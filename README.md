@@ -4,7 +4,7 @@ Up-to-date version of the Topological Cluster Classification code.
 
 ### Features ###
 
-*Cubic boxes
+* Cubic boxes
 * Orthogonal non-cubic boxes
 * Triclinic boundary conditions
 
