@@ -1,0 +1,36 @@
+init.params    // name of parameters file for xmol trajectory, minus d[rank]_ prefix
+3    // ISNOTCUBIC - 0 if cubic NVT, 1 if system non-cubic NVT, 2 if system is NPT, 3 triclinc with tilt   INTEGER
+box.txt    // name of parameters file for box size data, minus "d[rank]_" prefix
+1    // FRAMES - frames to read from input xmol file                                         INTEGER
+0    // STARTFROM - start reading from this frame in the xmol file                               INTEGER
+1    // SAMPLEFREQ - frequency at which to take frames from the xmol file                            INTEGER
+2.0    // rcutAA - specie-specie bond lengths only work with simple                               DOUBLE
+2.0    // rcutAB - specie-specie bond lengths only work with simple    Paddy scaled to be 1.4 sigmaAB scaled                           DOUBLE
+2.0    // rcutBB - specie-specie bond lengths only work with simple    Paddy scaled to be 1.4 sigmaBB scaled                           DOUBLE
+1    // 0 simple bond length, 1 Voronoi bond detection                                       BINARY INTEGER
+1    //0 off, 1 on, Use period boundary conditions (PBCs),               BINARY INTEGER
+0.82    // Modified Voronoi Fc parameter                                                    DOUBLE IN [0,1]
+30    // nB - max number of bonds to one particle                                         INTEGER
+0    // use Cell List to calculate bond network (and potential if used as well)                              BINARY INTEGER
+1    // write out bonds file                                                         BINARY INTEGER
+0    // write clusts_** files containing all clusters - USES LOTS OF HDD SPACE                       BINARY INTEGER
+1    // write raw_** xmol cluster files                                          BINARY INTEGER
+0    // write centres of 13A                                                 BINARY INTEGER
+0    // write particle fraction of each cluster per frame (pop_per_frame)                            BINARY INTEGER
+0.02    // bin width for bond length distributions                                              DOUBLE
+0    // write bond length distributions                                                  BINARY INTEGER
+0    // write bond length distributions for each cluster type                                    BINARY INTEGER
+0    // write bond length deviations from ground.state.bondlengths.dat for each cluster type             BINARY INTEGER
+0    // write number of neighbour distributions                                              BINARY INTEGER
+0    // write distributions for the number of particles bonded to the centre of each cluster             BINARY INTEGER
+0    / write compositions of each cluster in terms of A and B species                               BINARY INTEGER
+0    / do potential energy calculations                                                 BINARY INTEGER
+0    // 0 BLJ, 1 SFBLJ, 2 MorYuk: polydisp morse+yukawa, 3 not used, 4 IPL, 5 BLJ_WCAs, 6 SFIPL, 7 CRVT  INTEGER
+0    // do Coslovich-style Voronoi faces analysis                                            BINARY INTEGER
+0    // do Dynamics Analysis - choose which clusters and set memory sizes in static.memsize.dat          BINARY INTEGER
+0    // write subclusters of each cluster, if dynamics also done on required subcluster                  BINARY INTEGER
+1.0    // alpha relaxtion time (in simulation time units)                                          DOUBLE
+1    // printing running (per frame) debug information                                       BINARY INTEGER
+0.   //    shear amount (for Lees-Edwards BCs)
+
+Potential parameters are in potentialparams.in

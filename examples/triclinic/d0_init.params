@@ -1,0 +1,11 @@
+d0_init.params
+tj.xyz    xyz file
+no   ir file
+no     v file
+512  N
+256  NA
+1.29599793809 rho
+0  TSTART
+0.  INITIAL_FRAMETSTEP
+1.  TEND
+1 TOTALFRAMES
