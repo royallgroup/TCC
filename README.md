@@ -4,9 +4,9 @@ Up-to-date version of the Topological Cluster Classification code.
 
 ### Compile ###
 Enter the directory
-    src 
+    `src` 
 and type 
-    gcc -O3 *.c -o TCC
+    `gcc -O3 *.c -o TCC`
 
 ### Features ###
 
