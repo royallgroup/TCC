@@ -6,13 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "tcc_analysis.h"
-//#include <mpi.h>
-
-int size, rank;
+#include "dynamic_analysis.h"
 
 void Error(char *msg) {
-	printf("\nd%d %s\n",rank,msg); 
+	printf("\n%s\n",msg); 
 	exit(1); 
 } // Quit
 
@@ -50,69 +47,69 @@ void Setup_ReadAnalysisParams(char *filename) { // reads analysis code params fi
 		Error(errMsg);
 	}
 	
-	printf("d%d %s reading analysis file:\n",rank,filename);
+	printf("%s reading analysis file:\n",filename);
 	
 	doDynamicAnalysis=Setup_GetFirstIntFromLine(fin);
 	go_away_for=Setup_GetFirstIntFromLine(fin);
-	if (doDynamicAnalysis==1) printf("d%d doDynamicAnalysis %d therefore removing disappearences of %d or fewer frames\n",rank,doDynamicAnalysis,go_away_for);
-	else if (doDynamicAnalysis==0)  printf("d%d doDynamicAnalysis %d therefore cluster disappearences are not removed\n",rank,doDynamicAnalysis);
+	if (doDynamicAnalysis==1) printf("doDynamicAnalysis %d therefore removing disappearences of %d or fewer frames\n",doDynamicAnalysis,go_away_for);
+	else if (doDynamicAnalysis==0)  printf("doDynamicAnalysis %d therefore cluster disappearences are not removed\n",doDynamicAnalysis);
 	doSplits=Setup_GetFirstIntFromLine(fin);
 	if (doDynamicAnalysis==0) doSplits=0;
-	printf("d%d remove instances where subcluster becomes unbonded from cluster during a disappearence event? %d\n",rank,doSplits);
+	printf("remove instances where subcluster becomes unbonded from cluster during a disappearence event? %d\n",doSplits);
 	doDynFileRewrite=Setup_GetFirstIntFromLine(fin);
-	printf("d%d rewrite dyn_... files for debugging? %d\n",rank,doDynFileRewrite);
+	printf("rewrite dyn_... files for debugging? %d\n",doDynFileRewrite);
 	doWriteNewClustsFile=Setup_GetFirstIntFromLine(fin);
-	printf("d%d write processed clusters to new_... file %d\n",rank,doWriteNewClustsFile);
+	printf("write processed clusters to new_... file %d\n",doWriteNewClustsFile);
 	steady_Nclus=Setup_GetFirstIntFromLine(fin);
-	printf("d%d number of frames for N_clus/N to reach steady state - needs to be of order of length of longest lived cluster (frames) %d\n",rank,steady_Nclus);
+	printf("number of frames for N_clus/N to reach steady state - needs to be of order of length of longest lived cluster (frames) %d\n",steady_Nclus);
 	
 	doWriteLifetimeDistro=Setup_GetFirstIntFromLine(fin);
-	printf("d%d output lifetime distributions to lives_... file %d\n",rank,doWriteLifetimeDistro);
+	printf("output lifetime distributions to lives_... file %d\n",doWriteLifetimeDistro);
 	doWriteIn=Setup_GetFirstIntFromLine(fin);
-	printf("d%d write raw style trajectory of particles in clusters %d\n",rank,doWriteIn);
+	printf("write raw style trajectory of particles in clusters %d\n",doWriteIn);
 	
 	t_h=Setup_GetFirstIntFromLine(fin);
-	printf("d%d t_h - number of frames to write displacement distributions, particles continuously in clusters, etc %d\n",rank,t_h);
+	printf("t_h - number of frames to write displacement distributions, particles continuously in clusters, etc %d\n",t_h);
 	doDisplacementDistro=Setup_GetFirstIntFromLine(fin);
-	printf("d%d write displacement distribution of clustered particles from t to t+%d frames %d\n",rank,t_h,doDisplacementDistro);
+	printf("write displacement distribution of clustered particles from t to t+%d frames %d\n",t_h,doDisplacementDistro);
 	doWriteCtsIn=Setup_GetFirstIntFromLine(fin);
-	printf("d%d write raw style trajectory of particles in continuously in clusters over t_h %d - %d\n",rank,t_h,doWriteCtsIn);
+	printf("write raw style trajectory of particles in continuously in clusters over t_h %d - %d\n",t_h,doWriteCtsIn);
 	doWriteMSDClusNonClusCts=Setup_GetFirstIntFromLine(fin);
-	printf("d%d write MSD of particles in continuously in clusters over t - %d\n",rank,doWriteMSDClusNonClusCts);
+	printf("write MSD of particles in continuously in clusters over t - %d\n",doWriteMSDClusNonClusCts);
 	
 	
 	max_regions=Setup_GetFirstIntFromLine(fin);
-	printf("d%d maximum number of regions of any cluster type %d\n",rank,max_regions);
+	printf("maximum number of regions of any cluster type %d\n",max_regions);
 	doRegions=Setup_GetFirstIntFromLine(fin);
-	printf("d%d average size of regions of clusters, i.e. look at domain properties of regions of clusters %d\n",rank,doRegions);
+	printf("average size of regions of clusters, i.e. look at domain properties of regions of clusters %d\n",doRegions);
 	/*
 	output_clust=Setup_GetFirstIntFromLine(fin);
-	printf("d%d make xmol/VMD/Jmol movie of an individual cluster %d\n",rank,output_clust);
+	printf("make xmol/VMD/Jmol movie of an individual cluster %d\n",output_clust);
 	output_neighbours=Setup_GetFirstIntFromLine(fin);
-	printf("d%d include cluster's neighbours in xmol/VMD/Jmol movie of an individual cluster %d\n",rank,output_neighbours);
+	printf("include cluster's neighbours in xmol/VMD/Jmol movie of an individual cluster %d\n",output_neighbours);
 	clust_nB=Setup_GetFirstIntFromLine(fin);
-	printf("d%d maximum number of neighbours to an individual cluster %d\n",rank,clust_nB);
+	printf("maximum number of neighbours to an individual cluster %d\n",clust_nB);
 	output_all=Setup_GetFirstIntFromLine(fin);
-	printf("d%d include all particles in xmol/VMD/Jmol movie of an individual cluster %d\n",rank,output_all);
+	printf("include all particles in xmol/VMD/Jmol movie of an individual cluster %d\n",output_all);
 	output_bonds=Setup_GetFirstIntFromLine(fin);
-	printf("d%d include bonds in xmol/VMD/Jmol movie of an individual cluster %d\n",rank,output_bonds);
+	printf("include bonds in xmol/VMD/Jmol movie of an individual cluster %d\n",output_bonds);
 	radA=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d radius of A particles %.5lg\n",rank,radA);
+	printf("radius of A particles %.5lg\n",radA);
 	radB=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d radius of B particles %.5lg\n",rank,radB);
+	printf("radius of B particles %.5lg\n",radB);
 	reduce=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d size reduction factor for non-cluster particles %.5lg\n",rank,reduce);
+	printf("size reduction factor for non-cluster particles %.5lg\n",reduce);
 	sphere_size=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d VMD sphere size %.5lg\n",rank,sphere_size);
+	printf("VMD sphere size %.5lg\n",sphere_size);
 	bond_thickness=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d VMD bond thickness %.5lg\n",rank,bond_thickness);
+	printf("VMD bond thickness %.5lg\n",bond_thickness);
 	jmol_sphere_size=Setup_GetFirstIntFromLine(fin);
-	printf("d%d jmol sphere size %d\n",rank,jmol_sphere_size);
+	printf("jmol sphere size %d\n",jmol_sphere_size);
 	jmol_bond_thickness=Setup_GetFirstIntFromLine(fin);
-	printf("d%d jmol bond thickness %d\n",rank,jmol_bond_thickness);*/
+	printf("jmol bond thickness %d\n",jmol_bond_thickness);*/
 	
 	PRINTINFO=Setup_GetFirstIntFromLine(fin);
-	printf("d%d print running debug info %d\n\n",rank,PRINTINFO);
+	printf("print running debug info %d\n\n",PRINTINFO);
 
 	fclose(fin);
 }
@@ -128,18 +125,18 @@ void Setup_ReadInputParams(char *filename) { // reads tcc input params file
 		Error(errMsg);
 	}
 
-	printf("\nd%d %s reading inputfile:\n",rank,filename);
+	printf("\n%s reading inputfile:\n",filename);
 	
 	if (fgets(input,10000,fin)==NULL) {
 		sprintf(errMsg,"Setup_ReadInputParams(): empty %s file!",filename);	// Always test file open
 		Error(errMsg);
 	}
 	sprintf(errMsg,strtok(input," "));
-	sprintf(fXmolParamsName,"d%d_%s",rank,errMsg);
-	printf("d%d xmol params file name %s\n",rank,fXmolParamsName);
+	sprintf(fXmolParamsName,"%s",errMsg);
+	printf("xmol params file name %s\n",fXmolParamsName);
 	
 	FRAMES=Setup_GetFirstIntFromLine(fin);
-	printf("d%d frames to sample from xmol %d\n",rank,FRAMES);
+	printf("frames to sample from xmol %d\n",FRAMES);
 	if (doDynamicAnalysis==1) {
 		start_from=0+go_away_for+1;
 		end_by=FRAMES-1-go_away_for-1;
@@ -156,29 +153,29 @@ void Setup_ReadInputParams(char *filename) { // reads tcc input params file
 		end_by=percent_end=FRAMES-1;
 		useable_frames=FRAMES;
 	}
-	printf("d%d only consider clusters which are created on or after %d and end on or before %d of FRAMES %d\n",rank,start_from,end_by,FRAMES);
-	printf("d%d therefore useable_frames is %d\n",rank,useable_frames);
-	printf("d%d calculate Nclus(tau_l)/N between frames %d and %d\n",rank,percent_start,percent_end);
-	printf("d%d therefore useable frames for Nclus(tau_l)/N is %d\n",rank,useable_percent);
+	printf("only consider clusters which are created on or after %d and end on or before %d of FRAMES %d\n",start_from,end_by,FRAMES);
+	printf("therefore useable_frames is %d\n",useable_frames);
+	printf("calculate Nclus(tau_l)/N between frames %d and %d\n",percent_start,percent_end);
+	printf("therefore useable frames for Nclus(tau_l)/N is %d\n",useable_percent);
 	STARTFROM=Setup_GetFirstIntFromLine(fin);
-	printf("d%d start sampling from frame %d in xmol file\n",rank,STARTFROM);
+	printf("start sampling from frame %d in xmol file\n",STARTFROM);
 	SAMPLEFREQ=Setup_GetFirstIntFromLine(fin);
-	printf("d%d sampling frequency of frames %d\n",rank,SAMPLEFREQ);
+	printf("sampling frequency of frames %d\n",SAMPLEFREQ);
 	rcutAA=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d rcutAA %.5lg\n",rank,rcutAA);
+	printf("rcutAA %.5lg\n",rcutAA);
 	rcutAB=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d rcutAB %.5lg\n",rank,rcutAA);
+	printf("rcutAB %.5lg\n",rcutAA);
 	rcutBB=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d rcutBB %.5lg\n",rank,rcutAA);
+	printf("rcutBB %.5lg\n",rcutAA);
 	
 	Vor=Setup_GetFirstIntFromLine(fin);
-	printf("d%d Voronoi bond method? %d\n",rank,Vor);
+	printf("Voronoi bond method? %d\n",Vor);
 	PBCs=Setup_GetFirstIntFromLine(fin);
-	printf("d%d PBCs? %d\n",rank,PBCs);
+	printf("PBCs? %d\n",PBCs);
 	fc=Setup_GetFirstDoubleFromLine(fin);
-	printf("d%d fc %.5lg\n",rank,fc);
+	printf("fc %.5lg\n",fc);
 	nB=Setup_GetFirstIntFromLine(fin);
-	printf("d%d maximum number of bonds to a particle nB %d\n",rank,nB);
+	printf("maximum number of bonds to a particle nB %d\n",nB);
 	
 	throw_int=Setup_GetFirstIntFromLine(fin); // use cell list to calculate bond network
 	throw_int=Setup_GetFirstIntFromLine(fin); // doWriteBonds
@@ -188,7 +185,7 @@ void Setup_ReadInputParams(char *filename) { // reads tcc input params file
 	throw_int=Setup_GetFirstIntFromLine(fin); // writePopPerFrame
 	
 	binWidth=Setup_GetFirstDoubleFromLine(fin); // binWidth
-	printf("d%d binWidth %.5lg\n",rank,binWidth);
+	printf("binWidth %.5lg\n",binWidth);
 	throw_int=Setup_GetFirstIntFromLine(fin); // do bin length distributions
 	throw_int=Setup_GetFirstIntFromLine(fin); // doClusBLDistros
 	throw_int=Setup_GetFirstIntFromLine(fin); // doClusBLDeviation
@@ -215,9 +212,9 @@ void Setup_ReadInputParams(char *filename) { // reads tcc input params file
 	throw_int=Setup_GetFirstIntFromLine(fin); // intNoDynamicClusters
 	throw_int=Setup_GetFirstIntFromLine(fin); // incrDynamicClusters*/
 	doSubClusts=Setup_GetFirstIntFromLine(fin); // do subClusters
-	printf("d%d dyn_** files contain subClusters %d\n",rank,doSubClusts);
+	printf("dyn_** files contain subClusters %d\n",doSubClusts);
 	talpha=Setup_GetFirstDoubleFromLine(fin); // t_alpha
-	printf("d%d talpha %.5lg\n\n",rank,talpha);
+	printf("talpha %.5lg\n\n",talpha);
 	
 	fclose(fin);
 }
@@ -254,14 +251,14 @@ void Setup_ReadXmolParams(char *filename) { // reads xmol params file
 	TFINAL=Setup_GetFirstDoubleFromLine(readin);
 	TOTALFRAMES=Setup_GetFirstIntFromLine(readin);
 	if (STARTFROM+SAMPLEFREQ*FRAMES>TOTALFRAMES) Error("Setup_ReadXmolParams(): STARTFROM+SAMPLEFREQ*FRAMES>TOTALFRAMES");
-	printf("\nd%d %s read in:\n",rank,filename);
-	printf("d%d N %d NA %d RHO %lg\n",rank,N,NA,RHO);
-	printf("d%d TSTART %lg FRAMETSTEP %lg TFINAL %lg\n",rank,TSTART,FRAMETSTEP,TFINAL);
-	printf("d%d TOTALFRAMES %d\n",rank,TOTALFRAMES);
+	printf("\n%s read in:\n",filename);
+	printf("N %d NA %d RHO %lg\n",N,NA,RHO);
+	printf("TSTART %lg FRAMETSTEP %lg TFINAL %lg\n",TSTART,FRAMETSTEP,TFINAL);
+	printf("TOTALFRAMES %d\n",TOTALFRAMES);
 	
 	side=pow((double)N/RHO, 1.0/3.0);
 	halfSide=side/2.0;
-	printf("d%d box side length = %.15lg\n\n",rank,side);
+	printf("box side length = %.15lg\n\n",side);
 	fclose(readin);
 }
 
@@ -269,7 +266,7 @@ void Setup_ReadDynamicDat(char *filename) { // Initialize lots of important vari
 	char errMsg[1000];
 	FILE *fin;
 	
-	printf("d%d reading dynamics memory parameters from %s\n",rank,filename);
+	printf("reading dynamics memory parameters from %s\n",filename);
 	fin=fopen(filename,"r");
 	if (fin==NULL)  {
 		sprintf(errMsg,"Setup_ReadDynamicDat() : Error opening file %s",filename);	// Always test file open
@@ -280,56 +277,56 @@ void Setup_ReadDynamicDat(char *filename) { // Initialize lots of important vari
 	dyn_msp3a=Setup_GetFirstIntFromLine(fin);
 	dyn_msp3b=Setup_GetFirstIntFromLine(fin);
 	dyn_msp3c=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_msp3 %d dyn_msp3a %d dyn_msp3b %d dyn_msp3c %d\n",rank,dyn_msp3,dyn_msp3a,dyn_msp3b,dyn_msp3c);
+	printf("dyn_msp3 %d dyn_msp3a %d dyn_msp3b %d dyn_msp3c %d\n",dyn_msp3,dyn_msp3a,dyn_msp3b,dyn_msp3c);
 	dyn_msp4=Setup_GetFirstIntFromLine(fin);
 	dyn_msp4a=Setup_GetFirstIntFromLine(fin);
 	dyn_msp4b=Setup_GetFirstIntFromLine(fin);
 	dyn_m6A=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_msp4 %d dyn_msp4a %d dyn_msp4b %d dyn_m6A %d\n",rank,dyn_msp4,dyn_msp4a,dyn_msp4b,dyn_m6A);
+	printf("dyn_msp4 %d dyn_msp4a %d dyn_msp4b %d dyn_m6A %d\n",dyn_msp4,dyn_msp4a,dyn_msp4b,dyn_m6A);
 	dyn_msp5=Setup_GetFirstIntFromLine(fin);
 	dyn_msp5a=Setup_GetFirstIntFromLine(fin);
 	dyn_msp5b=Setup_GetFirstIntFromLine(fin);
 	dyn_msp5c=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_msp5 %d dyn_msp5a %d dyn_msp5b %d dyn_msp5c %d\n",rank,dyn_msp5,dyn_msp5a,dyn_msp5b,dyn_msp5c);
+	printf("dyn_msp5 %d dyn_msp5a %d dyn_msp5b %d dyn_msp5c %d\n",dyn_msp5,dyn_msp5a,dyn_msp5b,dyn_msp5c);
 	dyn_m6Z=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m6Z %d\n",rank,dyn_m6Z);
+	printf("dyn_m6Z %d\n",dyn_m6Z);
 	dyn_m7K=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m7K %d\n",rank,dyn_m7K);
+	printf("dyn_m7K %d\n",dyn_m7K);
 	dyn_m8A=Setup_GetFirstIntFromLine(fin);
 	dyn_m8B=Setup_GetFirstIntFromLine(fin);
 	dyn_m8K=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m8A %d dyn_m8B %d dyn_m8K %d\n",rank,dyn_m8A,dyn_m8B,dyn_m8K);
+	printf("dyn_m8A %d dyn_m8B %d dyn_m8K %d\n",dyn_m8A,dyn_m8B,dyn_m8K);
 	dyn_m9A=Setup_GetFirstIntFromLine(fin);
 	dyn_m9B=Setup_GetFirstIntFromLine(fin);
 	dyn_m9K=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m9A %d dyn_m9B %d dyn_m9K %d\n",rank,dyn_m9A,dyn_m9B,dyn_m9K);
+	printf("dyn_m9A %d dyn_m9B %d dyn_m9K %d\n",dyn_m9A,dyn_m9B,dyn_m9K);
 	dyn_m10A=Setup_GetFirstIntFromLine(fin);
 	dyn_m10B=Setup_GetFirstIntFromLine(fin);
 	dyn_m10K=Setup_GetFirstIntFromLine(fin);
 	dyn_m10W=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m10A %d dyn_m10B %d dyn_m10K %d dyn_m10W %d\n",rank,dyn_m10A,dyn_m10B,dyn_m10K,dyn_m10W);
+	printf("dyn_m10A %d dyn_m10B %d dyn_m10K %d dyn_m10W %d\n",dyn_m10A,dyn_m10B,dyn_m10K,dyn_m10W);
 	dyn_m11A=Setup_GetFirstIntFromLine(fin);
 	dyn_m11B=Setup_GetFirstIntFromLine(fin);
 	dyn_m11C=Setup_GetFirstIntFromLine(fin);
 	dyn_m11E=Setup_GetFirstIntFromLine(fin);
 	dyn_m11F=Setup_GetFirstIntFromLine(fin);
 	dyn_m11W=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m11A %d dyn_m11B %d dyn_m11C %d dyn_m11E %d dyn_m11F %d dyn_m11W %d\n",rank,dyn_m11A,dyn_m11B,dyn_m11C,dyn_m11E,dyn_m11F,dyn_m11W);
+	printf("dyn_m11A %d dyn_m11B %d dyn_m11C %d dyn_m11E %d dyn_m11F %d dyn_m11W %d\n",dyn_m11A,dyn_m11B,dyn_m11C,dyn_m11E,dyn_m11F,dyn_m11W);
 	dyn_m12A=Setup_GetFirstIntFromLine(fin);
 	dyn_m12B=Setup_GetFirstIntFromLine(fin);
 	dyn_m12D=Setup_GetFirstIntFromLine(fin);
 	dyn_m12E=Setup_GetFirstIntFromLine(fin);
 	dyn_m12K=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m12A %d dyn_m12B %d dyn_m12D %d dyn_m12E %d dyn_m12K %d\n",rank,dyn_m12A,dyn_m12B,dyn_m12D,dyn_m12E,dyn_m12K);
+	printf("dyn_m12A %d dyn_m12B %d dyn_m12D %d dyn_m12E %d dyn_m12K %d\n",dyn_m12A,dyn_m12B,dyn_m12D,dyn_m12E,dyn_m12K);
 	dyn_m13A=Setup_GetFirstIntFromLine(fin);
 	dyn_m13B=Setup_GetFirstIntFromLine(fin);
 	dyn_m13K=Setup_GetFirstIntFromLine(fin);
-	printf("d%d dyn_m13A %d dyn_m13B %d dyn_m13K %d\n",rank,dyn_m13A,dyn_m13B,dyn_m13K);
+	printf("dyn_m13A %d dyn_m13B %d dyn_m13K %d\n",dyn_m13A,dyn_m13B,dyn_m13K);
 	dyn_mFCC=Setup_GetFirstIntFromLine(fin);
 	dyn_mHCP=Setup_GetFirstIntFromLine(fin);
 	dyn_mBCC_9=Setup_GetFirstIntFromLine(fin);
 	dyn_mBCC_15=Setup_GetFirstIntFromLine(fin);
-	printf("d%d do_mFCC %d do_mHCP %d do_mBCC_9 %d do_mBCC_15 %d\n\n",rank,dyn_mFCC,dyn_mHCP,dyn_mBCC_9,dyn_mBCC_15);
+	printf("do_mFCC %d do_mHCP %d do_mBCC_9 %d do_mBCC_15 %d\n\n",dyn_mFCC,dyn_mHCP,dyn_mBCC_9,dyn_mBCC_15);
 	
 	fclose(fin);
 }
@@ -373,7 +370,7 @@ void Setup_ReadXmol() { // reads coordinates and particle types from xmol trajec
 				}
 			
 				r[f][0][j]=tx;	r[f][1][j]=ty;	r[f][2][j]=tz;
-				if (PRINTINFO==1) if (j==N-1) printf("d%d f%d part%d %c %.5lg %.5lg %.5lg\n\n",rank,i,j,c,r[f][0][j],r[f][1][j],r[f][2][j]);
+				if (PRINTINFO==1) if (j==N-1) printf("f%d part%d %c %.5lg %.5lg %.5lg\n\n",i,j,c,r[f][0][j],r[f][1][j],r[f][2][j]);
 			}
 		}
 		if (cntA!=NA) {
@@ -433,27 +430,6 @@ int Bonds_BondCheck(int f, int i, int j) {	// Returns 1 if i & j are bonded; 0 o
 	} 
 	return 0;
 }
-
-/*void Setup_ReadTalpha(char *filename) {  // read talpha from talpha input file 
-	char errMsg[1000];
-	int i;
-	double throwaway;
-	FILE *fin;
-	
-	printf("d%d reading t-alpha from %s\n",rank,filename);
-	fin=fopen(filename,"r");
-	if (fin==NULL)  {
-		sprintf(errMsg,"Setup_ReadTalpha(): Error opening file %s",filename);	// Always test file open
-		Error(errMsg);
-	}
-	
-	for (i=0; i<size; i++) {
-		throwaway=Setup_GetFirstDoubleFromLine(fin);
-		if (rank==i) talpha=throwaway;
-	}
-	
-	fclose(fin);
-}*/
 
 void Setup_InitVars() { // Initialize lots of important variables 
 	int f, i, j, k;
@@ -741,9 +717,9 @@ void Input_Cluster_Type(char *clustName, int clustSize, int subClust, char *strS
 	fgets(cthrowaway,10000,fIn); // throwaway first information line
 	mClust=0; // read in number of clusters that the file contains
 	fscanf(fIn,"%d\n",&mClust);
-	printf("d%d number of %s clusters coming in %d\n",rank,clustName,mClust);
+	printf("number of %s clusters coming in %d\n",clustName,mClust);
 	if (mClust==0) { // no clusters present
-		printf("d%d no clusters in dynamic tcc file %s\n",rank,input);
+		printf("no clusters in dynamic tcc file %s\n",input);
 		fclose(fIn);
 		return;
 	}
@@ -842,12 +818,12 @@ void Input_Cluster_Type(char *clustName, int clustSize, int subClust, char *strS
 		fscanf(fIn,"\n");
 	}
 	fclose(fIn);
-	printf("\nd%d Read %s\n",rank,input);
-	printf("d%d by frame count longest single total max lifetime\n",rank);
-	printf("d%d %d %d %d\n",rank,longest_single_int_instance,longest_total_int_instance,longest_max_int_instance);
+	printf("\nRead %s\n",input);
+	printf("by frame count longest single total max lifetime\n");
+	printf("%d %d %d\n",longest_single_int_instance,longest_total_int_instance,longest_max_int_instance);
 
-	printf("d%d by t_alpha longest single total max lifetimes\n",rank);
-	printf("d%d %lg %lg %lg\n",rank,longest_single_instance,longest_total_instance,longest_max_instance);
+	printf("by t_alpha longest single total max lifetimes\n");
+	printf("%lg %lg %lg\n",longest_single_instance,longest_total_instance,longest_max_instance);
 	
 	if (doDynFileRewrite==1) { // rewrite dyn_** file (just for debugging - test to see it was all read in ok)
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.test.dyn_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs,clustName);
@@ -884,7 +860,7 @@ void Input_Cluster_Type(char *clustName, int clustSize, int subClust, char *strS
 			fprintf(fOut,"\n");
 		}
 		fclose(fOut);
-		printf("d%d Rewritten dyn_... file to check all is ok %s\n",rank,output);
+		printf("Rewritten dyn_... file to check all is ok %s\n",output);
 	}
 }
 
@@ -1160,10 +1136,10 @@ int Calc_Lifetimes(char *fileName, int n_clusters, int clustSize, int binary_cen
 			}
 		}
 	}
-	printf("d%d number of clusts in %d no clusts out %d dropped %d useable_frames %d \n",rank,n_clusters,calc_nosamples,dropped,useable_frames);
+	printf("number of clusts in %d no clusts out %d dropped %d useable_frames %d \n",n_clusters,calc_nosamples,dropped,useable_frames);
 	
 	Alloc_the_clusts(calc_nosamples,clustSize); // alloc memory for the new dynamic clusters
-	printf("d%d allocated memory for the processed dynamic clusters\n",rank);
+	printf("allocated memory for the processed dynamic clusters\n");
 	
 	calc_nosamples_again=0;
 	for (i=0; i<n_clusters; i++) { // need to run above again to put new_clusters into arrays
@@ -1338,7 +1314,7 @@ int Calc_Lifetimes(char *fileName, int n_clusters, int clustSize, int binary_cen
 			if (calc_maxlength<curr_end-curr_start) calc_maxlength=curr_end-curr_start;
 		}
 	}
-	printf("d%d number of clusts in %d no clusts out %d dropped %d useable_frames %d \n",rank,n_clusters,calc_nosamples,dropped,useable_frames);
+	printf("number of clusts in %d no clusts out %d dropped %d useable_frames %d \n",n_clusters,calc_nosamples,dropped,useable_frames);
 	
 	Alloc_the_clusts(calc_nosamples,clustSize); // alloc memory for the new dynamic clusters
 	
@@ -1371,7 +1347,7 @@ int Calc_Lifetimes(char *fileName, int n_clusters, int clustSize, int binary_cen
 	if (calc_nosamples_again!=calc_nosamples) Error("calc_nosamples_again!=calc_nosamples");
 	}
 	
-	printf("d%d filled processed dynamic cluster arrays\n",rank);
+	printf("filled processed dynamic cluster arrays\n");
 	
 	file=fopen(fileName, "w");
 	if (file==NULL)  {
@@ -1580,7 +1556,7 @@ void Calc_Rg(int f, int *regions_parts) {
 		}
 	}
 	
-	if (regions[f][no_regions[f]]==1) printf("d%d f%d region %d size %d Rg %lg %d\n",rank,f,i,regions[f][no_regions[f]],regions_Rg[f][no_regions[f]],regions_parts[0]);
+	if (regions[f][no_regions[f]]==1) printf("f%d region %d size %d Rg %lg %d\n",f,i,regions[f][no_regions[f]],regions_Rg[f][no_regions[f]],regions_parts[0]);
 	
 	sum=sum/(regions[f][no_regions[f]]*regions[f][no_regions[f]]);
 	sum=sqrt(sum);
@@ -1675,13 +1651,13 @@ int DFS_noPBCs(int f, int *inc_parts) {	// return 0 if does not percolate, 1 if 
 			}
 		}
 	}
-	//printf("d%d f%d hi1\n",rank,f);
+	//printf("f%d hi1\n",f);
 	if (through_x==0 && through_y==0 && through_z==0) {
 		free(regions_parts);
 		free(inc_parts_sub);
 		return 0;
 	}
-	//printf("d%d f%d hi2\n",rank,f);
+	//printf("f%d hi2\n",f);
 	no_regions_noPBCs=0;
 	for (i=0; i<N; i++) {
 		if (used_part_noPBCs[i]!=0) continue;
@@ -1698,14 +1674,14 @@ int DFS_noPBCs(int f, int *inc_parts) {	// return 0 if does not percolate, 1 if 
 				if (inc_parts_sub[bNums[f][j][k]]==1) {
 					free(regions_parts);
 					free(inc_parts_sub);
-					printf("d%d f%d percolates x %d y %d z %d no_regions_noPBCs %d\n",rank,f,through_x,through_y,through_z,no_regions_noPBCs);
+					printf("f%d percolates x %d y %d z %d no_regions_noPBCs %d\n",f,through_x,through_y,through_z,no_regions_noPBCs);
 					return 1;
 				}
 			}
 		}
 		no_regions_noPBCs++;
 	}
-	//printf("d%d f%d x %d y %d z %d no_regions_noPBCs %d\n",rank,f,through_x,through_y,through_z,no_regions_noPBCs);
+	//printf("f%d x %d y %d z %d no_regions_noPBCs %d\n",f,through_x,through_y,through_z,no_regions_noPBCs);
 	free(regions_parts);
 	free(inc_parts_sub);
 	return 0;
@@ -1827,7 +1803,7 @@ void DFS(int calc_no_samples, int f, int cluster_size, int *inc_parts) {
 			part_move[j][0]=part_move[j][1]=part_move[j][2]=0;
 		}
 	}
-	//printf("d%d f%d regions %d percolating regions %d\n",rank,f,no_regions[f],no_percolates);
+	//printf("f%d regions %d percolating regions %d\n",f,no_regions[f],no_percolates);
 	free(inc_parts_sub);
 	free(regions_parts);
 }
@@ -2000,11 +1976,11 @@ void DFS(int calc_no_samples, int f, int cluster_size, int *inc_parts) {
 	}
 
 	fclose(file);
-	printf("d%d Written %s\n",rank,output);
+	printf("Written %s\n",output);
 	fclose(vmdfile);
-	printf("d%d Written %s\n",rank,output2);
+	printf("Written %s\n",output2);
 	fclose(jmolfile);
-	printf("d%d Written %s\n",rank,output3);
+	printf("Written %s\n",output3);
 	
 	free(trial_clust);
 	
@@ -2135,7 +2111,7 @@ void Take_Clust_Neighbours(int clustSize, char *strClustType, int takeClust) {
 					if (reject==1) continue;
 	
 					if (no_neighbours_13A[f]==clust_nB) {
-						printf("d%d parts_13A[i][j=%d] %d cnb[f][f][parts_13A[i][j]] %d\n",rank,j,parts_13A[takeClust][j],cnb[f][parts_13A[takeClust][j]]);
+						printf("parts_13A[i][j=%d] %d cnb[f][f][parts_13A[i][j]] %d\n",j,parts_13A[takeClust][j],cnb[f][parts_13A[takeClust][j]]);
 						sprintf(errMsg,"Take_Clust_Neighbours(): no_neighbours_13A[i=%d][f=%d] %d clust_nB %d not big enough\n",i,f,no_neighbours_13A[f],clust_nB);
 						Error(errMsg);
 					}
@@ -2184,14 +2160,14 @@ void Take_Clust_Neighbours(int clustSize, char *strClustType, int takeClust) {
 			}
 		}
 	}
-	printf("d%d for second time\n\n",rank);
+	printf("for second time\n\n");
 	
 	fclose(file);
-	printf("d%d Written %s\n",rank,output);
+	printf("Written %s\n",output);
 	fclose(vmdfile);
-	printf("d%d Written %s\n",rank,output2);
+	printf("Written %s\n",output2);
 	fclose(jmolfile);
-	printf("d%d Written %s\n",rank,output3);
+	printf("Written %s\n",output3);
 	
 	free(trial_clust);
 }
@@ -2342,11 +2318,11 @@ void Take_All(int clustSize, char *strClustType) {
 
 
 	fclose(file);
-	printf("d%d Written %s\n",rank,output);
+	printf("Written %s\n",output);
 	fclose(vmdfile);
-	printf("d%d Written %s\n",rank,output2);
+	printf("Written %s\n",output2);
 	fclose(jmolfile);
-	printf("d%d Written %s\n",rank,output3);
+	printf("Written %s\n",output3);
 	
 	for (f=0; f<FRAMES; f++) {
 		free(is_in[f]);
@@ -2998,7 +2974,7 @@ void Displacement_Distro(int overframes, int frame_start, int frame_finish, char
 	myfile=fopen(filenamepath,"w");
 	fprintf(myfile,"%s\n",filenamepath);
 	if (myfile==NULL) Error("Displacement_Distro() : Error opening file\n");	// Always test file open
-	printf("\nd%d Displacement_Distro(): printing displacement_distro(t_h=%d) to %s\n", rank,overframes,filenamepath);
+	printf("\nDisplacement_Distro(): printing displacement_distro(t_h=%d) to %s\n",overframes,filenamepath);
 	fprintf(myfile,"length	Displacements over t=%lg (or %d frames)	Norm Displacements (samples %d)\n",overframes*FRAMETSTEP,overframes,cnt);
 	
 	for(i=0; i<nobins; i++) {
@@ -3064,7 +3040,7 @@ void Write_Continuously_In(int t_h, char *filename, int* **in) {
 		}
 	}
 	
-	printf("d%d written particles continuously in selected array from f to f + %d to %s",rank,t_h,filename);
+	printf("written particles continuously in selected array from f to f + %d to %s",t_h,filename);
 
 	fclose(file);
 }
@@ -3323,15 +3299,15 @@ void Find_Regions(int calc_no_samples, char *clustName, int clustSize) {
 			j=0;
 			for (i=0; i<N; i++) { if (inc_parts[i]==1) j++; }
 			DFS(calc_no_samples,f,clustSize,&inc_parts[0]);
-			//printf("d%d f%d n13A %d no_regions[f] %d\n",rank,f,j,no_regions[f]);
+			//printf("f%d n13A %d no_regions[f] %d\n",f,j,no_regions[f]);
 			mean_region_size=0.0;
 			for (i=0; i<no_regions[f]; i++) {
 				mean_region_size+=(double)regions[f][i];
-				//printf("d%d f%d region %d size %d Rg %lg\n",rank,f,i,regions[f][i],regions_Rg[f][i]);
+				//printf("f%d region %d size %d Rg %lg\n",f,i,regions[f][i],regions_Rg[f][i]);
 				fprintf(fregions,"%d	%d	%.12lg	%.12lg\n",f,regions[f][i],regions_Rg[f][i],regions_mean_cluster_lifetime[f][i]);
 			}
 			mean_region_size=mean_region_size/(double)no_regions[f];
-			//printf("d%d f%d mean_region_size %.5lg length scale %.5lg\n",rank,f,mean_region_size,pow(mean_region_size,0.3333333));
+			//printf("f%d mean_region_size %.5lg length scale %.5lg\n",f,mean_region_size,pow(mean_region_size,0.3333333));
 			f++;
 		}
 	}
@@ -3344,7 +3320,7 @@ void Find_Regions(int calc_no_samples, char *clustName, int clustSize) {
 		i+=no_regions[f];
 	}
 	total_region_size=total_region_size/(double)i;
-	printf("d%d mean_region_size %.5lg length scale %.5lg\n",rank,total_region_size,pow(total_region_size,0.3333333));
+	printf("mean_region_size %.5lg length scale %.5lg\n",total_region_size,pow(total_region_size,0.3333333));
 	fprintf(fregions,"mean_region_size %.5lg length scale %.5lg\n",total_region_size,pow(total_region_size,0.3333333));
 	
 	total_region_size=0.0;
@@ -3356,7 +3332,7 @@ void Find_Regions(int calc_no_samples, char *clustName, int clustSize) {
 		}
 	}
 	total_region_size=total_region_size/mean_region_size;
-	printf("d%d (sum N_j)^2/(sum N_j) %.5lg length scale %.5lg\n",rank,total_region_size,pow(total_region_size,0.3333333));
+	printf("(sum N_j)^2/(sum N_j) %.5lg length scale %.5lg\n",total_region_size,pow(total_region_size,0.3333333));
 	fprintf(fregions,"(sum N_j)^2/(sum N_j) %.5lg length scale %.5lg\n",total_region_size,pow(total_region_size,0.3333333));
 	fclose(fregions);
 	fclose(f_region_cluster_lifetimes);
@@ -3397,7 +3373,7 @@ void Find_Regions(int calc_no_samples, char *clustName, int clustSize) {
 		}
 		fprintf(fpop_per_frame,"%d	%.12lg\n",f,(double)k/N);
 	}
-	printf("d%d mean pop_per_frame all frames 13A %lg\n",rank,(double)i/(N*FRAMES));
+	printf("mean pop_per_frame all frames 13A %lg\n",(double)i/(N*FRAMES));
 	i=0;
 	k=0;
 	for (f=100; f<FRAMES-100; f++) {
@@ -3408,7 +3384,7 @@ void Find_Regions(int calc_no_samples, char *clustName, int clustSize) {
 		}
 		k++;
 	}
-	printf("d%d mean pop_per_frame f=[100,FRAMES-100] frames 13A %lg\n",rank,(double)i/(N*k));
+	printf("mean pop_per_frame f=[100,FRAMES-100] frames 13A %lg\n",(double)i/(N*k));
 	fclose(fpop_per_frame);
 }*/
 
@@ -3418,73 +3394,68 @@ void Do_Cluster(char *clustName, int clustSize, int centre_shell, int subClust, 
 	
 	Setup_ResetVars();
 	mClust=0;
-	printf("d%d reading in cluster %s\n",rank,clustName);
+	printf("reading in cluster %s\n",clustName);
 	Input_Cluster_Type(clustName, clustSize, subClust, subClustStr, centre_shell);
-	printf("d%d Read in dynamic TCC cluster %s - number of clusters is %d\n",rank,clustName,mClust);
+	printf("Read in dynamic TCC cluster %s - number of clusters is %d\n",clustName,mClust);
 	if (mClust==0) {
 		return;
 	}
 	
 	if (doDynamicAnalysis==1 && doSplits==1) {
-		printf("d%d Finding splits between sights of cluster\n",rank);
+		printf("Finding splits between sights of cluster\n");
 		Find_Splits(clustSize,mClust);
-		printf("d%d Found splits between sights of cluster\n",rank);
+		printf("Found splits between sights of cluster\n");
 	}
 	
 	sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.doDynAnal%d.doSplits%d.new_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs,doDynamicAnalysis,doSplits,clustName);
 	calc_nosamples=Calc_Lifetimes(output,mClust,clustSize,centre_shell);
-	printf("d%d freeing the temporary cluster variables .... ",rank);
+	printf("freeing the temporary cluster variables .... ");
 	Free_temp(centre_shell);
 	printf(" ... freed\n");
 	
 	if (doWriteLifetimeDistro==1) {	
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.doDynAnal%d.doSplits%d.lives_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, doDynamicAnalysis,doSplits,clustName);
-		printf("d%d writing cluster lifetime histogram .... ",rank);
+		printf("writing cluster lifetime histogram .... ");
 		Write_Lifetime_Distro(output,clustSize,calc_nosamples,0,0,0,0,&clustered_parts);
 		printf(" ... written\n");
 	}
 	
 	if (doWriteIn==1 && doWriteLifetimeDistro==1) {
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.doDynAnal%d.doSplits%d.raw_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, doDynamicAnalysis,doSplits,clustName);
-		printf("d%d writing clustered particles .... ",rank);
+		printf("writing clustered particles .... ");
 		Write_Clustered_Particles(output, &clustered_parts);
 		printf(" ... written\n");
 	}
 	
 	if (doDisplacementDistro==1 && doWriteLifetimeDistro==1) {
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.doDynAnal%d.doSplits%d.disp%d.dispDistro_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, doDynamicAnalysis,doSplits,t_h,clustName);
-		printf("d%d writing displacement distribution over %d frames .... ",rank,t_h);
+		printf("writing displacement distribution over %d frames .... ",t_h);
 		Displacement_Distro(t_h, percent_start, percent_end, output, &clustered_parts);
 		printf(" ... written\n");
 	}
 	
 	if (doWriteCtsIn==1 && doWriteLifetimeDistro==1) {
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.doDynAnal%d.doSplits%d.cts%d.raw_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, doDynamicAnalysis,doSplits,t_h,clustName);
-		printf("d%d writing particles continuosly in clusters over %d frames following each frame.... ",rank,t_h);
+		printf("writing particles continuosly in clusters over %d frames following each frame.... ",t_h);
 		Write_Continuously_In(t_h, output, &clustered_parts);
 		printf(" ... written\n");
 	}
 	
 	if (doWriteMSDClusNonClusCts==1 && doWriteLifetimeDistro==1) {
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.doDynAnal%d.doSplits%d.cts%d.msd_%s",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, doDynamicAnalysis,doSplits,t_h,clustName);
-		printf("d%d writing MSD of particles continuosly in clusters over t.... ",rank);
+		printf("writing MSD of particles continuosly in clusters over t.... ");
 		Write_MSD_clustered_nonclustered(percent_start, percent_end, output, &clustered_parts);
 		printf(" ... written\n");
 	}
 	
 	
-	printf("d%d freeing processed cluster variables .... ",rank);
+	printf("freeing processed cluster variables .... ");
 	Free_the_clusts(calc_nosamples);
 	printf(" ... freed\n\n");
 }
 
 //// START: main() routine
 int main(int argc, char **argv) {
-	//MPI_Init(&argc, &argv);
-	//MPI_Comm_size(MPI_COMM_WORLD, &size);
-	//MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	rank=0;
-	size=8;
 
 	sprintf(fAnalysisParamsName,"analysis_params.in");
 	Setup_ReadAnalysisParams(fAnalysisParamsName);
@@ -3497,16 +3468,16 @@ int main(int argc, char **argv) {
 	Setup_ReadDynamicDat(fDynamicDatName);
 	
 	
-	printf("d%d Initiating variables...\n",rank);
+	printf("Initiating variables...\n");
 	sprintf(fBondsName,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
 	Setup_InitVars();
-	printf("d%d Initiated variables...reseting variables...\n",rank);
+	printf("Initiated variables...reseting variables...\n");
 	Setup_ResetVars();
-	printf("d%d reseting variables... starting xmol read\n",rank);
+	printf("reseting variables... starting xmol read\n");
 	Setup_ReadXmol();
-	printf("d%d xmol file %s read in succesfully... starting bonds read\n",rank,fXmolName);
+	printf("xmol file %s read in succesfully... starting bonds read\n",fXmolName);
 	Setup_ReadBonds();
-	printf("d%d Bonds file %s read in succesfully\n",rank,fXmolName);
+	printf("Bonds file %s read in succesfully\n",fXmolName);
 	
 	if (dyn_msp3!=-1) Do_Cluster("sp3", 3,0,0,"");
 	if (dyn_msp3a!=-1) Do_Cluster("sp3a", 3,0,0,"");
@@ -3553,10 +3524,7 @@ int main(int argc, char **argv) {
 	
 	Setup_FreeVars();
 	
-	printf("d%d FIN\n",rank);
-	//MPI_Barrier(MPI_COMM_WORLD);
-	//printf("\n\nd%d after barrier \n\n",rank);
-	//MPI_Finalize();
-	//printf("\n\nd%d after finalize \n\n",rank);
+	printf("FIN\n");
+
 	return 0;
 }
