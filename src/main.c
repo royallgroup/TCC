@@ -4,7 +4,7 @@
 
 
 #include <string.h>
-#include <mpi.h>
+// #include <mpi.h>
 #include "globals.h"
 #include "setup.h"
 #include "tools.h"
