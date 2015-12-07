@@ -6,7 +6,7 @@ Up-to-date version of the Topological Cluster Classification code.
 Enter the directory
     `src` 
 and type 
-    `gcc -O3 *.c -o TCC`
+    `gcc -Ofast -lm *.c -o TCC`
 
 ### Features ###
 
