@@ -8,22 +8,16 @@ Enter the directory
 and type 
     `gcc -Ofast -lm *.c -o TCC`
 
-### Features ###
+### Setting up the simulation box ###
 
-* Cubic boxes
-* Orthogonal non-cubic boxes
-* Triclinic boundary conditions
-
-### Turn on the options for triclinic boundary conditions###
-
-* Set the BOX option to 3 (triclinic with tilt)
-* Provide an input file containing a one-line header and one single line for every configuration.
-* Every line contains 5 entries: the iteration, Lx, Ly,Lz, and the tilt (with sign).
-
+* For cubic boxes set the ISNOTCUBIC parameter in inputparamers.in to 0. The box size will be determined from the density given in the d0_init.params file.
+* For non-cubic NVT set the ISNOTCUBIC parameter in inputparamers.in to 1. The box size will be read at TCC initialisation from the second line of the d0_box.txt file (first line is a comment). The syntax is "timestep sidex sidey sidez" where timestep = 0 and sidex y and z are the x y and z box side lengths.
+* For non-cubic NPT set the ISNOTCUBIC parameter in inputparamers.in to 2. The box size will be read each timestep (each xyz frame) from the d0_box.txt file. The syntax is "timestep sidex sidey sidez" with each timestep on a new line. There must be at least as many timesteps as frames in the xyz file.
+* For Triclinic boundary conditions with tilt, set the ISNOTCUBIC parameter in inputparamers.in to 3. The box size will be read each timestep (each xyz frame) from the d0_box.txt file. The syntax is "timestep sidex sidey sidez tilt" where the tilt has a sign.
 
 ### Dynamic TCC ###
 
-To run the dynamic TCC:
+The general schema to run the dynamic TCC is:
 
 * First run the normal TCC, outputting the .bonds file.
 * Turn on the dynamic flag in the TCC, output .dyn files.
