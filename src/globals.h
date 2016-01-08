@@ -503,6 +503,7 @@ FILE *file_raw_12A, *file_raw_12B, *file_raw_12D, *file_raw_12E, *file_raw_12K;
 FILE *file_raw_13A, *file_raw_13B, *file_raw_13K;
 FILE *file_raw_FCC, *file_raw_HCP, *file_raw_BCC_9, *file_raw_BCC_15;
 
+FILE *file_11A_cen_xmol;
 FILE *file_13A_cen_xmol;
 
 // dynamic variables
