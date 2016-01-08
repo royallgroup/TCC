@@ -108,6 +108,7 @@ void Setup_ReadInputParams(char *filename) {    // read tcc parameters file
     
     doWriteClus=Setup_GetFirstIntFromLine(fin);
     doWriteRaw=Setup_GetFirstIntFromLine(fin);
+    do11AcenXmol=Setup_GetFirstIntFromLine(fin);
     do13AcenXmol=Setup_GetFirstIntFromLine(fin);
     doWritePopPerFrame=Setup_GetFirstIntFromLine(fin);
     printf("d%d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",rank,doWriteClus,doWriteRaw,doWritePopPerFrame);

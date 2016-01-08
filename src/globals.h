@@ -38,6 +38,7 @@ int doWriteBonds;   // write bonds files out
 
 int doWriteClus;    // write out indices of each detected cluster
 int doWriteRaw; // write raw_*** cluster xmol files out
+int do11AcenXmol; // write centres of 11A   
 int do13AcenXmol; // write centres of 13A   
 int doWritePopPerFrame; // write pop_per_frame file
 double binWidth;    // width of bins for bond length histogram

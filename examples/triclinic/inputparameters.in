@@ -15,6 +15,7 @@ box.txt    // name of parameters file for box size data, minus "d[rank]_" prefix
 1    // write out bonds file                                                         BINARY INTEGER
 0    // write clusts_** files containing all clusters - USES LOTS OF HDD SPACE                       BINARY INTEGER
 1    // write raw_** xmol cluster files                                          BINARY INTEGER
+0    // write centres of 11A                                                 BINARY INTEGER
 0    // write centres of 13A                                                 BINARY INTEGER
 0    // write particle fraction of each cluster per frame (pop_per_frame)                            BINARY INTEGER
 0.02    // bin width for bond length distributions                                              DOUBLE

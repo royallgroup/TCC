@@ -2398,6 +2398,20 @@ void Write_Raw_Xmol(int f, FILE *thefile, char *sarr) {
 	}
 }
 
+void Write_11A_cen_xmol(int f) {
+	int i;
+	
+	int n11A_cen=0;
+	
+	for(i=0; i<N; i++) if(s11A_cen[i]=='O') ++n11A_cen;         // get total number of 13A centres 
+		
+	fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,TOTALFRAMES);
+	for(i=0; i<N; i++) {
+		if (s11A_cen[i]=='O') fprintf(file_11A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
+	}
+}
+
+
 void Write_13A_cen_xmol(int f) {
 	int i;
 	
@@ -4574,6 +4588,13 @@ int main(int argc, char **argv) {
 		printf("d%d completed\n",rank);
 	}
 	
+	if (do11AcenXmol==1) {
+		printf("\nd%d initializing 11A centre xmol files...",rank);
+		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+		file_11A_cen_xmol=fopen(output, "w");
+		printf("d%d completed\n",rank);
+	}
+	
 	if (do13AcenXmol==1) {
 		printf("\nd%d initializing 13A centre xmol files...",rank);
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
@@ -4772,6 +4793,7 @@ int main(int argc, char **argv) {
 
 			if (doWriteRaw==1) Write_Raw(f);
 			
+			if (do11AcenXmol==1) Write_11A_cen_xmol(f);
 			if (do13AcenXmol==1) Write_13A_cen_xmol(f);
 		    
 			
@@ -4868,6 +4890,12 @@ int main(int argc, char **argv) {
 	if (doWriteRaw==1) {
 		printf("d%d Closing raw cluster xmol files....",rank);
 		Write_Raw_Close();
+		printf("closed!\n\n");
+	}
+	
+	if (do11AcenXmol==1) {
+		printf("d%d Closing 11A centre xmol files....",rank);
+		fclose(file_11A_cen_xmol);
 		printf("closed!\n\n");
 	}
 	
