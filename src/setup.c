@@ -1,5 +1,6 @@
 #include "setup.h"
 #include "tools.h"
+#include "iniparser.h"
 
 //// START: Setup routines
 int Setup_GetFirstIntFromLine(FILE *stream) {   // take and return first integer from line in file stream
@@ -25,115 +26,120 @@ double Setup_GetFirstDoubleFromLine(FILE *stream) { // take and return first dou
     return atof(pch);
 }
 
-void Setup_ReadTalpha(char *filename) { // read alpha relaxation time from a file
+void Setup_ReadIniFile(char *filename) {
+    
     char errMsg[1000];
-    int i;
-    double throwaway;
-    FILE *fin;
+    double RHO;
+    dictionary  *   ini ;
     
-    printf("d%d size=%d>1 && doDynamics==1 therefore reading t-alpha from %s\n",rank,size,filename);
-    fin=fopen(filename,"r");
-    if (fin==NULL)  {
-        sprintf(errMsg,"Setup__ReadTalpha(): Error opening file %s",filename);  // Always test file open
+    ini = iniparser_load(filename);
+    if (ini==NULL) {
+        sprintf(errMsg,"Setup_ReadIniFile(): Error opening file %s",filename);  // Always test file open
         Error_no_free(errMsg);
     }
     
-    for (i=0; i<size; i++) {
-        throwaway=Setup_GetFirstDoubleFromLine(fin);
-        if (rank==i) talpha=throwaway;
-    }
+    //box
+    ISNOTCUBIC = iniparser_getint(ini, "box:box_type", -1);
+    fBoxSizeName = (char*)iniparser_getstring(ini, "box:box_name", "-1");
     
-    fclose(fin);
-}
-
-void Setup_ReadInputParams(char *filename) {    // read tcc parameters file
-    char input[10000], ctalphafile[1000], errMsg[1000];
-    char holder1[1000], holder2[1000]; //NPT_FIX
-    FILE *fin;
-
-    fin=fopen(filename,"r");
-    if (fin==NULL)  {
-        sprintf(errMsg,"Setup_ReadInputParams(): Error opening file %s",filename);  // Always test file open
-        Error_no_free(errMsg);
-    }
-
-    if (fgets(input,10000,fin)==NULL) {
-        sprintf(errMsg,"Setup_ReadInputParams(): empty %s file!",filename); // Always test file open
-        Error_no_free(errMsg);
-    }
-    printf("d%d %s reading in:\n",rank,filename);
-    sprintf(errMsg,strtok(input," "));
-    sprintf(fXmolParamsName,"d%d_%s",rank,errMsg);
-    printf("d%d xmol params name %s\n",rank,fXmolParamsName);
     
-    //NPT_FIX: is it npt? get data file name
-    ISNOTCUBIC=Setup_GetFirstIntFromLine(fin);
-    fgets(holder1,1000,fin);
-    sprintf(holder2,strtok(holder1," "));
-    //sprintf(fBoxSizeName,"%s",holder2);
-    sprintf(fBoxSizeName,"d%d_%s",rank,holder2);
-    printf("Box size file name %s\n",fBoxSizeName);
-            
-    FRAMES=Setup_GetFirstIntFromLine(fin);
-    STARTFROM=Setup_GetFirstIntFromLine(fin);
-    SAMPLEFREQ=Setup_GetFirstIntFromLine(fin);
-    printf("d%d FRAMES %d STARTFROM %d SAMPLEFREQ %d\n",rank,FRAMES,STARTFROM,SAMPLEFREQ);
-    
-    rcutAA=Setup_GetFirstDoubleFromLine(fin);
+    //run
+    fXmolName = (char*)iniparser_getstring(ini, "run:xyzfilename", "-1");
+    FRAMES = iniparser_getint(ini, "run:frames", -1);
+    N = iniparser_getint(ini, "run:num_particles", -1);
+    NA = iniparser_getint(ini, "run:numA_particles", -1);
+    RHO = iniparser_getdouble(ini, "run:number_density", -1);
+    TSTART = iniparser_getdouble(ini, "run:simulationstarttime", -1);
+    FRAMETSTEP = iniparser_getdouble(ini, "run:simulationtimestep", -1);
+    TFINAL = iniparser_getdouble(ini, "run:simulationendtime", -1);
+    STARTFROM = iniparser_getint(ini, "run:start_from", -1);
+    SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
+
+    //simulation
+    rcutAA = iniparser_getdouble(ini, "simulation:rcutAA", -1);
+    rcutAB = iniparser_getdouble(ini, "simulation:rcutAB", -1);
+    rcutBB = iniparser_getdouble(ini, "simulation:rcutBB", -1);
+    Vor = iniparser_getboolean(ini, "simulation:bond_type", -1);
+    PBCs = iniparser_getboolean(ini, "simulation:pbcs", -1);
+    fc = iniparser_getdouble(ini, "simulation:voronoi_parameter", -1);
+    nB = iniparser_getint(ini, "simulation:num_bonds", -1);
+    USELIST = iniparser_getboolean(ini, "simulation:cell_list", -1);
+    WHICHPOTENTIAL = iniparser_getint(ini, "simulation:potential_type", -1);
+
+    //output
+    doWriteBonds = iniparser_getboolean(ini, "output:bonds", -1);
+    doWriteClus = iniparser_getboolean(ini, "output:clusts", -1);
+    doWriteRaw = iniparser_getboolean(ini, "output:raw", -1);
+    do11AcenXmol = iniparser_getboolean(ini, "output:11a", -1);
+    do13AcenXmol = iniparser_getboolean(ini, "output:13a", -1);
+    doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
+    binWidth = iniparser_getdouble(ini, "output:bin_width", -1);
+    doBLDistros = iniparser_getboolean(ini, "output:bond_length", -1);
+    doClusBLDistros = iniparser_getboolean(ini, "output:bond_length_cluster", -1);
+    doClusBLDeviation = iniparser_getboolean(ini, "output:bond_length_dev", -1);
+    donbDistros = iniparser_getboolean(ini, "output:neighbour_dist", -1);
+    doBondedCen = iniparser_getboolean(ini, "output:bonded_dist", -1);
+    doClusComp = iniparser_getboolean(ini, "output:cluster_composition", -1);
+    doSubClusts = iniparser_getboolean(ini, "output:subclusters", -1);
+
+    doPotential = iniparser_getboolean(ini, "extra:potential_energy", -1);
+    doCoslovich = iniparser_getboolean(ini, "extra:coslovich", -1);
+    doDynamics = iniparser_getboolean(ini, "extra:dodynamics", -1);
+    talpha = iniparser_getdouble(ini, "extra:alpha_time", -1);
+    PRINTINFO = iniparser_getboolean(ini, "extra:debug", -1);
+    iniparser_getdouble(ini, "extra:shear", -1);
+
+    // calculate derived values
     rcutAA2=rcutAA*rcutAA;
-    rcutAB=Setup_GetFirstDoubleFromLine(fin);
     rcutAB2=rcutAB*rcutAB;
-    rcutBB=Setup_GetFirstDoubleFromLine(fin);
     rcutBB2=rcutBB*rcutBB;
-    Vor=Setup_GetFirstIntFromLine(fin);
-    PBCs=Setup_GetFirstIntFromLine(fin);
-    fc=Setup_GetFirstDoubleFromLine(fin);
-    nB=Setup_GetFirstIntFromLine(fin);
-    USELIST=Setup_GetFirstIntFromLine(fin);
-    doWriteBonds=Setup_GetFirstIntFromLine(fin);
     if (Vor==1) {   // if using modified Voronoi method can't have different cut off lengths for the bonds
         rcutAB=rcutAA;
         rcutBB=rcutAA;
         rcutAB2=rcutAA2;
         rcutBB2=rcutAA2;
-    }
-    if (Vor==1) {
         printf("d%d As voronoi method no individually specie-specie interaction length\nd%d rcut %lg rcut2 %lg\n",rank,rank,rcutAA,rcutAA2);
     }
-    else {
-        printf("d%d rcutAA %lg rcutAB %lg rcutBB %lg\n",rank,rcutAA,rcutAB,rcutBB);
-        printf("d%d rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rank,rcutAA2,rcutAB2,rcutBB2);
+    initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
+    initNoLifetimes=initNoDynamicClusters=incrDynamicClusters=1;
+    if (doDynamics==1) {
+        printf("d%d ^^^^^^^^^^^^^ in dynamic mode therefore not writing any files other than those for the dynamics of clusters!!!\n",rank);
+        doWriteBonds=doWriteClus=doWriteRaw=doWritePopPerFrame=doBLDistros=doClusBLDistros=doClusBLDeviation=donbDistros=doBondedCen=doClusComp=doPotential=doCoslovich=0;
     }
-    printf("d%d Vor %d PBCs %d fc %lg nB %d USELIST %d write bonds file %d\n",rank,Vor,PBCs,fc,nB,USELIST,doWriteBonds);
     
-    doWriteClus=Setup_GetFirstIntFromLine(fin);
-    doWriteRaw=Setup_GetFirstIntFromLine(fin);
-    do11AcenXmol=Setup_GetFirstIntFromLine(fin);
-    do13AcenXmol=Setup_GetFirstIntFromLine(fin);
-    doWritePopPerFrame=Setup_GetFirstIntFromLine(fin);
-    printf("d%d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",rank,doWriteClus,doWriteRaw,doWritePopPerFrame);
+    if (NA>N) {
+        Error_no_free("Setup_ReadIniFile(): NA > N - something wrong in xmol trajectory params file\n");
+    }
+    else if (NA<N) {doBinary=1;}
+    else {doBinary=0;}
     
-    binWidth=Setup_GetFirstDoubleFromLine(fin);
-    doBLDistros=Setup_GetFirstIntFromLine(fin);
-    doClusBLDistros=Setup_GetFirstIntFromLine(fin);
-    doClusBLDeviation=Setup_GetFirstIntFromLine(fin);
+    sidex=sidey=sidez=pow((double)N/RHO, 1.0/3.0);
+    halfSidex=halfSidey=halfSidez=sidex/2.0;
+    
+    // print out values read from ini file
+    printf("d%d ISNOTCUBIC %d\n",rank,ISNOTCUBIC);
+    printf("d%d FRAMES %d N %d NA %d RHO %lg TSTART %lg\n",rank,FRAMES,N,NA,RHO,TSTART);
+    printf("d%d FRAMETSTEP %lg TFINAL %lg STARTFROM %d SAMPLEFREQ %d\n",rank,FRAMETSTEP,TFINAL, STARTFROM,SAMPLEFREQ);
+    printf("d%d rcutAA %lg rcutAB %lg rcutBB %lg\n",rank,rcutAA,rcutAB,rcutBB);
+    printf("d%d rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rank,rcutAA2,rcutAB2,rcutBB2);
+    printf("d%d Vor %d PBCs %d fc %lg nB %d USELIST %d\n",rank,Vor,PBCs,fc,nB,USELIST);
+    printf("d%d write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",rank,doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
     printf("d%d binWidth %.5lg doBLDistros %d doClusBLDistros %d doClusBLDeviation %d\n",rank,binWidth,doBLDistros,doClusBLDistros,doClusBLDeviation);
+    printf("d%d donbDistros %d doBondedCen %d doClusComp %d doSubClusts %d\n",rank,donbDistros,doBondedCen,doClusComp,doSubClusts);
+    printf("d%d doPotential %d doCoslovich %d doDynamics %d talpha %lg PRINTINFO %d\n\n",rank,doPotential,doCoslovich,doDynamics,talpha,PRINTINFO);
+        
+    if (ISNOTCUBIC==0) {
+        printf("calculating box sides from RHO\n");
+        printf("d%d box side length = %.5lg, half side: %.5lg\n\n",rank,sidex,halfSidex);
+    }
     
-    donbDistros=Setup_GetFirstIntFromLine(fin);
-    doBondedCen=Setup_GetFirstIntFromLine(fin);
-    doClusComp=Setup_GetFirstIntFromLine(fin);
-    printf("d%d donbDistros %d doBondedCen %d doClusComp %d\n",rank,donbDistros,doBondedCen,doClusComp);
-    
-    doPotential=Setup_GetFirstIntFromLine(fin);
-    WHICHPOTENTIAL=Setup_GetFirstIntFromLine(fin);
-    printf("d%d doPotential %d\n",rank,doPotential);
     if (doPotential==1) {
         if (WHICHPOTENTIAL==0) printf("d%d %d: (Binary) Lennard-Jones potential\n",rank,WHICHPOTENTIAL);
         else if (WHICHPOTENTIAL==1) printf("d%d %d: Stoddard-Ford cut-off (Binary) Lennard-Jones potential\n",rank,WHICHPOTENTIAL);
         else if (WHICHPOTENTIAL==2) printf("d%d %d: Morse+Yukawa potential\n",rank,WHICHPOTENTIAL);
         else if (WHICHPOTENTIAL==3) {
             printf("d%d %d: Not currently implemented potential\n",rank,WHICHPOTENTIAL);
-            sprintf(errMsg,"Setup_ReadInputParams(): Not currently implemented potential"); // Always test file open
+            sprintf(errMsg,"Setup_ReadIniFile(): Not currently implemented potential"); // Always test file open
             Error_no_free(errMsg);
         }
         else if (WHICHPOTENTIAL==4) printf("d%d %d: Inverse-power law potential\n",rank,WHICHPOTENTIAL);
@@ -141,90 +147,11 @@ void Setup_ReadInputParams(char *filename) {    // read tcc parameters file
         else if (WHICHPOTENTIAL==6) printf("d%d %d: Stoddard-Ford cut-off (Binary) Inverse-power law potential\n",rank,WHICHPOTENTIAL);
         else if (WHICHPOTENTIAL==7) printf("d%d %d: CRVT potential\n",rank,WHICHPOTENTIAL);
         else {
-            sprintf(errMsg,"Setup_ReadInputParams(): WHICHPOTENTIAL %d not implemented",WHICHPOTENTIAL);    // Always test file open
+            sprintf(errMsg,"Setup_ReadIniFile(): WHICHPOTENTIAL %d not implemented",WHICHPOTENTIAL);    // Always test file open
             Error_no_free(errMsg);
         }
     }
-    
-    doCoslovich=Setup_GetFirstIntFromLine(fin);
-    printf("d%d doCoslovich %d\n",rank,doCoslovich);
-    
-    /*initNoStatic=Setup_GetFirstIntFromLine(fin);
-    incrStatic=Setup_GetFirstIntFromLine(fin);
-    initNoClustPerPart=Setup_GetFirstIntFromLine(fin);
-    incrClustPerPart=Setup_GetFirstIntFromLine(fin);
-    printf("d%d Static Memory Settings: initNoStatic %d incrStatic %d initNoClustPerPart %d incrClustPerPart %d\n",rank,initNoStatic,incrStatic,initNoClustPerPart,incrClustPerPart);*/
-    initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
-    
-    doDynamics=Setup_GetFirstIntFromLine(fin);
-    printf("d%d doDynamics %d\n",rank, doDynamics);
-    /*initNoLifetimes=Setup_GetFirstIntFromLine(fin);
-    initNoDynamicClusters=Setup_GetFirstIntFromLine(fin);
-    incrDynamicClusters=Setup_GetFirstIntFromLine(fin);
-    printf("d%d initNoLifetimes %d initNoDynamicClusters %d incrDynamicClusters %d\n",rank,doDynamics,initNoLifetimes,initNoDynamicClusters,incrDynamicClusters);*/
-    initNoLifetimes=initNoDynamicClusters=incrDynamicClusters=1;
-    doSubClusts=Setup_GetFirstIntFromLine(fin);
-    talpha=Setup_GetFirstDoubleFromLine(fin);
-    printf("d%d doSubClusts %d talpha %lg\n",rank,doSubClusts,talpha);
-    
-    if (size>1 && doDynamics==1) {  // read t_alpha from file if running on more than one processor
-        sprintf(ctalphafile,"t_alpha.in");
-        Setup_ReadTalpha(ctalphafile);
-    }
-    
-    if (doDynamics==1) {
-        printf("d%d ^^^^^^^^^^^^^ in dynamic mode therefore not writing any files other than those for the dynamics of clusters!!!\n",rank);
-        doWriteBonds=doWriteClus=doWriteRaw=doWritePopPerFrame=doBLDistros=doClusBLDistros=doClusBLDeviation=donbDistros=doBondedCen=doClusComp=doPotential=doCoslovich=0;
-    }
-    PRINTINFO=Setup_GetFirstIntFromLine(fin);
-    printf("d%d PRINTINFO %d\n\n",rank,PRINTINFO);
-    
-    fclose(fin);
-}
-
-void Setup_ReadXmolParams(char *filename) { // read parameters file for xmol trajectory
-    char input[10000],errMsg[1000];
-    double RHO;
-    FILE *readin;
-    
-    readin=fopen(filename,"r");
-    if (readin==NULL)  {
-        sprintf(errMsg,"Setup_ReadXmolParams() : Error opening file %s",filename);  // Always test file open
-        Error_no_free(errMsg);
-    }
-    
-    fgets(input,10000,readin);
-    if (fgets(input,10000,readin)==NULL) Error_no_free("Setup_ReadXmolParams(): end of input file reached\n");
-    sprintf(fXmolName,strtok(input," "));
-
-    if (fgets(input,10000,readin)==NULL) Error_no_free("Setup_ReadXmolParams(): end of input file reached\n");
-    if (fgets(input,10000,readin)==NULL) Error_no_free("Setup_ReadXmolParams(): end of input file reached\n");
-
-    N=Setup_GetFirstIntFromLine(readin);
-    NA=Setup_GetFirstIntFromLine(readin);
-    if (NA>N) {
-        Error_no_free("Setup_ReadXmolParams(): NA > N - something wrong in xmol trajectory params file\n");
-    }
-    else if (NA<N) doBinary=1;
-    else doBinary=0;
-    RHO=Setup_GetFirstDoubleFromLine(readin);
-    TSTART=Setup_GetFirstDoubleFromLine(readin);
-    FRAMETSTEP=Setup_GetFirstDoubleFromLine(readin);
-    TFINAL=Setup_GetFirstDoubleFromLine(readin);
-    TOTALFRAMES=Setup_GetFirstIntFromLine(readin);
-    printf("d%d %s read in:\n",rank,filename);
-    printf("d%d N %d NA %d RHO %lg\n",rank,N,NA,RHO);
-    printf("d%d TSTART %lg FRAMETSTEP %lg TFINAL %lg\n",rank,TSTART,FRAMETSTEP,TFINAL);
-    printf("d%d TOTALFRAMES %d\n",rank,TOTALFRAMES);
-    
-    
-    sidex=sidey=sidez=pow((double)N/RHO, 1.0/3.0);
-    halfSidex=halfSidey=halfSidez=sidex/2.0;
-    if (ISNOTCUBIC==0) {
-        printf("calculating box sides from RHO\n");
-        printf("d%d box side length = %.5lg, half side: %.5lg\n\n",rank,sidex,halfSidex);
-    }
-    fclose(readin);
+    iniparser_freedict(ini);
 }
 
 void Setup_ReadBox(FILE *readIn)  {
@@ -355,6 +282,10 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     z = malloc(N*sizeof(double));   if (z==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): z[] malloc out of memory\n");    Error_no_free(errMsg); }
     
     rtype=malloc(N*sizeof(int)); if (rtype==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): rtype[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
+    
+    fXmolName=malloc(500*sizeof(char)); if (fXmolName=NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fBoxSizeName=malloc(500*sizeof(char)); if (fXmolName=NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    
     
     cnb = malloc(N*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
     correctedBonds=0;   // count number of times have make j bonded to i given i bonded to j due to round off error in Voronoi code
@@ -1476,6 +1407,8 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     int i;
     
     free(rtype);
+    free(fXmolName);
+    free(fBoxSizeName);
     free(x); free(y); free(z);
 
     for (i=0; i<N; ++i) {

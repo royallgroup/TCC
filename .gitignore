@@ -3,3 +3,7 @@
 /obj
 *.depend
 *.layout
+*.a
+*.so.1
+*.o
+*.exe

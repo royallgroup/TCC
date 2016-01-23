@@ -19,8 +19,8 @@ double TSTART;
 double FRAMETSTEP;
 double TFINAL;
 
-char fInputParamsName[1000], fXmolParamsName[1000], fXmolName[1000], fDynMemSizeName[1000], fgsblName[1000], fPotentialParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
-char fBoxSizeName[1000]; //NPT stuff: name of file which contains info on box
+char fInputParamsName[1000], fDynMemSizeName[1000], fgsblName[1000], fPotentialParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
+char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 double *x, *y, *z;  // positions in x y and z directions of N particles
 int *rtype; // particle type
 double side, halfSide;  // box side length
