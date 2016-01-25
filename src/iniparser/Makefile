@@ -6,7 +6,7 @@
 # Compiler settings
 CC      ?= gcc
 
-CFLAGS  += -fPIC -Wall -Wextra -ansi -pedantic
+CFLAGS  += -fPIC -Wall -Wextra -pedantic
 ifndef DEBUG
 ADDITIONAL_CFLAGS  ?= -O2
 else
@@ -20,7 +20,7 @@ AR	    ?= ar
 ARFLAGS = rcv
 
 SHLD = ${CC} ${CFLAGS}
-LDSHFLAGS = -shared -Wl,-Bsymbolic
+LDSHFLAGS = -shared
 LDFLAGS += -Wl,-rpath -Wl,/usr/lib -Wl,-rpath,/usr/lib
 
 # .so.0 is for version 3.x, .so.1 is 4.x
@@ -62,15 +62,7 @@ libiniparser.a:	$(OBJS)
 	$(QUIET_RANLIB)$(RANLIB) $@
 
 $(SO_TARGET):	$(OBJS)
-	$(QUIET_LINK)$(SHLD) $(LDSHFLAGS) $(LDFLAGS) -o $(SO_TARGET) $(OBJS) \
-		-Wl,-soname=`basename $(SO_TARGET)`
+	$(QUIET_LINK)$(SHLD) $(LDSHFLAGS) $(LDFLAGS) -o $(SO_TARGET) $(OBJS)
 
 clean:
-	$(RM) $(OBJS)
-	@(cd test ; $(MAKE) clean)
-
-veryclean:
 	$(RM) $(OBJS) libiniparser.a $(SO_TARGET)
-	rm -rf ./html ; mkdir html
-	cd example ; $(MAKE) veryclean
-	cd test ; $(MAKE) veryclean
