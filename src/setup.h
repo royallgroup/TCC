@@ -7,8 +7,7 @@
 //// START: Setup routines
 int Setup_GetFirstIntFromLine(FILE *);
 double Setup_GetFirstDoubleFromLine(FILE *);
-void Setup_ReadInputParams(char *); // initialize RingStat routine
-void Setup_ReadXmolParams(char *); // read in .params file
+void Setup_ReadIniFile(char *);
 void Setup_Readxyz(int e, int write, int f, FILE *);  // output single float valued arrays in gopenmol xyz format
 
 void Setup_InitStaticVars();    // Initialize bond detection

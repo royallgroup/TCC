@@ -2385,7 +2385,7 @@ void Write_Raw_Init() {
 void Write_Raw_Xmol(int f, FILE *thefile, char *sarr) {
 	int i;
 	
-	fprintf(thefile,"%d\nframe %d of %d\n",N,f,TOTALFRAMES);
+	fprintf(thefile,"%d\nframe %d of %d\n",N,f,FRAMES);
 	for(i=0; i<N; i++) {
 		if (sarr[i]!='C') {
 			if (rtype[i]==1) fprintf(thefile,"C\n");
@@ -2405,7 +2405,7 @@ void Write_11A_cen_xmol(int f) {
 	
 	for(i=0; i<N; i++) if(s11A_cen[i]=='O') ++n11A_cen;         // get total number of 13A centres 
 		
-	fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,TOTALFRAMES);
+	fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,FRAMES);
 	for(i=0; i<N; i++) {
 		if (s11A_cen[i]=='O') fprintf(file_11A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
 	}
@@ -2419,7 +2419,7 @@ void Write_13A_cen_xmol(int f) {
 	
 	for(i=0; i<N; i++) if(s13A_cen[i]=='O') ++n13A_cen;         // get total number of 13A centres 
 		
-	fprintf(file_13A_cen_xmol,"%d\nframe %d of %d\n",n13A_cen,f,TOTALFRAMES);
+	fprintf(file_13A_cen_xmol,"%d\nframe %d of %d\n",n13A_cen,f,FRAMES);
 	for(i=0; i<N; i++) {
 		if (s13A_cen[i]=='O') fprintf(file_13A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
 	}
@@ -4434,10 +4434,8 @@ int main(int argc, char **argv) {
 	//rank++;
 	//size++;
 	
-	sprintf(fInputParamsName,"inputparameters.in");
-	Setup_ReadInputParams(fInputParamsName);	// read input params
-
-	Setup_ReadXmolParams(fXmolParamsName);	// read xmol params
+	sprintf(fInputParamsName,"inputparameters.ini");
+	Setup_ReadIniFile(fInputParamsName);	// read input params
 	
 	//NPT stuff
 	if (ISNOTCUBIC!=0){
@@ -4458,7 +4456,7 @@ int main(int argc, char **argv) {
 		rSizes=fopen(fBoxSizeName,"r");
 		if(rSizes==NULL)  {
 			sprintf(errMsg,"main() : Error opening file %s",fBoxSizeName);
-			Error(errMsg);
+			Error_no_free(errMsg);
 		}
 		fgets(other,1000,rSizes); //reads first line
 		if  (ISNOTCUBIC==1) {
@@ -4478,7 +4476,7 @@ int main(int argc, char **argv) {
 	rXmol=fopen(fXmolName,"r");	// open xmol trajecotry
 	if (rXmol==NULL)  {
 		sprintf(errMsg,"main() : Error opening file %s",fXmolName);	// Always test file open
-		Error(errMsg);
+		Error_no_free(errMsg);
 	}
 	
 	if (doWriteBonds==1) {
@@ -4486,13 +4484,13 @@ int main(int argc, char **argv) {
 		bondsout=fopen(output, "w");
 		if (bondsout==NULL)  {
 			sprintf(errMsg,"main() : Error opening file %s",output);	// Always test file open
-			Error(errMsg);
+			Error_no_free(errMsg);
 		}
 	}
 	
 	if (USELIST==1) {
 		M = (int)(side/rcutAA);	// number of cells along box side
-		if (M<3) Error("main(): M<3, too few cells");
+		if (M<3) Error_no_free("main(): M<3, too few cells");
 		ncells = M*M*M;	// total number of cells
 	}
 	
@@ -4665,7 +4663,7 @@ int main(int argc, char **argv) {
 	printf("d%d begin main loop\n",rank);
 
 	f=0;
-	for (e=0;e<TOTALFRAMES;e++) {
+	for (e=0;e<FRAMES;e++) {
 		remainder=e%SAMPLEFREQ;
 		if (remainder==0 && f<FRAMES && e>=STARTFROM) {
 			write=1;
@@ -4731,7 +4729,7 @@ int main(int argc, char **argv) {
 
 			if (doCoslovich==1) {
 				Coslovich(f);
-				fprintf(file_s_0_0_12,"%d\nframe %d of %d\n",N,f,TOTALFRAMES);
+				fprintf(file_s_0_0_12,"%d\nframe %d of %d\n",N,f,FRAMES);
 				for(i=0; i<N; i++) {
 					if (s_s_0_0_12[i]!='C') {
 						if (rtype[i]==1) fprintf(file_s_0_0_12,"C\n");
@@ -4814,7 +4812,6 @@ int main(int argc, char **argv) {
 	if (f!=FRAMES) {
 		printf("\n\n\nd%d !!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!\n\n\n",rank);
 		printf("d%d Analysed frames %d less than expected number of FRAMES %d from %s\n\n",rank,f,FRAMES,fInputParamsName);
-		printf("d%d Error could be in xmol file check %s\n\n\n",rank,fXmolParamsName);
 	}
 	
 	if (doWriteClus==1) Write_Cluster_Close();
