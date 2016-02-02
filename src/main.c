@@ -4436,7 +4436,7 @@ int main(int argc, char **argv) {
 	
 	sprintf(fInputParamsName,"inputparameters.ini");
 	Setup_ReadIniFile(fInputParamsName);	// read input params
-	
+	printf("box size file: %s\n",fBoxSizeName);
 	//NPT stuff
 	if (ISNOTCUBIC!=0){
 		if (USELIST==1) {

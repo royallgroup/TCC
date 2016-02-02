@@ -31,7 +31,10 @@ void Setup_ReadIniFile(char *filename) {
     char errMsg[1000];
     double RHO;
     dictionary  *   ini ;
-    
+
+    fXmolName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fBoxSizeName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
+
     ini = iniparser_load(filename);
     if (ini==NULL) {
         sprintf(errMsg,"Setup_ReadIniFile(): Error opening file %s",filename);  // Always test file open
@@ -98,12 +101,12 @@ void Setup_ReadIniFile(char *filename) {
         rcutBB=rcutAA;
         rcutAB2=rcutAA2;
         rcutBB2=rcutAA2;
-        printf("d%d As voronoi method no individually specie-specie interaction length\nd%d rcut %lg rcut2 %lg\n",rank,rank,rcutAA,rcutAA2);
+        printf("As voronoi method no individually specie-specie interaction length\nrcut %lg rcut2 %lg\n",rcutAA,rcutAA2);
     }
     initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
     initNoLifetimes=initNoDynamicClusters=incrDynamicClusters=1;
     if (doDynamics==1) {
-        printf("d%d ^^^^^^^^^^^^^ in dynamic mode therefore not writing any files other than those for the dynamics of clusters!!!\n",rank);
+        printf("In dynamic mode therefore not writing any files other than those for the dynamics of clusters\n");
         doWriteBonds=doWriteClus=doWriteRaw=doWritePopPerFrame=doBLDistros=doClusBLDistros=doClusBLDeviation=donbDistros=doBondedCen=doClusComp=doPotential=doCoslovich=0;
     }
     
@@ -117,35 +120,36 @@ void Setup_ReadIniFile(char *filename) {
     halfSidex=halfSidey=halfSidez=sidex/2.0;
     
     // print out values read from ini file
-    printf("d%d ISNOTCUBIC %d\n",rank,ISNOTCUBIC);
-    printf("d%d FRAMES %d N %d NA %d RHO %lg TSTART %lg\n",rank,FRAMES,N,NA,RHO,TSTART);
-    printf("d%d FRAMETSTEP %lg TFINAL %lg STARTFROM %d SAMPLEFREQ %d\n",rank,FRAMETSTEP,TFINAL, STARTFROM,SAMPLEFREQ);
-    printf("d%d rcutAA %lg rcutAB %lg rcutBB %lg\n",rank,rcutAA,rcutAB,rcutBB);
-    printf("d%d rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rank,rcutAA2,rcutAB2,rcutBB2);
-    printf("d%d Vor %d PBCs %d fc %lg nB %d USELIST %d\n",rank,Vor,PBCs,fc,nB,USELIST);
-    printf("d%d write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",rank,doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
-    printf("d%d binWidth %.5lg doBLDistros %d doClusBLDistros %d doClusBLDeviation %d\n",rank,binWidth,doBLDistros,doClusBLDistros,doClusBLDeviation);
-    printf("d%d donbDistros %d doBondedCen %d doClusComp %d doSubClusts %d\n",rank,donbDistros,doBondedCen,doClusComp,doSubClusts);
-    printf("d%d doPotential %d doCoslovich %d doDynamics %d talpha %lg PRINTINFO %d\n\n",rank,doPotential,doCoslovich,doDynamics,talpha,PRINTINFO);
+    printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
+    printf("ISNOTCUBIC %d\n",ISNOTCUBIC);
+    printf("FRAMES %d N %d NA %d RHO %lg TSTART %lg\n",FRAMES,N,NA,RHO,TSTART);
+    printf("FRAMETSTEP %lg TFINAL %lg STARTFROM %d SAMPLEFREQ %d\n",FRAMETSTEP,TFINAL, STARTFROM,SAMPLEFREQ);
+    printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
+    printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
+    printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
+    printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
+    printf("binWidth %.5lg doBLDistros %d doClusBLDistros %d doClusBLDeviation %d\n",binWidth,doBLDistros,doClusBLDistros,doClusBLDeviation);
+    printf("donbDistros %d doBondedCen %d doClusComp %d doSubClusts %d\n",donbDistros,doBondedCen,doClusComp,doSubClusts);
+    printf("doPotential %d doCoslovich %d doDynamics %d talpha %lg PRINTINFO %d\n\n",doPotential,doCoslovich,doDynamics,talpha,PRINTINFO);
         
     if (ISNOTCUBIC==0) {
         printf("calculating box sides from RHO\n");
-        printf("d%d box side length = %.5lg, half side: %.5lg\n\n",rank,sidex,halfSidex);
+        printf("box side length = %.5lg, half side: %.5lg\n\n",sidex,halfSidex);
     }
     
     if (doPotential==1) {
-        if (WHICHPOTENTIAL==0) printf("d%d %d: (Binary) Lennard-Jones potential\n",rank,WHICHPOTENTIAL);
-        else if (WHICHPOTENTIAL==1) printf("d%d %d: Stoddard-Ford cut-off (Binary) Lennard-Jones potential\n",rank,WHICHPOTENTIAL);
-        else if (WHICHPOTENTIAL==2) printf("d%d %d: Morse+Yukawa potential\n",rank,WHICHPOTENTIAL);
+        if (WHICHPOTENTIAL==0) printf("%d: (Binary) Lennard-Jones potential\n",WHICHPOTENTIAL);
+        else if (WHICHPOTENTIAL==1) printf("%d: Stoddard-Ford cut-off (Binary) Lennard-Jones potential\n",WHICHPOTENTIAL);
+        else if (WHICHPOTENTIAL==2) printf("%d: Morse+Yukawa potential\n",WHICHPOTENTIAL);
         else if (WHICHPOTENTIAL==3) {
-            printf("d%d %d: Not currently implemented potential\n",rank,WHICHPOTENTIAL);
+            printf("%d: Not currently implemented potential\n",WHICHPOTENTIAL);
             sprintf(errMsg,"Setup_ReadIniFile(): Not currently implemented potential"); // Always test file open
             Error_no_free(errMsg);
         }
-        else if (WHICHPOTENTIAL==4) printf("d%d %d: Inverse-power law potential\n",rank,WHICHPOTENTIAL);
-        else if (WHICHPOTENTIAL==5) printf("d%d %d: (Binary) WCA_s cubic splined potential\n",rank,WHICHPOTENTIAL);
-        else if (WHICHPOTENTIAL==6) printf("d%d %d: Stoddard-Ford cut-off (Binary) Inverse-power law potential\n",rank,WHICHPOTENTIAL);
-        else if (WHICHPOTENTIAL==7) printf("d%d %d: CRVT potential\n",rank,WHICHPOTENTIAL);
+        else if (WHICHPOTENTIAL==4) printf("%d: Inverse-power law potential\n",WHICHPOTENTIAL);
+        else if (WHICHPOTENTIAL==5) printf("%d: (Binary) WCA_s cubic splined potential\n",WHICHPOTENTIAL);
+        else if (WHICHPOTENTIAL==6) printf("%d: Stoddard-Ford cut-off (Binary) Inverse-power law potential\n",WHICHPOTENTIAL);
+        else if (WHICHPOTENTIAL==7) printf("%d: CRVT potential\n",WHICHPOTENTIAL);
         else {
             sprintf(errMsg,"Setup_ReadIniFile(): WHICHPOTENTIAL %d not implemented",WHICHPOTENTIAL);    // Always test file open
             Error_no_free(errMsg);
@@ -283,10 +287,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     
     rtype=malloc(N*sizeof(int)); if (rtype==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): rtype[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
     
-    fXmolName=malloc(500*sizeof(char)); if (fXmolName=NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
-    fBoxSizeName=malloc(500*sizeof(char)); if (fXmolName=NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
-    
-    
+
     cnb = malloc(N*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
     correctedBonds=0;   // count number of times have make j bonded to i given i bonded to j due to round off error in Voronoi code
     bNums = malloc(N*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle

@@ -19,8 +19,6 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
     
     if(ISNOTCUBIC!=3)
     {
-   
-    if(PBCs==1){
         if (dx<-halfSidex) dx+=sidex;
         else if (dx>halfSidex) dx-=sidex;
         if (dy<-halfSidey) dy+=sidey;
@@ -28,33 +26,28 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
         if (dz<-halfSidez) dz+=sidez;
         else if (dz>halfSidez) dz-=sidez;
         return dx * dx + dy * dy + dz * dz;
-        }
     }
 
     else 
     {
     if (dz > sidez*0.5) dz -= sidez;  
-    if (dz< -sidez*0.5)  dz += sidez;
-      //deal with y, which affects x
-       if (dy > sidey*0.5) {
-        dx-=tilt;
-        dy -= sidey;
-  
-    }
-       if (dy< -sidey*0.5) {
-        dx+=tilt ;
-        dy += sidey;
-
-       }
+    if (dz < -sidez*0.5)  dz += sidez;
+        //deal with y, which affects x
+        if (dy > sidey*0.5) {
+            dx-=tilt;
+            dy -= sidey;
+        }
+        if (dy < -sidey*0.5) {
+            dx+=tilt ;
+            dy += sidey;
+        }
         //deal with x
-      if (dx > sidex*0.5) dx -= sidex; 
-      if (dx< -sidex*0.5)  dx+= sidex;
+    if (dx > sidex*0.5) dx -= sidex; 
+    if (dx < -sidex*0.5)  dx+= sidex;
     
     return dx * dx + dy * dy + dz * dz;
         
     }
-    
-    ;
 
 }
 
