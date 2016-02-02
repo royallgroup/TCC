@@ -4470,7 +4470,7 @@ int main(int argc, char **argv) {
 			// printf("sidex: %f, sidey: %f, sidez: %f, tilt %f\n", sidex,sidey,sidez,tilt);
 		}
 	}
-	
+	fclose(rSizes);
 	
 	printf("d%d reading coordinate frames from %s\n\n",rank,fXmolName);
 	rXmol=fopen(fXmolName,"r");	// open xmol trajecotry

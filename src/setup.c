@@ -33,7 +33,7 @@ void Setup_ReadIniFile(char *filename) {
     dictionary  *   ini ;
 
     fXmolName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
-    fBoxSizeName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fBoxSizeName=malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
 
     ini = iniparser_load(filename);
     if (ini==NULL) {
@@ -43,11 +43,10 @@ void Setup_ReadIniFile(char *filename) {
     
     //box
     ISNOTCUBIC = iniparser_getint(ini, "box:box_type", -1);
-    fBoxSizeName = (char*)iniparser_getstring(ini, "box:box_name", "-1");
-    
+    strcpy(fBoxSizeName, (char*)iniparser_getstring(ini, "box:box_name", "-1"));    
     
     //run
-    fXmolName = (char*)iniparser_getstring(ini, "run:xyzfilename", "-1");
+    strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "-1"));
     FRAMES = iniparser_getint(ini, "run:frames", -1);
     N = iniparser_getint(ini, "run:num_particles", -1);
     NA = iniparser_getint(ini, "run:numA_particles", -1);
