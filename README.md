@@ -7,7 +7,7 @@ Enter the directory
     `src/iniparser` 
 and type 
 	`make`
-	return to the src directory and type
+return to the src directory and type
     `gcc -Ofast -lm *.c -o TCC -Liniparser/ -liniparser`
 
 ### Setting up the simulation box ###
