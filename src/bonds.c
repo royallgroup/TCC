@@ -28,22 +28,36 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
         return dx * dx + dy * dy + dz * dz;
     }
 
-    else 
+    else // if it is a triclinic periodic box...
     {
-    if (dz > sidez*0.5) dz -= sidez;  
-    if (dz < -sidez*0.5)  dz += sidez;
+    if (dz > sidez*0.5) 
+        {
+            dz -= sidez;
+            dy -= tiltyz;
+            dx -= tiltxz;
+        }  
+    if (dz < -sidez*0.5)  {
+        dz += sidez;
+        dy += tiltyz;
+        dx += tiltxz;
+
+    }
         //deal with y, which affects x
-        if (dy > sidey*0.5) {
-            dx-=tilt;
+    if (dy > sidey*0.5) {
+            dx-=tiltxy;
             dy -= sidey;
         }
-        if (dy < -sidey*0.5) {
-            dx+=tilt ;
+    if (dy < -sidey*0.5) {
+            dx+=tiltxy ;
             dy += sidey;
         }
         //deal with x
-    if (dx > sidex*0.5) dx -= sidex; 
-    if (dx < -sidex*0.5)  dx+= sidex;
+    if (dx > sidex*0.5) {
+        dx -= sidex; 
+    }
+    if (dx < -sidex*0.5)  {
+        dx+= sidex;
+    }
     
     return dx * dx + dy * dy + dz * dz;
         
@@ -504,39 +518,59 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
                 }
                 else {//if triclinc PBC are used
                     // printf("tilt  %g\n", tilt);
-                    if (rijz<-halfSidez) rijz+=sidez;
-                    else if (rijz>halfSidez) rijz-=sidez;
-                    
+                    if (rijz<-halfSidez) {
+                        rijz+=sidez;
+                        rijy += tiltyz;
+                        rijx += tiltxz;
+                        }
+                    else if (rijz>halfSidez) {
+                        rijz-=sidez;
+                        rijy -= tiltyz;
+                        rijx -= tiltxz;
+                    }
                     if (rijy<-halfSidey){   
-                            rijx+=tilt;
+                            rijx+=tiltxy;
                             rijy+=sidey;}
 
                     else if (rijy>halfSidey) {
-                        rijx-=tilt;
+                        rijx-=tiltxy;
                         rijy-=sidey;
                         }      
                     if (rijx<-halfSidex) rijx+=sidex;
                     else if (rijx>halfSidex) rijx-=sidex;
 
-                    if (rikz<-halfSidez) rikz+=sidez;
+                    if (rikz<-halfSidez) {
+                        rikz+=sidez;
+                        riky += tiltyz;
+                        rikx += tiltxz;
+
+                    }
                     else if (rikz>halfSidez) rikz-=sidez;
                     if (riky<-halfSidey){   
-                            rikx+=tilt;
+                            rikx+=tiltxy;
                             riky+=sidey;}
                     else if (riky>halfSidey) {
-                        rikx-=tilt;
+                        rikx-=tiltxy;
                         riky-=sidey;
                         }      
                     if (rikx<-halfSidex) rikx+=sidex;
                     else if (rikx>halfSidex) rikx-=sidex;
 
-                    if (rjkz<-halfSidez) rjkz+=sidez;
-                    else if (rjkz>halfSidez) rjkz-=sidez;
+                    if (rjkz<-halfSidez) {
+                        rjkz+=sidez;
+                        rjky += tiltyz;
+                        rjkx += tiltxz;
+                    }
+                    else if (rjkz>halfSidez) {
+                        rjkz-=sidez;
+                        rjky -= tiltyz;
+                        rjkx -= tiltxz;
+                    }
                     if (rjky<-halfSidey){   
-                            rjkx+=tilt;
+                            rjkx+=tiltxy;
                             rjky+=sidey;}
                     else if (rjky>halfSidey) {
-                        rjkx-=tilt;
+                        rjkx-=tiltxy;
                         rjky-=sidey;
                         }      
                     if (rjkx<-halfSidex) rjkx+=sidex;
@@ -755,25 +789,46 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
                 }
             }
                 else {//if triclinc PBC are used
-                    if (rijz<-halfSidez) rijz+=sidez;
-                    else if (rijz>halfSidez) rijz-=sidez;
+                    if (rijz<-halfSidez) {
+                        rijz +=sidez;
+                        rijy +=tiltyz;
+                        rijx +=tiltxz;
+                    }
+                    else if (rijz>halfSidez) {
+                        rijz-=sidez;
+                        rijy -=tiltyz;
+                        rijx -=tiltxz;  
+                    }
                     if (rijy<-halfSidey){   
-                            rijx+=tilt;
+                            rijx+=tiltxy;
                             rijy+=sidey;}
                     else if (rijy>halfSidey) {
-                        rijx-=tilt;
+                        rijx-=tiltxy;
                         rijy-=sidey;
-                        }      
+                        }
+
                     if (rijx<-halfSidex) rijx+=sidex;
                     else if (rijx>halfSidex) rijx-=sidex;
 
-                    if (rikz<-halfSidez) rikz+=sidez;
-                    else if (rikz>halfSidez) rikz-=sidez;
+                    //k
+
+                    if (rikz<-halfSidez) {
+                        rikz+=sidez;
+                        rikz +=tiltyz;
+                        rikz +=tiltxz;
+
+                    }
+                    else if (rikz>halfSidez) {
+                        rikz-=sidez;
+                        rikz -=tiltyz;
+                        rikz -=tiltxz;
+
+                    }
                     if (riky<-halfSidey){   
-                            rikx+=tilt;
+                            rikx+=tiltxy;
                             riky+=sidey;}
                     else if (riky>halfSidey) {
-                        rikx-=tilt;
+                        rikx-=tiltxy;
                         riky-=sidey;
                         }      
                     if (rikx<-halfSidex) rikx+=sidex;
@@ -782,10 +837,10 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
                     if (rjkz<-halfSidez) rjkz+=sidez;
                     else if (rjkz>halfSidez) rjkz-=sidez;
                     if (rjky<-halfSidey){   
-                            rjkx+=tilt;
+                            rjkx+=tiltxy;
                             rjky+=sidey;}
                     else if (rjky>halfSidey) {
-                        rjkx-=tilt;
+                        rjkx-=tiltxy;
                         rjky-=sidey;
                         }      
                     if (rjkx<-halfSidex) rjkx+=sidex;

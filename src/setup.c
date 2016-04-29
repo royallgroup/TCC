@@ -164,9 +164,10 @@ void Setup_ReadBox(FILE *readIn)  {
     if(ISNOTCUBIC==3){
         printf("Triclinic Boundary Conditions\n");
       
-        fscanf(readIn,"%i %lg %lg %lg %lg\n", &sweep,&sidex,&sidey,&sidez, &tilt);
-    
-        printf("%i %lg %lg %lg %lg\n",sweep,sidex,sidey,sidez, tilt);}
+        fscanf(readIn,"%i %lf %lf %lf %lf %lf %lf\n", &sweep,&sidex,&sidey,&sidez, &tiltxy, &tiltxz, &tiltyz);
+        printf("iter Lx Ly Lz xy xz yz\n");
+
+        printf("%i %lf %lf %lf %lf %lf %lf\n",sweep,sidex,sidey,sidez, tiltxy, tiltxz, tiltyz);}
     else
     {
         fscanf(readIn,"%i %lg %lg %lg\n", &sweep,&sidex,&sidey,&sidez);

@@ -21,20 +21,35 @@ void BLJ() {    // binary Lennard-Jones potential
                 }
             }
             else {
-                 if (dz<-halfSidez) dz+=sidez;
-            else if (dz>halfSidez) dz-=sidez;
+                if (dz > sidez*0.5) 
+                    {
+                        dz -= sidez;
+                        dy -= tiltyz;
+                        dx -= tiltxz;
+                    }  
+                if (dz < -sidez*0.5)  {
+                    dz += sidez;
+                    dy += tiltyz;
+                    dx += tiltxz;
 
-            if (dy<-halfSidey){   
-                    dx-=tilt;
-                    dy+=sidey;
                 }
-            else if (dy>halfSidey) {
-                dx+=tilt;
-                dy-=sidey;
-                }   
+                    //deal with y, which affects x
+                if (dy > sidey*0.5) {
+                        dx-=tiltxy;
+                        dy -= sidey;
+                    }
+                if (dy < -sidey*0.5) {
+                        dx+=tiltxy ;
+                        dy += sidey;
+                    }
+                    //deal with x
+                if (dx > sidex*0.5) {
+                    dx -= sidex; 
+                }
+                if (dx < -sidex*0.5)  {
+                    dx+= sidex;
+                }
 
-            if (dx<-halfSidex) dx+=sidex;
-            else if (dx>halfSidex) dx-=sidex;
             }
             sep2=dx*dx+dy*dy+dz*dz;
             if (rtype[i]!=rtype[j]) {   // AB interaction
@@ -203,16 +218,16 @@ void BLJSF() {  // binary Lennard-Jones potential with Stoddard-Ford truncation
                 if (dz<-halfSidez) { dz+=sidez; }
                 else if (dz>halfSidez)   { dz-=sidez; }
             }
-            if(PBCs==3){
+            if(ISNOTCUBIC==3){
                  if (dz<-halfSidez) dz+=sidez;
             else if (dz>halfSidez) dz-=sidez;
 
             if (dy<-halfSidey){   
-                    dx-=tilt;
+                    dx-=tiltxy;
                     dy+=sidey;
                 }
             else if (dy>halfSidey) {
-                dx+=tilt;
+                dx+=tiltxy;
                 dy-=sidey;
                 }   
 
@@ -552,16 +567,16 @@ void BIPL() {   // binary IPL potential
                 if (dz<-halfSidez) { dz+=sidez; }
                 else if (dz>halfSidez)   { dz-=sidez; }
             }
-            if(PBCs==3){
+            if(ISNOTCUBIC==3){
                  if (dz<-halfSidez) dz+=sidez;
             else if (dz>halfSidez) dz-=sidez;
 
             if (dy<-halfSidey){   
-                    dx-=tilt;
+                    dx-=tiltxy;
                     dy+=sidey;
                 }
             else if (dy>halfSidey) {
-                dx+=tilt;
+                dx+=tiltxy;
                 dy-=sidey;
                 }   
 
@@ -900,16 +915,16 @@ void BLJ_WCA_s() {  // cubic smoothed WCA potential from Coslovich 2011
                 if (dz<-halfSidez) { dz+=sidez; }
                 else if (dz>halfSidez)   { dz-=sidez; }
             }
-            if(PBCs==3){
+            if(ISNOTCUBIC==3){
                  if (dz<-halfSidez) dz+=sidez;
             else if (dz>halfSidez) dz-=sidez;
 
             if (dy<-halfSidey){   
-                    dx-=tilt;
+                    dx-=tiltxy;
                     dy+=sidey;
                 }
             else if (dy>halfSidey) {
-                dx+=tilt;
+                dx+=tiltxy;
                 dy-=sidey;
                 }   
 

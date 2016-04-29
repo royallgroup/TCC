@@ -4455,7 +4455,7 @@ int main(int argc, char **argv) {
 		printf("reading box size data from %s\n",fBoxSizeName);
 		rSizes=fopen(fBoxSizeName,"r");
 		if(rSizes==NULL)  {
-			sprintf(errMsg,"main() : Error opening file %s",fBoxSizeName);
+			sprintf(errMsg,"main() : Error opening boxfile %s",fBoxSizeName);
 			Error_no_free(errMsg);
 		}
 		fgets(other,1000,rSizes); //reads first line
@@ -4467,13 +4467,14 @@ int main(int argc, char **argv) {
 		
 			printf("======> Triclinic Box \n");
 			// Setup_ReadBox(rSizes);
-			// printf("sidex: %f, sidey: %f, sidez: %f, tilt %f\n", sidex,sidey,sidez,tilt);
+			// printf("sidex: %f, sidey: %f, sidez: %f, xy: %f, xz: %f, yz: %f\n", sidex,sidey,sidez,tiltxy, tiltxz, tiltyz);
 		}
 	}
-	fclose(rSizes);
+
 	
 	printf("d%d reading coordinate frames from %s\n\n",rank,fXmolName);
 	rXmol=fopen(fXmolName,"r");	// open xmol trajecotry
+
 	if (rXmol==NULL)  {
 		sprintf(errMsg,"main() : Error opening file %s",fXmolName);	// Always test file open
 		Error_no_free(errMsg);
@@ -4670,6 +4671,7 @@ int main(int argc, char **argv) {
 		}
 		else write=0;
 		if (write==1) Setup_ResetStaticVars(f);
+
 		if (ISNOTCUBIC>=2) {
 			Setup_ReadBox(rSizes);
 		}
@@ -4806,6 +4808,8 @@ int main(int argc, char **argv) {
 		}
 		if (f==FRAMES) break;
 	}
+
+
 	fclose(rXmol);
 	if (doWriteBonds==1) fclose(bondsout);
 	

@@ -25,7 +25,7 @@ double *x, *y, *z;  // positions in x y and z directions of N particles
 int *rtype; // particle type
 double side, halfSide;  // box side length
 double sidex, sidey, sidez, halfSidex, halfSidey, halfSidez; //NPT_FIX
-double tilt;
+double tiltxy,tiltxz,tiltyz;
 
 
 double rcutAA,rcutAA2,rcutAB,rcutAB2,rcutBB,rcutBB2;    // diameters of AB and BB interactions for binary interactions
