@@ -1,7 +1,7 @@
 # README #
 
 Up-to-date version of the Topological Cluster Classification code.
-(!)
+
 ### Compile ###
 Enter the directory
     `src/iniparser` 
