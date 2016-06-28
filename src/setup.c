@@ -48,6 +48,7 @@ void Setup_ReadIniFile(char *filename) {
     //run
     strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "-1"));
     FRAMES = iniparser_getint(ini, "run:frames", -1);
+    TOTALFRAMES=iniparser_getint(ini, "run:totalframes", -1);
     N = iniparser_getint(ini, "run:num_particles", -1);
     NA = iniparser_getint(ini, "run:numA_particles", -1);
     RHO = iniparser_getdouble(ini, "run:number_density", -1);

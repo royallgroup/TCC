@@ -2385,7 +2385,7 @@ void Write_Raw_Init() {
 void Write_Raw_Xmol(int f, FILE *thefile, char *sarr) {
 	int i;
 	
-	fprintf(thefile,"%d\nframe %d of %d\n",N,f,FRAMES);
+	fprintf(thefile,"%d\nframe %d of %d\n",N,f,TOTALFRAMES);
 	for(i=0; i<N; i++) {
 		if (sarr[i]!='C') {
 			if (rtype[i]==1) fprintf(thefile,"C\n");
@@ -2405,7 +2405,7 @@ void Write_11A_cen_xmol(int f) {
 	
 	for(i=0; i<N; i++) if(s11A_cen[i]=='O') ++n11A_cen;         // get total number of 13A centres 
 		
-	fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,FRAMES);
+	fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,TOTALFRAMES);
 	for(i=0; i<N; i++) {
 		if (s11A_cen[i]=='O') fprintf(file_11A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
 	}
@@ -4664,7 +4664,7 @@ int main(int argc, char **argv) {
 	printf("d%d begin main loop\n",rank);
 
 	f=0;
-	for (e=0;e<FRAMES;e++) {
+	for (e=0;e<TOTALFRAMES;e++) {
 		remainder=e%SAMPLEFREQ;
 		if (remainder==0 && f<FRAMES && e>=STARTFROM) {
 			write=1;
@@ -4731,7 +4731,7 @@ int main(int argc, char **argv) {
 
 			if (doCoslovich==1) {
 				Coslovich(f);
-				fprintf(file_s_0_0_12,"%d\nframe %d of %d\n",N,f,FRAMES);
+				fprintf(file_s_0_0_12,"%d\nframe %d of %d\n",N,f,TOTALFRAMES);
 				for(i=0; i<N; i++) {
 					if (s_s_0_0_12[i]!='C') {
 						if (rtype[i]==1) fprintf(file_s_0_0_12,"C\n");
