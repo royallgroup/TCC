@@ -1,6 +1,8 @@
 *.cbp
 /bin
 /obj
+/.idea
+/cmake*
 *.depend
 *.layout
 *.a

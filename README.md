@@ -2,13 +2,14 @@
 
 Up-to-date version of the Topological Cluster Classification code.
 
-### Compile ###
-Enter the directory
-    `src/iniparser` 
-and type 
+### Compilation ###
+The TCC uses the free open source build system _cmake_ to generate makefiles.
+From the build directory execute
+    `cmake ..` 
+and then execute 
 	`make`
-return to the src directory and type
-    `gcc -Ofast -lm *.c -o TCC -Liniparser/ -liniparser`
+this will generate the tcc binary in the build folder.
+Examples of the required input files are given in the examples folders.
 
 ### Setting up the simulation box ###
 
