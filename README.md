@@ -4,12 +4,28 @@ Up-to-date version of the Topological Cluster Classification code.
 
 ### Compilation ###
 The TCC uses the free open source build system _cmake_ to generate makefiles.
-From the build directory execute
-    `cmake ..` 
-and then execute 
-	`make`
-this will generate the tcc binary in the build folder.
+
+##### To build on Windows with MinGW:
+
+From a command prompt in the TCC directory execute
+* `mkdir build`
+* `cd build`
+* `cmake .. -G "MinGW MakeFiles"
+* `minge32-make.exe
+
+##### To build on other systems
+
+From a terminal in the TCC directory execute
+* `mkdir build`
+* `cd build`
+* `cmake ..`
+* `make`
+
+##### Running the TCC
+
+Binaries will be generate in the bin folder.
 Examples of the required input files are given in the examples folders.
+To run the TCC the executable should be in the same directory as the input files.
 
 ### Setting up the simulation box ###
 
