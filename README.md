@@ -1,6 +1,6 @@
 # README #
 
-Up-to-date version of the Topological Cluster Classification code.
+Latest version of the Topological Cluster Classification code.
 
 ### Compilation ###
 The TCC uses the free open source build system _cmake_ to generate makefiles.
@@ -10,8 +10,8 @@ The TCC uses the free open source build system _cmake_ to generate makefiles.
 From a command prompt in the TCC directory execute
 * `mkdir build`
 * `cd build`
-* `cmake .. -G "MinGW MakeFiles"
-* `minge32-make.exe
+* `cmake .. -G "MinGW MakeFiles`
+* `mingw32-make.exe`
 
 ##### To build on other systems
 
