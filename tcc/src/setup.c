@@ -240,7 +240,8 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     dosp5=dosp5a=dosp5b=dosp5c=1;
     do6Z=do7K=do8A=do8B=do8K=do9A=do9B=do9K=do10A=do10B=do10K=do10W=1;
     do11A=do11B=do11C=do11E=do11F=do11W=do12A=do12B=do12D=do12E=do12K=1;
-    do13A=do13B=do13K=doFCC=doHCP=doBCC9=doBCC15=1;
+    do13A=do13B=do13K=doFCC=doHCP=doBCC9=1;
+    doBCC15=0;
     
     msp3a=msp3b=msp3c=initNoStatic; // max size of **sp** arrays in dimension i
     msp4a=msp4b=msp4c=m6A=initNoStatic; // max size of **sp** arrays in dimension i

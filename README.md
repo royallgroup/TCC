@@ -10,7 +10,7 @@ The TCC uses the free open source build system _cmake_ to generate makefiles.
 From a command prompt in the TCC directory execute
 * `mkdir build`
 * `cd build`
-* `cmake .. -G "MinGW MakeFiles`
+* `cmake .. -G "MinGW Makefiles`
 * `mingw32-make.exe`
 
 ##### To build on other systems
