@@ -5126,10 +5126,10 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     sp3c_i_unc=sp3c_j_unc=ep[0]=ep[1]=eclus5A[0]=eclus5A[1]=tmp=-1;
 
     // Clusters 5A_i and 5A_j are new to the 13K, they have:
-    // two spindle particles in the in 11F
-    // one sp3 particles is the central particle (rc) from 11F
-    // one is from a 5A in the 11F (sp3c_i/j_unc)
-    // one is distinct from the 11F
+    // two spindle particles in the 11F
+    // one sp3 particle is the central particle (rc) from 11F
+    // one sp3 particle is from a 5A in the 11F (sp3c_i/j_unc)
+    // one sp3 particle is distinct from the 11F
 
     // Identification of sp3c_i_unc
     k=0;
@@ -5200,8 +5200,8 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
                                     if (l == 11) {
                                         ep[0] = tmp;
                                         eclus5A[0] = mem_sp3c[hc11F[n11F[f]][0]][i];
+                                        k++;
                                     }
-                                    k++;
                                 }
                             }
                         }
@@ -5234,8 +5234,8 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
                                     if (l == 11) {
                                         ep[1] = tmp;
                                         eclus5A[1] = mem_sp3c[hc11F[n11F[f]][0]][i];
+                                        k++;
                                     }
-                                    k++;
                                 }
                             }
                         }
@@ -5285,9 +5285,9 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     if(ach[hc13K[n13K[f]][8]]  == 'C') ach[hc13K[n13K[f]][8]] = ach_shell[hc13K[n13K[f]][8]] = 'B';
     if(ach[hc13K[n13K[f]][9]]  == 'C') ach[hc13K[n13K[f]][9]] = ach_shell[hc13K[n13K[f]][9]] = 'B';
     if(ach[hc13K[n13K[f]][10]]  == 'C') ach[hc13K[n13K[f]][10]] = ach_shell[hc13K[n13K[f]][10]] = 'B';
-    //ach[hc13K[n13K[f]][0]] = ach_cen[hc13K[n13K[f]][0]] = 'O';
-    //ach[hc13K[n13K[f]][11]] = ach_shell[hc13K[n13K[f]][11]] = 'O';
-    //ach[hc13K[n13K[f]][12]] = ach_shell[hc13K[n13K[f]][12]] = 'O';
+    ach[hc13K[n13K[f]][0]] = ach_cen[hc13K[n13K[f]][0]] = 'O';
+    ach[hc13K[n13K[f]][11]] = ach_shell[hc13K[n13K[f]][11]] = 'O';
+    ach[hc13K[n13K[f]][12]] = ach_shell[hc13K[n13K[f]][12]] = 'O';
     
     if (doBondedCen==1) {
         n_bonded_to_cen_13K+=cnb[hc13K[n13K[f]][0]];
