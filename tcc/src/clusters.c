@@ -5125,8 +5125,13 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     
     sp3c_i_unc=sp3c_j_unc=ep[0]=ep[1]=eclus5A[0]=eclus5A[1]=tmp=-1;
 
-    // Identify the particle in 5A_i which is distinct from the 11F
-    // The spindles are guaranteed in 11F, one sp3 is rc from 11F,
+    // Clusters 5A_i and 5A_j are new to the 13K, they have:
+    // two spindle particles in the in 11F
+    // one sp3 particles is the central particle (rc) from 11F
+    // one is from a 5A in the 11F (sp3c_i/j_unc)
+    // one is distinct from the 11F
+
+    // Identification of sp3c_i_unc
     k=0;
     for (i=0; i<3; i++) {
         // Make sure the sp3 ring of 5A_i does not contain the central particle in the 11F
@@ -5150,7 +5155,7 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     }
     if (k!=1) return 0;
 
-    // Determine whether 5A_i is part of the 13K, store in sp3c_j_unc
+    // Identification of sp3c_j_unc
     k=0;
     for (i=0; i<3; i++) {
         // Make sure the sp3 ring of 5A_i does not contain the central particle in the 11F
@@ -5173,53 +5178,70 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     }
     if (k!=1) return 0;
 
+    // Try to identify the new particle in 5A_j which is not in 11F
     k=0;
-    for (i=0; i<nmem_sp3c[hc11F[n11F[f]][0]]; ++i) { // loop over all sp3c which hc13K[n13K[f]][0] is a member
-        if (mem_sp3c[hc11F[n11F[f]][0]][i]==sp3c_i || mem_sp3c[hc11F[n11F[f]][0]][i]==sp3c_j) continue;
-        
-        if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][3]!=sp3c[sp3c_i][3]) continue;
-        if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][4]!=sp3c[sp3c_i][4]) continue;
-    
-        for (j=0; j<3; j++) {
-            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j]==hc11F[n11F[f]][0]) continue;
-            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j]==sp3c_i_unc) continue;
-            if (k==1) return 0;
-            tmp=sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j];
-            
-            for (l=0; l<11; l++) {  // check temp not already in 11F
-                if (tmp==hc11F[n11F[f]][l]) break;
+    // loop over all 5A clusters of which hc13K[n13K[f]][0] is a member
+    for (i=0; i<nmem_sp3c[hc11F[n11F[f]][0]]; ++i) {
+        if (mem_sp3c[hc11F[n11F[f]][0]][i]!=sp3c_i && mem_sp3c[hc11F[n11F[f]][0]][i]!=sp3c_j) {
+            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][3] == sp3c[sp3c_i][3]) {
+                if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][4] == sp3c[sp3c_i][4]) {
+                    for (j = 0; j < 3; j++) {
+                        if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j] != hc11F[n11F[f]][0]) {
+                            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j] != sp3c_i_unc) {
+                                if (k == 1) {
+                                    return 0;
+                                }
+                                else {
+                                    tmp = sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j];
+                                    // check that tmp is not already in 11F
+                                    for (l = 0; l < 11; l++) {
+                                        if (tmp == hc11F[n11F[f]][l]) break;
+                                    }
+                                    if (l == 11) {
+                                        ep[0] = tmp;
+                                        eclus5A[0] = mem_sp3c[hc11F[n11F[f]][0]][i];
+                                    }
+                                    k++;
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            if (l==11) {
-                ep[0]=tmp;
-                eclus5A[0]=mem_sp3c[hc11F[n11F[f]][0]][i];
-            }
-            k++;
         }
     }
     if (k!=1) return 0; 
     // have found particle uncommon to 11F which forms a 5A cluster sharing spindles of sp3c_i and ring particles hc13K[n13K[f]][0] and sp3c_i_unc
 
+    // Try to identify the new particle in 5A_j which is not in 11F
     k=0;
     for (i=0; i<nmem_sp3c[hc11F[n11F[f]][0]]; ++i) { // loop over all sp3c which hc13K[n13K[f]][0] is a member
-        if (mem_sp3c[hc11F[n11F[f]][0]][i]==sp3c_i || mem_sp3c[hc11F[n11F[f]][0]][i]==sp3c_j) continue;
-        
-        if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][3]!=sp3c[sp3c_j][3]) continue;
-        if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][4]!=sp3c[sp3c_j][4]) continue;
-    
-        for (j=0; j<3; j++) {
-            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j]==hc11F[n11F[f]][0]) continue;
-            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j]==sp3c_j_unc) continue;
-            if (k==1) return 0;
-            tmp=sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j];
-            
-            for (l=0; l<11; l++) {  // check temp not already in 11F
-                if (tmp==hc11F[n11F[f]][l]) break;
+        if (mem_sp3c[hc11F[n11F[f]][0]][i]!=sp3c_i && mem_sp3c[hc11F[n11F[f]][0]][i]!=sp3c_j) {
+            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][3] == sp3c[sp3c_j][3]) {
+                if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][4] == sp3c[sp3c_j][4]) {
+                    for (j = 0; j < 3; j++) {
+                        if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j] != hc11F[n11F[f]][0]) {
+                            if (sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j] != sp3c_j_unc) {
+                                if (k == 1) {
+                                    return 0;
+                                }
+                                else {
+                                    tmp = sp3c[mem_sp3c[hc11F[n11F[f]][0]][i]][j];
+
+                                    for (l = 0; l < 11; l++) {  // check temp not already in 11F
+                                        if (tmp == hc11F[n11F[f]][l]) break;
+                                    }
+                                    if (l == 11) {
+                                        ep[1] = tmp;
+                                        eclus5A[1] = mem_sp3c[hc11F[n11F[f]][0]][i];
+                                    }
+                                    k++;
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            if (l==11) {
-                ep[1]=tmp;
-                eclus5A[1]=mem_sp3c[hc11F[n11F[f]][0]][i];
-            }
-            k++;
         }
     }
     if (k!=1) return 0; 
