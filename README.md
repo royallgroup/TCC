@@ -21,6 +21,13 @@ From a terminal in the TCC directory execute
 * `cmake ..`
 * `make`
 
+##### Testing the TCC
+
+It is recommended you test the TCC to check it is compiled correctly on your system, this currently requires Python and the pytest module. The test will run a short configurration to check clusters are correctly detected.
+
+Once you have built the TCC, cd to the test directory and type
+'py.test test.py'
+
 ##### Running the TCC
 
 Binaries will be generate in the bin folder.
