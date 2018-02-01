@@ -10,7 +10,7 @@ The TCC uses the free open source build system _cmake_ to generate makefiles.
 From a command prompt in the TCC directory execute
 * `mkdir build`
 * `cd build`
-* `cmake .. -G "MinGW Makefiles`
+* `cmake .. -G "MinGW Makefiles"`
 * `mingw32-make.exe`
 
 ##### To build on other systems
@@ -20,6 +20,13 @@ From a terminal in the TCC directory execute
 * `cd build`
 * `cmake ..`
 * `make`
+
+##### Testing the TCC
+
+It is recommended you test the TCC to check it is compiled correctly on your system, this currently requires Python and the pytest module. The test will run a short configurration to check clusters are correctly detected.
+
+Once you have built the TCC, cd to the test directory and type
+'py.test test.py'
 
 ##### Running the TCC
 
