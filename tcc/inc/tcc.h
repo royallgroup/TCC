@@ -1,5 +1,5 @@
 /* Alex Malins - alex.malins@gmail.com */
-/* DynamicTCC: A topological cluster classification code with temporal tracking of clusters. */
+/* TCC: A topological cluster classification code with temporal tracking of clusters. */
 /* Not for general consumption */	
 
 #include <stdio.h>
@@ -9,16 +9,9 @@
 
 #include "tools.h"
 #include "setup.h"
-//void RingStat_Init(char *fn);	// initialize RingStat routine opening an individual file
-//void RingStat_Reset();	// reset RingStat variables
-//void RingStat_RunRing();	// run ring detection
-//void RingStat_run2(int j);	// run ring detection
-//// END: RingStat routines
 
-//// START: Bonds routines
 double Bonds_GetR2(int i, int j);	// get separation between particles i and j
 double Bonds_GetR2_PBCs(int i, int j);	// get wrapped separation between particles i and j
-void Bonds_WriteBondNetwork(int f);	// write bondnetwork to a file
 int icell(int tix, int tiy, int tiz);
 void links();
 void Bonds_GetBonds(int f);	// Get bonds using simple lengths
@@ -27,20 +20,6 @@ void Bonds_GetBondsV_CellList(int f);	// Get bonds using Voronoi Cell List
 int Bonds_BondCheck(int i, int j);	// Returns 1 if i & j are bonded; 0 otherwise
 int Bonds_cnb_j(int i, int j);
 
-//void Bonds_Ras(const char *fname, char *ach);
-//void Bonds_openmolOut();
-//void Bonds_RasMumCall() { myClust -> RasMum(x, y, z); }
-//void Bonds_ClusMumCall(int i) { myClust -> ClusMum(i, x, y, z); }
-//void Bonds_AnClus() { myClust -> Analyse(); }
-//void Bonds_PovDat() { myClust -> PovDat(x, y, z); }
-//int Bonds_gbNums(int f, int i, int j) { return bNums[f][i][j]; }	// Return j'th particle bonded to particle i
-//int Bonds_gcnb(int f, int i) { return cnb[f][i]; }	// Return number of bonds (or equivalently particles bonded to) to particle i
-//double Bonds_GetX(int f, int i) { return x[f][i]; }	// Return x position of particle i 
-//double Bonds_GetY(int f, int i) { return y[f][i]; }	// Return y position of particle i 
-//double Bonds_GetZ(int f, int i) { return z[f][i]; }	// Return z position of particle i 
-//// END: Bonds routines
-
-//// START: Rings routines
 void Rings_gSP3(int f, int n0);	// get SP3/4/5 rings including particle n0
 void Rings_gSP4(int f, int n0, int n1, int n2);	// {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring
 void Rings_gSP5(int f, int n0, int n1, int n2, int n3);	// {n0,n1,n2,n3} is not an SP4 ring, is it an SP5 ring
@@ -50,12 +29,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4);	// Take {n0,n1,n
 void Rings_setSP3c(int f); // store cluster 5A D3h from Bonds_aSP3()
 void Rings_setSP4c(int f);	// store cluster 6A Oh from Bonds_aSP4()
 void Rings_setSP5c(int f);	// store cluster 7A D5h from Bonds_aSP5()
-void Rings_PrintRingNums(int f); // print (3/4/5)(a/b/c) stats to screen
 
-//void Rings_WriteRings(int f);
-//// END: Rings routines
-
-//// START: Clusters routines
 void Clusters_Get6Z_C2v(int f);	// Detect 6Z clusters
 void Clusters_Get7K(int f);	// Detect 7K clusters
 void Clusters_Get8A_D2d(int f);	// Detect 8A D2d clusters
@@ -94,21 +68,11 @@ void Clusters_GetFCC(int f);	// Detect 13 particle FCC clusters
 void Clusters_GetHCP(int f);	// Detect 13 particle HCP clusters
 void Clusters_GetBCC_9(int f);	// Detect 9 particle BCC clusters
 void Clusters_GetBCC_15(int f);	// Detect 15 particle BCC clusters
-//// END: Clusters routines
 
-//// START: Dyn routines
-void Dyn_add(int *arr, int f, int clusSize, int *dyn_n, int *dyn_m, int* **dyn_l, int* **dyn_hc, int do_up, int *dyn_up, int n, int do_sub, int n_sub, int* **dyn_sub, int *sub);
-void Dyn_add_6A(int repeat, int *arr, int f, int clusSize, int *dyn_n, int *dyn_m, int* **dyn_l, int* **dyn_hc, int do_up, int *dyn_up, int n, int do_sub, int n_sub, int* **dyn_sub, int *sub);
-void Dyn_add_8A(int *arr, int f, int clusSize, int *dyn_n, int *dyn_m, int* **dyn_l, int* **dyn_hc, int do_up, int *dyn_up, int n, int do_sub, int n_sub, int* **dyn_sub, int *sub);
-void Dyn_Analyse_Free();
-
-//// START: Stats routines
 void Stats_Init();	// initialize Stats routine
 void Stats_Reset();	// reset Cluster routine variables
 void Stats_FreeMem();	// free memory from stats variables
 void Stats_Analyse();	// output Cluster statistics to file
 void Stats_SetA();	// Set arrays to true if the ith particle is a member of any clusters with this or a larger number of particles
-void Stats_Report();	// output Cluster statistics to screen
-void Stats_ClusMum(int f, double *x, double *y, double *z);
-void Stats_ClusOut(int f, char *cn, char *ach, double *x, double *y, double *z);
+
 //// END: Stats routines

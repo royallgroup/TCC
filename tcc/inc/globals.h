@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 //// START: Global variables
-int rank,size;
 int N, NA;  // number of particles
 int doBinary;   // if two particle species, look at correlations between them
 int ISNOTCUBIC; //if the system in non-cubic or NPT, get box size info from a datafile
@@ -19,7 +18,7 @@ double TSTART;
 double FRAMETSTEP;
 double TFINAL;
 
-char fInputParamsName[1000], fDynMemSizeName[1000], fgsblName[1000], fPotentialParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
+char fInputParamsName[1000], fgsblName[1000], fPotentialParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 double *x, *y, *z;  // positions in x y and z directions of N particles
 int *rtype; // particle type
@@ -59,14 +58,9 @@ int incrStatic; // when full, increment static cluster arrays by this amount
 int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
 
-int doDynamics; // do dynamics analysis for clusters
-int initNoLifetimes;    // initial number of lifetimes for dynamic clusters
-int initNoDynamicClusters;  // initial number of dynamic clusters
-int incrDynamicClusters;    // when full, increment dynamic cluster arrays by this amount
 int doSubClusts; // write sub clusters in tcc files
 double talpha; // alpha relaxtion time
 int PRINTINFO; // print running information about progress
-
 
 int *cnb; // Current Number of Bonds for particles {1,...,N}
 int **bNums;    // list of particles (indices j) bonded to particle at index i
@@ -505,275 +499,5 @@ FILE *file_raw_FCC, *file_raw_HCP, *file_raw_BCC_9, *file_raw_BCC_15;
 
 FILE *file_11A_cen_xmol;
 FILE *file_13A_cen_xmol;
-
-// dynamic variables
-int dyn_MaxLives; // maximum number of times I witness one cluster
-int dyn_TotClus, dyn_TotEvents, dyn_Tot_a_Events;
-int dyn_nsp3, dyn_nsp3a, dyn_nsp3b, dyn_nsp3c;  // nudyn_mber of sp3a/b/c respectively
-int dyn_nsp4, dyn_nsp4a, dyn_nsp4b, dyn_n6A;    // nudyn_mber of sp4a/b 6A respectively
-int dyn_nsp5, dyn_nsp5a, dyn_nsp5b, dyn_nsp5c;  // nudyn_mber of sp5a/b/c respectively
-int dyn_n6Z, dyn_n7K;   // nudyn_mber of clusters of particlar type
-int dyn_n8A, dyn_n8B, dyn_n8K;  
-int dyn_n9A, dyn_n9B, dyn_n9K;
-int dyn_n10A, dyn_n10B, dyn_n10K, dyn_n10W;
-int dyn_n11A, dyn_n11B, dyn_n11C, dyn_n11E, dyn_n11F, dyn_n11W; // nudyn_mber of clusters of particlar type
-int dyn_n12A, dyn_n12B, dyn_n12D, dyn_n12E, dyn_n12K;
-int dyn_n13A, dyn_n13B, dyn_n13K;
-int dyn_nFCC, dyn_nHCP, dyn_nBCC_9, dyn_nBCC_15;
-
-int dyn_esp3, dyn_esp3a, dyn_esp3b, dyn_esp3c;  // nudyn_mber of sp3a/b/c respectively
-int dyn_esp4, dyn_esp4a, dyn_esp4b, dyn_e6A;    // nudyn_mber of sp4a/b 6A respectively
-int dyn_esp5, dyn_esp5a, dyn_esp5b, dyn_esp5c;  // nudyn_mber of sp5a/b/c respectively
-int dyn_e6Z, dyn_e7K;   // nudyn_mber of clusters of particlar type
-int dyn_e8A, dyn_e8B, dyn_e8K;  
-int dyn_e9A, dyn_e9B, dyn_e9K;
-int dyn_e10A, dyn_e10B, dyn_e10K, dyn_e10W;
-int dyn_e11A, dyn_e11B, dyn_e11C, dyn_e11E, dyn_e11F, dyn_e11W; // nudyn_mber of clusters of particlar type
-int dyn_e12A, dyn_e12B, dyn_e12D, dyn_e12E, dyn_e12K;
-int dyn_e13A, dyn_e13B, dyn_e13K;
-int dyn_eFCC, dyn_eHCP, dyn_eBCC_9, dyn_eBCC_15;
-
-int dyn_asp3, dyn_asp3a, dyn_asp3b, dyn_asp3c;  // nudyn_mber of sp3a/b/c respectively
-int dyn_asp4, dyn_asp4a, dyn_asp4b, dyn_a6A;    // nudyn_mber of sp4a/b 6A respectively
-int dyn_asp5, dyn_asp5a, dyn_asp5b, dyn_asp5c;  // nudyn_mber of sp5a/b/c respectively
-int dyn_a6Z, dyn_a7K;   // nudyn_mber of clusters of particlar type
-int dyn_a8A, dyn_a8B, dyn_a8K;  
-int dyn_a9A, dyn_a9B, dyn_a9K;
-int dyn_a10A, dyn_a10B, dyn_a10K, dyn_a10W;
-int dyn_a11A, dyn_a11B, dyn_a11C, dyn_a11E, dyn_a11F, dyn_a11W; // nudyn_mber of clusters of particlar type
-int dyn_a12A, dyn_a12B, dyn_a12D, dyn_a12E, dyn_a12K;
-int dyn_a13A, dyn_a13B, dyn_a13K;
-int dyn_aFCC, dyn_aHCP, dyn_aBCC_9, dyn_aBCC_15;
-
-int dyn_msp3, dyn_msp3a, dyn_msp3b, dyn_msp3c;  // dyn_max size of **sp** arrays in didyn_mension i
-int dyn_msp4, dyn_msp4a, dyn_msp4b, dyn_m6A;    // dyn_max size of **sp** arrays in didyn_mension i
-int dyn_msp5, dyn_msp5a, dyn_msp5b, dyn_msp5c;  // dyn_max size of **sp** arrays in didyn_mension i
-int dyn_m6Z, dyn_m7K;   // dyn_max size of dyn_m** arrays in didyn_mension i
-int dyn_m8A, dyn_m8B, dyn_m8K;  // dyn_max size of dyn_m** arrays in didyn_mension i
-int dyn_m9A, dyn_m9B, dyn_m9K;  // dyn_max size of dyn_m** arrays in didyn_mension i
-int dyn_m10A, dyn_m10B, dyn_m10K, dyn_m10W; // dyn_max size of dyn_m** arrays in didyn_mension i
-int dyn_m11A, dyn_m11B, dyn_m11C, dyn_m11E, dyn_m11F, dyn_m11W; // dyn_max size of dyn_m** arrays in didyn_mension i
-int dyn_m12A, dyn_m12B, dyn_m12D, dyn_m12E, dyn_m12K;   // dyn_max size of dyn_m** arrays in didyn_mension i
-int dyn_m13A, dyn_m13B, dyn_m13K;   // max size of dyn_m** arrays in dimension i
-int dyn_mFCC, dyn_mHCP, dyn_mBCC_9, dyn_mBCC_15;    // dyn_max size of **sp** arrays in didyn_mension i
-
-double sum_hist_sp3, sum_hist_sp3a, sum_hist_sp3b, sum_hist_sp3c;   // sum_hist_ax size of **sp** arrays in disum_hist_ension i
-double sum_hist_sp4, sum_hist_sp4a, sum_hist_sp4b, sum_hist_6A; // sum_hist_ax size of **sp** arrays in disum_hist_ension i
-double sum_hist_sp5, sum_hist_sp5a, sum_hist_sp5b, sum_hist_sp5c;   // sum_hist_ax size of **sp** arrays in disum_hist_ension i
-double sum_hist_6Z, sum_hist_7K;    // sum_hist_ax size of sum_hist_** arrays in disum_hist_ension i
-double sum_hist_8A, sum_hist_8B, sum_hist_8K;   // sum_hist_ax size of sum_hist_** arrays in disum_hist_ension i
-double sum_hist_9A, sum_hist_9B, sum_hist_9K;   // sum_hist_ax size of sum_hist_** arrays in disum_hist_ension i
-double sum_hist_10A, sum_hist_10B, sum_hist_10K, sum_hist_10W;  // sum_hist_ax size of sum_hist_** arrays in disum_hist_ension i
-double sum_hist_11A, sum_hist_11B, sum_hist_11C, sum_hist_11E, sum_hist_11F, sum_hist_11W;  // sum_hist_ax size of sum_hist_** arrays in disum_hist_ension i
-double sum_hist_12A, sum_hist_12B, sum_hist_12D, sum_hist_12E, sum_hist_12K;    // sum_hist_ax size of sum_hist_** arrays in disum_hist_ension i
-double sum_hist_13A, sum_hist_13B, sum_hist_13K;    // max size of sum_hist_** arrays in dimension i
-double sum_hist_FCC, sum_hist_HCP, sum_hist_BCC_9, sum_hist_BCC_15; // sum_hist_ax size of **sp** arrays in disum_hist_ension i
-
-double sum_max_hist_sp3, sum_max_hist_sp3a, sum_max_hist_sp3b, sum_max_hist_sp3c;   // sum_max_hist_ax size of **sp** arrays in disum_max_hist_ension i
-double sum_max_hist_sp4, sum_max_hist_sp4a, sum_max_hist_sp4b, sum_max_hist_6A; // sum_max_hist_ax size of **sp** arrays in disum_max_hist_ension i
-double sum_max_hist_sp5, sum_max_hist_sp5a, sum_max_hist_sp5b, sum_max_hist_sp5c;   // sum_max_hist_ax size of **sp** arrays in disum_max_hist_ension i
-double sum_max_hist_6Z, sum_max_hist_7K;    // sum_max_hist_ax size of sum_max_hist_** arrays in disum_max_hist_ension i
-double sum_max_hist_8A, sum_max_hist_8B, sum_max_hist_8K;   // sum_max_hist_ax size of sum_max_hist_** arrays in disum_max_hist_ension i
-double sum_max_hist_9A, sum_max_hist_9B, sum_max_hist_9K;   // sum_max_hist_ax size of sum_max_hist_** arrays in disum_max_hist_ension i
-double sum_max_hist_10A, sum_max_hist_10B, sum_max_hist_10K, sum_max_hist_10W;  // sum_max_hist_ax size of sum_max_hist_** arrays in disum_max_hist_ension i
-double sum_max_hist_11A, sum_max_hist_11B, sum_max_hist_11C, sum_max_hist_11E, sum_max_hist_11F, sum_max_hist_11W;  // sum_max_hist_ax size of sum_max_hist_** arrays in disum_max_hist_ension i
-double sum_max_hist_12A, sum_max_hist_12B, sum_max_hist_12D, sum_max_hist_12E, sum_max_hist_12K;    // sum_max_hist_ax size of sum_max_hist_** arrays in disum_max_hist_ension i
-double sum_max_hist_13A, sum_max_hist_13B, sum_max_hist_13K;    // max size of sum_max_hist_** arrays in dimension i
-double sum_max_hist_FCC, sum_max_hist_HCP, sum_max_hist_BCC_9, sum_max_hist_BCC_15; // sum_max_hist_ax size of **sp** arrays in disum_max_hist_ension i
-
-int **dyn_sp3, **dyn_sp3a, **dyn_sp3b, **dyn_sp3c;  // sp3a/b/c arrays (index i denotes nudyn_mber of cluster, j lists particles in cluster)
-int **dyn_sp4, **dyn_sp4a, **dyn_sp4b, **dyn_hc6A;  // sp5a/b/c arrays (index i denotes nudyn_mber of cluster, j lists particles in cluster)
-int **dyn_sp5, **dyn_sp5a, **dyn_sp5b, **dyn_sp5c;  // sp6a/b/c arrays (index i denotes number of cluster, j lists particles in cluster)
-int **dyn_hc6Z, **dyn_hc7K; // cluster storage arrays (index i denotes nudyn_mber/identifier of cluster, j lists particles in cluster)
-int **dyn_hc8A, **dyn_hc8B, **dyn_hc8K;
-int **dyn_hc9A, **dyn_hc9B, **dyn_hc9K;
-int **dyn_hc10A, **dyn_hc10B, **dyn_hc10K, **dyn_hc10W;
-int **dyn_hc11A, **dyn_hc11B, **dyn_hc11C, **dyn_hc11E, **dyn_hc11F, **dyn_hc11W;  // cluster storage arrays (index i denotes nudyn_mber/identifier of cluster, j lists particles in cluster)
-int **dyn_hc12A, **dyn_hc12B, **dyn_hc12D, **dyn_hc12E, **dyn_hc12K;
-int **dyn_hc13A, **dyn_hc13B, **dyn_hc13K;
-int **dyn_hcFCC, **dyn_hcHCP, **dyn_hcBCC_9, **dyn_hcBCC_15;
-
-int **dyn_lsp3, **dyn_lsp3a, **dyn_lsp3b, **dyn_lsp3c;  // sp3a/b/c arrays (index i denotes nudyn_lmber of cluster, j lists particles in cluster)
-int **dyn_lsp4, **dyn_lsp4a, **dyn_lsp4b, **dyn_l6A;    // sp5a/b/c arrays (index i denotes nudyn_lmber of cluster, j lists particles in cluster)
-int **dyn_lsp5, **dyn_lsp5a, **dyn_lsp5b, **dyn_lsp5c;  // sp6a/b/c arrays (index i denotes number of cluster, j lists particles in cluster)
-int **dyn_l6Z, **dyn_l7K;   // cluster storage arrays (index i denotes nudyn_mber/identifier of cluster, j lists particles in cluster)
-int **dyn_l8A, **dyn_l8B, **dyn_l8K;
-int **dyn_l9A, **dyn_l9B, **dyn_l9K;
-int **dyn_l10A, **dyn_l10B, **dyn_l10K, **dyn_l10W;
-int **dyn_l11A, **dyn_l11B, **dyn_l11C, **dyn_l11E, **dyn_l11F, **dyn_l11W;  // cluster storage arrays (index i denotes nudyn_mber/identifier of cluster, j lists particles in cluster)
-int **dyn_l12A, **dyn_l12B, **dyn_l12D, **dyn_l12E, **dyn_l12K;
-int **dyn_l13A, **dyn_l13B, **dyn_l13K;
-int **dyn_lFCC, **dyn_lHCP, **dyn_lBCC_9, **dyn_lBCC_15;
-
-int **dyn_sub_6Z, **dyn_sub_7K; // cluster storage arrays (index i denotes nudyn_mber/identifier of cluster, j lists particles in cluster)
-int **dyn_sub_8A, **dyn_sub_8B, **dyn_sub_8K;
-int **dyn_sub_9A, **dyn_sub_9B, **dyn_sub_9K;
-int **dyn_sub_10A, **dyn_sub_10B, **dyn_sub_10K, **dyn_sub_10W;
-int **dyn_sub_11A, **dyn_sub_11B, **dyn_sub_11C, **dyn_sub_11E, **dyn_sub_11F, **dyn_sub_11W;  // cluster storage arrays (index i denotes nudyn_mber/identifier of cluster, j lists particles in cluster)
-int **dyn_sub_12A, **dyn_sub_12B, **dyn_sub_12D, **dyn_sub_12E, **dyn_sub_12K;
-int **dyn_sub_13B, **dyn_sub_13K;
-int **dyn_sub_FCC, **dyn_sub_HCP, **dyn_sub_BCC_9, **dyn_sub_BCC_15;
-
-int *dyn_up_sp3b, *dyn_up_sp3c;
-int *dyn_up_sp4b, *dyn_up_sp4c;
-int *dyn_up_sp5b, *dyn_up_sp5c;
-int *dyn_up_9B, *dyn_up_9K, *dyn_up_10B, *dyn_up_11A, *dyn_up_11C, *dyn_up_11F;
-
-int *dyn_hist_sp3, *dyn_hist_sp3a, *dyn_hist_sp3b, *dyn_hist_sp3c;
-int *dyn_hist_sp4, *dyn_hist_sp4a, *dyn_hist_sp4b, *dyn_hist_6A;
-int *dyn_hist_sp5, *dyn_hist_sp5a, *dyn_hist_sp5b, *dyn_hist_sp5c;
-int *dyn_hist_6Z, *dyn_hist_7K;
-int *dyn_hist_8A, *dyn_hist_8B, *dyn_hist_8K;
-int *dyn_hist_9A, *dyn_hist_9B, *dyn_hist_9K;
-int *dyn_hist_10A, *dyn_hist_10B, *dyn_hist_10K, *dyn_hist_10W;
-int *dyn_hist_11A, *dyn_hist_11B, *dyn_hist_11C, *dyn_hist_11E, *dyn_hist_11F, *dyn_hist_11W;
-int *dyn_hist_12A, *dyn_hist_12B, *dyn_hist_12D, *dyn_hist_12E, *dyn_hist_12K;
-int *dyn_hist_13A, *dyn_hist_13B, *dyn_hist_13K;
-int *dyn_hist_FCC, *dyn_hist_HCP, *dyn_hist_BCC_9, *dyn_hist_BCC_15;
-
-double *dyn_norm_hist_sp3, *dyn_norm_hist_sp3a, *dyn_norm_hist_sp3b, *dyn_norm_hist_sp3c;
-double *dyn_norm_hist_sp4, *dyn_norm_hist_sp4a, *dyn_norm_hist_sp4b, *dyn_norm_hist_6A;
-double *dyn_norm_hist_sp5, *dyn_norm_hist_sp5a, *dyn_norm_hist_sp5b, *dyn_norm_hist_sp5c;
-double *dyn_norm_hist_6Z, *dyn_norm_hist_7K;
-double *dyn_norm_hist_8A, *dyn_norm_hist_8B, *dyn_norm_hist_8K;
-double *dyn_norm_hist_9A, *dyn_norm_hist_9B, *dyn_norm_hist_9K;
-double *dyn_norm_hist_10A, *dyn_norm_hist_10B, *dyn_norm_hist_10K, *dyn_norm_hist_10W;
-double *dyn_norm_hist_11A, *dyn_norm_hist_11B, *dyn_norm_hist_11C, *dyn_norm_hist_11E, *dyn_norm_hist_11F, *dyn_norm_hist_11W;
-double *dyn_norm_hist_12A, *dyn_norm_hist_12B, *dyn_norm_hist_12D, *dyn_norm_hist_12E, *dyn_norm_hist_12K;
-double *dyn_norm_hist_13A, *dyn_norm_hist_13B, *dyn_norm_hist_13K;
-double *dyn_norm_hist_FCC, *dyn_norm_hist_HCP, *dyn_norm_hist_BCC_9, *dyn_norm_hist_BCC_15;
-
-double *dyn_norm_corrected_hist_sp3, *dyn_norm_corrected_hist_sp3a, *dyn_norm_corrected_hist_sp3b, *dyn_norm_corrected_hist_sp3c;
-double *dyn_norm_corrected_hist_sp4, *dyn_norm_corrected_hist_sp4a, *dyn_norm_corrected_hist_sp4b, *dyn_norm_corrected_hist_6A;
-double *dyn_norm_corrected_hist_sp5, *dyn_norm_corrected_hist_sp5a, *dyn_norm_corrected_hist_sp5b, *dyn_norm_corrected_hist_sp5c;
-double *dyn_norm_corrected_hist_6Z, *dyn_norm_corrected_hist_7K;
-double *dyn_norm_corrected_hist_8A, *dyn_norm_corrected_hist_8B, *dyn_norm_corrected_hist_8K;
-double *dyn_norm_corrected_hist_9A, *dyn_norm_corrected_hist_9B, *dyn_norm_corrected_hist_9K;
-double *dyn_norm_corrected_hist_10A, *dyn_norm_corrected_hist_10B, *dyn_norm_corrected_hist_10K, *dyn_norm_corrected_hist_10W;
-double *dyn_norm_corrected_hist_11A, *dyn_norm_corrected_hist_11B, *dyn_norm_corrected_hist_11C, *dyn_norm_corrected_hist_11E, *dyn_norm_corrected_hist_11F, *dyn_norm_corrected_hist_11W;
-double *dyn_norm_corrected_hist_12A, *dyn_norm_corrected_hist_12B, *dyn_norm_corrected_hist_12D, *dyn_norm_corrected_hist_12E, *dyn_norm_corrected_hist_12K;
-double *dyn_norm_corrected_hist_13A, *dyn_norm_corrected_hist_13B, *dyn_norm_corrected_hist_13K;
-double *dyn_norm_corrected_hist_FCC, *dyn_norm_corrected_hist_HCP, *dyn_norm_corrected_hist_BCC_9, *dyn_norm_corrected_hist_BCC_15;
-
-double *dyn_decay_norm_hist_sp3, *dyn_decay_norm_hist_sp3a, *dyn_decay_norm_hist_sp3b, *dyn_decay_norm_hist_sp3c;
-double *dyn_decay_norm_hist_sp4, *dyn_decay_norm_hist_sp4a, *dyn_decay_norm_hist_sp4b, *dyn_decay_norm_hist_6A;
-double *dyn_decay_norm_hist_sp5, *dyn_decay_norm_hist_sp5a, *dyn_decay_norm_hist_sp5b, *dyn_decay_norm_hist_sp5c;
-double *dyn_decay_norm_hist_6Z, *dyn_decay_norm_hist_7K;
-double *dyn_decay_norm_hist_8A, *dyn_decay_norm_hist_8B, *dyn_decay_norm_hist_8K;
-double *dyn_decay_norm_hist_9A, *dyn_decay_norm_hist_9B, *dyn_decay_norm_hist_9K;
-double *dyn_decay_norm_hist_10A, *dyn_decay_norm_hist_10B, *dyn_decay_norm_hist_10K, *dyn_decay_norm_hist_10W;
-double *dyn_decay_norm_hist_11A, *dyn_decay_norm_hist_11B, *dyn_decay_norm_hist_11C, *dyn_decay_norm_hist_11E, *dyn_decay_norm_hist_11F, *dyn_decay_norm_hist_11W;
-double *dyn_decay_norm_hist_12A, *dyn_decay_norm_hist_12B, *dyn_decay_norm_hist_12D, *dyn_decay_norm_hist_12E, *dyn_decay_norm_hist_12K;
-double *dyn_decay_norm_hist_13A, *dyn_decay_norm_hist_13B, *dyn_decay_norm_hist_13K;
-double *dyn_decay_norm_hist_FCC, *dyn_decay_norm_hist_HCP, *dyn_decay_norm_hist_BCC_9, *dyn_decay_norm_hist_BCC_15;
-
-double *dyn_decay_norm_corrected_hist_sp3, *dyn_decay_norm_corrected_hist_sp3a, *dyn_decay_norm_corrected_hist_sp3b, *dyn_decay_norm_corrected_hist_sp3c;
-double *dyn_decay_norm_corrected_hist_sp4, *dyn_decay_norm_corrected_hist_sp4a, *dyn_decay_norm_corrected_hist_sp4b, *dyn_decay_norm_corrected_hist_6A;
-double *dyn_decay_norm_corrected_hist_sp5, *dyn_decay_norm_corrected_hist_sp5a, *dyn_decay_norm_corrected_hist_sp5b, *dyn_decay_norm_corrected_hist_sp5c;
-double *dyn_decay_norm_corrected_hist_6Z, *dyn_decay_norm_corrected_hist_7K;
-double *dyn_decay_norm_corrected_hist_8A, *dyn_decay_norm_corrected_hist_8B, *dyn_decay_norm_corrected_hist_8K;
-double *dyn_decay_norm_corrected_hist_9A, *dyn_decay_norm_corrected_hist_9B, *dyn_decay_norm_corrected_hist_9K;
-double *dyn_decay_norm_corrected_hist_10A, *dyn_decay_norm_corrected_hist_10B, *dyn_decay_norm_corrected_hist_10K, *dyn_decay_norm_corrected_hist_10W;
-double *dyn_decay_norm_corrected_hist_11A, *dyn_decay_norm_corrected_hist_11B, *dyn_decay_norm_corrected_hist_11C, *dyn_decay_norm_corrected_hist_11E, *dyn_decay_norm_corrected_hist_11F, *dyn_decay_norm_corrected_hist_11W;
-double *dyn_decay_norm_corrected_hist_12A, *dyn_decay_norm_corrected_hist_12B, *dyn_decay_norm_corrected_hist_12D, *dyn_decay_norm_corrected_hist_12E, *dyn_decay_norm_corrected_hist_12K;
-double *dyn_decay_norm_corrected_hist_13A, *dyn_decay_norm_corrected_hist_13B, *dyn_decay_norm_corrected_hist_13K;
-double *dyn_decay_norm_corrected_hist_FCC, *dyn_decay_norm_corrected_hist_HCP, *dyn_decay_norm_corrected_hist_BCC_9, *dyn_decay_norm_corrected_hist_BCC_15;
-
-int *dyn_total_hist_sp3, *dyn_total_hist_sp3a, *dyn_total_hist_sp3b, *dyn_total_hist_sp3c;
-int *dyn_total_hist_sp4, *dyn_total_hist_sp4a, *dyn_total_hist_sp4b, *dyn_total_hist_6A;
-int *dyn_total_hist_sp5, *dyn_total_hist_sp5a, *dyn_total_hist_sp5b, *dyn_total_hist_sp5c;
-int *dyn_total_hist_6Z, *dyn_total_hist_7K;
-int *dyn_total_hist_8A, *dyn_total_hist_8B, *dyn_total_hist_8K;
-int *dyn_total_hist_9A, *dyn_total_hist_9B, *dyn_total_hist_9K;
-int *dyn_total_hist_10A, *dyn_total_hist_10B, *dyn_total_hist_10K, *dyn_total_hist_10W;
-int *dyn_total_hist_11A, *dyn_total_hist_11B, *dyn_total_hist_11C, *dyn_total_hist_11E, *dyn_total_hist_11F, *dyn_total_hist_11W;
-int *dyn_total_hist_12A, *dyn_total_hist_12B, *dyn_total_hist_12D, *dyn_total_hist_12E, *dyn_total_hist_12K;
-int *dyn_total_hist_13A, *dyn_total_hist_13B, *dyn_total_hist_13K;
-int *dyn_total_hist_FCC, *dyn_total_hist_HCP, *dyn_total_hist_BCC_9, *dyn_total_hist_BCC_15;
-
-double *dyn_norm_total_hist_sp3, *dyn_norm_total_hist_sp3a, *dyn_norm_total_hist_sp3b, *dyn_norm_total_hist_sp3c;
-double *dyn_norm_total_hist_sp4, *dyn_norm_total_hist_sp4a, *dyn_norm_total_hist_sp4b, *dyn_norm_total_hist_6A;
-double *dyn_norm_total_hist_sp5, *dyn_norm_total_hist_sp5a, *dyn_norm_total_hist_sp5b, *dyn_norm_total_hist_sp5c;
-double *dyn_norm_total_hist_6Z, *dyn_norm_total_hist_7K;
-double *dyn_norm_total_hist_8A, *dyn_norm_total_hist_8B, *dyn_norm_total_hist_8K;
-double *dyn_norm_total_hist_9A, *dyn_norm_total_hist_9B, *dyn_norm_total_hist_9K;
-double *dyn_norm_total_hist_10A, *dyn_norm_total_hist_10B, *dyn_norm_total_hist_10K, *dyn_norm_total_hist_10W;
-double *dyn_norm_total_hist_11A, *dyn_norm_total_hist_11B, *dyn_norm_total_hist_11C, *dyn_norm_total_hist_11E, *dyn_norm_total_hist_11F, *dyn_norm_total_hist_11W;
-double *dyn_norm_total_hist_12A, *dyn_norm_total_hist_12B, *dyn_norm_total_hist_12D, *dyn_norm_total_hist_12E, *dyn_norm_total_hist_12K;
-double *dyn_norm_total_hist_13A, *dyn_norm_total_hist_13B, *dyn_norm_total_hist_13K;
-double *dyn_norm_total_hist_FCC, *dyn_norm_total_hist_HCP, *dyn_norm_total_hist_BCC_9, *dyn_norm_total_hist_BCC_15;
-
-double *dyn_decay_norm_total_hist_sp3, *dyn_decay_norm_total_hist_sp3a, *dyn_decay_norm_total_hist_sp3b, *dyn_decay_norm_total_hist_sp3c;
-double *dyn_decay_norm_total_hist_sp4, *dyn_decay_norm_total_hist_sp4a, *dyn_decay_norm_total_hist_sp4b, *dyn_decay_norm_total_hist_6A;
-double *dyn_decay_norm_total_hist_sp5, *dyn_decay_norm_total_hist_sp5a, *dyn_decay_norm_total_hist_sp5b, *dyn_decay_norm_total_hist_sp5c;
-double *dyn_decay_norm_total_hist_6Z, *dyn_decay_norm_total_hist_7K;
-double *dyn_decay_norm_total_hist_8A, *dyn_decay_norm_total_hist_8B, *dyn_decay_norm_total_hist_8K;
-double *dyn_decay_norm_total_hist_9A, *dyn_decay_norm_total_hist_9B, *dyn_decay_norm_total_hist_9K;
-double *dyn_decay_norm_total_hist_10A, *dyn_decay_norm_total_hist_10B, *dyn_decay_norm_total_hist_10K, *dyn_decay_norm_total_hist_10W;
-double *dyn_decay_norm_total_hist_11A, *dyn_decay_norm_total_hist_11B, *dyn_decay_norm_total_hist_11C, *dyn_decay_norm_total_hist_11E, *dyn_decay_norm_total_hist_11F, *dyn_decay_norm_total_hist_11W;
-double *dyn_decay_norm_total_hist_12A, *dyn_decay_norm_total_hist_12B, *dyn_decay_norm_total_hist_12D, *dyn_decay_norm_total_hist_12E, *dyn_decay_norm_total_hist_12K;
-double *dyn_decay_norm_total_hist_13A, *dyn_decay_norm_total_hist_13B, *dyn_decay_norm_total_hist_13K;
-double *dyn_decay_norm_total_hist_FCC, *dyn_decay_norm_total_hist_HCP, *dyn_decay_norm_total_hist_BCC_9, *dyn_decay_norm_total_hist_BCC_15;
-
-int *dyn_max_hist_sp3, *dyn_max_hist_sp3a, *dyn_max_hist_sp3b, *dyn_max_hist_sp3c;
-int *dyn_max_hist_sp4, *dyn_max_hist_sp4a, *dyn_max_hist_sp4b, *dyn_max_hist_6A;
-int *dyn_max_hist_sp5, *dyn_max_hist_sp5a, *dyn_max_hist_sp5b, *dyn_max_hist_sp5c;
-int *dyn_max_hist_6Z, *dyn_max_hist_7K;
-int *dyn_max_hist_8A, *dyn_max_hist_8B, *dyn_max_hist_8K;
-int *dyn_max_hist_9A, *dyn_max_hist_9B, *dyn_max_hist_9K;
-int *dyn_max_hist_10A, *dyn_max_hist_10B, *dyn_max_hist_10K, *dyn_max_hist_10W;
-int *dyn_max_hist_11A, *dyn_max_hist_11B, *dyn_max_hist_11C, *dyn_max_hist_11E, *dyn_max_hist_11F, *dyn_max_hist_11W;
-int *dyn_max_hist_12A, *dyn_max_hist_12B, *dyn_max_hist_12D, *dyn_max_hist_12E, *dyn_max_hist_12K;
-int *dyn_max_hist_13A, *dyn_max_hist_13B, *dyn_max_hist_13K;
-int *dyn_max_hist_FCC, *dyn_max_hist_HCP, *dyn_max_hist_BCC_9, *dyn_max_hist_BCC_15;
-
-double *dyn_norm_max_hist_sp3, *dyn_norm_max_hist_sp3a, *dyn_norm_max_hist_sp3b, *dyn_norm_max_hist_sp3c;
-double *dyn_norm_max_hist_sp4, *dyn_norm_max_hist_sp4a, *dyn_norm_max_hist_sp4b, *dyn_norm_max_hist_6A;
-double *dyn_norm_max_hist_sp5, *dyn_norm_max_hist_sp5a, *dyn_norm_max_hist_sp5b, *dyn_norm_max_hist_sp5c;
-double *dyn_norm_max_hist_6Z, *dyn_norm_max_hist_7K;
-double *dyn_norm_max_hist_8A, *dyn_norm_max_hist_8B, *dyn_norm_max_hist_8K;
-double *dyn_norm_max_hist_9A, *dyn_norm_max_hist_9B, *dyn_norm_max_hist_9K;
-double *dyn_norm_max_hist_10A, *dyn_norm_max_hist_10B, *dyn_norm_max_hist_10K, *dyn_norm_max_hist_10W;
-double *dyn_norm_max_hist_11A, *dyn_norm_max_hist_11B, *dyn_norm_max_hist_11C, *dyn_norm_max_hist_11E, *dyn_norm_max_hist_11F, *dyn_norm_max_hist_11W;
-double *dyn_norm_max_hist_12A, *dyn_norm_max_hist_12B, *dyn_norm_max_hist_12D, *dyn_norm_max_hist_12E, *dyn_norm_max_hist_12K;
-double *dyn_norm_max_hist_13A, *dyn_norm_max_hist_13B, *dyn_norm_max_hist_13K;
-double *dyn_norm_max_hist_FCC, *dyn_norm_max_hist_HCP, *dyn_norm_max_hist_BCC_9, *dyn_norm_max_hist_BCC_15;
-
-double *dyn_norm_corrected_max_hist_sp3, *dyn_norm_corrected_max_hist_sp3a, *dyn_norm_corrected_max_hist_sp3b, *dyn_norm_corrected_max_hist_sp3c;
-double *dyn_norm_corrected_max_hist_sp4, *dyn_norm_corrected_max_hist_sp4a, *dyn_norm_corrected_max_hist_sp4b, *dyn_norm_corrected_max_hist_6A;
-double *dyn_norm_corrected_max_hist_sp5, *dyn_norm_corrected_max_hist_sp5a, *dyn_norm_corrected_max_hist_sp5b, *dyn_norm_corrected_max_hist_sp5c;
-double *dyn_norm_corrected_max_hist_6Z, *dyn_norm_corrected_max_hist_7K;
-double *dyn_norm_corrected_max_hist_8A, *dyn_norm_corrected_max_hist_8B, *dyn_norm_corrected_max_hist_8K;
-double *dyn_norm_corrected_max_hist_9A, *dyn_norm_corrected_max_hist_9B, *dyn_norm_corrected_max_hist_9K;
-double *dyn_norm_corrected_max_hist_10A, *dyn_norm_corrected_max_hist_10B, *dyn_norm_corrected_max_hist_10K, *dyn_norm_corrected_max_hist_10W;
-double *dyn_norm_corrected_max_hist_11A, *dyn_norm_corrected_max_hist_11B, *dyn_norm_corrected_max_hist_11C, *dyn_norm_corrected_max_hist_11E, *dyn_norm_corrected_max_hist_11F, *dyn_norm_corrected_max_hist_11W;
-double *dyn_norm_corrected_max_hist_12A, *dyn_norm_corrected_max_hist_12B, *dyn_norm_corrected_max_hist_12D, *dyn_norm_corrected_max_hist_12E, *dyn_norm_corrected_max_hist_12K;
-double *dyn_norm_corrected_max_hist_13A, *dyn_norm_corrected_max_hist_13B, *dyn_norm_corrected_max_hist_13K;
-double *dyn_norm_corrected_max_hist_FCC, *dyn_norm_corrected_max_hist_HCP, *dyn_norm_corrected_max_hist_BCC_9, *dyn_norm_corrected_max_hist_BCC_15;
-
-double *dyn_decay_norm_max_hist_sp3, *dyn_decay_norm_max_hist_sp3a, *dyn_decay_norm_max_hist_sp3b, *dyn_decay_norm_max_hist_sp3c;
-double *dyn_decay_norm_max_hist_sp4, *dyn_decay_norm_max_hist_sp4a, *dyn_decay_norm_max_hist_sp4b, *dyn_decay_norm_max_hist_6A;
-double *dyn_decay_norm_max_hist_sp5, *dyn_decay_norm_max_hist_sp5a, *dyn_decay_norm_max_hist_sp5b, *dyn_decay_norm_max_hist_sp5c;
-double *dyn_decay_norm_max_hist_6Z, *dyn_decay_norm_max_hist_7K;
-double *dyn_decay_norm_max_hist_8A, *dyn_decay_norm_max_hist_8B, *dyn_decay_norm_max_hist_8K;
-double *dyn_decay_norm_max_hist_9A, *dyn_decay_norm_max_hist_9B, *dyn_decay_norm_max_hist_9K;
-double *dyn_decay_norm_max_hist_10A, *dyn_decay_norm_max_hist_10B, *dyn_decay_norm_max_hist_10K, *dyn_decay_norm_max_hist_10W;
-double *dyn_decay_norm_max_hist_11A, *dyn_decay_norm_max_hist_11B, *dyn_decay_norm_max_hist_11C, *dyn_decay_norm_max_hist_11E, *dyn_decay_norm_max_hist_11F, *dyn_decay_norm_max_hist_11W;
-double *dyn_decay_norm_max_hist_12A, *dyn_decay_norm_max_hist_12B, *dyn_decay_norm_max_hist_12D, *dyn_decay_norm_max_hist_12E, *dyn_decay_norm_max_hist_12K;
-double *dyn_decay_norm_max_hist_13A, *dyn_decay_norm_max_hist_13B, *dyn_decay_norm_max_hist_13K;
-double *dyn_decay_norm_max_hist_FCC, *dyn_decay_norm_max_hist_HCP, *dyn_decay_norm_max_hist_BCC_9, *dyn_decay_norm_max_hist_BCC_15;
-
-double *dyn_decay_norm_corrected_max_hist_sp3, *dyn_decay_norm_corrected_max_hist_sp3a, *dyn_decay_norm_corrected_max_hist_sp3b, *dyn_decay_norm_corrected_max_hist_sp3c;
-double *dyn_decay_norm_corrected_max_hist_sp4, *dyn_decay_norm_corrected_max_hist_sp4a, *dyn_decay_norm_corrected_max_hist_sp4b, *dyn_decay_norm_corrected_max_hist_6A;
-double *dyn_decay_norm_corrected_max_hist_sp5, *dyn_decay_norm_corrected_max_hist_sp5a, *dyn_decay_norm_corrected_max_hist_sp5b, *dyn_decay_norm_corrected_max_hist_sp5c;
-double *dyn_decay_norm_corrected_max_hist_6Z, *dyn_decay_norm_corrected_max_hist_7K;
-double *dyn_decay_norm_corrected_max_hist_8A, *dyn_decay_norm_corrected_max_hist_8B, *dyn_decay_norm_corrected_max_hist_8K;
-double *dyn_decay_norm_corrected_max_hist_9A, *dyn_decay_norm_corrected_max_hist_9B, *dyn_decay_norm_corrected_max_hist_9K;
-double *dyn_decay_norm_corrected_max_hist_10A, *dyn_decay_norm_corrected_max_hist_10B, *dyn_decay_norm_corrected_max_hist_10K, *dyn_decay_norm_corrected_max_hist_10W;
-double *dyn_decay_norm_corrected_max_hist_11A, *dyn_decay_norm_corrected_max_hist_11B, *dyn_decay_norm_corrected_max_hist_11C, *dyn_decay_norm_corrected_max_hist_11E, *dyn_decay_norm_corrected_max_hist_11F, *dyn_decay_norm_corrected_max_hist_11W;
-double *dyn_decay_norm_corrected_max_hist_12A, *dyn_decay_norm_corrected_max_hist_12B, *dyn_decay_norm_corrected_max_hist_12D, *dyn_decay_norm_corrected_max_hist_12E, *dyn_decay_norm_corrected_max_hist_12K;
-double *dyn_decay_norm_corrected_max_hist_13A, *dyn_decay_norm_corrected_max_hist_13B, *dyn_decay_norm_corrected_max_hist_13K;
-double *dyn_decay_norm_corrected_max_hist_FCC, *dyn_decay_norm_corrected_max_hist_HCP, *dyn_decay_norm_corrected_max_hist_BCC_9, *dyn_decay_norm_corrected_max_hist_BCC_15;
-
 
 #endif 

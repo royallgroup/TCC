@@ -11,12 +11,7 @@ void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=6;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     s1a=s2a=s1b=s2b=-1;
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get6Z_C2v(): ach[] malloc out of memory\n");  Error(errMsg); }
     for(i=0; i<N; ++i) ach[i] = 'C';
@@ -107,17 +102,6 @@ void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
                 hc6Z[n6Z[f]][4]=k;
             }
             // hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
-            if (doDynamics==1 && dyn_m6Z!=-1) {
-                if (doSubClusts==1 && dyn_msp3c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp3c[i];
-                    sub[1]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][j]];
-                    quickSort(&sub[0],2);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc6Z[n6Z[f]], f, clusSize, &dyn_n6Z, &dyn_m6Z, &dyn_l6Z, &dyn_hc6Z, do_up, dummy_up, n6Z[f], do_sub, n_sub, &dyn_sub_6Z, sub);
-            }
             ach[hc6Z[n6Z[f]][0]] = 'O';
             ach[hc6Z[n6Z[f]][1]] = 'O';
             ach[hc6Z[n6Z[f]][2]] = 'O';
@@ -162,12 +146,7 @@ void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=7;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     scom=sother[0]=sother[1]=sp3_com[0]=sp3_com[1]=sp3c_i_other=sp3c_j_other=-1;
     
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get7K(): ach[] malloc out of memory\n");  Error(errMsg); }
@@ -305,18 +284,6 @@ void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
             quickSort(&hc7K[n7K[f]][5],2);
             
             // hc7K key: (scom, sother, ring_com, ring_other)
-            
-            if (doDynamics==1 && dyn_m7K!=-1) {
-                if (doSubClusts==1 && dyn_msp3c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp3c[i];
-                    sub[1]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][j]];
-                    quickSort(&sub[0],2);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc7K[n7K[f]], f, clusSize, &dyn_n7K, &dyn_m7K, &dyn_l7K, &dyn_hc7K, do_up, dummy_up, n7K[f], do_sub, n_sub, &dyn_sub_7K, sub);
-            }
             ach[hc7K[n7K[f]][0]] = 'O';
             ach[hc7K[n7K[f]][1]] = 'O';
             ach[hc7K[n7K[f]][2]] = 'O';
@@ -368,12 +335,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
     int number_of_A;
     int clusSize=8;
     int *used_sp5b;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=12;
-    int sub[12];
-    
+
     unc[0]=unc[1]=com[0]=com[1]=com[2]=com[3]=-1;
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8A_D2d(): ach[] malloc out of memory\n");  Error(errMsg); }
     for (i=0; i<N; ++i) ach[i] = 'C';
@@ -385,569 +347,361 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
         for (j2=0; j2<nsp5b[f]; ++j2) used_sp5b[j2] = 0;
         used_sp5b[i]=1;
         for (j2=0; j2<5; ++j2) {
-        for (j=0; j<nmem_sp5b[sp5b[i][j2]]; ++j) {  // loop over all sp5b_j
-            if (mem_sp5b[sp5b[i][j2]][j]<=i) continue;
-            if (used_sp5b[mem_sp5b[sp5b[i][j2]][j]]==1) continue;
-            used_sp5b[mem_sp5b[sp5b[i][j2]][j]]=1;
-            m = 0;
-            for (k=0; k<5; ++k) {
-                for (l=0; l<5; ++l) {
-                    if(sp5b[i][k] == sp5b[mem_sp5b[sp5b[i][j2]][j]][l]) {
-                        if (m<5) com[m]=sp5b[i][k];
-                        ++m;
+            for (j=0; j<nmem_sp5b[sp5b[i][j2]]; ++j) {  // loop over all sp5b_j
+                if (mem_sp5b[sp5b[i][j2]][j]<=i) continue;
+                if (used_sp5b[mem_sp5b[sp5b[i][j2]][j]]==1) continue;
+                used_sp5b[mem_sp5b[sp5b[i][j2]][j]]=1;
+                m = 0;
+                for (k=0; k<5; ++k) {
+                    for (l=0; l<5; ++l) {
+                        if(sp5b[i][k] == sp5b[mem_sp5b[sp5b[i][j2]][j]][l]) {
+                            if (m<5) com[m]=sp5b[i][k];
+                            ++m;
+                        }
                     }
                 }
-            }
-            if (m!=4) continue; // exactly four members of the SP5 rings of sp5b_i and sp5b_j in common
-            
-            if (sp5b[i][5] == sp5b[mem_sp5b[sp5b[i][j2]][j]][5]) continue;  // distinct spindles
+                if (m!=4) continue; // exactly four members of the SP5 rings of sp5b_i and sp5b_j in common
 
-            for (k=0; k<5; ++k) {
-                m=0;
-                for (l=0; l<4; ++l) {
-                    if (sp5b[i][k]==com[l]) m++;
-                }
-                if (m==0) unc[0]=sp5b[i][k];
-            }
-            for (k=0; k<5; ++k) {
-                m=0;
-                for (l=0; l<4; ++l) {
-                    if (sp5b[mem_sp5b[sp5b[i][j2]][j]][k]==com[l]) m++;
-                }
-                if (m==0) unc[1]=sp5b[mem_sp5b[sp5b[i][j2]][j]][k];
-            }           
-            
-            // Now we have found the 8A D2d cluster
-            if (n8A[f]==m8A) { 
-                hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_8A=resize_1D_double(bl_mom_8A,m8A,m8A+incrStatic);
-                }
-                m8A=m8A+incrStatic;
-            }
-            trial[0]=sp5b[i][5];    // build up trial cluster
-            trial[1]=sp5b[mem_sp5b[sp5b[i][j2]][j]][5];
-            trial[4]=unc[0];
-            trial[5]=unc[1];
-            
-            cnt=2;
-            break_out=0;
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(sp5b[i][k],trial[4])==1 && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
-                    if (cnt==4) {
-                        break_out=1;
-                        break;
+                if (sp5b[i][5] == sp5b[mem_sp5b[sp5b[i][j2]][j]][5]) continue;  // distinct spindles
+
+                for (k=0; k<5; ++k) {
+                    m=0;
+                    for (l=0; l<4; ++l) {
+                        if (sp5b[i][k]==com[l]) m++;
                     }
-                    trial[cnt]=sp5b[i][k];
-                    cnt++;
+                    if (m==0) unc[0]=sp5b[i][k];
                 }
-            }
-            if (break_out==1 || cnt<4) continue;
-            
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(sp5b[i][k],trial[2])==1 && sp5b[i][k]!=trial[2] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
-                    trial[6]=sp5b[i][k];
-                }
-                if (Bonds_BondCheck(sp5b[i][k],trial[3])==1 && sp5b[i][k]!=trial[3] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
-                    trial[7]=sp5b[i][k];
-                }
-            }
-            
-            quickSort(&trial[0],4);
-            quickSort(&trial[4],4);
-            flg=0;  // check trial cluster not already found
-            for (k=0; k<n8A[f]; ++k) {
-                for (l=0; l<8; ++l) {
-                    if (trial[l]!=hc8A[k][l]) break;
-                }   
-                if (l==8) flg=1;
-            }
-            if (flg==0) {
-                for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
-                
-                if (doDynamics==1 && dyn_m8A!=-1) {
-                    if (doSubClusts==1 && dyn_msp5b!=-1 && dyn_msp5c!=-1) {
-                        sub[0]=dyn_up_sp5b[i];
-                        sub[1]=dyn_up_sp5b[mem_sp5c[sp5b[i][j2]][j]];
-                        sub[2]=-1;
-                        sub[3]=-1;
-                        sub[4]=-1;
-                        sub[5]=-1;
-                        sub[6]=-1;
-                        sub[7]=-1;
-                        sub[8]=-1;
-                        sub[9]=-1;
-                        sub[10]=-1;
-                        sub[11]=-1;
-                        quickSort(&sub[0],2);
-                        do_sub=1;
+                for (k=0; k<5; ++k) {
+                    m=0;
+                    for (l=0; l<4; ++l) {
+                        if (sp5b[mem_sp5b[sp5b[i][j2]][j]][k]==com[l]) m++;
                     }
-                    else {
-                        sub[0]=1;
-                        sub[1]=1;
-                        sub[2]=-1;
-                        sub[3]=-1;
-                        sub[4]=-1;
-                        sub[5]=-1;
-                        sub[6]=-1;
-                        sub[7]=-1;
-                        sub[8]=-1;
-                        sub[9]=-1;
-                        sub[10]=-1;
-                        sub[11]=-1;
-                        do_sub=0;
-                    }
-                    do_up=0;
-                    Dyn_add_8A(trial, f, clusSize, &dyn_n8A, &dyn_m8A, &dyn_l8A, &dyn_hc8A, do_up, dummy_up, n8A[f], do_sub, n_sub, &dyn_sub_8A, sub);
+                    if (m==0) unc[1]=sp5b[mem_sp5b[sp5b[i][j2]][j]][k];
                 }
-                if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-                if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-                if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-                if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-                if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-                if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-                ach[hc8A[n8A[f]][6]] = 'O';
-                ach[hc8A[n8A[f]][7]] = 'O';
-                
-                if (doClusBLDistros==1) {
-                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                            if (Bonds_BondCheck(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])==1) {
-                                Bonds_TickBLDistro(bondlengths[hc8A[n8A[f]][binAcnt]][Bonds_cnb_j(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])],BLDistro8A,&BLDistroNoSamples8A);
+
+                // Now we have found the 8A D2d cluster
+                if (n8A[f]==m8A) {
+                    hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
+                    if (doClusBLDeviation==1) {
+                        bl_mom_8A=resize_1D_double(bl_mom_8A,m8A,m8A+incrStatic);
+                    }
+                    m8A=m8A+incrStatic;
+                }
+                trial[0]=sp5b[i][5];    // build up trial cluster
+                trial[1]=sp5b[mem_sp5b[sp5b[i][j2]][j]][5];
+                trial[4]=unc[0];
+                trial[5]=unc[1];
+
+                cnt=2;
+                break_out=0;
+                for (k=0; k<5; ++k) {
+                    if (Bonds_BondCheck(sp5b[i][k],trial[4])==1 && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
+                        if (cnt==4) {
+                            break_out=1;
+                            break;
+                        }
+                        trial[cnt]=sp5b[i][k];
+                        cnt++;
+                    }
+                }
+                if (break_out==1 || cnt<4) continue;
+
+                for (k=0; k<5; ++k) {
+                    if (Bonds_BondCheck(sp5b[i][k],trial[2])==1 && sp5b[i][k]!=trial[2] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
+                        trial[6]=sp5b[i][k];
+                    }
+                    if (Bonds_BondCheck(sp5b[i][k],trial[3])==1 && sp5b[i][k]!=trial[3] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
+                        trial[7]=sp5b[i][k];
+                    }
+                }
+
+                quickSort(&trial[0],4);
+                quickSort(&trial[4],4);
+                flg=0;  // check trial cluster not already found
+                for (k=0; k<n8A[f]; ++k) {
+                    for (l=0; l<8; ++l) {
+                        if (trial[l]!=hc8A[k][l]) break;
+                    }
+                    if (l==8) flg=1;
+                }
+                if (flg==0) {
+                    for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
+
+                    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
+                    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
+                    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
+                    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
+                    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
+                    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
+                    ach[hc8A[n8A[f]][6]] = 'O';
+                    ach[hc8A[n8A[f]][7]] = 'O';
+
+                    if (doClusBLDistros==1) {
+                        for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                            for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                                if (Bonds_BondCheck(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])==1) {
+                                    Bonds_TickBLDistro(bondlengths[hc8A[n8A[f]][binAcnt]][Bonds_cnb_j(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])],BLDistro8A,&BLDistroNoSamples8A);
+                                }
                             }
                         }
                     }
-                }
 
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
-                            nA8A++;
-                            number_of_A++;
+
+                    if (doClusComp==1) {
+                        number_of_A=0;
+                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
+                            if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
+                                nA8A++;
+                                number_of_A++;
+                            }
+                            else nB8A++;
                         }
-                        else nB8A++;
+                        n_distro_8A[number_of_A]++;
                     }
-                    n_distro_8A[number_of_A]++;
+
+                    ++n8A[f];
+
+                    // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
                 }
-                
-                ++n8A[f];
-                
-                // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
             }
-            else if (doDynamics==1 && dyn_m8A!=-1) {
-                if (doSubClusts==1 && dyn_msp5b!=-1 && dyn_msp5c!=-1) {
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    sub[6]=dyn_up_sp5b[i];
-                    sub[7]=dyn_up_sp5b[mem_sp5c[sp5b[i][j2]][j]];
-                    sub[8]=-1;
-                    sub[9]=-1;
-                    sub[10]=-1;
-                    sub[11]=-1;
-                    quickSort(&sub[6],2);
-                    do_sub=1;
-                }
-                else {
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    sub[6]=1;
-                    sub[7]=1;
-                    sub[8]=-1;
-                    sub[9]=-1;
-                    sub[10]=-1;
-                    sub[11]=-1;
-                    do_sub=0;
-                }
-                do_up=0;
-                Dyn_add_8A(trial, f, clusSize, &dyn_n8A, &dyn_m8A, &dyn_l8A, &dyn_hc8A, do_up, dummy_up, n8A[f], do_sub, n_sub, &dyn_sub_8A, sub);
-            }
-        }
         }
     }
     for (i=0; i<nsp5c[f] - 1; ++i) {    // loop over all 7A_i
         for (j2=5; j2<6; ++j2) {
-        for (j=0; j<nmem_sp5c[sp5c[i][j2]]; ++j) {  // loop over all 7A_j
-            if (mem_sp5c[sp5c[i][j2]][j]<=i) continue;
-            m = 0;
-            for (k=0; k<5; ++k) {
-                for (l=0; l<5; ++l) {
-                    if (sp5c[i][k] == sp5c[mem_sp5c[sp5c[i][j2]][j]][l]) {
-                        if (m<5) com[m]=sp5c[i][k];
-                        ++m;
+            for (j=0; j<nmem_sp5c[sp5c[i][j2]]; ++j) {  // loop over all 7A_j
+                if (mem_sp5c[sp5c[i][j2]][j]<=i) continue;
+                m = 0;
+                for (k=0; k<5; ++k) {
+                    for (l=0; l<5; ++l) {
+                        if (sp5c[i][k] == sp5c[mem_sp5c[sp5c[i][j2]][j]][l]) {
+                            if (m<5) com[m]=sp5c[i][k];
+                            ++m;
+                        }
                     }
                 }
-            }
-            if (m!=4) continue;     // exactly four members of the SP5 rings of 7A_i and 7A_j in common
-            
-            flg = sp5c[i][5] == sp5c[mem_sp5c[sp5c[i][j2]][j]][5] && sp5c[i][6] == sp5c[mem_sp5c[sp5c[i][j2]][j]][6];
-            flg = flg || (sp5c[i][5] == sp5c[mem_sp5c[sp5c[i][j2]][j]][6] && sp5c[i][6] == sp5c[mem_sp5c[sp5c[i][j2]][j]][5]);
-            if (flg!=1) continue; // both spindles common
-            
-            for (k=0; k<5; ++k) {
-                m=0;
-                for (l=0; l<4; ++l) {
-                    if (sp5c[i][k]==com[l]) m++;
-                }
-                if (m==0) unc[0]=sp5c[i][k];
-            }
-            for (k=0; k<5; ++k) {
-                m=0;
-                for (l=0; l<4; ++l) {
-                    if (sp5c[mem_sp5c[sp5c[i][j2]][j]][k]==com[l]) m++;
-                }
-                if (m==0) unc[1]=sp5c[mem_sp5c[sp5c[i][j2]][j]][k];
-            }
-            
-            // Now we have found the 8A D2d cluster
-            if (n8A[f]==m8A) { 
-                hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_8A=resize_1D_double(bl_mom_8A,m8A,m8A+incrStatic);
-                }
-                m8A=m8A+incrStatic;
-            }
-            trial[0]=sp5c[i][5];    // build up trial cluster
-            trial[1]=sp5c[i][6];
-            trial[4]=unc[0];
-            trial[5]=unc[1];
-            
-            cnt=2;
-            break_out=0;
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(sp5c[i][k],trial[4])==1 && sp5c[i][k]!=trial[4] && sp5c[i][k]!=trial[5]) {
-                    if (cnt==4) {
-                        break_out=1;
-                        break;
+                if (m!=4) continue;     // exactly four members of the SP5 rings of 7A_i and 7A_j in common
+
+                flg = sp5c[i][5] == sp5c[mem_sp5c[sp5c[i][j2]][j]][5] && sp5c[i][6] == sp5c[mem_sp5c[sp5c[i][j2]][j]][6];
+                flg = flg || (sp5c[i][5] == sp5c[mem_sp5c[sp5c[i][j2]][j]][6] && sp5c[i][6] == sp5c[mem_sp5c[sp5c[i][j2]][j]][5]);
+                if (flg!=1) continue; // both spindles common
+
+                for (k=0; k<5; ++k) {
+                    m=0;
+                    for (l=0; l<4; ++l) {
+                        if (sp5c[i][k]==com[l]) m++;
                     }
-                    trial[cnt]=sp5c[i][k];
-                    cnt++;
+                    if (m==0) unc[0]=sp5c[i][k];
                 }
-            }
-            if (break_out==1 || cnt<4) continue;
-            
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(sp5c[i][k],trial[2])==1 && sp5c[i][k]!=trial[2] && sp5c[i][k]!=trial[4] && sp5c[i][k]!=trial[5]) {
-                    trial[6]=sp5c[i][k];
-                }
-                if (Bonds_BondCheck(sp5c[i][k],trial[3])==1 && sp5c[i][k]!=trial[3] && sp5c[i][k]!=trial[4] && sp5c[i][k]!=trial[5]) {
-                    trial[7]=sp5c[i][k];
-                }
-            }
-            
-            quickSort(&trial[0],4);
-            quickSort(&trial[4],4);
-            flg=0;  // check trial cluster not already found
-            for (k=0; k<n8A[f]; ++k) {
-                for (l=0; l<8; ++l) {
-                    if (trial[l]!=hc8A[k][l]) break;
-                }   
-                if (l==8) flg=1;
-            }
-            if (flg==0) {
-                for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
-                
-                if (doDynamics==1 && dyn_m8A!=-1) {
-                    if (doSubClusts==1 && dyn_msp5b!=-1 && dyn_msp5c!=-1) {
-                        sub[0]=-1;
-                        sub[1]=-1;
-                        sub[2]=dyn_up_sp5c[i];
-                        sub[3]=dyn_up_sp5c[mem_sp5c[sp5b[i][j2]][j]];
-                        sub[4]=-1;
-                        sub[5]=-1;
-                        sub[6]=-1;
-                        sub[7]=-1;
-                        sub[8]=-1;
-                        sub[9]=-1;
-                        sub[10]=-1;
-                        sub[11]=-1;
-                        quickSort(&sub[2],2);
-                        do_sub=1;
+                for (k=0; k<5; ++k) {
+                    m=0;
+                    for (l=0; l<4; ++l) {
+                        if (sp5c[mem_sp5c[sp5c[i][j2]][j]][k]==com[l]) m++;
                     }
-                    else {
-                        sub[0]=-1;
-                        sub[1]=-1;
-                        sub[2]=1;
-                        sub[3]=1;
-                        sub[4]=-1;
-                        sub[5]=-1;
-                        sub[6]=-1;
-                        sub[7]=-1;
-                        sub[8]=-1;
-                        sub[9]=-1;
-                        sub[10]=-1;
-                        sub[11]=-1;
-                        do_sub=0;
-                    }
-                    do_up=0;
-                    Dyn_add_8A(trial, f, clusSize, &dyn_n8A, &dyn_m8A, &dyn_l8A, &dyn_hc8A, do_up, dummy_up, n8A[f], do_sub, n_sub, &dyn_sub_8A, sub);
+                    if (m==0) unc[1]=sp5c[mem_sp5c[sp5c[i][j2]][j]][k];
                 }
-                if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-                if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-                if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-                if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-                if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-                if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-                ach[hc8A[n8A[f]][6]] = 'O';
-                ach[hc8A[n8A[f]][7]] = 'O';
-                
-                if (doClusBLDistros==1) {
-                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                            if (Bonds_BondCheck(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])==1) {
-                                Bonds_TickBLDistro(bondlengths[hc8A[n8A[f]][binAcnt]][Bonds_cnb_j(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])],BLDistro8A,&BLDistroNoSamples8A);
+
+                // Now we have found the 8A D2d cluster
+                if (n8A[f]==m8A) {
+                    hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
+                    if (doClusBLDeviation==1) {
+                        bl_mom_8A=resize_1D_double(bl_mom_8A,m8A,m8A+incrStatic);
+                    }
+                    m8A=m8A+incrStatic;
+                }
+                trial[0]=sp5c[i][5];    // build up trial cluster
+                trial[1]=sp5c[i][6];
+                trial[4]=unc[0];
+                trial[5]=unc[1];
+
+                cnt=2;
+                break_out=0;
+                for (k=0; k<5; ++k) {
+                    if (Bonds_BondCheck(sp5c[i][k],trial[4])==1 && sp5c[i][k]!=trial[4] && sp5c[i][k]!=trial[5]) {
+                        if (cnt==4) {
+                            break_out=1;
+                            break;
+                        }
+                        trial[cnt]=sp5c[i][k];
+                        cnt++;
+                    }
+                }
+                if (break_out==1 || cnt<4) continue;
+
+                for (k=0; k<5; ++k) {
+                    if (Bonds_BondCheck(sp5c[i][k],trial[2])==1 && sp5c[i][k]!=trial[2] && sp5c[i][k]!=trial[4] && sp5c[i][k]!=trial[5]) {
+                        trial[6]=sp5c[i][k];
+                    }
+                    if (Bonds_BondCheck(sp5c[i][k],trial[3])==1 && sp5c[i][k]!=trial[3] && sp5c[i][k]!=trial[4] && sp5c[i][k]!=trial[5]) {
+                        trial[7]=sp5c[i][k];
+                    }
+                }
+
+                quickSort(&trial[0],4);
+                quickSort(&trial[4],4);
+                flg=0;  // check trial cluster not already found
+                for (k=0; k<n8A[f]; ++k) {
+                    for (l=0; l<8; ++l) {
+                        if (trial[l]!=hc8A[k][l]) break;
+                    }
+                    if (l==8) flg=1;
+                }
+                if (flg==0) {
+                    for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
+
+                    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
+                    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
+                    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
+                    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
+                    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
+                    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
+                    ach[hc8A[n8A[f]][6]] = 'O';
+                    ach[hc8A[n8A[f]][7]] = 'O';
+
+                    if (doClusBLDistros==1) {
+                        for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                            for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                                if (Bonds_BondCheck(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])==1) {
+                                    Bonds_TickBLDistro(bondlengths[hc8A[n8A[f]][binAcnt]][Bonds_cnb_j(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])],BLDistro8A,&BLDistroNoSamples8A);
+                                }
                             }
                         }
                     }
-                }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
-                            nA8A++;
-                            number_of_A++;
+
+                    if (doClusComp==1) {
+                        number_of_A=0;
+                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
+                            if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
+                                nA8A++;
+                                number_of_A++;
+                            }
+                            else nB8A++;
                         }
-                        else nB8A++;
+                        n_distro_8A[number_of_A]++;
                     }
-                    n_distro_8A[number_of_A]++;
+
+                    ++n8A[f];
+
+                    // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
                 }
-                
-                ++n8A[f];
-                
-                // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
             }
-            else if (doDynamics==1 && dyn_m8A!=-1) {
-                if (doSubClusts==1 && dyn_msp5b!=-1 && dyn_msp5c!=-1) {
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    sub[6]=-1;
-                    sub[7]=-1;
-                    sub[8]=dyn_up_sp5c[i];
-                    sub[9]=dyn_up_sp5c[mem_sp5c[sp5b[i][j2]][j]];
-                    sub[10]=-1;
-                    sub[11]=-1;
-                    quickSort(&sub[8],2);
-                    do_sub=1;
-                }
-                else {
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    sub[6]=-1;
-                    sub[7]=-1;
-                    sub[8]=1;
-                    sub[9]=1;
-                    sub[10]=-1;
-                    sub[11]=-1;
-                    do_sub=0;
-                }
-                do_up=0;
-                Dyn_add_8A(trial, f, clusSize, &dyn_n8A, &dyn_m8A, &dyn_l8A, &dyn_hc8A, do_up, dummy_up, n8A[f], do_sub, n_sub, &dyn_sub_8A, sub);
-            }
-        }
         }
     }
     for (i=0; i<nsp5b[f]; ++i) {    // loop over all sp5b_i
         for (j2=5; j2<6; ++j2) {
-        for (j=0; j<nmem_sp5c[sp5b[i][j2]]; ++j) {  // loop over all 7A_j
-            m = 0;
-            for (k=0; k<5; ++k) {
-                for (l=0; l<5; ++l) {
-                    if (sp5b[i][k] == sp5c[mem_sp5c[sp5b[i][j2]][j]][l]) {
-                        if (m<5) com[m]=sp5b[i][k];
-                        ++m;
+            for (j=0; j<nmem_sp5c[sp5b[i][j2]]; ++j) {  // loop over all 7A_j
+                m = 0;
+                for (k=0; k<5; ++k) {
+                    for (l=0; l<5; ++l) {
+                        if (sp5b[i][k] == sp5c[mem_sp5c[sp5b[i][j2]][j]][l]) {
+                            if (m<5) com[m]=sp5b[i][k];
+                            ++m;
+                        }
                     }
                 }
-            }
-            if (m!=4) continue; // exactly four members of the SP5 rings of sp5b_i and 7A_j in common
-            
-            flg = sp5b[i][5] == sp5c[mem_sp5c[sp5b[i][j2]][j]][5] || sp5b[i][5] == sp5c[mem_sp5c[sp5b[i][j2]][j]][6];   
-            if (flg!=1) continue;   // sp5b_i spindle common with one of 7A_j spindles
-            
-            for (k=0; k<5; ++k) {
-                m=0;
-                for (l=0; l<4; ++l) {
-                    if (sp5b[i][k]==com[l]) m++;
-                }
-                if (m==0) unc[0]=sp5b[i][k];
-            }
-            for (k=0; k<5; ++k) {
-                m=0;
-                for (l=0; l<4; ++l) {
-                    if (sp5c[mem_sp5c[sp5b[i][j2]][j]][k]==com[l]) m++;
-                }
-                if (m==0) unc[1]=sp5c[mem_sp5c[sp5b[i][j2]][j]][k];
-            }
-            
-            // Now we have found the 8A D2d cluster
-            if (n8A[f]==m8A) { 
-                hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_8A=resize_1D_double(bl_mom_8A,m8A,m8A+incrStatic);
-                }
-                m8A=m8A+incrStatic;
-            }
-            trial[0]=sp5c[mem_sp5c[sp5b[i][j2]][j]][5]; // build up trial cluster
-            trial[1]=sp5c[mem_sp5c[sp5b[i][j2]][j]][6];
-            trial[4]=unc[0];
-            trial[5]=unc[1];
-            
-            cnt=2;
-            break_out=0;
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(sp5b[i][k],trial[4])==1 && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
-                    if (cnt==4) {
-                        break_out=1;
-                        break;
+                if (m!=4) continue; // exactly four members of the SP5 rings of sp5b_i and 7A_j in common
+
+                flg = sp5b[i][5] == sp5c[mem_sp5c[sp5b[i][j2]][j]][5] || sp5b[i][5] == sp5c[mem_sp5c[sp5b[i][j2]][j]][6];
+                if (flg!=1) continue;   // sp5b_i spindle common with one of 7A_j spindles
+
+                for (k=0; k<5; ++k) {
+                    m=0;
+                    for (l=0; l<4; ++l) {
+                        if (sp5b[i][k]==com[l]) m++;
                     }
-                    trial[cnt]=sp5b[i][k];
-                    cnt++;
+                    if (m==0) unc[0]=sp5b[i][k];
                 }
-            }
-            if (break_out==1 || cnt<4) continue;
-            
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(sp5b[i][k],trial[2])==1 && sp5b[i][k]!=trial[2] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
-                    trial[6]=sp5b[i][k];
-                }
-                if (Bonds_BondCheck(sp5b[i][k],trial[3])==1 && sp5b[i][k]!=trial[3] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
-                    trial[7]=sp5b[i][k];
-                }
-            }
-            
-            quickSort(&trial[0],4);
-            quickSort(&trial[4],4);
-            flg=0;  // check trial cluster not already found
-            for (k=0; k<n8A[f]; ++k) {
-                for (l=0; l<8; ++l) {
-                    if (trial[l]!=hc8A[k][l]) break;
-                }   
-                if (l==8) flg=1;
-            }
-            if (flg==0) {
-                for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
-                
-                if (doDynamics==1 && dyn_m8A!=-1) {
-                    if (doSubClusts==1 && dyn_msp5b!=-1 && dyn_msp5c!=-1) {
-                        do_sub=1;
-                        sub[0]=-1;
-                        sub[1]=-1;
-                        sub[2]=-1;
-                        sub[3]=-1;
-                        sub[4]=dyn_up_sp5b[i];
-                        sub[5]=dyn_up_sp5c[mem_sp5c[sp5b[i][j2]][j]];
-                        sub[6]=-1;
-                        sub[7]=-1;
-                        sub[8]=-1;
-                        sub[9]=-1;
-                        sub[10]=-1;
-                        sub[11]=-1;
+                for (k=0; k<5; ++k) {
+                    m=0;
+                    for (l=0; l<4; ++l) {
+                        if (sp5c[mem_sp5c[sp5b[i][j2]][j]][k]==com[l]) m++;
                     }
-                    else {
-                        do_sub=0;
-                        sub[0]=-1;
-                        sub[1]=-1;
-                        sub[2]=-1;
-                        sub[3]=-1;
-                        sub[4]=1;
-                        sub[5]=1;
-                        sub[6]=-1;
-                        sub[7]=-1;
-                        sub[8]=-1;
-                        sub[9]=-1;
-                        sub[10]=-1;
-                        sub[11]=-1;
-                    }
-                    do_up=0;
-                    Dyn_add_8A(trial, f, clusSize, &dyn_n8A, &dyn_m8A, &dyn_l8A, &dyn_hc8A, do_up, dummy_up, n8A[f], do_sub, n_sub, &dyn_sub_8A, sub);
+                    if (m==0) unc[1]=sp5c[mem_sp5c[sp5b[i][j2]][j]][k];
                 }
-                if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-                if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-                if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-                if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-                if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-                if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-                ach[hc8A[n8A[f]][6]] = 'O';
-                ach[hc8A[n8A[f]][7]] = 'O';
-                
-                if (doClusBLDistros==1) {
-                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                            if (Bonds_BondCheck(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])==1) {
-                                Bonds_TickBLDistro(bondlengths[hc8A[n8A[f]][binAcnt]][Bonds_cnb_j(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])],BLDistro8A,&BLDistroNoSamples8A);
+
+                // Now we have found the 8A D2d cluster
+                if (n8A[f]==m8A) {
+                    hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
+                    if (doClusBLDeviation==1) {
+                        bl_mom_8A=resize_1D_double(bl_mom_8A,m8A,m8A+incrStatic);
+                    }
+                    m8A=m8A+incrStatic;
+                }
+                trial[0]=sp5c[mem_sp5c[sp5b[i][j2]][j]][5]; // build up trial cluster
+                trial[1]=sp5c[mem_sp5c[sp5b[i][j2]][j]][6];
+                trial[4]=unc[0];
+                trial[5]=unc[1];
+
+                cnt=2;
+                break_out=0;
+                for (k=0; k<5; ++k) {
+                    if (Bonds_BondCheck(sp5b[i][k],trial[4])==1 && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
+                        if (cnt==4) {
+                            break_out=1;
+                            break;
+                        }
+                        trial[cnt]=sp5b[i][k];
+                        cnt++;
+                    }
+                }
+                if (break_out==1 || cnt<4) continue;
+
+                for (k=0; k<5; ++k) {
+                    if (Bonds_BondCheck(sp5b[i][k],trial[2])==1 && sp5b[i][k]!=trial[2] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
+                        trial[6]=sp5b[i][k];
+                    }
+                    if (Bonds_BondCheck(sp5b[i][k],trial[3])==1 && sp5b[i][k]!=trial[3] && sp5b[i][k]!=trial[4] && sp5b[i][k]!=trial[5]) {
+                        trial[7]=sp5b[i][k];
+                    }
+                }
+
+                quickSort(&trial[0],4);
+                quickSort(&trial[4],4);
+                flg=0;  // check trial cluster not already found
+                for (k=0; k<n8A[f]; ++k) {
+                    for (l=0; l<8; ++l) {
+                        if (trial[l]!=hc8A[k][l]) break;
+                    }
+                    if (l==8) flg=1;
+                }
+                if (flg==0) {
+                    for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
+
+                    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
+                    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
+                    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
+                    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
+                    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
+                    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
+                    ach[hc8A[n8A[f]][6]] = 'O';
+                    ach[hc8A[n8A[f]][7]] = 'O';
+
+                    if (doClusBLDistros==1) {
+                        for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                            for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                                if (Bonds_BondCheck(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])==1) {
+                                    Bonds_TickBLDistro(bondlengths[hc8A[n8A[f]][binAcnt]][Bonds_cnb_j(hc8A[n8A[f]][binAcnt],hc8A[n8A[f]][binBcnt])],BLDistro8A,&BLDistroNoSamples8A);
+                                }
                             }
                         }
                     }
-                }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
-                            nA8A++;
-                            number_of_A++;
+
+                    if (doClusComp==1) {
+                        number_of_A=0;
+                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
+                            if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
+                                nA8A++;
+                                number_of_A++;
+                            }
+                            else nB8A++;
                         }
-                        else nB8A++;
+                        n_distro_8A[number_of_A]++;
                     }
-                    n_distro_8A[number_of_A]++;
+
+                    ++n8A[f];
+
+                    // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
                 }
-                
-                ++n8A[f];
-                
-                // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
             }
-            else if (doDynamics==1 && dyn_m8A!=-1) {
-                if (doSubClusts==1 && dyn_msp5b!=-1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    sub[6]=-1;
-                    sub[7]=-1;
-                    sub[8]=-1;
-                    sub[9]=-1;
-                    sub[10]=dyn_up_sp5b[i];
-                    sub[11]=dyn_up_sp5c[mem_sp5c[sp5b[i][j2]][j]];
-                }
-                else {
-                    do_sub=0;
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    sub[6]=-1;
-                    sub[7]=-1;
-                    sub[8]=-1;
-                    sub[9]=-1;
-                    sub[10]=1;
-                    sub[11]=1;
-                }
-                do_up=0;
-                Dyn_add_8A(trial, f, clusSize, &dyn_n8A, &dyn_m8A, &dyn_l8A, &dyn_hc8A, do_up, dummy_up, n8A[f], do_sub, n_sub, &dyn_sub_8A, sub);
-            }
-        }
         }
     }
 
@@ -964,12 +718,7 @@ void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=8;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=1;
-    int sub[1];
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8B_Cs(): ach[] malloc out of memory\n");   Error(errMsg); }
     for(i=0; i<N; ++i) ach[i] = 'C';
     
@@ -1025,15 +774,6 @@ void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
             hc8B[n8B[f]][7]=n1;
             // hc8B key: (SP5_to_4, SP5_to_0/2, SP5_to_3, SP5_to_n1(lower), SP5_to_n1(greater), s, s_to_n1, n1)
             
-            if (doDynamics==1 && dyn_m8B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc8B[n8B[f]], f, clusSize, &dyn_n8B, &dyn_m8B, &dyn_l8B, &dyn_hc8B, do_up, dummy_up, n8B[f], do_sub, n_sub, &dyn_sub_8B, sub);
-            }
             if (ach[hc8B[n8B[f]][7]] == 'C') ach[hc8B[n8B[f]][7]] = 'B';
             if (ach[hc8B[n8B[f]][0]] == 'C') ach[hc8B[n8B[f]][0]] = 'B';
             if (ach[hc8B[n8B[f]][1]] == 'C') ach[hc8B[n8B[f]][1]] = 'B';
@@ -1117,15 +857,6 @@ void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
             hc8B[n8B[f]][7]=n1;
             
             // hc8B key: (SP5_to_4, SP5_to_0/2, SP5_to_3, SP5_to_n1(lower), SP5_to_n1(greater), s, s_to_n1, n1)
-            if (doDynamics==1 && dyn_m8B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc8B[n8B[f]], f, clusSize, &dyn_n8B, &dyn_m8B, &dyn_l8B, &dyn_hc8B, do_up, dummy_up, n8B[f], do_sub, n_sub, &dyn_sub_8B, sub);
-            }
             if (ach[hc8B[n8B[f]][7]] == 'C') ach[hc8B[n8B[f]][7]] = 'B';
             if (ach[hc8B[n8B[f]][0]] == 'C') ach[hc8B[n8B[f]][0]] = 'B';
             if (ach[hc8B[n8B[f]][1]] == 'C') ach[hc8B[n8B[f]][1]] = 'B';
@@ -1172,12 +903,7 @@ void Clusters_Get8K(int f) {    // Detect 8K clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=8;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=3;
-    int sub[3];
-    
+
     cp[0]=cp[1]=unc[0]=unc[1]=unc[2]=scom=sother[0]=sother[1]=-1;
 
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8K(): ach[] malloc out of memory\n");  Error(errMsg); }
@@ -1323,19 +1049,7 @@ void Clusters_Get8K(int f) {    // Detect 8K clusters
                 quickSort(&trial[2],3);
                 quickSort(&trial[5],3);
                 for (l=0; l<clusSize; l++) hc8K[n8K[f]][l]=trial[l];
-                
-                if (doDynamics==1 && dyn_m8K!=-1) {
-                    if (doSubClusts==1 && dyn_msp3c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp3c[i];
-                        sub[1]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][j]];
-                        sub[2]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][k]];
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc8K[n8K[f]], f, clusSize, &dyn_n8K, &dyn_m8K, &dyn_l8K, &dyn_hc8K, do_up, dummy_up, n8K[f], do_sub, n_sub, &dyn_sub_8K, sub);
-                }
+
                 if(ach[hc8K[n8K[f]][2]] == 'C') ach[hc8K[n8K[f]][2]] = 'B';
                 if(ach[hc8K[n8K[f]][3]] == 'C') ach[hc8K[n8K[f]][3]] = 'B';
                 if(ach[hc8K[n8K[f]][4]] == 'C') ach[hc8K[n8K[f]][4]] = 'B';
@@ -1385,11 +1099,6 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=9;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=3;
-    int sub[3];
 
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get9A_D3h(): ach[] malloc out of memory\n");  Error(errMsg); }
     for (i=0; i<N; ++i) ach[i] = 'C';
@@ -1540,18 +1249,6 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
                     }
                 
                 // hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
-                if (doDynamics==1 && dyn_m9A!=-1) {
-                    if (doSubClusts==1 && dyn_msp4b!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp4b[i];
-                        sub[1]=dyn_up_sp4b[mem_sp4b[sp4b[i][j2]][j]];
-                        sub[2]=dyn_up_sp4b[k];
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc9A[n9A[f]], f, clusSize, &dyn_n9A, &dyn_m9A, &dyn_l9A, &dyn_hc9A, do_up, dummy_up, n9A[f], do_sub, n_sub, &dyn_sub_9A, sub);
-                }
                 if(ach[hc9A[n9A[f]][0]] == 'C') ach[hc9A[n9A[f]][0]] = 'B';
                 if(ach[hc9A[n9A[f]][1]] == 'C') ach[hc9A[n9A[f]][1]] = 'B';
                 if(ach[hc9A[n9A[f]][3]] == 'C') ach[hc9A[n9A[f]][3]] = 'B';
@@ -1605,11 +1302,7 @@ void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=9;
-    int do_up=0;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     sp1=sp2i=sp2j=-1;
     ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach1[] malloc out of memory\n");    Error(errMsg); }
     ach1_cen=malloc(N*sizeof(char));    if (ach1_cen==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach1_cen[] malloc out of memory\n");    Error(errMsg); }
@@ -1742,18 +1435,6 @@ void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12
             hc9B[n9B[f]][8]=sp1;
             
             // hc9B key: (SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com)
-            if (doDynamics==1 && dyn_m9B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                    sub[1]=dyn_up_sp5c[j];
-                    quickSort(&sub[0],2);
-                }
-                else do_sub=0;
-                if (doSubClusts==1) do_up=1;
-                else do_up=0;
-                Dyn_add(hc9B[n9B[f]], f, clusSize, &dyn_n9B, &dyn_m9B, &dyn_l9B, &dyn_hc9B, do_up, dyn_up_9B, n9B[f], do_sub, n_sub, &dyn_sub_9B, sub);
-            }
             if (ach1[hc9B[n9B[f]][0]] == 'C') ach1[hc9B[n9B[f]][0]] = ach1_shell[hc9B[n9B[f]][0]] = 'B';
             if (ach1[hc9B[n9B[f]][1]] == 'C') ach1[hc9B[n9B[f]][1]] = ach1_shell[hc9B[n9B[f]][1]] = 'B';
             if (ach1[hc9B[n9B[f]][2]] == 'C') ach1[hc9B[n9B[f]][2]] = ach1_shell[hc9B[n9B[f]][2]] = 'B';
@@ -1861,10 +1542,6 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=10;
-    int do_up=0;
-    int do_sub=0;
-    int n_sub=3;
-    int sub[3];
 
     for (k=j+1; k<nsp5c[f]; ++k) {  // loop over all 7A_k
         if (sp5c[k][5] == hc9B[n9B[f]][8]) {    // check one spindle of 7A_k is the common spindle of 9B (hc9B[id9B][.] at this point)
@@ -1936,19 +1613,6 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
             for (l=0;l<10;l++) hc10B[n10B[f]][l]=trial[l];
 
             // hc10B key: (ordered shell particles, s1, s2, s3 (ordered), s_com)
-            if (doDynamics==1 && dyn_m10B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                    sub[1]=dyn_up_sp5c[j];
-                    sub[2]=dyn_up_sp5c[k];
-                    quickSort(&sub[0],3);
-                }
-                else do_sub=0;
-                if (doSubClusts==1) do_up=1;
-                else do_up=0;
-                Dyn_add(hc10B[n10B[f]], f, clusSize, &dyn_n10B, &dyn_m10B, &dyn_l10B, &dyn_hc10B, do_up, dyn_up_10B, n10B[f], do_sub, n_sub, &dyn_sub_10B, sub);
-            }
             if(ach[hc10B[n10B[f]][0]] == 'C') ach[hc10B[n10B[f]][0]] = ach_shell[hc10B[n10B[f]][0]] = 'B';
             if(ach[hc10B[n10B[f]][1]] == 'C') ach[hc10B[n10B[f]][1]] = ach_shell[hc10B[n10B[f]][1]] = 'B';
             if(ach[hc10B[n10B[f]][2]] == 'C') ach[hc10B[n10B[f]][2]] = ach_shell[hc10B[n10B[f]][2]] = 'B';
@@ -2077,19 +1741,6 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
             for (l=0;l<10;l++) hc10B[n10B[f]][l]=trial[l];
 
             // hc10B key: (ordered shell particles, s1, s2, s3 (ordered), s_com)
-            if (doDynamics==1 && dyn_m10B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                    sub[1]=dyn_up_sp5c[j];
-                    sub[2]=dyn_up_sp5c[k];
-                    quickSort(&sub[0],3);
-                }
-                else do_sub=0;
-                if (doSubClusts==1) do_up=1;
-                else do_up=0;
-                Dyn_add(hc10B[n10B[f]], f, clusSize, &dyn_n10B, &dyn_m10B, &dyn_l10B, &dyn_hc10B, do_up, dyn_up_10B, n10B[f], do_sub, n_sub, &dyn_sub_10B, sub);
-            }
             if(ach[hc10B[n10B[f]][0]] == 'C') ach[hc10B[n10B[f]][0]] = ach_shell[hc10B[n10B[f]][0]] = 'B';
             if(ach[hc10B[n10B[f]][1]] == 'C') ach[hc10B[n10B[f]][1]] = ach_shell[hc10B[n10B[f]][1]] = 'B';
             if(ach[hc10B[n10B[f]][2]] == 'C') ach[hc10B[n10B[f]][2]] = ach_shell[hc10B[n10B[f]][2]] = 'B';
@@ -2166,11 +1817,6 @@ int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // D
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=11;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=1;
-    int sub[1];
 
     if(cnb[hc9B[n9B[f]][8]]!= 10) return 0; // s_com has 10 bonds in total (all forming the shell)
     
@@ -2244,16 +1890,6 @@ int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // D
         hc11B[n11B[f]][10] = ep[0];
     }
     // hc11B key: (as 9B, ep_1_to_9B_0, ep_2_to_9B_1)
-    
-    if (doDynamics==1 && dyn_m11B!=-1) {
-        if (doSubClusts==1 && dyn_m9B!=-1) {
-            do_sub=1;
-            sub[0]=dyn_up_9B[n9B[f]];
-        }
-        else do_sub=0;
-        do_up=0;
-        Dyn_add(hc11B[n11B[f]], f, clusSize, &dyn_n11B, &dyn_m11B, &dyn_l11B, &dyn_hc11B, do_up, dummy_up, n11B[f], do_sub, n_sub, &dyn_sub_11B, sub);
-    }
     if(ach[hc11B[n11B[f]][0]] == 'C') ach[hc11B[n11B[f]][0]] = ach_shell[hc11B[n11B[f]][0]] = 'B';
     if(ach[hc11B[n11B[f]][1]] == 'C') ach[hc11B[n11B[f]][1]] = ach_shell[hc11B[n11B[f]][1]] = 'B';
     if(ach[hc11B[n11B[f]][2]] == 'C') ach[hc11B[n11B[f]][2]] = ach_shell[hc11B[n11B[f]][2]] = 'B';
@@ -2323,11 +1959,6 @@ int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) {  // D
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=11;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=1;
-    int sub[1];
 
     if(cnb[hc10B[n10B[f]][9]]!= 10) return 0;   // s_com has 10 bonds in total (all forming the shell)
 
@@ -2370,17 +2001,7 @@ int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) {  // D
     hc11W[n11W[f]][8] = hc10B[n10B[f]][8];
     hc11W[n11W[f]][9] = hc10B[n10B[f]][9];
     hc11W[n11W[f]][10] = ep;
-    
-    
-    if (doDynamics==1 && dyn_m11W!=-1) {
-        if (doSubClusts==1 && dyn_m10B!=-1) {
-            do_sub=1;
-            sub[0]=dyn_up_10B[n10B[f]];
-        }
-        else do_sub=0;
-        do_up=0;
-        Dyn_add(hc11W[n11W[f]], f, clusSize, &dyn_n11W, &dyn_m11W, &dyn_l11W, &dyn_hc11W, do_up, dummy_up, n11W[f], do_sub, n_sub, &dyn_sub_11W, sub);
-    }
+
     if(ach[hc11W[n11W[f]][0]] == 'C') ach[hc11W[n11W[f]][0]] = ach_shell[hc11W[n11W[f]][0]] = 'B';
     if(ach[hc11W[n11W[f]][1]] == 'C') ach[hc11W[n11W[f]][1]] = ach_shell[hc11W[n11W[f]][1]] = 'B';
     if(ach[hc11W[n11W[f]][2]] == 'C') ach[hc11W[n11W[f]][2]] = ach_shell[hc11W[n11W[f]][2]] = 'B';
@@ -2455,12 +2076,7 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=11;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=3;
-    int sub[3];
-    
+
     for(k=i+1; k<nsp5c[f]; k++) { // loop over all 7A_k
         if(k == j) continue;
         if(sp5c[k][5] == sp2j && sp5c[k][6] != sp2i) { // one 7A_k spindle is sp2j, one is not sp2i
@@ -2537,18 +2153,6 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (l=0;l<11;l++) hc11E[n11E[f]][l]=trial[l];
 
-                if (doDynamics==1 && dyn_m11E!=-1) {
-                    if (doSubClusts==1 && dyn_msp5c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp5c[i];
-                        sub[1]=dyn_up_sp5c[j];
-                        sub[2]=dyn_up_sp5c[k];
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc11E[n11E[f]], f, clusSize, &dyn_n11E, &dyn_m11E, &dyn_l11E, &dyn_hc11E, do_up, dummy_up, n11E[f], do_sub, n_sub, &dyn_sub_11E, sub);
-                }
                 if(ach1[hc11E[n11E[f]][4]] == 'C') ach1[hc11E[n11E[f]][4]] = 'B';
                 if(ach1[hc11E[n11E[f]][5]] == 'C') ach1[hc11E[n11E[f]][5]] = 'B';
                 if(ach1[hc11E[n11E[f]][6]] == 'C') ach1[hc11E[n11E[f]][6]] = 'B';
@@ -2663,18 +2267,6 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (l=0;l<11;l++) hc11E[n11E[f]][l]=trial[l];
 
-                if (doDynamics==1 && dyn_m11E!=-1) {
-                    if (doSubClusts==1 && dyn_msp5c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp5c[i];
-                        sub[1]=dyn_up_sp5c[j];
-                        sub[2]=dyn_up_sp5c[k];
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc11E[n11E[f]], f, clusSize, &dyn_n11E, &dyn_m11E, &dyn_l11E, &dyn_hc11E, do_up, dummy_up, n11E[f], do_sub, n_sub, &dyn_sub_11E, sub);
-                }
                 if(ach1[hc11E[n11E[f]][4]] == 'C') ach1[hc11E[n11E[f]][4]] = 'B';
                 if(ach1[hc11E[n11E[f]][5]] == 'C') ach1[hc11E[n11E[f]][5]] = 'B';
                 if(ach1[hc11E[n11E[f]][6]] == 'C') ach1[hc11E[n11E[f]][6]] = 'B';
@@ -2791,18 +2383,6 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (l=0;l<11;l++) hc11E[n11E[f]][l]=trial[l];
 
-                if (doDynamics==1 && dyn_m11E!=-1) {
-                    if (doSubClusts==1 && dyn_msp5c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp5c[i];
-                        sub[1]=dyn_up_sp5c[j];
-                        sub[2]=dyn_up_sp5c[k];
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc11E[n11E[f]], f, clusSize, &dyn_n11E, &dyn_m11E, &dyn_l11E, &dyn_hc11E, do_up, dummy_up, n11E[f], do_sub, n_sub, &dyn_sub_11E, sub);
-                }
                 if(ach1[hc11E[n11E[f]][4]] == 'C') ach1[hc11E[n11E[f]][4]] = 'B';
                 if(ach1[hc11E[n11E[f]][5]] == 'C') ach1[hc11E[n11E[f]][5]] = 'B';
                 if(ach1[hc11E[n11E[f]][6]] == 'C') ach1[hc11E[n11E[f]][6]] = 'B';
@@ -2917,18 +2497,6 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (l=0;l<11;l++) hc11E[n11E[f]][l]=trial[l];
 
-                if (doDynamics==1 && dyn_m11E!=-1) {
-                    if (doSubClusts==1 && dyn_msp5c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp5c[i];
-                        sub[1]=dyn_up_sp5c[j];
-                        sub[2]=dyn_up_sp5c[k];
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc11E[n11E[f]], f, clusSize, &dyn_n11E, &dyn_m11E, &dyn_l11E, &dyn_hc11E, do_up, dummy_up, n11E[f], do_sub, n_sub, &dyn_sub_11E, sub);
-                }
                 if(ach1[hc11E[n11E[f]][4]] == 'C') ach1[hc11E[n11E[f]][4]] = 'B';
                 if(ach1[hc11E[n11E[f]][5]] == 'C') ach1[hc11E[n11E[f]][5]] = 'B';
                 if(ach1[hc11E[n11E[f]][6]] == 'C') ach1[hc11E[n11E[f]][6]] = 'B';
@@ -2980,12 +2548,7 @@ int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach)
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=12;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=4;
-    int sub[4];
-    
+
     if(k > j) m = k;
     else m = j;
     for (l=m+1; l<nsp5c[f]; l++) {
@@ -3037,19 +2600,6 @@ int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach)
             
             for(m=0; m<12; ++m) hc12D[n12D[f]][m] = trial[m];   
             
-            if (doDynamics==1 && dyn_m12D!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                    sub[1]=dyn_up_sp5c[j];
-                    sub[2]=dyn_up_sp5c[k];
-                    sub[3]=dyn_up_sp5c[l];
-                    quickSort(&sub[0],4);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc12D[n12D[f]], f, clusSize, &dyn_n12D, &dyn_m12D, &dyn_l12D, &dyn_hc12D, do_up, dummy_up, n12D[f], do_sub, n_sub, &dyn_sub_12D, sub);
-            }
             if(ach[hc12D[n12D[f]][4]] == 'C') ach[hc12D[n12D[f]][4]] = 'B';
             if(ach[hc12D[n12D[f]][5]] == 'C') ach[hc12D[n12D[f]][5]] = 'B';
             if(ach[hc12D[n12D[f]][6]] == 'C') ach[hc12D[n12D[f]][6]] = 'B';
@@ -3102,11 +2652,7 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=9;
-    int do_up=0;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     cp[0]=cp[1]=scom=sother[0]=sother[1]=-1;
     
     ach_1=malloc(N*sizeof(char));   if (ach_1==NULL) { sprintf(errMsg,"Clusters_Get9K_10K(): ach_1[] malloc out of memory\n");  Error(errMsg); }
@@ -3228,18 +2774,6 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
             quickSort(&trial[2],4);
             for (k=0; k<9; k++) hc9K[n9K[f]][k]=trial[k];
 
-            if (doDynamics==1 && dyn_m9K!=-1) {
-                if (doSubClusts==1 && dyn_m6A!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp4c[i];
-                    sub[1]=dyn_up_sp4c[mem_sp4c[sp4c[i][j2]][j]];
-                    quickSort(&sub[0],2);
-                }
-                else do_sub=0;
-                if (doSubClusts==1) do_up=1;
-                else do_up=0;
-                Dyn_add(hc9K[n9K[f]], f, clusSize, &dyn_n9K, &dyn_m9K, &dyn_l9K, &dyn_hc9K, do_up, dyn_up_9K, n9K[f], do_sub, n_sub, &dyn_sub_9K, sub);
-            }
             if(ach_1[hc9K[n9K[f]][0]]  == 'C') ach_1[hc9K[n9K[f]][0]] = ach_shell_1[hc9K[n9K[f]][0]] = 'B';
             if(ach_1[hc9K[n9K[f]][1]]  == 'C') ach_1[hc9K[n9K[f]][1]] = ach_shell_1[hc9K[n9K[f]][1]] = 'B';
             if(ach_1[hc9K[n9K[f]][2]]  == 'C') ach_1[hc9K[n9K[f]][2]] = ach_shell_1[hc9K[n9K[f]][2]] = 'B';
@@ -3321,12 +2855,7 @@ int Clusters_Get10K(int f, char *ach, char *ach_cen, char *ach_shell) { // Detec
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=10;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=1;
-    int sub[1];
-    
+
     ep=-1;
 
     k=0;    // check exactly one extra particle bonded to 9K central particle, extra particle is separate from any of the 9K shell particles
@@ -3360,15 +2889,6 @@ int Clusters_Get10K(int f, char *ach, char *ach_cen, char *ach_shell) { // Detec
     }
     hc10K[n10K[f]][9]=ep;
 
-    if (doDynamics==1 && dyn_m10K!=-1) {
-        if (doSubClusts==1 && dyn_msp5b!=-1) {
-            do_sub=1;
-            sub[0]=dyn_up_9K[n9K[f]];
-        }
-        else do_sub=0;
-        do_up=0;
-        Dyn_add(hc10K[n10K[f]], f, clusSize, &dyn_n10K, &dyn_m10K, &dyn_l10K, &dyn_hc10K, do_up, dummy_up, n10K[f], do_sub, n_sub, &dyn_sub_10K, sub);
-    }
     if(ach[hc10K[n10K[f]][0]]  == 'C') ach[hc10K[n10K[f]][0]] = ach_shell[hc10K[n10K[f]][0]] = 'B';
     if(ach[hc10K[n10K[f]][1]]  == 'C') ach[hc10K[n10K[f]][1]] = ach_shell[hc10K[n10K[f]][1]] = 'B';
     if(ach[hc10K[n10K[f]][2]]  == 'C') ach[hc10K[n10K[f]][2]] = ach_shell[hc10K[n10K[f]][2]] = 'B';
@@ -3434,12 +2954,7 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
     int number_of_A;
     int clusSize=10;
     int *used_sp4b;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get10A_C3v(): ach[] malloc out of memory\n"); Error(errMsg); }
     for (i=0; i<N; ++i) ach[i] = 'C';
     
@@ -3494,18 +3009,6 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
                 hc10A[n10A[f]][9]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4];
                 quickSort(&hc10A[n10A[f]][8],2);
                 
-                
-                if (doDynamics==1 && dyn_m10A!=-1) {
-                    if (doSubClusts==1 && dyn_msp4b!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp4b[i];
-                        sub[1]=dyn_up_sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]];
-                        quickSort(&sub[0],2);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc10A[n10A[f]], f, clusSize, &dyn_n10A, &dyn_m10A, &dyn_l10A, &dyn_hc10A, do_up, dummy_up, n10A[f], do_sub, n_sub, &dyn_sub_10A, sub);
-                }
                 if(ach[hc10A[n10A[f]][0]] == 'C') ach[hc10A[n10A[f]][0]] = 'B';
                 if(ach[hc10A[n10A[f]][1]] == 'C') ach[hc10A[n10A[f]][1]] = 'B';
                 if(ach[hc10A[n10A[f]][2]] == 'C') ach[hc10A[n10A[f]][2]] = 'B';
@@ -3558,12 +3061,7 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=10;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=5;
-    int sub[5];
-    
+
     sp5b_clusts[0]=sp5b_clusts[1]=sp5b_clusts[2]=sp5b_clusts[3]=sp5b_clusts[4]=-1;
     
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get10W(): ach[] malloc out of memory\n"); Error(errMsg); }
@@ -3622,20 +3120,6 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
         for (j=0; j<9; j++) hc10W[n10W[f]][j+1]=shell_parts[j];
         quickSort(&hc10W[n10W[f]][1],9);
         
-        if (doDynamics==1 && dyn_m10W!=-1) {
-            if (doSubClusts==1 && dyn_msp5b!=-1) {
-                do_sub=1;
-                sub[0]=dyn_up_sp5b[sp5b_clusts[0]];
-                sub[1]=dyn_up_sp5b[sp5b_clusts[1]];
-                sub[2]=dyn_up_sp5b[sp5b_clusts[2]];
-                sub[3]=dyn_up_sp5b[sp5b_clusts[3]];
-                sub[4]=dyn_up_sp5b[sp5b_clusts[4]];
-                quickSort(&sub[0],5);
-            }
-            else do_sub=0;
-            do_up=0;
-            Dyn_add(hc10W[n10W[f]], f, clusSize, &dyn_n10W, &dyn_m10W, &dyn_l10W, &dyn_hc10W, do_up, dummy_up, n10W[f], do_sub, n_sub, &dyn_sub_10W, sub);
-        }
         if(ach[hc10W[n10W[f]][1]] == 'C') ach[hc10W[n10W[f]][1]] = ach_shell[hc10W[n10W[f]][1]] = 'B';
         if(ach[hc10W[n10W[f]][2]] == 'C') ach[hc10W[n10W[f]][2]] = ach_shell[hc10W[n10W[f]][2]] = 'B';
         if(ach[hc10W[n10W[f]][3]] == 'C') ach[hc10W[n10W[f]][3]] = ach_shell[hc10W[n10W[f]][3]] = 'B';
@@ -3714,11 +3198,7 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=11;
-    int do_up=0;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     ach_1=malloc(N*sizeof(char));   if (ach_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_1[] malloc out of memory\n"); Error(errMsg); }
     ach_cen_1=malloc(N*sizeof(char));   if (ach_cen_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_cen_1[] malloc out of memory\n"); Error(errMsg); }
     ach_shell_1=malloc(N*sizeof(char)); if (ach_shell_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_shell_1[] malloc out of memory\n"); Error(errMsg); }
@@ -3836,18 +3316,6 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
             quickSort(&hc11A[n11A[f]][0],8);
             quickSort(&hc11A[n11A[f]][8],2);
                 
-            if (doDynamics==1 && dyn_m11A!=-1) {
-                if (doSubClusts==1 && dyn_m6A!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp4c[i];
-                    sub[1]=dyn_up_sp4c[j];
-                    quickSort(&sub[0],2);
-                }
-                else do_sub=0;
-                if (doSubClusts==1) do_up=1;
-                else do_up=0;
-                Dyn_add(hc11A[n11A[f]], f, clusSize, &dyn_n11A, &dyn_m11A, &dyn_l11A, &dyn_hc11A, do_up, dyn_up_11A, n11A[f], do_sub, n_sub, &dyn_sub_11A, sub);
-            }
             if(ach_1[hc11A[n11A[f]][0]]  == 'C') ach_1[hc11A[n11A[f]][0]] = ach_shell_1[hc11A[n11A[f]][0]] = 'B';
             if(ach_1[hc11A[n11A[f]][1]]  == 'C') ach_1[hc11A[n11A[f]][1]] = ach_shell_1[hc11A[n11A[f]][1]] = 'B';
             if(ach_1[hc11A[n11A[f]][2]]  == 'C') ach_1[hc11A[n11A[f]][2]] = ach_shell_1[hc11A[n11A[f]][2]] = 'B';
@@ -3935,12 +3403,7 @@ int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=12;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=1;
-    int sub[1];
-    
+
     ep=-1;
     
     nep=0;
@@ -3968,15 +3431,6 @@ int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach
     for (i=0; i<11; i++) hc12K[n12K[f]][i] = hc11A[n11A[f]][i];
     hc12K[n12K[f]][11]=ep;
 
-    if (doDynamics==1 && dyn_m11A!=-1) {
-        if (doSubClusts==1 && dyn_msp5c!=-1) {
-            do_sub=1;
-            sub[0]=dyn_up_11A[n11A[f]];
-        }
-        else do_sub=0;
-        do_up=0;
-        Dyn_add(hc12K[n12K[f]], f, clusSize, &dyn_n12K, &dyn_m12K, &dyn_l12K, &dyn_hc12K, do_up, dummy_up, n12K[f], do_sub, n_sub, &dyn_sub_12K, sub);
-    }
     if(ach[hc12K[n12K[f]][0]]  == 'C') ach[hc12K[n12K[f]][0]] = ach_shell[hc12K[n12K[f]][0]] = 'B';
     if(ach[hc12K[n12K[f]][1]]  == 'C') ach[hc12K[n12K[f]][1]] = ach_shell[hc12K[n12K[f]][1]] = 'B';
     if(ach[hc12K[n12K[f]][2]]  == 'C') ach[hc12K[n12K[f]][2]] = ach_shell[hc12K[n12K[f]][2]] = 'B';
@@ -4046,11 +3500,7 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=11;
-    int do_up=0;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     ar[0]=ar[1]=sd[0]=sd[1]=spc=-1;
     ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach1[] malloc out of memory\n");   Error(errMsg); }
     ach1_cen=malloc(N*sizeof(char));    if (ach1_cen==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach1_cen[] malloc out of memory\n");   Error(errMsg); }
@@ -4187,18 +3637,6 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
                     quickSort(&hc11C[n11C[f]][5],4);
                     quickSort(&hc11C[n11C[f]][9],2);
                     
-                    if (doDynamics==1 && dyn_m11C!=-1) {
-                        if (doSubClusts==1 && dyn_msp5c!=-1) {
-                            do_sub=1;
-                            sub[0]=dyn_up_sp5c[i];
-                            sub[1]=dyn_up_sp5c[j];
-                            quickSort(&sub[0],2);
-                        }
-                        else do_sub=0;
-                        if (doSubClusts==1) do_up=1;
-                        else do_up=0;
-                        Dyn_add(hc11C[n11C[f]], f, clusSize, &dyn_n11C, &dyn_m11C, &dyn_l11C, &dyn_hc11C, do_up, dyn_up_11C, n11C[f], do_sub, n_sub, &dyn_sub_11C, sub);
-                    }
                     if(ach1[hc11C[n11C[f]][3]] == 'C') ach1[hc11C[n11C[f]][3]] = ach1_shell[hc11C[n11C[f]][3]] = 'B';
                     if(ach1[hc11C[n11C[f]][4]] == 'C') ach1[hc11C[n11C[f]][4]] = ach1_shell[hc11C[n11C[f]][4]] = 'B';
                     if(ach1[hc11C[n11C[f]][5]] == 'C') ach1[hc11C[n11C[f]][5]] = ach1_shell[hc11C[n11C[f]][5]] = 'B';
@@ -4291,12 +3729,7 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // R
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=12;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=1;
-    int sub[1];
-    
+
     ep=-1;
     
     if(cnb[hc11C[n11C[f]][0]] != 11) return 0;
@@ -4328,15 +3761,6 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // R
     for(k=0;k<11;k++) hc12A[n12A[f]][k]=hc11C[n11C[f]][k];
     hc12A[n12A[f]][11]=ep;
     
-    if (doDynamics==1 && dyn_m12A!=-1) {
-        if (doSubClusts==1 && dyn_m11C!=-1) {
-            do_sub=1;
-            sub[0]=dyn_up_11C[n11C[f]];
-        }
-        else do_sub=0;
-        do_up=0;
-        Dyn_add(hc12A[n12A[f]], f, clusSize, &dyn_n12A, &dyn_m12A, &dyn_l12A, &dyn_hc12A, do_up, dummy_up, n12A[f], do_sub, n_sub, &dyn_sub_12A, sub);
-    }
     if(ach[hc12A[n12A[f]][3]] == 'C') ach[hc12A[n12A[f]][3]] = ach_shell[hc12A[n12A[f]][3]] = 'B';
     if(ach[hc12A[n12A[f]][4]] == 'C') ach[hc12A[n12A[f]][4]] = ach_shell[hc12A[n12A[f]][4]] = 'B';
     if(ach[hc12A[n12A[f]][5]] == 'C') ach[hc12A[n12A[f]][5]] = ach_shell[hc12A[n12A[f]][5]] = 'B';
@@ -4406,10 +3830,6 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=11;
-    int do_up=0;
-    int do_sub=0;
-    int n_sub=4;
-    int sub[4];
 
     cp=bpi=bpj=ep1=ep2=the6A_i=the6A_j=-1;
     ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get11F_12E_13K(): ach1[] malloc out of memory\n");   Error(errMsg); }
@@ -4531,21 +3951,6 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
                             quickSort(&hc11F[n11F[f]][3],4);
                             quickSort(&hc11F[n11F[f]][7],4);
                             
-                            if (doDynamics==1 && dyn_m11F!=-1) {
-                                if (doSubClusts==1 && dyn_msp3c!=-1 && dyn_m6A!=-1) {
-                                    do_sub=1;
-                                    sub[0]=dyn_up_sp3c[i];
-                                    sub[1]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][j]];
-                                    sub[2]=dyn_up_sp4c[the6A_i];
-                                    sub[3]=dyn_up_sp4c[the6A_j];
-                                    quickSort(&sub[0],2);
-                                    quickSort(&sub[2],2);
-                                }
-                                else do_sub=0;
-                                if (doSubClusts==1) do_up=1;
-                                else do_up=0;
-                                Dyn_add(hc11F[n11F[f]], f, clusSize, &dyn_n11F, &dyn_m11F, &dyn_l11F, &dyn_hc11F, do_up, dyn_up_11F, n11F[f], do_sub, n_sub, &dyn_sub_11F, sub);
-                            }
                             if(ach1[hc11F[n11F[f]][0]] == 'C') ach1[hc11F[n11F[f]][0]] = 'B';
                             if(ach1[hc11F[n11F[f]][7]] == 'C') ach1[hc11F[n11F[f]][7]] = 'B';
                             if(ach1[hc11F[n11F[f]][8]] == 'C') ach1[hc11F[n11F[f]][8]] = 'B';
@@ -4697,21 +4102,6 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
                             quickSort(&hc11F[n11F[f]][3],4);
                             quickSort(&hc11F[n11F[f]][7],4);
                             
-                            if (doDynamics==1 && dyn_m11F!=-1) {
-                                if (doSubClusts==1 && dyn_msp3c!=-1 && dyn_m6A!=-1) {
-                                    do_sub=1;
-                                    sub[0]=dyn_up_sp3c[i];
-                                    sub[1]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][j]];
-                                    sub[2]=dyn_up_sp4c[the6A_i];
-                                    sub[3]=dyn_up_sp4c[the6A_j];
-                                    quickSort(&sub[0],2);
-                                    quickSort(&sub[2],2);
-                                }
-                                else do_sub=0;
-                                if (doSubClusts==1) do_up=1;
-                                else do_up=0;
-                                Dyn_add(hc11F[n11F[f]], f, clusSize, &dyn_n11F, &dyn_m11F, &dyn_l11F, &dyn_hc11F, do_up, dyn_up_11F, n11F[f], do_sub, n_sub, &dyn_sub_11F, sub);
-                            }
                             if(ach1[hc11F[n11F[f]][0]] == 'C') ach1[hc11F[n11F[f]][0]] = 'B';
                             if(ach1[hc11F[n11F[f]][7]] == 'C') ach1[hc11F[n11F[f]][7]] = 'B';
                             if(ach1[hc11F[n11F[f]][8]] == 'C') ach1[hc11F[n11F[f]][8]] = 'B';
@@ -4782,12 +4172,7 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 1
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=12;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     for(k=j+1; k<nsp3c[f]; ++k) {
         flg = (sp3c[k][3] == hc11F[n11F[f]][1] && sp3c[k][4] == hc11F[n11F[f]][2])  || (sp3c[k][3] == hc11F[n11F[f]][2] && sp3c[k][4] == hc11F[n11F[f]][1]);
         if (flg==1) { // spindles bonded correctly :)
@@ -4836,16 +4221,6 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 1
             quickSort(&hc12E[n12E[f]][0],6);
             quickSort(&hc12E[n12E[f]][6],6);
             
-            if (doDynamics==1 && dyn_m12E!=-1) {
-                if (doSubClusts==1 && dyn_msp3c!=-1 && dyn_m11F!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_11F[n11F[f]];
-                    sub[1]=dyn_up_sp3c[k];
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc12E[n12E[f]], f, clusSize, &dyn_n12E, &dyn_m12E, &dyn_l12E, &dyn_hc12E, do_up, dummy_up, n12E[f], do_sub, n_sub, &dyn_sub_12E, sub);
-            }
             if(ach[hc12E[n12E[f]][6]] == 'C') ach[hc12E[n12E[f]][6]] = 'B';
             if(ach[hc12E[n12E[f]][7]] == 'C') ach[hc12E[n12E[f]][7]] = 'B';
             if(ach[hc12E[n12E[f]][8]] == 'C') ach[hc12E[n12E[f]][8]] = 'B';
@@ -4913,12 +4288,7 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=13;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=3;
-    int sub[3];
-    
+
     sp3c_i_unc=sp3c_j_unc=ep[0]=ep[1]=eclus5A[0]=eclus5A[1]=tmp=-1;
 
     // Clusters 5A_i and 5A_j are new to the 13K, they have:
@@ -5059,18 +4429,6 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     quickSort(&hc13K[n13K[f]][11],2);
     quickSort(&eclus5A[0],2);
 
-    if (doDynamics==1 && dyn_m13K!=-1) {
-        if (doSubClusts==1 && dyn_msp3c!=-1 && dyn_m11F!=-1) {
-            do_sub=1;
-            sub[0]=dyn_up_11F[n11F[f]];
-            sub[1]=dyn_up_sp3c[eclus5A[0]];
-            sub[2]=dyn_up_sp3c[eclus5A[1]];
-            quickSort(&sub[1],2);
-        }
-        else do_sub=0;
-        do_up=0;
-        Dyn_add(hc13K[n13K[f]], f, clusSize, &dyn_n13K, &dyn_m13K, &dyn_l13K, &dyn_hc13K, do_up, dummy_up, n13K[f], do_sub, n_sub, &dyn_sub_13K, sub);
-    }
     if(ach[hc13K[n13K[f]][1]]  == 'C') ach[hc13K[n13K[f]][1]] = ach_shell[hc13K[n13K[f]][1]] = 'B';
     if(ach[hc13K[n13K[f]][2]]  == 'C') ach[hc13K[n13K[f]][2]] = ach_shell[hc13K[n13K[f]][2]] = 'B';
     if(ach[hc13K[n13K[f]][3]]  == 'C') ach[hc13K[n13K[f]][3]] = ach_shell[hc13K[n13K[f]][3]] = 'B';
@@ -5143,12 +4501,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=12;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=6;
-    int sub[6];
-    int **dummy_sub=NULL;
+
     
     ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach1[] malloc out of memory\n");   Error(errMsg); }
     ach1_cen=malloc(N*sizeof(char));    if (ach1_cen==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach1_cen[] malloc out of memory\n");   Error(errMsg); }
@@ -5223,11 +4576,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                 hc13A[n13A[f]][12] = sp5c[j][4];
                 quickSort(&hc13A[n13A[f]][1],12);
                 
-                if (doDynamics==1 && dyn_m13A!=-1) {
-                    do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc13A[n13A[f]], f, clusSize+1, &dyn_n13A, &dyn_m13A, &dyn_l13A, &dyn_hc13A, do_up, dummy_up, n13A[f], do_sub, 0, &dummy_sub, sub);
-                }
                 if(ach2[hc13A[n13A[f]][3]] == 'C') ach2[hc13A[n13A[f]][3]] = ach2_shell[hc13A[n13A[f]][3]] = 'B';
                 if(ach2[hc13A[n13A[f]][4]] == 'C') ach2[hc13A[n13A[f]][4]] = ach2_shell[hc13A[n13A[f]][4]] = 'B';
                 if(ach2[hc13A[n13A[f]][5]] == 'C') ach2[hc13A[n13A[f]][5]] = ach2_shell[hc13A[n13A[f]][5]] = 'B';
@@ -5349,12 +4697,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                 hc13A[n13A[f]][11] = sp5c[j][3];
                 hc13A[n13A[f]][12] = sp5c[j][4];
                 quickSort(&hc13A[n13A[f]][1],12);
-                
-                if (doDynamics==1 && dyn_m13A!=-1) {
-                    do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc13A[n13A[f]], f, clusSize+1, &dyn_n13A, &dyn_m13A, &dyn_l13A, &dyn_hc13A, do_up, dummy_up, n13A[f], do_sub, 0, &dummy_sub, sub);
-                }
+
                 if(ach2[hc13A[n13A[f]][3]] == 'C') ach2[hc13A[n13A[f]][3]] = ach2_shell[hc13A[n13A[f]][3]] = 'B';
                 if(ach2[hc13A[n13A[f]][4]] == 'C') ach2[hc13A[n13A[f]][4]] = ach2_shell[hc13A[n13A[f]][4]] = 'B';
                 if(ach2[hc13A[n13A[f]][5]] == 'C') ach2[hc13A[n13A[f]][5]] = ach2_shell[hc13A[n13A[f]][5]] = 'B';
@@ -5469,21 +4812,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
             quickSort(&hc12B[n12B[f]][2],5);
             quickSort(&hc12B[n12B[f]][7],5);
             
-            if (doDynamics==1 && dyn_m12B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                    sub[1]=dyn_up_sp5c[sj1[0]];
-                    sub[2]=dyn_up_sp5c[sj1[1]];
-                    sub[3]=dyn_up_sp5c[sj1[2]];
-                    sub[4]=dyn_up_sp5c[sj1[3]];
-                    sub[5]=dyn_up_sp5c[sj1[4]];
-                    quickSort(&sub[0],6);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc12B[n12B[f]], f, clusSize, &dyn_n12B, &dyn_m12B, &dyn_l12B, &dyn_hc12B, do_up, dummy_up, n12B[f], do_sub, n_sub, &dyn_sub_12B, sub);
-            }
             ach1[hc12B[n12B[f]][0]] = ach1_cen[hc12B[n12B[f]][0]] = 'O';
             ach1[hc12B[n12B[f]][2]] = ach1_shell[hc12B[n12B[f]][2]] = 'O';
             ach1[hc12B[n12B[f]][3]] = ach1_shell[hc12B[n12B[f]][3]] = 'O';
@@ -5593,21 +4921,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
             quickSort(&hc12B[n12B[f]][2],5);
             quickSort(&hc12B[n12B[f]][7],5);
             
-            if (doDynamics==1 && dyn_m12B!=-1) {
-                if (doSubClusts==1 && dyn_msp5c!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp5c[i];
-                    sub[1]=dyn_up_sp5c[sj2[0]];
-                    sub[2]=dyn_up_sp5c[sj2[1]];
-                    sub[3]=dyn_up_sp5c[sj2[2]];
-                    sub[4]=dyn_up_sp5c[sj2[3]];
-                    sub[5]=dyn_up_sp5c[sj2[4]];
-                    quickSort(&sub[0],6);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hc12B[n12B[f]], f, clusSize, &dyn_n12B, &dyn_m12B, &dyn_l12B, &dyn_hc12B, do_up, dummy_up, n12B[f], do_sub, n_sub, &dyn_sub_12B, sub);
-            }
             ach1[hc12B[n12B[f]][0]] = ach1_cen[hc12B[n12B[f]][0]] = 'O';
             ach1[hc12B[n12B[f]][2]] = ach1_shell[hc12B[n12B[f]][2]] = 'O';
             ach1[hc12B[n12B[f]][3]] = ach1_shell[hc12B[n12B[f]][3]] = 'O';
@@ -5693,12 +5006,7 @@ void Clusters_Get13B_D5h(int f) {   // Detect 13B D5h clusters, i.e. twisted ico
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=13;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=2;
-    int sub[2];
-    
+
     cp=-1;
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get13B_D5h(): ach[] malloc out of memory\n"); Error(errMsg); }
     ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_Get13B_D5h(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
@@ -5767,17 +5075,6 @@ void Clusters_Get13B_D5h(int f) {   // Detect 13B D5h clusters, i.e. twisted ico
                 quickSort(&hc13B[n13B[f]][1],2);
                 quickSort(&hc13B[n13B[f]][3],10);
                 
-                if (doDynamics==1 && dyn_m13B!=-1) {
-                    if (doSubClusts==1 && dyn_msp5c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp5c[i];
-                        sub[1]=dyn_up_sp5c[j];
-                        quickSort(&sub[0],2);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hc13B[n13B[f]], f, clusSize, &dyn_n13B, &dyn_m13B, &dyn_l13B, &dyn_hc13B, do_up, dummy_up, n13B[f], do_sub, n_sub, &dyn_sub_13B, sub);
-                }
                 if(ach[hc13B[n13B[f]][3]] == 'C') ach[hc13B[n13B[f]][3]] = ach_shell[hc13B[n13B[f]][3]] = 'B';
                 if(ach[hc13B[n13B[f]][4]] == 'C') ach[hc13B[n13B[f]][4]] = ach_shell[hc13B[n13B[f]][4]] = 'B';
                 if(ach[hc13B[n13B[f]][5]] == 'C') ach[hc13B[n13B[f]][5]] = ach_shell[hc13B[n13B[f]][5]] = 'B';
@@ -5860,12 +5157,7 @@ void Clusters_GetFCC(int f) {   // Detect 13 particle FCC clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=13;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=5;
-    int sub[5];
-    
+
     cp=bpi=bpj=nbpi=nbpj=i3=-1;
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetFCC(): ach[] malloc out of memory\n"); Error(errMsg); }
     ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetFCC(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
@@ -6058,27 +5350,7 @@ void Clusters_GetFCC(int f) {   // Detect 13 particle FCC clusters
                 hcFCC[nFCC[f]][8] = i3;
                 hcFCC[nFCC[f]][9] = i2;
                 quickSort(&hcFCC[nFCC[f]][1],12);
-                
-                if (doDynamics==1 && dyn_mFCC!=-1) {
-                    if (doSubClusts==1 && dyn_msp3b!=-1 && dyn_msp3c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp3b[i];
-                        sub[1]=dyn_up_sp3b[mem_sp3b[sp3b[i][j2]][j]];
-                        sub[2]=dyn_up_sp3b[mem_sp3b[sp3b[i][j2]][k]];
-                        if (l_clust_type==0) {
-                            sub[3]=dyn_up_sp3b[l];
-                            sub[4]=-1;
-                        }
-                        else {
-                            sub[3]=-1;
-                            sub[4]=dyn_up_sp3c[l];
-                        }
-                        quickSort(&sub[0],3);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hcFCC[nFCC[f]], f, clusSize, &dyn_nFCC, &dyn_mFCC, &dyn_lFCC, &dyn_hcFCC, do_up, dummy_up, nFCC[f], do_sub, n_sub, &dyn_sub_FCC, sub);
-                }
+
                 if(ach[hcFCC[nFCC[f]][1]] == 'C') ach[hcFCC[nFCC[f]][1]] = ach_shell[hcFCC[nFCC[f]][1]] = 'B';
                 if(ach[hcFCC[nFCC[f]][2]] == 'C') ach[hcFCC[nFCC[f]][2]] = ach_shell[hcFCC[nFCC[f]][2]] = 'B';
                 if(ach[hcFCC[nFCC[f]][5]] == 'C') ach[hcFCC[nFCC[f]][5]] = ach_shell[hcFCC[nFCC[f]][5]] = 'B';
@@ -6162,12 +5434,7 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=13;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=3;
-    int sub[3];
-    
+
     cp=-1;
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetHCP(): ach[] malloc out of memory\n"); Error(errMsg); }
     ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetHCP(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
@@ -6354,19 +5621,7 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
                 hcHCP[nHCP[f]][l++] = sp3c[mem_sp3c[sp3c[i][j2]][k]][4];
                 quickSort(&hcHCP[nHCP[f]][1],6);
                 quickSort(&hcHCP[nHCP[f]][7],6);
-    
-                if (doDynamics==1 && dyn_mHCP!=-1) {
-                    if (doSubClusts==1 && dyn_msp3c!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp3c[i];
-                        sub[1]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][j]];
-                        sub[2]=dyn_up_sp3c[mem_sp3c[sp3c[i][j2]][k]];
-                        quickSort(&sub[0],n_sub);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hcHCP[nHCP[f]], f, clusSize, &dyn_nHCP, &dyn_mHCP, &dyn_lHCP, &dyn_hcHCP, do_up, dummy_up, nHCP[f], do_sub, n_sub, &dyn_sub_HCP, sub);
-                }
+
                 if(ach[sp3c[i][0]] == 'C') ach[sp3c[i][0]] = 'B';
                 if(ach[sp3c[i][1]] == 'C') ach[sp3c[i][1]] = 'B';
                 if(ach[sp3c[i][2]] == 'C') ach[sp3c[i][2]] = 'B';
@@ -6464,12 +5719,7 @@ void Clusters_GetBCC_9(int f) {
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=9;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=6;
-    int sub[6];
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach[] malloc out of memory\n");   Error(errMsg); }
     ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach_cen[] malloc out of memory\n");   Error(errMsg); }
     ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach_shell[] malloc out of memory\n");   Error(errMsg); }
@@ -6552,21 +5802,6 @@ void Clusters_GetBCC_9(int f) {
             
             for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
             
-            if (doDynamics==1 && dyn_mBCC_9!=-1) {
-                if (doSubClusts==1 && dyn_msp4b!=-1 && dyn_m6A!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp4b[i];
-                    sub[1]=dyn_up_sp4b[mem_sp4b[sp4b[i][j2]][j]];
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    quickSort(&sub[0],2);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hcBCC_9[nBCC_9[f]], f, clusSize, &dyn_nBCC_9, &dyn_mBCC_9, &dyn_lBCC_9, &dyn_hcBCC_9, do_up, dummy_up, nBCC_9[f], do_sub, n_sub, &dyn_sub_BCC_9, sub);
-            }
             if(ach[hcBCC_9[nBCC_9[f]][1]] == 'C') ach[hcBCC_9[nBCC_9[f]][1]] = ach_shell[hcBCC_9[nBCC_9[f]][1]] = 'B';
             if(ach[hcBCC_9[nBCC_9[f]][2]] == 'C') ach[hcBCC_9[nBCC_9[f]][2]] = ach_shell[hcBCC_9[nBCC_9[f]][2]] = 'B';
             if(ach[hcBCC_9[nBCC_9[f]][3]] == 'C') ach[hcBCC_9[nBCC_9[f]][3]] = ach_shell[hcBCC_9[nBCC_9[f]][3]] = 'B';
@@ -6711,21 +5946,6 @@ void Clusters_GetBCC_9(int f) {
             }
             for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
             
-            if (doDynamics==1 && dyn_mBCC_9!=-1) {
-                if (doSubClusts==1 && dyn_msp4b!=-1 && dyn_m6A!=-1) {
-                    do_sub=1;
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=dyn_up_sp4c[i];
-                    sub[3]=dyn_up_sp4c[mem_sp4c[sp4c[i][j2]][j]];
-                    sub[4]=-1;
-                    sub[5]=-1;
-                    quickSort(&sub[2],2);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hcBCC_9[nBCC_9[f]], f, clusSize, &dyn_nBCC_9, &dyn_mBCC_9, &dyn_lBCC_9, &dyn_hcBCC_9, do_up, dummy_up, nBCC_9[f], do_sub, n_sub, &dyn_sub_BCC_9, sub);
-            }
             if(ach[hcBCC_9[nBCC_9[f]][1]] == 'C') ach[hcBCC_9[nBCC_9[f]][1]] = ach_shell[hcBCC_9[nBCC_9[f]][1]] = 'B';
             if(ach[hcBCC_9[nBCC_9[f]][2]] == 'C') ach[hcBCC_9[nBCC_9[f]][2]] = ach_shell[hcBCC_9[nBCC_9[f]][2]] = 'B';
             if(ach[hcBCC_9[nBCC_9[f]][3]] == 'C') ach[hcBCC_9[nBCC_9[f]][3]] = ach_shell[hcBCC_9[nBCC_9[f]][3]] = 'B';
@@ -6866,20 +6086,6 @@ void Clusters_GetBCC_9(int f) {
             }
             for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
             
-            if (doDynamics==1 && dyn_mBCC_9!=-1) {
-                if (doSubClusts==1 && dyn_m6A!=-1) {
-                    do_sub=1;
-                    sub[0]=-1;
-                    sub[1]=-1;
-                    sub[2]=-1;
-                    sub[3]=-1;
-                    sub[4]=dyn_up_sp4b[i];
-                    sub[5]=dyn_up_sp4c[mem_sp4c[sp4b[i][j2]][j]];
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hcBCC_9[nBCC_9[f]], f, clusSize, &dyn_nBCC_9, &dyn_mBCC_9, &dyn_lBCC_9, &dyn_hcBCC_9, do_up, dummy_up, nBCC_9[f], do_sub, n_sub, &dyn_sub_BCC_9, sub);
-            }
             if(ach[hcBCC_9[nBCC_9[f]][1]] == 'C') ach[hcBCC_9[nBCC_9[f]][1]] = ach_shell[hcBCC_9[nBCC_9[f]][1]] = 'B';
             if(ach[hcBCC_9[nBCC_9[f]][2]] == 'C') ach[hcBCC_9[nBCC_9[f]][2]] = ach_shell[hcBCC_9[nBCC_9[f]][2]] = 'B';
             if(ach[hcBCC_9[nBCC_9[f]][3]] == 'C') ach[hcBCC_9[nBCC_9[f]][3]] = ach_shell[hcBCC_9[nBCC_9[f]][3]] = 'B';
@@ -6957,12 +6163,7 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
     int binAcnt, binBcnt;
     int number_of_A;
     int clusSize=15;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=6;
-    int sub[6];
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach[] malloc out of memory\n");  Error(errMsg); }
     ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach_cen[] malloc out of memory\n");  Error(errMsg); }
     ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach_shell[] malloc out of memory\n");  Error(errMsg); }
@@ -7039,21 +6240,6 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
                 quickSort(&hcBCC_15[nBCC_15[f]][1],6);
                 quickSort(&hcBCC_15[nBCC_15[f]][7],8);  
                 
-                if (doDynamics==1 && dyn_mBCC_15!=-1) {
-                    if (doSubClusts==1 && dyn_m6A!=-1) {
-                        do_sub=1;
-                        sub[0]=dyn_up_sp4c[i];
-                        sub[1]=dyn_up_sp4c[sj[0]];
-                        sub[2]=dyn_up_sp4c[sj[1]];
-                        sub[3]=dyn_up_sp4c[sj[2]];
-                        sub[4]=dyn_up_sp4c[sj[3]];
-                        sub[5]=dyn_up_sp4c[sj[4]];
-                        quickSort(&sub[0],n_sub);
-                    }
-                    else do_sub=0;
-                    do_up=0;
-                    Dyn_add(hcBCC_15[nBCC_15[f]], f, clusSize, &dyn_nBCC_15, &dyn_mBCC_15, &dyn_lBCC_15, &dyn_hcBCC_15, do_up, dummy_up, nBCC_15[f], do_sub, n_sub, &dyn_sub_BCC_15, sub);
-                }
                 if(ach[hcBCC_15[nBCC_15[f]][7]] == 'C') ach[hcBCC_15[nBCC_15[f]][7]] = ach_shell[hcBCC_15[nBCC_15[f]][7]] = 'B';
                 if(ach[hcBCC_15[nBCC_15[f]][8]] == 'C') ach[hcBCC_15[nBCC_15[f]][8]] = ach_shell[hcBCC_15[nBCC_15[f]][8]] = 'B';
                 if(ach[hcBCC_15[nBCC_15[f]][9]] == 'C') ach[hcBCC_15[nBCC_15[f]][9]] = ach_shell[hcBCC_15[nBCC_15[f]][9]] = 'B';
@@ -7188,21 +6374,6 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
             quickSort(&hcBCC_15[nBCC_15[f]][1],6);
             quickSort(&hcBCC_15[nBCC_15[f]][7],8);  
             
-            if (doDynamics==1 && dyn_mBCC_15!=-1) {
-                if (doSubClusts==1 && dyn_m6A!=-1) {
-                    do_sub=1;
-                    sub[0]=dyn_up_sp4c[i];
-                    sub[1]=dyn_up_sp4c[sj[0]];
-                    sub[2]=dyn_up_sp4c[sj[1]];
-                    sub[3]=dyn_up_sp4c[sj[2]];
-                    sub[4]=dyn_up_sp4c[sj[3]];
-                    sub[5]=dyn_up_sp4c[sj[4]];
-                    quickSort(&sub[0],n_sub);
-                }
-                else do_sub=0;
-                do_up=0;
-                Dyn_add(hcBCC_15[nBCC_15[f]], f, clusSize, &dyn_nBCC_15, &dyn_mBCC_15, &dyn_lBCC_15, &dyn_hcBCC_15, do_up, dummy_up, nBCC_15[f], do_sub, n_sub, &dyn_sub_BCC_15, sub);
-            }
             if(ach[hcBCC_15[nBCC_15[f]][7]] == 'C') ach[hcBCC_15[nBCC_15[f]][7]] = ach_shell[hcBCC_15[nBCC_15[f]][7]] = 'B';
             if(ach[hcBCC_15[nBCC_15[f]][8]] == 'C') ach[hcBCC_15[nBCC_15[f]][8]] = ach_shell[hcBCC_15[nBCC_15[f]][8]] = 'B';
             if(ach[hcBCC_15[nBCC_15[f]][9]] == 'C') ach[hcBCC_15[nBCC_15[f]][9]] = ach_shell[hcBCC_15[nBCC_15[f]][9]] = 'B';

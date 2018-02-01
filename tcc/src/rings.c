@@ -46,12 +46,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
     int bcheck;
     int binAcnt;
     int number_of_A, number_of_A_ring;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
     
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
@@ -83,11 +77,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
         sp3a[nsp3a[f]][0] = n0;
         sp3a[nsp3a[f]][1] = n1;
         sp3a[nsp3a[f]][2] = n2;
-        if (doDynamics==1 && dyn_msp3a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp3a[nsp3a[f]], f, 3, &dyn_nsp3a, &dyn_msp3a, &dyn_lsp3a, &dyn_sp3a, do_up, dummy_up, nsp3a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
         
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3a,&BLDistroNoSamplessp3a);
@@ -179,12 +168,7 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
         sp3b[nsp3b[f]][1] = n1;
         sp3b[nsp3b[f]][2] = n2;
         sp3b[nsp3b[f]][3] = cp[0];
-        if (doDynamics==1 && dyn_msp3b!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp3b[nsp3b[f]], f, 4, &dyn_nsp3b, &dyn_msp3b, &dyn_lsp3b, &dyn_sp3b, do_up, dyn_up_sp3b, nsp3b[f], do_sub, n_sub, &dummy_sub, sub);
-        }
+
         mem_sp3b[n0][nmem_sp3b[n0]]=nsp3b[f];       
         nmem_sp3b[n0]++;        
         if (nmem_sp3b[n0] >= mmem_sp3b) {
@@ -355,12 +339,7 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             sp3c[nsp3c[f]][3] = cp[1];
             sp3c[nsp3c[f]][4] = cp[0];
         }
-        if (doDynamics==1 && dyn_msp3c!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp3c[nsp3c[f]], f, 5, &dyn_nsp3c, &dyn_msp3c, &dyn_lsp3c, &dyn_sp3c, do_up, dyn_up_sp3c, nsp3c[f], do_sub, n_sub, &dummy_sub, sub);
-        }
+
         mem_sp3c[n0][nmem_sp3c[n0]]=nsp3c[f];       
         nmem_sp3c[n0]++;        
         if (nmem_sp3c[n0] >= mmem_sp3c) { 
@@ -570,11 +549,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
         sp3a[nsp3a[f]][0] = n0;
         sp3a[nsp3a[f]][1] = n1;
         sp3a[nsp3a[f]][2] = n2;
-        if (doDynamics==1 && dyn_msp3a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp3a[nsp3a[f]], f, 3, &dyn_nsp3a, &dyn_msp3a, &dyn_lsp3a, &dyn_sp3a, do_up, dummy_up, nsp3a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
         
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3a,&BLDistroNoSamplessp3a);
@@ -666,13 +640,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
     int trial[6];
     int binAcnt;
     int number_of_A, number_of_A_ring;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
         j = bNums[n0][i];
@@ -704,11 +672,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         sp4a[nsp4a[f]][1] = n1;
         sp4a[nsp4a[f]][2] = n2;
         sp4a[nsp4a[f]][3] = n3;
-        if (doDynamics==1 && dyn_msp4a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp4a[nsp4a[f]], f, 4, &dyn_nsp4a, &dyn_msp4a, &dyn_lsp4a, &dyn_sp4a, do_up, dummy_up, nsp4a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
         
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4a,&BLDistroNoSamplessp4a);
@@ -817,12 +780,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         sp4b[nsp4b[f]][2] = n2;
         sp4b[nsp4b[f]][3] = n3;
         sp4b[nsp4b[f]][4] = cp[0];
-        if (doDynamics==1 && dyn_msp4b!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp4b[nsp4b[f]], f, 5, &dyn_nsp4b, &dyn_msp4b, &dyn_lsp4b, &dyn_sp4b, do_up, dyn_up_sp4b, nsp4b[f], do_sub, n_sub, &dummy_sub, sub);
-        }
+
         mem_sp4b[n0][nmem_sp4b[n0]]=nsp4b[f];       
         nmem_sp4b[n0]++;        
         if (nmem_sp4b[n0] >= mmem_sp4b) { 
@@ -1239,12 +1197,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             
             ++n6A[f];
         }
-        if (doDynamics==1 && dyn_m6A!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add_6A(flg, trial, f, 6, &dyn_n6A, &dyn_m6A, &dyn_l6A, &dyn_hc6A, do_up, dyn_up_sp4c, nsp4c[f], do_sub, n_sub, &dummy_sub, sub);
-        }
         
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4c,&BLDistroNoSamplessp4c);
@@ -1390,11 +1342,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         sp4a[nsp4a[f]][1] = n1;
         sp4a[nsp4a[f]][2] = n2;
         sp4a[nsp4a[f]][3] = n3;
-        if (doDynamics==1 && dyn_msp4a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp4a[nsp4a[f]], f, 4, &dyn_nsp4a, &dyn_msp4a, &dyn_lsp4a, &dyn_sp4a, do_up, dummy_up, nsp4a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
         
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4a,&BLDistroNoSamplessp4a);
@@ -1500,13 +1447,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
     int bcheck;
     int binAcnt;
     int number_of_A, number_of_A_ring;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
         j = bNums[n0][i];
@@ -1539,12 +1480,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
         sp5a[nsp5a[f]][2] = n2;
         sp5a[nsp5a[f]][3] = n3;
         sp5a[nsp5a[f]][4] = n4;
-        if (doDynamics==1 && dyn_msp5a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp5a[nsp5a[f]], f, 5, &dyn_nsp5a, &dyn_msp5a, &dyn_lsp5a, &dyn_sp5a, do_up, dummy_up, nsp5a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
+
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5a,&BLDistroNoSamplessp5a);
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
@@ -1669,12 +1605,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
         sp5b[nsp5b[f]][3] = n3;
         sp5b[nsp5b[f]][4] = n4;
         sp5b[nsp5b[f]][5] = cp[0];
-        if (doDynamics==1 && dyn_msp5b!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp5b[nsp5b[f]], f, 6, &dyn_nsp5b, &dyn_msp5b, &dyn_lsp5b, &dyn_sp5b, do_up, dyn_up_sp5b, nsp5b[f], do_sub, n_sub, &dummy_sub, sub);
-        }
+
         mem_sp5b[n0][nmem_sp5b[n0]]=nsp5b[f];       
         nmem_sp5b[n0]++;        
         if (nmem_sp5b[n0] >= mmem_sp5b) { 
@@ -1880,12 +1811,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             sp5c[nsp5c[f]][5] = cp[1];
             sp5c[nsp5c[f]][6] = cp[0];
         }
-        if (doDynamics==1 && dyn_msp5c!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp5c[nsp5c[f]], f, 7, &dyn_nsp5c, &dyn_msp5c, &dyn_lsp5c, &dyn_sp5c, do_up, dyn_up_sp5c, nsp5c[f], do_sub, n_sub, &dummy_sub, sub);
-        }
+
         mem_sp5c[n0][nmem_sp5c[n0]]=nsp5c[f];       
         nmem_sp5c[n0]++;        
         if (nmem_sp5c[n0] >= mmem_sp5c) { 
@@ -2113,11 +2039,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
         sp5a[nsp5a[f]][2] = n2;
         sp5a[nsp5a[f]][3] = n3;
         sp5a[nsp5a[f]][4] = n4;
-        if (doDynamics==1 && dyn_msp5a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp5a[nsp5a[f]], f, 5, &dyn_nsp5a, &dyn_msp5a, &dyn_lsp5a, &dyn_sp5a, do_up, dummy_up, nsp5a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
+
         
         if (doClusBLDistros==1) {
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5a,&BLDistroNoSamplessp5a);
@@ -2233,15 +2155,9 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
 }
 
 void Rings_setSP3c(int f) { // store cluster 5A D3h from Bonds_aSP3
-    int i, arr[3];
+    int i;
     char *ach, errMsg[1000];
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP3c(): ach[] malloc out of memory\n");   Error(errMsg); }
     
     for (i=0; i<N; i++) ach[i] = 'C';
@@ -2288,53 +2204,14 @@ void Rings_setSP3c(int f) { // store cluster 5A D3h from Bonds_aSP3
         if (ach[sp3c[i][2]] == 'C') ach[sp3c[i][2]] = 'B';
     }
     for (i=0; i<N; ++i) ssp3[i]=ach[i];
-    
-    if (doDynamics==1 && dyn_msp3!=-1) {
-        for (i=0; i<nsp3a[f]; i++) {
-            arr[0]=sp3a[i][0];
-            arr[1]=sp3a[i][1];
-            arr[2]=sp3a[i][2];
-            if (doDynamics==1 && dyn_msp3!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 3, &dyn_nsp3, &dyn_msp3, &dyn_lsp3, &dyn_sp3, do_up, dummy_up, nsp3[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp3b[f]; i++) {
-            arr[0]=sp3b[i][0];
-            arr[1]=sp3b[i][1];
-            arr[2]=sp3b[i][2];
-            if (doDynamics==1 && dyn_msp3!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 3, &dyn_nsp3, &dyn_msp3, &dyn_lsp3, &dyn_sp3, do_up, dummy_up, nsp3[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp3c[f]; ++i) {
-            arr[0]=sp3c[i][0];
-            arr[1]=sp3c[i][1];
-            arr[2]=sp3c[i][2];
-            if (doDynamics==1 && dyn_msp3!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 3, &dyn_nsp3, &dyn_msp3, &dyn_lsp3, &dyn_sp3, do_up, dummy_up, nsp3[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-    }
-    
+
     free(ach);
 }
 
 void Rings_setSP4c(int f) { // store cluster 6A Oh from Bonds_aSP4()
-    int i, arr[4];
+    int i;
     char *ach, errMsg[1000];
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP4c(): ach[] malloc out of memory\n");   Error(errMsg); }
     
     for (i=0; i<N; i++) ach[i] = 'C';
@@ -2387,56 +2264,15 @@ void Rings_setSP4c(int f) { // store cluster 6A Oh from Bonds_aSP4()
         if (ach[sp4c[i][3]] == 'C') ach[sp4c[i][3]] = 'B';
     }
     for (i=0; i<N; ++i) ssp4[i]=ach[i];
-    
-    if (doDynamics==1 && dyn_msp4!=-1) {
-        for (i=0; i<nsp4a[f]; i++) {
-            arr[0]=sp4a[i][0];
-            arr[1]=sp4a[i][1];
-            arr[2]=sp4a[i][2];
-            arr[3]=sp4a[i][3];
-            if (doDynamics==1 && dyn_msp4!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 4, &dyn_nsp4, &dyn_msp4, &dyn_lsp4, &dyn_sp4, do_up, dummy_up, nsp4[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp4b[f]; i++) {
-            arr[0]=sp4b[i][0];
-            arr[1]=sp4b[i][1];
-            arr[2]=sp4b[i][2];
-            arr[3]=sp4b[i][3];
-            if (doDynamics==1 && dyn_msp4!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 4, &dyn_nsp4, &dyn_msp4, &dyn_lsp4, &dyn_sp4, do_up, dummy_up, nsp4[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp4c[f]; ++i) {
-            arr[0]=sp4c[i][0];
-            arr[1]=sp4c[i][1];
-            arr[2]=sp4c[i][2];
-            arr[3]=sp4c[i][3];
-            if (doDynamics==1 && dyn_msp4!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 4, &dyn_nsp4, &dyn_msp4, &dyn_lsp4, &dyn_sp4, do_up, dummy_up, nsp4[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-    }
+
     
     free(ach);
 }
 
 void Rings_setSP5c(int f) { // store cluster 7A D5h from Bonds_aSP5()
-    int i, arr[5];
+    int i;
     char *ach, errMsg[1000];
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP5c(): ach[] malloc out of memory\n");   Error(errMsg); }
     
     for (i=0; i<N; i++) ach[i] = 'C';
@@ -2495,45 +2331,6 @@ void Rings_setSP5c(int f) { // store cluster 7A D5h from Bonds_aSP5()
         if (ach[sp5c[i][4]] == 'C') ach[sp5c[i][4]] = 'B';
     }
     for (i=0; i<N; ++i) ssp5[i]=ach[i];
-    
-    if (doDynamics==1 && dyn_msp5!=-1) {
-        for (i=0; i<nsp5a[f]; i++) {
-            arr[0]=sp5a[i][0];
-            arr[1]=sp5a[i][1];
-            arr[2]=sp5a[i][2];
-            arr[3]=sp5a[i][3];
-            arr[4]=sp5a[i][4];
-            if (doDynamics==1 && dyn_msp5!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 5, &dyn_nsp5, &dyn_msp5, &dyn_lsp5, &dyn_sp5, do_up, dummy_up, nsp5[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp5b[f]; i++) {
-            arr[0]=sp5b[i][0];
-            arr[1]=sp5b[i][1];
-            arr[2]=sp5b[i][2];
-            arr[3]=sp5b[i][3];
-            arr[4]=sp5b[i][4];
-            if (doDynamics==1 && dyn_msp5!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 5, &dyn_nsp5, &dyn_msp5, &dyn_lsp5, &dyn_sp5, do_up, dummy_up, nsp5[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp5c[f]; ++i) {
-            arr[0]=sp5c[i][0];
-            arr[1]=sp5c[i][1];
-            arr[2]=sp5c[i][2];
-            arr[3]=sp5c[i][3];
-            arr[4]=sp5c[i][4];
-            if (doDynamics==1 && dyn_msp5!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 5, &dyn_nsp5, &dyn_msp5, &dyn_lsp5, &dyn_sp5, do_up, dummy_up, nsp5[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-    }
     
     free(ach);
 }

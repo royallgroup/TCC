@@ -70,7 +70,7 @@ void Bonds_WriteBondNetwork(int f) {
     int i,j,k;
     char input[1000];
     FILE *writeout;
-    
+
     sprintf(input,"bondnetwork.f%d.matrix_bonds",f);
     writeout=fopen(input, "w");
     for (i=0; i<N; ++i) {
@@ -82,7 +82,7 @@ void Bonds_WriteBondNetwork(int f) {
         fprintf(writeout,"\n");
     }
     fclose(writeout);
-    printf("d%d Bonds_WriteBondNetwork(): Written bondnetwork matrix to %s\n\n",rank,input);
+    printf("Bonds_WriteBondNetwork(): Written bondnetwork matrix to %s\n\n",input);
 }
 
 void Bonds_WriteBonds(int f) {
@@ -157,7 +157,7 @@ void Bonds_WriteBLDistro(char *filename, int *histo, int *count, double *meanRtn
     (*meanRtn)=mean/(double)(*count);
     fprintf(writeout,"mean nearest neighbour bond length    %.15lg\n",meanBL);
     fclose(writeout);
-    printf("d%d Written %s\n",rank,filename);
+    printf("Written %s\n",filename);
 }
 
 void Bonds_WriteBLDistroClust(char *filename, int *histo, int *count,double *meanRtn) {
@@ -184,7 +184,7 @@ void Bonds_WriteBLDistroClust(char *filename, int *histo, int *count,double *mea
     (*meanRtn)=mean/(double)(*count);
     fprintf(writeout,"mean nearest neighbour bond length    %.15lg\n",(*meanRtn));
     fclose(writeout);
-    printf("d%d Written %s\n",rank,filename);
+    printf("Written %s\n",filename);
 }
 
 void Bonds_TallynbDistro() {
@@ -261,7 +261,7 @@ void Bonds_WritenbDistro(char *filename, int *histo, int *count, double *meannbR
     (*meannbRtn)=(double)(mean)/(double)(*count);
     fprintf(writeout,"mean nB   %.15lg\n",*meannbRtn);
     fclose(writeout);
-    printf("d%d Written %s\n",rank,filename);
+    printf("Written %s\n",filename);
 }
 
 void Bonds_CheckSymmetric() {
@@ -304,16 +304,16 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         }
         if (doWriteBonds==1) Bonds_WriteBonds(f);
         if (donbDistros==1) Bonds_TallynbDistro();
-        printf("d%d Got Bonds\n",rank);
+        printf("Got Bonds\n");
         return;
     }
     
-    printf("d%d Simple: N%d NA%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",rank,N,NA,rcutAA2,rcutAB2,rcutBB2);
+    printf("Simple: N%d NA%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",N,NA,rcutAA2,rcutAB2,rcutBB2);
     
     if (PRINTINFO==1) { 
-        printf("d%d Simple Bond Length rcutAA %lg rcutAB %lg rcutBB %lg\n",rank,rcutAA,rcutAB,rcutBB);
-        if (PBCs==0) printf("d%d No bonds through edge of box\n\n",rank);
-        else  printf("d%d Periodic Boundary Conditions - PBC bonds\n\n",rank);
+        printf("Simple Bond Length rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
+        if (PBCs==0) printf("No bonds through edge of box\n\n");
+        else  printf("Periodic Boundary Conditions - PBC bonds\n\n");
     }
     for (i=0; i<N; ++i) cnb[i] = 0;
     // POSSIBLE IMPROVEMENT: add cell list here
@@ -331,7 +331,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
                     bondlengths[j][k]=sqrt(dr2);
                 }
                 else{    // list is now full
-                    printf("d%d Bonds_GetBonds(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nB,i,j);
+                    printf("Bonds_GetBonds(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,j);
                     exit(1); 
                 }
             }
@@ -345,7 +345,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
                     bondlengths[j][k]=sqrt(dr2);
                 }
                 else{    // list is now full
-                    printf("d%d Bonds_GetBonds(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nB,i,j);
+                    printf("Bonds_GetBonds(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,j);
                     exit(1); 
                 }
             }
@@ -360,13 +360,13 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
                         bondlengths[j][k]=sqrt(dr2);
                     }
                     else{    // list is now full
-                        printf("d%d Bonds_GetBonds(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nB,i,j);
+                        printf("Bonds_GetBonds(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,j);
                         exit(1); 
                     }
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%1000)) printf("d%d Bonds_GetBonds(): particle %d of %d done\n",rank,i+1,N);
+        if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBonds(): particle %d of %d done\n",i+1,N);
     }
     printf("\n");
     
@@ -384,7 +384,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
     }
     if (doWriteBonds==1) Bonds_WriteBonds(f);
     if (donbDistros==1) Bonds_TallynbDistro();
-    printf("d%d Got Bonds\n",rank);
+    printf("Got Bonds\n");
 }
 
 void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
@@ -401,12 +401,12 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
     
     store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV(): store_dr2[] malloc out of memory\n"); Error(errMsg); }
 
-    printf("d%d Vor: N%d NA%d rcut2 %.15lg\n",rank,N,NA,rcutAA2);
+    printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
    
     if (PRINTINFO==1) { 
-        printf("d%d Voronoi fc %lg rcutAA %lg\n",rank,fc,rcutAA);
-        if (PBCs==0) printf("d%d No bonds through edge of box\n\n",rank);
-        else  printf("d%d Periodic Boundary Conditions - PBC bonds\n\n",rank);
+        printf("Voronoi fc %lg rcutAA %lg\n",fc,rcutAA);
+        if (PBCs==0) printf("No bonds through edge of box\n\n");
+        else  printf("Periodic Boundary Conditions - PBC bonds\n\n");
     }
     for (i=0; i<N; ++i) {
         cnb[i] = 0;
@@ -432,7 +432,7 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
                     store_dr2[j]=dr2;
                 }
                 else {    // list is now full
-                    printf("d%d Bonds_GetBondsV(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nBs,i,j);
+                    printf("Bonds_GetBondsV(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i,j);
                     exit(1); 
                 }
             }
@@ -458,7 +458,7 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
         } // Now sorted the list in order of distance from i
         
         if (cnbs!=cnbs2) {
-            printf("d%d Bonds_GetBondsV(): part %d - cnbs %d does not equal cnbs2 %d \n",rank,i,cnbs,cnbs2);
+            printf("Bonds_GetBondsV(): part %d - cnbs %d does not equal cnbs2 %d \n",i,cnbs,cnbs2);
             exit(1); 
         }
             
@@ -597,12 +597,12 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
                     bondlengths[i][k]=sqrt(store_dr2[j]);
                 }
                 else {    // list is now full
-                    printf("d%d Bonds_GetBondsV(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nB,i,j);
+                    printf("Bonds_GetBondsV(): nB %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,j);
                     exit(1); 
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%1000)) printf("d%d Bonds_GetBondsV(): particle %d of %d done\n",rank,i+1,N);
+        if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBondsV(): particle %d of %d done\n",i+1,N);
     }
     
     free(store_dr2);
@@ -622,17 +622,19 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
     int Sb[nBs];
     char errMsg[1000];
     
+
+
     store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
     temp_cnb = malloc(N*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
     temp_bNums = malloc(N*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
     for (j=0; j<N; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
             
-    printf("d%d Vor: N%d NA%d rcut2 %.15lg\n",rank,N,NA,rcutAA2);
+    printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
    
     if (PRINTINFO==1) { 
-        printf("d%d Voronoi fc %lg rcutAA %lg\n",rank,fc,rcutAA);
-        if (PBCs==0) printf("d%d No bonds through edge of box\n\n",rank);
-        else  printf("d%d Periodic Boundary Conditions - PBC bonds\n\n",rank);
+        printf("Voronoi fc %lg rcutAA %lg\n",fc,rcutAA);
+        if (PBCs==0) printf("No bonds through edge of box\n\n");
+        else  printf("Periodic Boundary Conditions - PBC bonds\n\n");
     }
     llist[0]=-1;
     for (i=0; i<N; ++i) {
@@ -660,7 +662,7 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
                         temp_cnb[j-1]++;
                     }
                     else {    // list is now full
-                        printf("d%d Bonds_GetBondsV_CellList(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nBs,i-1,j-1);
+                        printf("Bonds_GetBondsV_CellList(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
                         exit(1); 
                     }
                 }
@@ -681,7 +683,7 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
                             temp_cnb[j-1]++;
                         }
                         else {    // list is now full
-                            printf("d%d Bonds_GetBondsV_CellList(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nBs,i-1,j-1);
+                            printf("Bonds_GetBondsV_CellList(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
                             exit(1); 
                         }
                     }
@@ -729,7 +731,7 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
         } // Now sorted the list in order of distance from i
         
         if (cnbs!=cnbs2) {
-            printf("d%d Bonds_GetBondsV_CellList(): part %d - cnbs %d does not equal cnbs2 %d \n",rank,i,cnbs,cnbs2);
+            printf("Bonds_GetBondsV_CellList(): part %d - cnbs %d does not equal cnbs2 %d \n",i,cnbs,cnbs2);
             exit(1); 
         }
         cnb[i]=0;
@@ -865,12 +867,12 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
                     bondlengths[i][k]=sqrt(store_dr2[j]);
                 }
                 else {    // list is now full
-                    printf("d%d Bonds_GetBondsV_CellList(): nB %d number of bonds per particle is not big enough: particle i %d cnb[i] %d or j %d cnb[j] %d has too many bonds\nThis is probably because rcutAA is too large\n",rank,nB,i,cnb[i],j,cnb[j]);
+                    printf("Bonds_GetBondsV_CellList(): nB %d number of bonds per particle is not big enough: particle i %d cnb[i] %d or j %d cnb[j] %d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,cnb[i],j,cnb[j]);
                     exit(1); 
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%10000)) printf("d%d Bonds_GetBondsV_CellList(): particle %d of %d done\n",rank,i+1,N);
+        if (PRINTINFO==1) if (!((i+1)%10000)) printf("Bonds_GetBondsV_CellList(): particle %d of %d done\n",i+1,N);
     } // End i loop
     
     for (i=0; i<N; i++) free(temp_bNums[i]);
