@@ -1,5 +1,5 @@
 #include "bonds.h"
-//// START: Bonds routines
+
 double Bonds_GetR2(int i, int j) {  // get separation between particles i and j
     double dx, dy, dz;
     
@@ -66,8 +66,6 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
 }
 
 
-
-
 void Bonds_WriteBondNetwork(int f) {
     int i,j,k;
     char input[1000];
@@ -83,14 +81,6 @@ void Bonds_WriteBondNetwork(int f) {
         }
         fprintf(writeout,"\n");
     }
-    /*for (i=0; i<N; ++i) {
-        for (j=0; j<N; ++j) {
-            if (bondnetwork[i][j]!=bondnetwork[j][i]) {
-                printf("Bonds_WriteBondNetwork(): i%d rtype %d j%d rtype %d bondnetwork matrix not symmetric! sep2 is %lg i-j%d j-i%d\n",i,rtype[i],j,rtype[j],Bonds_GetR2(i,j),bondnetwork[i][j],bondnetwork[j][i]);
-                exit(1);
-            }
-        }
-    }*/
     fclose(writeout);
     printf("d%d Bonds_WriteBondNetwork(): Written bondnetwork matrix to %s\n\n",rank,input);
 }
@@ -284,8 +274,6 @@ void Bonds_CheckSymmetric() {
                 if (i==bNums[bNums[i][j]][k]) break;
             }
             if (k==cnb[bNums[i][j]]) {
-                //sprintf(errMsg,"Bonds_CheckSymmetric(): unsymmetric bond network from Voronoi code - i %d bonded to bNums[i][j] %d but bNums[i][j] %d not boned to i %d",i,bNums[i][j],bNums[i][j],i);
-                //Error(errMsg);
                 bNums[bNums[i][j]][k]=i;
                 cnb[bNums[i][j]]++;
                 bondlengths[bNums[i][j]][k]=bondlengths[i][j];
@@ -302,8 +290,6 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (USELIST==0) Bonds_GetBondsV(f);
         else Bonds_GetBondsV_CellList(f);
         Bonds_CheckSymmetric();
-        //if (f==0) Bonds_WriteBondNetwork(f);
-        //Bonds_ReadVoro(f);
         if (doBLDistros==1) {
             for (i=0; i<N; ++i) {
                 for (j=0; j<cnb[i]; ++j) {
@@ -384,7 +370,6 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
     }
     printf("\n");
     
-    //if (f==0) Bonds_WriteBondNetwork(f);
     if (doBLDistros==1) {
         for (i=0; i<N; ++i) {
             for (j=0; j<cnb[i]; ++j) {
@@ -618,7 +603,7 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
             }
         }
         if (PRINTINFO==1) if (!((i+1)%1000)) printf("d%d Bonds_GetBondsV(): particle %d of %d done\n",rank,i+1,N);
-    } // End i loop
+    }
     
     free(store_dr2);
 }
@@ -636,8 +621,6 @@ void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
     int *temp_cnb, **temp_bNums;
     int Sb[nBs];
     char errMsg[1000];
-    
-    cnbs=0;
     
     store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
     temp_cnb = malloc(N*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }

@@ -219,20 +219,20 @@ void BLJSF() {  // binary Lennard-Jones potential with Stoddard-Ford truncation
                 else if (dz>halfSidez)   { dz-=sidez; }
             }
             if(ISNOTCUBIC==3){
-                 if (dz<-halfSidez) dz+=sidez;
-            else if (dz>halfSidez) dz-=sidez;
+                if (dz<-halfSidez) dz+=sidez;
+                else if (dz>halfSidez) dz-=sidez;
 
-            if (dy<-halfSidey){   
-                    dx-=tiltxy;
-                    dy+=sidey;
-                }
-            else if (dy>halfSidey) {
-                dx+=tiltxy;
-                dy-=sidey;
-                }   
+                if (dy<-halfSidey){
+                        dx-=tiltxy;
+                        dy+=sidey;
+                    }
+                else if (dy>halfSidey) {
+                    dx+=tiltxy;
+                    dy-=sidey;
+                    }
 
-            if (dx<-halfSidex) dx+=sidex;
-            else if (dx>halfSidex) dx-=sidex;
+                if (dx<-halfSidex) dx+=sidex;
+                else if (dx>halfSidex) dx-=sidex;
             }
             sep2=dx*dx+dy*dy+dz*dz;
             if (rtype[i]!=rtype[j]) {   // AB interaction
@@ -568,20 +568,20 @@ void BIPL() {   // binary IPL potential
                 else if (dz>halfSidez)   { dz-=sidez; }
             }
             if(ISNOTCUBIC==3){
-                 if (dz<-halfSidez) dz+=sidez;
-            else if (dz>halfSidez) dz-=sidez;
+                    if (dz<-halfSidez) dz+=sidez;
+                    else if (dz>halfSidez) dz-=sidez;
 
-            if (dy<-halfSidey){   
-                    dx-=tiltxy;
-                    dy+=sidey;
-                }
-            else if (dy>halfSidey) {
-                dx+=tiltxy;
-                dy-=sidey;
+                if (dy<-halfSidey){
+                        dx-=tiltxy;
+                        dy+=sidey;
+                    }
+                else if (dy>halfSidey) {
+                    dx+=tiltxy;
+                    dy-=sidey;
                 }   
 
-            if (dx<-halfSidex) dx+=sidex;
-            else if (dx>halfSidex) dx-=sidex;
+                if (dx<-halfSidex) dx+=sidex;
+                else if (dx>halfSidex) dx-=sidex;
             }
             sep2=dx*dx+dy*dy+dz*dz;
             if (rtype[i]!=rtype[j]) {   // AB interaction
@@ -852,7 +852,7 @@ void listSFBIPL() { // Stoddard-Ford binary IPL potential with cell list
                     dx=x[i-1]-x[j-1];   // note use of i-1 to refer to particles counted from 0 in pos/velo/force arrays
                     dy=y[i-1]-y[j-1];
                     dz=z[i-1]-z[j-1];
-                        if (dx<-halfSidex) { dx+=sidex; }
+                    if (dx<-halfSidex) { dx+=sidex; }
                     else if (dx>halfSidex)   { dx-=sidex; }
                     if (dy<-halfSidey) { dy+=sidey; }
                     else if (dy>halfSidey)   { dy-=sidey; }
@@ -916,20 +916,20 @@ void BLJ_WCA_s() {  // cubic smoothed WCA potential from Coslovich 2011
                 else if (dz>halfSidez)   { dz-=sidez; }
             }
             if(ISNOTCUBIC==3){
-                 if (dz<-halfSidez) dz+=sidez;
-            else if (dz>halfSidez) dz-=sidez;
+                if (dz<-halfSidez) dz+=sidez;
+                else if (dz>halfSidez) dz-=sidez;
 
-            if (dy<-halfSidey){   
-                    dx-=tiltxy;
-                    dy+=sidey;
-                }
-            else if (dy>halfSidey) {
-                dx+=tiltxy;
-                dy-=sidey;
-                }   
+                if (dy<-halfSidey){
+                        dx-=tiltxy;
+                        dy+=sidey;
+                    }
+                else if (dy>halfSidey) {
+                    dx+=tiltxy;
+                    dy-=sidey;
+                    }
 
-            if (dx<-halfSidex) dx+=sidex;
-            else if (dx>halfSidex) dx-=sidex;
+                if (dx<-halfSidex) dx+=sidex;
+                else if (dx>halfSidex) dx-=sidex;
             }
             sep2=dx*dx+dy*dy+dz*dz;
             if (rtype[i]!=rtype[j]) {   // AB interaction

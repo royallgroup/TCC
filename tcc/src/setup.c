@@ -2,7 +2,6 @@
 #include "tools.h"
 #include "iniparser.h"
 
-//// START: Setup routines
 int Setup_GetFirstIntFromLine(FILE *stream) {   // take and return first integer from line in file stream
     char input[10000], errMsg[1000];
     char *pch;
@@ -2259,7 +2258,6 @@ void Setup_print_U_r() {    // prints details of potential used
     
     else if (WHICHPOTENTIAL==7) {
         if (USELIST==0) sprintf(output,"d%d_tcc.CRVT.UrFr",rank);
-        //else sprintf(output,"d%d_tcc.CELL_LIST.SFBIPL.UrFr",rank);
         potForceFile=fopen(output,"w");
         fprintf(potForceFile,"%s CRVTpotenial\n",output);
         fprintf(potForceFile,"r U(r)\n");
@@ -2271,10 +2269,6 @@ void Setup_print_U_r() {    // prints details of potential used
             rtype[1]=1;
             potential=0.0;
             if (USELIST==0) CRVT();
-            /*else if (USELIST==1) {
-                links_pot();
-                listCRVT();
-            }*/
             fprintf(potForceFile,"  %.15lg",potential);
             
         }

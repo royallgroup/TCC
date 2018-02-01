@@ -4,7 +4,6 @@
 
 
 #include <string.h>
-// #include <mpi.h>
 #include "globals.h"
 #include "setup.h"
 #include "tools.h"
@@ -43,8 +42,6 @@ int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells
 }
 
 
-
-//// START: Ring routines
 void Rings_gSP3(int f, int n0) {	// get SP3/4/5 rings including particle n0
 	int i,j;
 	int n1, n2;
@@ -2861,7 +2858,6 @@ void Write_Cluster_sp5(int f, FILE *writeout) {
 		fprintf(writeout,"	%d\n",sp5c[i][clusSize-1]);
 	}
 }
-//// END: Write routines
 
 void Pop_Per_Frame(int f) {
 	int i;
@@ -4272,7 +4268,6 @@ void Coslovich(int f) {
 		
 		if (n2==0 && n3==0 && n4==2 && n5==8 && n6==0 && n7==0 && n8==0) {
 			nCos_s_0_2_8++;
-			//printf("d%d small (0,2,8) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5);
 			s_s_0_2_8[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_s_0_2_8[bNums[i][j]]=='C') s_s_0_2_8[bNums[i][j]]='B';
@@ -4280,7 +4275,6 @@ void Coslovich(int f) {
 		}
 		if (n2==0 && n3==1 && n4==2 && n5==5 && n6==3 && n7==0 && n8==0) {
 			nCos_s_1_2_5_3++;
-			//printf("d%d small (1,2,5,3) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d n6 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5,n6);
 			s_s_1_2_5_3[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_s_1_2_5_3[bNums[i][j]]=='C') s_s_1_2_5_3[bNums[i][j]]='B';
@@ -4288,7 +4282,6 @@ void Coslovich(int f) {
 		}
 		if (n2==0 && n3==1 && n4==2 && n5==5 && n6==2 && n7==0 && n8==0) {
 			nCos_s_1_2_5_2++;
-			//printf("d%d small (1,2,5,2) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d n6 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5,n6);
 			s_s_1_2_5_2[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_s_1_2_5_2[bNums[i][j]]=='C') s_s_1_2_5_2[bNums[i][j]]='B';
@@ -4296,7 +4289,6 @@ void Coslovich(int f) {
 		}
 		if (n2==0 && n3==0 && n4==3 && n5==6 && n6==0 && n7==0 && n8==0) {
 			nCos_s_0_3_6++;
-			//printf("d%d small (0,3,6) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5);
 			s_s_0_3_6[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_s_0_3_6[bNums[i][j]]=='C') s_s_0_3_6[bNums[i][j]]='B';
@@ -4332,7 +4324,6 @@ void Coslovich(int f) {
 		
 		if (n2==0 && n3==0 && n4==2 && n5==8 && n6==4 && n7==0 && n8==0) {
 			nCos_b_0_2_8_4++;
-			//printf("d%d big (0,2,8,4) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d n6 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5,n6);
 			s_b_0_2_8_4[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_b_0_2_8_4[bNums[i][j]]=='C') s_b_0_2_8_4[bNums[i][j]]='B';
@@ -4340,7 +4331,6 @@ void Coslovich(int f) {
 		}
 		if (n2==0 && n3==0 && n4==2 && n5==8 && n6==5 && n7==0 && n8==0) {
 			nCos_b_0_2_8_5++;
-			//printf("d%d big (0,2,8,5) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d n6 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5,n6);
 			s_b_0_2_8_5[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_b_0_2_8_5[bNums[i][j]]=='C') s_b_0_2_8_5[bNums[i][j]]='B';
@@ -4348,7 +4338,6 @@ void Coslovich(int f) {
 		}
 		if (n2==0 && n3==0 && n4==3 && n5==6 && n6==6 && n7==0 && n8==0) {
 			nCos_b_0_3_6_6++;
-			//printf("d%d big (0,3,6,6) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d n6 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5,n6);
 			s_b_0_3_6_6[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_b_0_3_6_6[bNums[i][j]]=='C') s_b_0_3_6_6[bNums[i][j]]='B';
@@ -4356,7 +4345,6 @@ void Coslovich(int f) {
 		}
 		if (n2==0 && n3==0 && n4==1 && n5==10 && n6==4 && n7==0 && n8==0) {
 			nCos_b_0_1_10_4++;
-			//printf("d%d big (0,1,10,4) i %d rtype[i] %d cnb[i] %d n3 %d n4 %d n5 %d n6 %d\n",rank,i,rtype[i],cnb[i],n3,n4,n5,n6);
 			s_b_0_1_10_4[i]='O';
 			for (j=0; j<cnb[i]; j++) {
 				if (s_b_0_1_10_4[bNums[i][j]]=='C') s_b_0_1_10_4[bNums[i][j]]='B';
@@ -4418,7 +4406,6 @@ void Coslovich(int f) {
 
 //// START: main() routine
 int main(int argc, char **argv) {
-	// MPI_Init(&argc, &argv);
 	int e, f, i;
 	int write, remainder;
 	double tempish;
@@ -4429,10 +4416,7 @@ int main(int argc, char **argv) {
 	FILE *rXmol;
 	FILE *rSizes; //NPT_FIX
 	FILE *clusBinFile, *dyn_lives_file, *dyn_decays_file, *cos_pop_per_frame, *file_s_0_0_12;
-	// MPI_Comm_size(MPI_COMM_WORLD, &size);
-	// MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	//rank++;
-	//size++;
+
 	
 	sprintf(fInputParamsName,"inputparameters.ini");
 	Setup_ReadIniFile(fInputParamsName);	// read input params
@@ -4464,10 +4448,7 @@ int main(int argc, char **argv) {
 			printf("sidex: %f, sidey: %f, sidez: %f\n", sidex,sidey,sidez);
 		}
 		if  (ISNOTCUBIC==3) {
-		
 			printf("======> Triclinic Box \n");
-			// Setup_ReadBox(rSizes);
-			// printf("sidex: %f, sidey: %f, sidez: %f, xy: %f, xz: %f, yz: %f\n", sidex,sidey,sidez,tiltxy, tiltxz, tiltyz);
 		}
 	}
     fclose(rSizes);
@@ -5998,8 +5979,6 @@ int main(int argc, char **argv) {
 		printf("d%d denom %.15lg big (0,1,10,4) %.15lg\n",rank,(double)(FRAMES*(NA)),tempish);
 	}
 	
-	// MPI_Barrier(MPI_COMM_WORLD);
-	
 	Setup_FreeStaticVars();
 	Stats_FreeMem();
 	if (doPotential==1) Setup_FreePotentialVars();
@@ -6009,10 +5988,5 @@ int main(int argc, char **argv) {
 	}
 	
 	printf("\n\nd%d FIN \n\n",rank);
-	
-	// MPI_Barrier(MPI_COMM_WORLD);
-	printf("\n\nd%d after barrier \n\n",rank);
-	// MPI_Finalize();
-	printf("\n\nd%d after finalize \n\n",rank);
 	return 0;
 }

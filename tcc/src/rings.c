@@ -100,13 +100,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
         }
         
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                av_pot_sp3a+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-                av_pot_sp3+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-            }
-        }*/
-        
         if (doClusComp==1) {
             number_of_A=0;
             number_of_A_ring=0;
@@ -192,7 +185,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             else do_up=0;
             Dyn_add(sp3b[nsp3b[f]], f, 4, &dyn_nsp3b, &dyn_msp3b, &dyn_lsp3b, &dyn_sp3b, do_up, dyn_up_sp3b, nsp3b[f], do_sub, n_sub, &dummy_sub, sub);
         }
-        //printf("3b\n");
         mem_sp3b[n0][nmem_sp3b[n0]]=nsp3b[f];       
         nmem_sp3b[n0]++;        
         if (nmem_sp3b[n0] >= mmem_sp3b) {
@@ -244,13 +236,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)],BLDistrosp3b,&BLDistroNoSamplessp3b);
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp3b,&BLDistroNoSamplessp3b);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                av_pot_sp3b+=part_pot[sp3b[nsp3b[f]][binAcnt]];
-                if (binAcnt<3) av_pot_sp3+=part_pot[sp3b[nsp3b[f]][binAcnt]];
-            }
-        }*/
         
         if (doClusComp==1) {
             number_of_A=0;
@@ -376,7 +361,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             else do_up=0;
             Dyn_add(sp3c[nsp3c[f]], f, 5, &dyn_nsp3c, &dyn_msp3c, &dyn_lsp3c, &dyn_sp3c, do_up, dyn_up_sp3c, nsp3c[f], do_sub, n_sub, &dummy_sub, sub);
         }
-        //printf("3c\n");
         mem_sp3c[n0][nmem_sp3c[n0]]=nsp3c[f];       
         nmem_sp3c[n0]++;        
         if (nmem_sp3c[n0] >= mmem_sp3c) { 
@@ -445,13 +429,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             
             if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp3c,&BLDistroNoSamplessp3c);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp3c+=part_pot[sp3c[nsp3c[f]][binAcnt]];
-                if (binAcnt<3) av_pot_sp3+=part_pot[sp3c[nsp3c[f]][binAcnt]];
-            }
-        }*/
         
         if (doClusComp==1) {
             number_of_A=0;
@@ -610,13 +587,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
         }
         
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                av_pot_sp3a+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-                av_pot_sp3+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-            }
-        }*/
-        
         if (doClusComp==1) {
             number_of_A=0;
             number_of_A_ring=0;
@@ -754,13 +724,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
         }
         
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                av_pot_sp4a+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-                av_pot_sp4+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-            }
-        }*/
-        
         if (doClusComp==1) {
             number_of_A=0;
             number_of_A_ring=0;
@@ -860,7 +823,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             else do_up=0;
             Dyn_add(sp4b[nsp4b[f]], f, 5, &dyn_nsp4b, &dyn_msp4b, &dyn_lsp4b, &dyn_sp4b, do_up, dyn_up_sp4b, nsp4b[f], do_sub, n_sub, &dummy_sub, sub);
         }
-        //printf("4b\n");
         mem_sp4b[n0][nmem_sp4b[n0]]=nsp4b[f];       
         nmem_sp4b[n0]++;        
         if (nmem_sp4b[n0] >= mmem_sp4b) { 
@@ -925,13 +887,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp4b,&BLDistroNoSamplessp4b);
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)],BLDistrosp4b,&BLDistroNoSamplessp4b);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp4b+=part_pot[sp4b[nsp4b[f]][binAcnt]];
-                if (binAcnt<4) av_pot_sp4+=part_pot[sp4b[nsp4b[f]][binAcnt]];
-            }
-        }*/
         
         if (doClusComp==1) {
             number_of_A=0;
@@ -1047,7 +1002,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             sp4c[nsp4c[f]][4] = cp[1];
             sp4c[nsp4c[f]][5] = cp[0];
         }
-        //printf("4c\n");
         mem_sp4c[n0][nmem_sp4c[n0]]=nsp4c[f];       
         nmem_sp4c[n0]++;        
         if (nmem_sp4c[n0] >= mmem_sp4c) { 
@@ -1146,12 +1100,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
                 
                 if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistro6A,&BLDistroNoSamples6A);
             }
-            
-            /*if (doPotential==1) {
-                for (binAcnt=0; binAcnt<6; binAcnt++) {
-                    av_pot_6A+=part_pot[hc6A[n6A[f]][binAcnt]];
-                }
-            }*/
             
             if (doClusComp==1) {
                 number_of_A=0;
@@ -1326,13 +1274,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             
         // hc6A key: (SP4_1, SP4_2, SP4_3, SP4_4, s1, s2)
         
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                av_pot_sp4c+=part_pot[sp4c[nsp4c[f]][binAcnt]];
-                if (binAcnt<4) av_pot_sp4+=part_pot[sp4c[nsp4c[f]][binAcnt]];
-            }
-        }*/
-        
         if (doClusComp==1) {
             number_of_A=0;
             number_of_A_ring=0;
@@ -1468,13 +1409,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                av_pot_sp4a+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-                av_pot_sp4+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-            }
-        }*/
         
         if (doClusComp==1) {
             number_of_A=0;
@@ -1628,13 +1562,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
         }
         
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp5a+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-                av_pot_sp5+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-            }
-        }*/
-        
         if (doClusComp==1) {
             number_of_A=0;
             number_of_A_ring=0;
@@ -1748,7 +1675,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             else do_up=0;
             Dyn_add(sp5b[nsp5b[f]], f, 6, &dyn_nsp5b, &dyn_msp5b, &dyn_lsp5b, &dyn_sp5b, do_up, dyn_up_sp5b, nsp5b[f], do_sub, n_sub, &dummy_sub, sub);
         }
-        //printf("5b\n");
         mem_sp5b[n0][nmem_sp5b[n0]]=nsp5b[f];       
         nmem_sp5b[n0]++;        
         if (nmem_sp5b[n0] >= mmem_sp5b) { 
@@ -1825,13 +1751,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                av_pot_sp5b+=part_pot[sp5b[nsp5b[f]][binAcnt]];
-                if (binAcnt<5) av_pot_sp5+=part_pot[sp5b[nsp5b[f]][binAcnt]];
-            }
-        }*/
         
         if (doClusComp==1) {
             number_of_A=0;
@@ -1967,7 +1886,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             else do_up=0;
             Dyn_add(sp5c[nsp5c[f]], f, 7, &dyn_nsp5c, &dyn_msp5c, &dyn_lsp5c, &dyn_sp5c, do_up, dyn_up_sp5c, nsp5c[f], do_sub, n_sub, &dummy_sub, sub);
         }
-        //printf("5c\n");
         mem_sp5c[n0][nmem_sp5c[n0]]=nsp5c[f];       
         nmem_sp5c[n0]++;        
         if (nmem_sp5c[n0] >= mmem_sp5c) { 
@@ -2064,13 +1982,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             
             if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<7; binAcnt++) {
-                av_pot_sp5c+=part_pot[sp5c[nsp5c[f]][binAcnt]];
-                if (binAcnt<5) av_pot_sp5+=part_pot[sp5c[nsp5c[f]][binAcnt]];
-            }
-        }*/
         
         if (doClusComp==1) {
             number_of_A=0;
@@ -2224,14 +2135,7 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5a,&BLDistroNoSamplessp5a);
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
         }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp5a+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-                av_pot_sp5+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-            }
-        }*/
-        
+
         if (doClusComp==1) {
             number_of_A=0;
             number_of_A_ring=0;
