@@ -15,10 +15,7 @@ double Bonds_GetR2_PBCs(int i, int j);	// get wrapped separation between particl
 int icell(int tix, int tiy, int tiz);
 void links();
 void Bonds_GetBonds(int f);	// Get bonds using simple lengths
-void Bonds_GetBondsV(int f);	// Get bonds using Voronoi
-void Bonds_GetBondsV_CellList(int f);	// Get bonds using Voronoi Cell List
 int Bonds_BondCheck(int i, int j);	// Returns 1 if i & j are bonded; 0 otherwise
-int Bonds_cnb_j(int i, int j);
 
 void Rings_gSP3(int f, int n0);	// get SP3/4/5 rings including particle n0
 void Rings_gSP4(int f, int n0, int n1, int n2);	// {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring
@@ -75,4 +72,3 @@ void Stats_FreeMem();	// free memory from stats variables
 void Stats_Analyse();	// output Cluster statistics to file
 void Stats_SetA();	// Set arrays to true if the ith particle is a member of any clusters with this or a larger number of particles
 
-//// END: Stats routines

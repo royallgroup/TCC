@@ -11,33 +11,9 @@
 #include "rings.h"
 #include "clusters.h"
 
-
-void Update_bl_mom(int f) {
-	int i;
-	
-	for (i=0; i<nsp3[f]; i++) mean_bl_mom_sp3+=bl_mom_sp3[i];
-	for (i=0; i<nsp3a[f]; i++) mean_bl_mom_sp3a+=bl_mom_sp3a[i];
-	for (i=0; i<nsp3b[f]; i++) mean_bl_mom_sp3b+=bl_mom_sp3b[i];
-	for (i=0; i<nsp3c[f]; i++) mean_bl_mom_sp3c+=bl_mom_sp3c[i];
-	
-	for (i=0; i<nsp4[f]; i++) mean_bl_mom_sp4+=bl_mom_sp4[i];
-	for (i=0; i<nsp4a[f]; i++) mean_bl_mom_sp4a+=bl_mom_sp4a[i];
-	for (i=0; i<nsp4b[f]; i++) mean_bl_mom_sp4b+=bl_mom_sp4b[i];
-	for (i=0; i<nsp4c[f]; i++) mean_bl_mom_sp4c+=bl_mom_sp4c[i];
-	for (i=0; i<n6A[f]; i++) mean_bl_mom_6A+=bl_mom_6A[i];
-	
-	for (i=0; i<nsp5[f]; i++) mean_bl_mom_sp5+=bl_mom_sp5[i];
-	for (i=0; i<nsp5a[f]; i++) mean_bl_mom_sp5a+=bl_mom_sp5a[i];
-	for (i=0; i<nsp5b[f]; i++) mean_bl_mom_sp5b+=bl_mom_sp5b[i];
-	for (i=0; i<nsp5c[f]; i++) mean_bl_mom_sp5c+=bl_mom_sp5c[i];
-}
-
-
-
 int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
 	return 1 + (tix-1+M)%M + M*((tiy-1+M)%M) + M*M*((tiz-1+M)%M); 
 }
-
 
 void Rings_gSP3(int f, int n0) {	// get SP3/4/5 rings including particle n0
 	int i,j;
@@ -435,23 +411,7 @@ void Stats_Report(char *filename) {
 	printf("excess spindles sp3	%d\n",ncsp3_excess_spindles);
 	printf("excess spindles sp4	%d\n",ncsp4_excess_spindles);
 	printf("excess spindles sp5	%d\n",ncsp5_excess_spindles);
-	if (doBLDistros==1) {
-		printf("mean bl samples	%.15lg	%d\n",meanBL,BLDistroNoSamples);
-		if (doBinary==1) {
-			printf("mean AA bl samples	%.15lg	%d\n",meanBLAA,BLDistroNoSamplesAA);
-			printf("mean AB bl samples	%.15lg	%d\n",meanBLAB,BLDistroNoSamplesAB);
-			printf("mean BB bl samples	%.15lg	%d\n",meanBLBB,BLDistroNoSamplesBB);
-		}
-	}
-	if (donbDistros==1) {
-		printf("mean nB	%.15lg\n",meannb);
-		if (doBinary==1) {
-			printf("mean A->A nB	%.15lg\n",meannbAA);
-			printf("mean A->B nB	%.15lg\n",meannbAB);
-			printf("mean B->A nB	%.15lg\n",meannbBA);
-			printf("mean B->B nB	%.15lg\n",meannbBB);
-		}
-	}
+
 	temp=(double)ncsp3c_spindlebonds/(double)nc5A;
 	printf("5A spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
 	temp=(double)ncsp4c_spindlebonds/(double)ncsp4c;
@@ -521,21 +481,7 @@ void Stats_Report(char *filename) {
 	fprintf(writeout,"excess spindles sp3	%d\n",ncsp3_excess_spindles);
 	fprintf(writeout,"excess spindles sp4	%d\n",ncsp4_excess_spindles);
 	fprintf(writeout,"excess spindles sp5	%d\n",ncsp5_excess_spindles);
-	if (doBLDistros==1) fprintf(writeout,"mean bl samples	%.15lg	%d\n",meanBL,BLDistroNoSamples);
-	if (doBinary==1 && doBLDistros==1) {
-		fprintf(writeout,"mean AA bl samples	%.15lg	%d\n",meanBLAA,BLDistroNoSamplesAA);
-		fprintf(writeout,"mean AB bl samples	%.15lg	%d\n",meanBLAB,BLDistroNoSamplesAB);
-		fprintf(writeout,"mean BB bl samples	%.15lg	%d\n",meanBLBB,BLDistroNoSamplesBB);
-	}
-	if (donbDistros==1) {
-		fprintf(writeout,"mean nB	%.15lg\n",meannb);
-		if (doBinary==1) {
-			fprintf(writeout,"mean A->A nB	%.15lg\n",meannbAA);
-			fprintf(writeout,"mean A->B nB	%.15lg\n",meannbAB);
-			fprintf(writeout,"mean B->A nB	%.15lg\n",meannbBA);
-			fprintf(writeout,"mean B->B nB	%.15lg\n",meannbBB);
-		}
-	}
+
 	temp=(double)ncsp3c_spindlebonds/(double)nc5A;
 	fprintf(writeout,"5A spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
 	temp=(double)ncsp4c_spindlebonds/(double)ncsp4c;
@@ -1403,418 +1349,26 @@ void Norm_Write_bonded_to_cen_distro(char *output, int *the_array, int clusSize,
 	printf("Written %s\n",output);
 }
 
-void Norm_Write_bonded_to_cen(char *filename) {
-	FILE *fOut;
-	char output[1000], errMsg[1000];
-	double tempratio, normFactor;
-	
-	normFactor=(double)(nc9B);
-	sprintf(output,"%s.bonded_to_cen_9B",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_9B[0],9,normFactor);
-	normFactor=(double)(nc9K);
-	sprintf(output,"%s.bonded_to_cen_9K",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_9K[0],9,normFactor);
-	normFactor=(double)(nc10B);
-	sprintf(output,"%s.bonded_to_cen_10B",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_10B[0],10,normFactor);
-	normFactor=(double)(nc10K);
-	sprintf(output,"%s.bonded_to_cen_10K",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_10K[0],9,normFactor);
-	normFactor=(double)(nc10W);
-	sprintf(output,"%s.bonded_to_cen_10W",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_10W[0],9,normFactor);
-	normFactor=(double)(nc11A);
-	sprintf(output,"%s.bonded_to_cen_11A",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_11A[0],11,normFactor);
-	normFactor=(double)(nc11B);
-	sprintf(output,"%s.bonded_to_cen_11B",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_11B[0],11,normFactor);
-	normFactor=(double)(nc11C);
-	sprintf(output,"%s.bonded_to_cen_11C",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_11C[0],11,normFactor);
-	normFactor=(double)(nc11W);
-	sprintf(output,"%s.bonded_to_cen_11W",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_11W[0],11,normFactor);
-	normFactor=(double)(nc12A);
-	sprintf(output,"%s.bonded_to_cen_12A",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_12A[0],12,normFactor);
-	normFactor=(double)(nc12B);
-	sprintf(output,"%s.bonded_to_cen_12B",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_12B[0],12,normFactor);
-	normFactor=(double)(nc12K);
-	sprintf(output,"%s.bonded_to_cen_12K",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_12K[0],9,normFactor);
-	normFactor=(double)(nc13A);
-	sprintf(output,"%s.bonded_to_cen_13A",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_13A[0],13,normFactor);
-	normFactor=(double)(nc13B);
-	sprintf(output,"%s.bonded_to_cen_13B",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_13B[0],13,normFactor);
-	normFactor=(double)(nc13K);
-	sprintf(output,"%s.bonded_to_cen_13K",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_13K[0],9,normFactor);
-	normFactor=(double)(ncFCC);
-	sprintf(output,"%s.bonded_to_cen_FCC",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_FCC[0],13,normFactor);
-	normFactor=(double)(ncHCP);
-	sprintf(output,"%s.bonded_to_cen_HCP",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_HCP[0],13,normFactor);
-	normFactor=(double)(ncBCC_9);
-	sprintf(output,"%s.bonded_to_cen_BCC_9",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_BCC_9[0],9,normFactor);
-	normFactor=(double)(ncBCC_15);
-	sprintf(output,"%s.bonded_to_cen_BCC_15",filename);
-	Norm_Write_bonded_to_cen_distro(output,&n_distro_bonded_to_cen_BCC_15[0],15,normFactor);
-	
-	sprintf(output,"%s.bonded_to_cen",filename);
-	fOut=fopen(output,"w");
-	if (fOut==NULL)  {
-		sprintf(errMsg,"Norm_Write_bonded_to_cen(): Error opening file %s",output);	// Always test file open
-		Error(errMsg);
-	}
-	fprintf(fOut,"%s\n",output);
-	
-	printf("Number Bonded to Central Particle Analysis\ndClust Mean Bonded to Centre\n");
-	tempratio=(double)n_bonded_to_cen_9B/(double)nc9B;
-	printf("9B_C2v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_9K/(double)nc9K;
-	printf("9K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_10B/(double)nc10B;
-	printf("10B_C3v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11A/(double)nc11A;
-	printf("11A_D4d	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_10K/(double)nc10K;
-	printf("10K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_10W/(double)nc10W;
-	printf("10W	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11B/(double)nc11B;
-	printf("11B_C2v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11C/(double)nc11C;
-	printf("11CD	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11W/(double)nc11W;
-	printf("11W	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_12A/(double)nc12A;
-	printf("12A_C2v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_12B/(double)nc12B;
-	printf("12BC	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_12K/(double)nc12K;
-	printf("12K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_13A/(double)nc13A;
-	printf("13A_Ih	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_13B/(double)nc13B;
-	printf("13B_D5h	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_13K/(double)nc13K;
-	printf("13K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_FCC/(double)ncFCC;
-	printf("FCC_m13	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_HCP/(double)ncHCP;
-	printf("HCP_m13	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_BCC_9/(double)ncBCC_9;
-	printf("BCC_m9	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_BCC_15/(double)ncBCC_15;
-	printf("BCC_m15	%lg\n",tempratio);
-	
-	fprintf(fOut,"\nNumber Bonded to Central Particle Analysis\nClust Mean Bonded to Centre\n");
-	tempratio=(double)n_bonded_to_cen_9B/(double)nc9B;
-	fprintf(fOut,"9B_C2v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_9K/(double)nc9K;
-	fprintf(fOut,"9K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_10B/(double)nc10B;
-	fprintf(fOut,"10B_C3v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_10K/(double)nc10K;
-	fprintf(fOut,"10K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_10W/(double)nc10W;
-	fprintf(fOut,"10W	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11A/(double)nc11A;
-	fprintf(fOut,"11A_D4d	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11B/(double)nc11B;
-	fprintf(fOut,"11B_C2v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11C/(double)nc11C;
-	fprintf(fOut,"11CD	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_11W/(double)nc11W;
-	fprintf(fOut,"11W	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_12A/(double)nc12A;
-	fprintf(fOut,"12A_C2v	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_12B/(double)nc12B;
-	fprintf(fOut,"12BC	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_12K/(double)nc12K;
-	fprintf(fOut,"12K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_13A/(double)nc13A;
-	fprintf(fOut,"13A_Ih	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_13B/(double)nc13B;
-	fprintf(fOut,"13B_D5h	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_13K/(double)nc13K;
-	fprintf(fOut,"13K	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_FCC/(double)ncFCC;
-	fprintf(fOut,"FCC_m13	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_HCP/(double)ncHCP;
-	fprintf(fOut,"HCP_m13	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_BCC_9/(double)ncBCC_9;
-	fprintf(fOut,"BCC_m9	%lg\n",tempratio);
-	tempratio=(double)n_bonded_to_cen_BCC_15/(double)ncBCC_15;
-	fprintf(fOut,"BCC_m15	%lg\n",tempratio);
-
-	fclose(fOut);
-	printf("\nWritten %s\n\n",output);
-}
-
-void Norm_Write_bl_mom(char *filename) {
-	FILE *f_bl_mom;
-	char  errMsg[1000];
-	
-	mean_bl_mom_sp3/=ncsp3;
-	mean_bl_mom_sp3a/=ncsp3a;
-	mean_bl_mom_sp3b/=ncsp3b;
-	mean_bl_mom_sp3c/=nc5A;
-	mean_bl_mom_sp4/=ncsp4;
-	mean_bl_mom_sp4a/=ncsp4a;
-	mean_bl_mom_sp4b/=ncsp4b;
-	mean_bl_mom_sp4c/=ncsp4c;
-	mean_bl_mom_6A/=nc6A;
-	mean_bl_mom_sp5/=ncsp5;
-	mean_bl_mom_sp5a/=ncsp5a;
-	mean_bl_mom_sp5b/=ncsp5b;
-	mean_bl_mom_sp5c/=nc7A;
-	
-	printf("\nCluster bond length 2nd moment deviation analysis\n");
-	printf("Clust	mean 2nd moment\n");
-	printf("sp3	%lg\n",mean_bl_mom_sp3);
-	printf("sp3a	%lg\n",mean_bl_mom_sp3a);
-	printf("sp3b	%lg\n",mean_bl_mom_sp3b);
-	printf("5A_D3h	%lg\n",mean_bl_mom_sp3c);
-	printf("sp4	%lg\n",mean_bl_mom_sp4);
-	printf("sp4a	%lg\n",mean_bl_mom_sp4a);
-	printf("sp4b	%lg\n",mean_bl_mom_sp4b);
-	printf("sp4c	%lg\n",mean_bl_mom_sp4c);
-	printf("6A_Oh	%lg\n",mean_bl_mom_6A);
-	printf("sp5	%lg\n",mean_bl_mom_sp5);
-	printf("sp5a	%lg\n",mean_bl_mom_sp5a);
-	printf("sp5b	%lg\n",mean_bl_mom_sp5b);
-	printf("7A_D5h	%lg\n",mean_bl_mom_sp5c);
-	
-	f_bl_mom=fopen(filename,"w");
-	if (f_bl_mom==NULL)  {
-		sprintf(errMsg,"Norm_Write_Potential(): Error opening file %s",filename);	// Always test file open
-		Error(errMsg);
-	}
-	fprintf(f_bl_mom,"%s\n",filename);
-
-	fprintf(f_bl_mom,"Clust	mean 2nd moment\n");
-	fprintf(f_bl_mom,"sp3	%lg\n",mean_bl_mom_sp3);
-	fprintf(f_bl_mom,"sp3a	%lg\n",mean_bl_mom_sp3a);
-	fprintf(f_bl_mom,"sp3b	%lg\n",mean_bl_mom_sp3b);
-	fprintf(f_bl_mom,"5A_D3h	%lg\n",mean_bl_mom_sp3c);
-	fprintf(f_bl_mom,"sp4	%lg\n",mean_bl_mom_sp4);
-	fprintf(f_bl_mom,"sp4a	%lg\n",mean_bl_mom_sp4a);
-	fprintf(f_bl_mom,"sp4b	%lg\n",mean_bl_mom_sp4b);
-	fprintf(f_bl_mom,"sp4c	%lg\n",mean_bl_mom_sp4c); 
-	fprintf(f_bl_mom,"6A_Oh	%lg\n",mean_bl_mom_6A); 
-	fprintf(f_bl_mom,"sp5	%lg\n",mean_bl_mom_sp5);
-	fprintf(f_bl_mom,"sp5a	%lg\n",mean_bl_mom_sp5a);
-	fprintf(f_bl_mom,"sp5b	%lg\n",mean_bl_mom_sp5b);
-	fprintf(f_bl_mom,"7A_D5h	%lg\n",mean_bl_mom_sp5c);
-	
-	fclose(f_bl_mom);
-	printf("\nWritten %s\n\n",filename);
-}
-
-void Coslovich(int f) {
-	int i, j, k;
-	int cnt;
-	int n2, n3, n4, n5, n6, n7, n8;
-	
-	for (i=0; i<N; i++) {
-		s_s_0_2_8[i]='C';
-		s_s_1_2_5_3[i]='C';
-		s_s_1_2_5_2[i]='C';
-		s_s_0_3_6[i]='C';
-		s_s_0_0_12[i]='C';
-		s_b_0_2_8_4[i]='C';
-		s_b_0_2_8_5[i]='C';
-		s_b_0_3_6_6[i]='C';
-		s_b_0_1_10_4[i]='C';
-	}
-	
-	for (i=0; i<N; i++) {
-		if (rtype[i]!=2) continue;
-		n2=n3=n4=n5=n6=n7=n8=0;
-		for (j=0; j<cnb[i]; j++) {
-			cnt=0;
-			for (k=0; k<cnb[i]; k++) {
-				if (k==j) continue;
-				if (Bonds_BondCheck(bNums[i][j],bNums[i][k])==1) cnt++;
-			}
-			if (cnt==2) n2++;
-			else if (cnt==3) n3++;
-			else if (cnt==4) n4++;
-			else if (cnt==5) n5++;
-			else if (cnt==6) n6++;
-			else if (cnt==7) n7++;
-			else if (cnt==8) n8++;
-		}
-		
-		if (n2==0 && n3==0 && n4==2 && n5==8 && n6==0 && n7==0 && n8==0) {
-			nCos_s_0_2_8++;
-			s_s_0_2_8[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_s_0_2_8[bNums[i][j]]=='C') s_s_0_2_8[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==1 && n4==2 && n5==5 && n6==3 && n7==0 && n8==0) {
-			nCos_s_1_2_5_3++;
-			s_s_1_2_5_3[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_s_1_2_5_3[bNums[i][j]]=='C') s_s_1_2_5_3[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==1 && n4==2 && n5==5 && n6==2 && n7==0 && n8==0) {
-			nCos_s_1_2_5_2++;
-			s_s_1_2_5_2[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_s_1_2_5_2[bNums[i][j]]=='C') s_s_1_2_5_2[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==0 && n4==3 && n5==6 && n6==0 && n7==0 && n8==0) {
-			nCos_s_0_3_6++;
-			s_s_0_3_6[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_s_0_3_6[bNums[i][j]]=='C') s_s_0_3_6[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==0 && n4==0 && n5==12 && n6==0 && n7==0 && n8==0) {
-			nCos_s_0_0_12++;
-			
-			s_s_0_0_12[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_s_0_0_12[bNums[i][j]]=='C') s_s_0_0_12[bNums[i][j]]='B';
-			}
-		}
-	}
-	
-	for (i=0; i<N; i++) {
-		if (rtype[i]!=1) continue;
-		n2=n3=n4=n5=n6=n7=n8=0;
-		for (j=0; j<cnb[i]; j++) {
-			cnt=0;
-			for (k=0; k<cnb[i]; k++) {
-				if (k==j) continue;
-				if (Bonds_BondCheck(bNums[i][j],bNums[i][k])==1) cnt++;
-			}
-			if (cnt==2) n2++;
-			else if (cnt==3) n3++;
-			else if (cnt==4) n4++;
-			else if (cnt==5) n5++;
-			else if (cnt==6) n6++;
-			else if (cnt==7) n7++;
-			else if (cnt==8) n8++;
-		}
-		
-		if (n2==0 && n3==0 && n4==2 && n5==8 && n6==4 && n7==0 && n8==0) {
-			nCos_b_0_2_8_4++;
-			s_b_0_2_8_4[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_b_0_2_8_4[bNums[i][j]]=='C') s_b_0_2_8_4[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==0 && n4==2 && n5==8 && n6==5 && n7==0 && n8==0) {
-			nCos_b_0_2_8_5++;
-			s_b_0_2_8_5[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_b_0_2_8_5[bNums[i][j]]=='C') s_b_0_2_8_5[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==0 && n4==3 && n5==6 && n6==6 && n7==0 && n8==0) {
-			nCos_b_0_3_6_6++;
-			s_b_0_3_6_6[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_b_0_3_6_6[bNums[i][j]]=='C') s_b_0_3_6_6[bNums[i][j]]='B';
-			}
-		}
-		if (n2==0 && n3==0 && n4==1 && n5==10 && n6==4 && n7==0 && n8==0) {
-			nCos_b_0_1_10_4++;
-			s_b_0_1_10_4[i]='O';
-			for (j=0; j<cnb[i]; j++) {
-				if (s_b_0_1_10_4[bNums[i][j]]=='C') s_b_0_1_10_4[bNums[i][j]]='B';
-			}
-		}
-	}
-	
-	for (i=0; i<N; i++) {
-		if (s_s_0_2_8[i]!='C') {
-			np_s_0_2_8++;
-			pop_per_frame_s_0_2_8[f]=pop_per_frame_s_0_2_8[f]+1.0;
-		}
-		if (s_s_1_2_5_3[i]!='C') {
-			np_s_1_2_5_3++;
-			pop_per_frame_s_1_2_5_3[f]=pop_per_frame_s_1_2_5_3[f]+1.0;
-		}
-		if (s_s_1_2_5_2[i]!='C') {
-			np_s_1_2_5_2++;
-			pop_per_frame_s_1_2_5_2[f]=pop_per_frame_s_1_2_5_2[f]+1.0;
-		}
-		if (s_s_0_3_6[i]!='C') {
-			np_s_0_3_6++;
-			pop_per_frame_s_0_3_6[f]=pop_per_frame_s_0_3_6[f]+1.0;
-		}
-		if (s_s_0_0_12[i]!='C') {
-			np_s_0_0_12++;
-			pop_per_frame_s_0_0_12[f]=pop_per_frame_s_0_0_12[f]+1.0;
-		}
-		
-		if (s_b_0_2_8_4[i]!='C') {
-			np_b_0_2_8_4++;
-			pop_per_frame_b_0_2_8_4[f]=pop_per_frame_b_0_2_8_4[f]+1.0;
-		}
-		if (s_b_0_2_8_5[i]!='C') {
-			np_b_0_2_8_5++;
-			pop_per_frame_b_0_2_8_5[f]=pop_per_frame_b_0_2_8_5[f]+1.0;
-		}
-		if (s_b_0_3_6_6[i]!='C') {
-			np_b_0_3_6_6++;
-			pop_per_frame_b_0_3_6_6[f]=pop_per_frame_b_0_3_6_6[f]+1.0;
-		}
-		if (s_b_0_1_10_4[i]!='C') {
-			np_b_0_1_10_4++;
-			pop_per_frame_b_0_1_10_4[f]=pop_per_frame_b_0_1_10_4[f]+1.0;
-		}
-	}
-	pop_per_frame_s_0_2_8[f]=pop_per_frame_s_0_2_8[f]/N;
-	pop_per_frame_s_1_2_5_3[f]=pop_per_frame_s_1_2_5_3[f]/N;
-	pop_per_frame_s_1_2_5_2[f]=pop_per_frame_s_1_2_5_2[f]/N;
-	pop_per_frame_s_0_3_6[f]=pop_per_frame_s_0_3_6[f]/N;
-	pop_per_frame_s_0_0_12[f]=pop_per_frame_s_0_0_12[f]/N;
-	
-	pop_per_frame_b_0_2_8_4[f]=pop_per_frame_b_0_2_8_4[f]/N;
-	pop_per_frame_b_0_2_8_5[f]=pop_per_frame_b_0_2_8_5[f]/N;
-	pop_per_frame_b_0_3_6_6[f]=pop_per_frame_b_0_3_6_6[f]/N;
-	pop_per_frame_b_0_1_10_4[f]=pop_per_frame_b_0_1_10_4[f]/N;
-}
-			
-
 //// START: main() routine
 int main(int argc, char **argv) {
 	int e, f, i;
 	int write, remainder;
-	double tempish;
 	char errMsg[1000], output[1000], other[1000];
 	int ix, iy, iz;
 	int imap;
 	FILE *rXmol;
-	FILE *rSizes; //NPT_FIX
-	FILE *clusBinFile, *cos_pop_per_frame, *file_s_0_0_12;
+	FILE *rSizes;
 
-	
 	sprintf(fInputParamsName,"inputparameters.ini");
 	Setup_ReadIniFile(fInputParamsName);	// read input params
 	printf("box size file: %s\n",fBoxSizeName);
-	//NPT stuff
+
 	if (ISNOTCUBIC!=0){
 		if (USELIST==1) {
 		sprintf(errMsg,"main() : Error! Need switch cell list off for non-cubic/NPT system");	// Always test file open
 		Error(errMsg);
 		}
 	}
-	//NPT stuff
 	//read in box data if noncubic/NPT
 	if  (ISNOTCUBIC!=0){
 		printf("reading box size data from %s\n",fBoxSizeName);
@@ -1857,11 +1411,6 @@ int main(int argc, char **argv) {
 	}
 	
 	Setup_InitStaticVars();
-	
-	if (doClusBLDeviation==1) {
-		sprintf(fgsblName,"ground.state.bondlengths.dat");
-		Setup_InitgsblVars(fgsblName);
-	}
 	
 	if (USELIST==1) {
 		cellSide = side/M;	// length of cells
@@ -1919,67 +1468,7 @@ int main(int argc, char **argv) {
 		file_13A_cen_xmol=fopen(output, "w");
 		printf("completed\n");
 	}
-	
-	if (doCoslovich==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.s_0_0_12",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		file_s_0_0_12=fopen(output, "w");
-		if (file_s_0_0_12==NULL)  {
-			sprintf(errMsg,"main() : Error opening file %s",output);	// Always test file open
-			Error(errMsg);
-		}
-		
-		s_s_0_2_8=malloc(N*sizeof(char));	if (s_s_0_2_8==NULL) { sprintf(errMsg,"main(): s_s_0_2_8[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_s_1_2_5_3=malloc(N*sizeof(char));	if (s_s_1_2_5_3==NULL) { sprintf(errMsg,"main(): s_s_1_2_5_3[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_s_1_2_5_2=malloc(N*sizeof(char));	if (s_s_1_2_5_2==NULL) { sprintf(errMsg,"main(): s_s_1_2_5_2[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_s_0_3_6=malloc(N*sizeof(char));	if (s_s_0_3_6==NULL) { sprintf(errMsg,"main(): s_s_0_3_6[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_s_0_0_12=malloc(N*sizeof(char));	if (s_s_0_0_12==NULL) { sprintf(errMsg,"main(): s_s_0_0_12[] malloc out of memory\n");	Error_no_free(errMsg); }
-		
-		pop_per_frame_s_0_2_8=malloc(FRAMES*sizeof(double));	if (pop_per_frame_s_0_2_8==NULL) { sprintf(errMsg,"main(): pop_per_frame_s_0_2_8[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_s_1_2_5_3=malloc(FRAMES*sizeof(double));	if (pop_per_frame_s_1_2_5_3==NULL) { sprintf(errMsg,"main(): pop_per_frame_s_1_2_5_3[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_s_1_2_5_2=malloc(FRAMES*sizeof(double));	if (pop_per_frame_s_1_2_5_2==NULL) { sprintf(errMsg,"main(): pop_per_frame_s_1_2_5_2[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_s_0_3_6=malloc(FRAMES*sizeof(double));	if (pop_per_frame_s_0_3_6==NULL) { sprintf(errMsg,"main(): pop_per_frame_s_0_3_6[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_s_0_0_12=malloc(FRAMES*sizeof(double));	if (pop_per_frame_s_0_0_12==NULL) { sprintf(errMsg,"main(): pop_per_frame_s_0_0_12[] malloc out of memory\n");	Error_no_free(errMsg); }
-		
-		s_b_0_2_8_4=malloc(N*sizeof(char));	if (s_b_0_2_8_4==NULL) { sprintf(errMsg,"main(): s_b_0_2_8_4[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_b_0_2_8_5=malloc(N*sizeof(char));	if (s_b_0_2_8_5==NULL) { sprintf(errMsg,"main(): s_b_0_2_8_5[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_b_0_3_6_6=malloc(N*sizeof(char));	if (s_b_0_3_6_6==NULL) { sprintf(errMsg,"main(): s_b_0_3_6_6[] malloc out of memory\n");	Error_no_free(errMsg); }
-		s_b_0_1_10_4=malloc(N*sizeof(char));	if (s_b_0_1_10_4==NULL) { sprintf(errMsg,"main(): s_b_0_1_10_4[] malloc out of memory\n");	Error_no_free(errMsg); }
-		
-		pop_per_frame_b_0_2_8_4=malloc(FRAMES*sizeof(double));	if (pop_per_frame_b_0_2_8_4==NULL) { sprintf(errMsg,"main(): pop_per_frame_b_0_2_8[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_b_0_2_8_5=malloc(FRAMES*sizeof(double));	if (pop_per_frame_b_0_2_8_5==NULL) { sprintf(errMsg,"main(): pop_per_frame_b_0_2_8_5[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_b_0_3_6_6=malloc(FRAMES*sizeof(double));	if (pop_per_frame_b_0_3_6_6==NULL) { sprintf(errMsg,"main(): pop_per_frame_b_0_3_6[] malloc out of memory\n");	Error_no_free(errMsg); }
-		pop_per_frame_b_0_1_10_4=malloc(FRAMES*sizeof(double));	if (pop_per_frame_b_0_1_10_4==NULL) { sprintf(errMsg,"main(): pop_per_frame_b_0_1_10_4[] malloc out of memory\n");	Error_no_free(errMsg); }
-		
-		for (i=0; i<N; i++) {
-			s_s_0_2_8[i]='C';
-			s_s_1_2_5_3[i]='C';
-			s_s_1_2_5_2[i]='C';
-			s_s_0_3_6[i]='C';
-			s_s_0_0_12[i]='C';
-			
-			s_b_0_2_8_4[i]='C';
-			s_b_0_2_8_5[i]='C';
-			s_b_0_3_6_6[i]='C';
-			s_b_0_1_10_4[i]='C';
-		}
-		for (i=0; i<FRAMES; i++) {
-			pop_per_frame_s_0_2_8[i]=0.0;
-			pop_per_frame_s_1_2_5_3[i]=0.0;
-			pop_per_frame_s_1_2_5_2[i]=0.0;
-			pop_per_frame_s_0_3_6[i]=0.0;
-			pop_per_frame_s_0_0_12[i]=0.0;
-			
-			pop_per_frame_b_0_2_8_4[i]=0.0;
-			pop_per_frame_b_0_2_8_5[i]=0.0;
-			pop_per_frame_b_0_3_6_6[i]=0.0;
-			pop_per_frame_b_0_1_10_4[i]=0.0;
-		}
-		nCos_s_0_2_8=nCos_s_1_2_5_3=nCos_s_1_2_5_2=nCos_s_0_3_6=nCos_s_0_0_12=0;
-		np_s_0_2_8=np_s_1_2_5_3=np_s_1_2_5_2=np_s_0_3_6=np_s_0_0_12=0;
-		nCos_b_0_2_8_4=nCos_b_0_2_8_5=nCos_b_0_3_6_6=nCos_b_0_1_10_4=0;
-		np_b_0_2_8_4=np_b_0_2_8_5=np_b_0_3_6_6=np_b_0_1_10_4=0;
-	}
-	
+
 	printf("begin main loop\n");
 
 	f=0;
@@ -2025,21 +1514,6 @@ int main(int argc, char **argv) {
 			if (doHCP==1) Clusters_GetHCP(f);
 			if (doBCC9==1) Clusters_GetBCC_9(f);
 			if (doBCC15==1) Clusters_GetBCC_15(f);
-
-			if (doCoslovich==1) {
-				Coslovich(f);
-				fprintf(file_s_0_0_12,"%d\nframe %d of %d\n",N,f,TOTALFRAMES);
-				for(i=0; i<N; i++) {
-					if (s_s_0_0_12[i]!='C') {
-						if (rtype[i]==1) fprintf(file_s_0_0_12,"C\n");
-						else fprintf(file_s_0_0_12,"D\n");
-					}
-					else if (s_s_0_0_12[i]=='C') {
-						if (rtype[i]==1) fprintf(file_s_0_0_12,"A\n");
-						else fprintf(file_s_0_0_12,"B\n");
-					}
-				}
-			}
 
 			if (doWriteClus==1) {
 				Write_Cluster_sp3(f,wsp3);
@@ -2097,7 +1571,6 @@ int main(int argc, char **argv) {
 			Stats_Reset();
 			Stats_Analyse();
 			Pop_Per_Frame(f);
-			if (doClusBLDeviation==1) Update_bl_mom(f);
 
 			printf("f%d complete\n",f);
 			f++;
@@ -2202,296 +1675,11 @@ int main(int argc, char **argv) {
 		printf("closed!\n\n");
 	}
 	
-	if (doCoslovich==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.cos_pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		cos_pop_per_frame=fopen(output, "w");
-		if (cos_pop_per_frame==NULL)  {
-			sprintf(errMsg,"main() : Error opening file %s",output);	// Always test file open
-			Error(errMsg);
-		}
-		fprintf(cos_pop_per_frame,"%s\n",output);
-		
-		fprintf(cos_pop_per_frame,"frame	time	time_norm_t_a	s(0,0,12)	s(0,2,8)	s(1,2,5,3)	s(1,2,5,2)	s(0,3,6)	b(0,2,8,4)	b(0,2,8,5)	b(0,3,6,6)	b(0,1,10,4)\n");
-		fprintf(cos_pop_per_frame,"mean	-	-	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg\n",(double)np_s_0_0_12/(N*FRAMES),(double)np_s_0_2_8/(N*FRAMES),(double)np_s_1_2_5_3/(N*FRAMES),(double)np_s_1_2_5_2/(N*FRAMES),(double)np_s_0_3_6/(N*FRAMES),(double)np_b_0_2_8_4/(N*FRAMES),(double)np_b_0_2_8_5/(N*FRAMES),(double)np_b_0_3_6_6/(N*FRAMES),(double)np_b_0_1_10_4/(N*FRAMES));
-		for (f=0;f<FRAMES;f++) {
-			fprintf(cos_pop_per_frame,"%d	%.15lg	%.15lg",f,(double)f*FRAMETSTEP*SAMPLEFREQ,(double)f*FRAMETSTEP*SAMPLEFREQ/talpha);
-			fprintf(cos_pop_per_frame,"	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg\n",pop_per_frame_s_0_0_12[f],pop_per_frame_s_0_2_8[f],pop_per_frame_s_1_2_5_3[f],pop_per_frame_s_1_2_5_2[f],pop_per_frame_s_0_3_6[f],pop_per_frame_b_0_2_8_4[f],pop_per_frame_b_0_2_8_5[f],pop_per_frame_b_0_3_6_6[f],pop_per_frame_b_0_1_10_4[f]);
-		}
-		fclose(cos_pop_per_frame);
-		printf("Written %s\n\n",output);
-		fclose(file_s_0_0_12);
-	}
-	
-	if (doBLDistros==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistro(output,BLDistro,&BLDistroNoSamples,&meanBL);
-		if (doBinary==1){
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_AA",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WriteBLDistro(output,BLDistroAA,&BLDistroNoSamplesAA,&meanBLAA);
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_AB",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WriteBLDistro(output,BLDistroAB,&BLDistroNoSamplesAB,&meanBLAB);
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_BB",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WriteBLDistro(output,BLDistroBB,&BLDistroNoSamplesBB,&meanBLBB);
-		}
-	}
-
-	if (doClusBLDistros==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp3",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp3,&BLDistroNoSamplessp3,&meanBLsp3);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp3a",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp3a,&BLDistroNoSamplessp3a,&meanBLsp3a);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp3b",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp3b,&BLDistroNoSamplessp3b,&meanBLsp3b);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp3c",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp3c,&BLDistroNoSamplessp3c,&meanBLsp3c);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp4",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp4,&BLDistroNoSamplessp4,&meanBLsp4);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp4a",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp4a,&BLDistroNoSamplessp4a,&meanBLsp4a);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp4b",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp4b,&BLDistroNoSamplessp4b,&meanBLsp4b);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp4c",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp4c,&BLDistroNoSamplessp4c,&meanBLsp4c);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_6A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro6A,&BLDistroNoSamples6A,&meanBL6A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp5",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp5,&BLDistroNoSamplessp5,&meanBLsp5);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp5a",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp5a,&BLDistroNoSamplessp5a,&meanBLsp5a);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp5b",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp5b,&BLDistroNoSamplessp5b,&meanBLsp5b);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_sp5c",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistrosp5c,&BLDistroNoSamplessp5c,&meanBLsp5c);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_6Z",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro6Z,&BLDistroNoSamples6Z,&meanBL6Z);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_7K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro7K,&BLDistroNoSamples7K,&meanBL7K);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_8A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro8A,&BLDistroNoSamples8A,&meanBL8A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_8B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro8B,&BLDistroNoSamples8B,&meanBL8B);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_8K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro8K,&BLDistroNoSamples8K,&meanBL8K);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_9A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro9A,&BLDistroNoSamples9A,&meanBL9A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_9B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro9B,&BLDistroNoSamples9B,&meanBL9B);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_9K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro9K,&BLDistroNoSamples9K,&meanBL9K);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_10A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro10A,&BLDistroNoSamples10A,&meanBL10A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_10B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro10B,&BLDistroNoSamples10B,&meanBL10B);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_10K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro10K,&BLDistroNoSamples10K,&meanBL10K);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_10W",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro10W,&BLDistroNoSamples10W,&meanBL10W);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_11A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro11A,&BLDistroNoSamples11A,&meanBL11A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_11B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro11B,&BLDistroNoSamples11B,&meanBL11B);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_11C",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro11C,&BLDistroNoSamples11C,&meanBL11C);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_11E",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro11E,&BLDistroNoSamples11E,&meanBL11E);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_11F",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro11F,&BLDistroNoSamples11F,&meanBL11F);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_11W",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro11W,&BLDistroNoSamples11W,&meanBL11W);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_12A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro12A,&BLDistroNoSamples12A,&meanBL12A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_12B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro12B,&BLDistroNoSamples12B,&meanBL12B);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_12D",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro12D,&BLDistroNoSamples12D,&meanBL12D);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_12E",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro12E,&BLDistroNoSamples12E,&meanBL12E);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_12K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro12K,&BLDistroNoSamples12K,&meanBL12K);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_13A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro13A,&BLDistroNoSamples13A,&meanBL13A);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_13B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro13B,&BLDistroNoSamples13B,&meanBL13B);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_13K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistro13K,&BLDistroNoSamples13K,&meanBL13K);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_FCC",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistroFCC,&BLDistroNoSamplesFCC,&meanBLFCC);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_HCP",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistroHCP,&BLDistroNoSamplesHCP,&meanBLHCP);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_BCC_9",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistroBCC_9,&BLDistroNoSamplesBCC_9,&meanBLBCC_9);
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bond_length_BCC_15",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WriteBLDistroClust(output,BLDistroBCC_15,&BLDistroNoSamplesBCC_15,&meanBLBCC_15);
-		
-		printf("\nCluster based bond length analysis\n");
-		printf("Clust	mean bond length\n");
-		printf("sp3	%lg	%lg\n",meanBLsp3,-meanBL+meanBLsp3);
-		printf("sp3a	%lg	%lg\n",meanBLsp3a,-meanBL+meanBLsp3a);
-		printf("sp3b	%lg	%lg\n",meanBLsp3b,-meanBL+meanBLsp3b);
-		printf("5A_D3h	%lg	%lg\n",meanBLsp3c,-meanBL+meanBLsp3c);
-		printf("sp4	%lg	%lg\n",meanBLsp4,-meanBL+meanBLsp4);
-		printf("sp4a	%lg	%lg\n",meanBLsp4a,-meanBL+meanBLsp4a);
-		printf("sp4b	%lg	%lg\n",meanBLsp4b,-meanBL+meanBLsp4b);
-		printf("sp4c	%lg	%lg\n",meanBLsp4c,-meanBL+meanBLsp4c);
-		printf("6A_Oh	%lg	%lg\n",meanBL6A,-meanBL+meanBL6A);
-		printf("6Z_C2v	%lg	%lg\n",meanBL6Z,-meanBL+meanBL6Z);
-		printf("7K	%lg	%lg\n",meanBL7K,-meanBL+meanBL7K);
-		printf("sp5	%lg	%lg\n",meanBLsp5,-meanBL+meanBLsp5);
-		printf("sp5a	%lg	%lg\n",meanBLsp5a,-meanBL+meanBLsp5a);
-		printf("sp5b	%lg	%lg\n",meanBLsp5b,-meanBL+meanBLsp5b);
-		printf("7A_D5h	%lg	%lg\n",meanBLsp5c,-meanBL+meanBLsp5c);
-		printf("8A_D2d	%lg	%lg\n",meanBL8A,-meanBL+meanBL8A);
-		printf("8B_Cs	%lg	%lg\n",meanBL8B,-meanBL+meanBL8B);
-		printf("8K	%lg	%lg\n",meanBL8K,-meanBL+meanBL8K);
-		printf("9A_D3h	%lg	%lg\n",meanBL9A,-meanBL+meanBL9A);
-		printf("9B_C2v	%lg	%lg\n",meanBL9B,-meanBL+meanBL9B);
-		printf("9K	%lg	%lg\n",meanBL9K,-meanBL+meanBL9K);
-		printf("10A_D4d	%lg	%lg\n",meanBL10A,-meanBL+meanBL10A);
-		printf("10B_C3v	%lg	%lg\n",meanBL10B,-meanBL+meanBL10B);
-		printf("10K	%lg	%lg\n",meanBL10K,-meanBL+meanBL10K);
-		printf("10W	%lg	%lg\n",meanBL10W,-meanBL+meanBL10W);
-		printf("11A_D4d	%lg	%lg\n",meanBL11A,-meanBL+meanBL11A);
-		printf("11B_C2v	%lg	%lg\n",meanBL11B,-meanBL+meanBL11B);
-		printf("11CD	%lg	%lg\n",meanBL11C,-meanBL+meanBL11C);
-		printf("11E_C2	%lg	%lg\n",meanBL11E,-meanBL+meanBL11E);
-		printf("11F_C2v	%lg	%lg\n",meanBL11F,-meanBL+meanBL11F);
-		printf("11W_Cs	%lg	%lg\n",meanBL11W,-meanBL+meanBL11W);
-		printf("12A_C2v	%lg	%lg\n",meanBL12A,-meanBL+meanBL12A);
-		printf("12BC	%lg	%lg\n",meanBL12B,-meanBL+meanBL12B);
-		printf("12D_D2d	%lg	%lg\n",meanBL12D,-meanBL+meanBL12D);
-		printf("12E_D3h	%lg	%lg\n",meanBL12E,-meanBL+meanBL12E);
-		printf("12K	%lg	%lg\n",meanBL12K,-meanBL+meanBL12K);
-		printf("13A_Ih	%lg	%lg\n",meanBL13A,-meanBL+meanBL13A);
-		printf("13B_D5h	%lg	%lg\n",meanBL13B,-meanBL+meanBL13B);
-		printf("13K	%lg	%lg\n",meanBL13K,-meanBL+meanBL13K);
-		printf("FCC_m13	%lg	%lg\n",meanBLFCC,-meanBL+meanBLFCC);
-		printf("HCP_m13	%lg	%lg\n",meanBLHCP,-meanBL+meanBLHCP);
-		printf("BCC_m9	%lg	%lg\n",meanBLBCC_9,-meanBL+meanBLBCC_9);
-		printf("BCC_m15	%lg	%lg\n",meanBLBCC_15,-meanBL+meanBLBCC_15);
-		if (doBLDistros==1) printf("mean bl	%lg	%lg\n",meanBL,0.0);
-		
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.meanBL",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		clusBinFile=fopen(output,"w");
-		if (clusBinFile==NULL)  {
-			sprintf(errMsg,"main(): Error opening file %s",output);	// Always test file open
-			Error(errMsg);
-		}
-		fprintf(clusBinFile,"%s\n",output);
-		
-		fprintf(clusBinFile,"Clust	mean bond length\n");
-		fprintf(clusBinFile,"sp3	%lg	%lg\n",meanBLsp3,-meanBL+meanBLsp3);
-		fprintf(clusBinFile,"sp3a	%lg	%lg\n",meanBLsp3a,-meanBL+meanBLsp3a);
-		fprintf(clusBinFile,"sp3b	%lg	%lg\n",meanBLsp3b,-meanBL+meanBLsp3b);
-		fprintf(clusBinFile,"5A_D3h	%lg	%lg\n",meanBLsp3c,-meanBL+meanBLsp3c);
-		fprintf(clusBinFile,"sp4	%lg	%lg\n",meanBLsp4,-meanBL+meanBLsp4);
-		fprintf(clusBinFile,"sp4a	%lg	%lg\n",meanBLsp4a,-meanBL+meanBLsp4a);
-		fprintf(clusBinFile,"sp4b	%lg	%lg\n",meanBLsp4b,-meanBL+meanBLsp4b);
-		fprintf(clusBinFile,"sp4c	%lg	%lg\n",meanBLsp4c,-meanBL+meanBLsp4c); 
-		fprintf(clusBinFile,"6A_Oh	%lg	%lg\n",meanBL6A,-meanBL+meanBL6A); 
-		fprintf(clusBinFile,"6Z_C2v	%lg	%lg\n",meanBL6Z,-meanBL+meanBL6Z);
-		fprintf(clusBinFile,"7K	%lg	%lg\n",meanBL7K,-meanBL+meanBL7K);
-		fprintf(clusBinFile,"sp5	%lg	%lg\n",meanBLsp5,-meanBL+meanBLsp5);
-		fprintf(clusBinFile,"sp5a	%lg	%lg\n",meanBLsp5a,-meanBL+meanBLsp5a);
-		fprintf(clusBinFile,"sp5b	%lg	%lg\n",meanBLsp5b,-meanBL+meanBLsp5b);
-		fprintf(clusBinFile,"7A_D5h	%lg	%lg\n",meanBLsp5c,-meanBL+meanBLsp5c);
-		fprintf(clusBinFile,"8A_D2d	%lg	%lg\n",meanBL8A,-meanBL+meanBL8A);
-		fprintf(clusBinFile,"8B_Cs	%lg	%lg\n",meanBL8B,-meanBL+meanBL8B);
-		fprintf(clusBinFile,"8K	%lg	%lg\n",meanBL8K,-meanBL+meanBL8K);
-		fprintf(clusBinFile,"9A_D3h	%lg	%lg\n",meanBL9A,-meanBL+meanBL9A);
-		fprintf(clusBinFile,"9B_C2v	%lg	%lg\n",meanBL9B,-meanBL+meanBL9B);
-		fprintf(clusBinFile,"9K	%lg	%lg\n",meanBL9K,-meanBL+meanBL9K);
-		fprintf(clusBinFile,"10A_D4d	%lg	%lg\n",meanBL10A,-meanBL+meanBL10A);
-		fprintf(clusBinFile,"10B_C3v	%lg	%lg\n",meanBL10B,-meanBL+meanBL10B);
-		fprintf(clusBinFile,"10K	%lg	%lg\n",meanBL10K,-meanBL+meanBL10K);
-		fprintf(clusBinFile,"10W	%lg	%lg\n",meanBL10W,-meanBL+meanBL10W);
-		fprintf(clusBinFile,"11A_D4d	%lg	%lg\n",meanBL11A,-meanBL+meanBL11A);
-		fprintf(clusBinFile,"11B_C2v	%lg	%lg\n",meanBL11B,-meanBL+meanBL11B);
-		fprintf(clusBinFile,"11CD	%lg	%lg\n",meanBL11C,-meanBL+meanBL11C);
-		fprintf(clusBinFile,"11E_C2	%lg	%lg\n",meanBL11E,-meanBL+meanBL11E);
-		fprintf(clusBinFile,"11F_C2v	%lg	%lg\n",meanBL11F,-meanBL+meanBL11F);
-		fprintf(clusBinFile,"11W_Cs	%lg	%lg\n",meanBL11W,-meanBL+meanBL11W);
-		fprintf(clusBinFile,"12A_C2v	%lg	%lg\n",meanBL12A,-meanBL+meanBL12A);
-		fprintf(clusBinFile,"12BC	%lg	%lg\n",meanBL12B,-meanBL+meanBL12B);
-		fprintf(clusBinFile,"12D_D2d	%lg	%lg\n",meanBL12D,-meanBL+meanBL12D);
-		fprintf(clusBinFile,"12E_D3h	%lg	%lg\n",meanBL12E,-meanBL+meanBL12E);
-		fprintf(clusBinFile,"12K	%lg	%lg\n",meanBL12K,-meanBL+meanBL12K);
-		fprintf(clusBinFile,"13A_Ih	%lg	%lg\n",meanBL13A,-meanBL+meanBL13A);
-		fprintf(clusBinFile,"13B_D5h	%lg	%lg\n",meanBL13B,-meanBL+meanBL13B);
-		fprintf(clusBinFile,"13K	%lg	%lg\n",meanBL13K,-meanBL+meanBL13K);
-		fprintf(clusBinFile,"FCC_m13	%lg	%lg\n",meanBLFCC,-meanBL+meanBLFCC);
-		fprintf(clusBinFile,"HCP_m13	%lg	%lg\n",meanBLHCP,-meanBL+meanBLHCP);
-		fprintf(clusBinFile,"BCC_m9	%lg	%lg\n",meanBLBCC_9,-meanBL+meanBLBCC_9);
-		fprintf(clusBinFile,"BCC_m15	%lg	%lg\n",meanBLBCC_15,-meanBL+meanBLBCC_15);
-		if (doBLDistros==1) fprintf(clusBinFile,"mean bl	%lg	%lg\n",meanBL,0.0);
-		
-		fclose(clusBinFile);
-		printf("\nWritten %s\n\n",output);
-	}
-	
-	if (donbDistros==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.nb_histo",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Bonds_WritenbDistro(output,nbDistro,&nbDistroNoSamples,&meannb);
-		if (doBinary==1) {
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.nb_histo_AA",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WritenbDistro(output,nbDistroAA,&nbDistroNoSamplesAA,&meannbAA);
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.nb_histo_AB",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WritenbDistro(output,nbDistroAB,&nbDistroNoSamplesAB,&meannbAB);
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.nb_histo_BA",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WritenbDistro(output,nbDistroBA,&nbDistroNoSamplesBA,&meannbBA);
-			sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.nb_histo_BB",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-			Bonds_WritenbDistro(output,nbDistroBB,&nbDistroNoSamplesBB,&meannbBB);
-		}
-	}
-	
-
 	sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
 	printf("\n");
 	Stats_Report(output);
 	printf("\nWritten %s\n\n",output);
 
-	if (doBondedCen==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Norm_Write_bonded_to_cen(output);
-	}
-	
-	if (doClusBLDeviation==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clus_bl_mom",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Norm_Write_bl_mom(output);
-	}
-	
-	if (doCoslovich==1) {
-		printf("small (0,2,8) %d ",nCos_s_0_2_8);
-		tempish=(double)nCos_s_0_2_8/(double)(FRAMES*(N-NA));
-		printf("denom %.15lg small (0,2,8) %.15lg\n",(double)(FRAMES*(N-NA)),tempish);
-		
-		printf("small (1,2,5,3) %d ",nCos_s_1_2_5_3);
-		tempish=(double)nCos_s_1_2_5_3/(double)(FRAMES*(N-NA));
-		printf("denom %.15lg small (1,2,5,3) %.15lg\n",(double)(FRAMES*(N-NA)),tempish);
-		
-		printf("small (1,2,5,2) %d ",nCos_s_1_2_5_2);
-		tempish=(double)nCos_s_1_2_5_2/(double)(FRAMES*(N-NA));
-		printf("denom %.15lg small (1,2,5,2) %.15lg\n",(double)(FRAMES*(N-NA)),tempish);
-		
-		printf("small (0,3,6) %d ",nCos_s_0_3_6);
-		tempish=(double)nCos_s_0_3_6/(double)(FRAMES*(N-NA));
-		printf("denom %.15lg small (0,3,6) %.15lg\n",(double)(FRAMES*(N-NA)),tempish);
-		
-		printf("big (0,2,8,4) %d ",nCos_b_0_2_8_4);
-		tempish=(double)nCos_b_0_2_8_4/(double)(FRAMES*(NA));
-		printf("denom %.15lg big (0,2,8,4) %.15lg\n",(double)(FRAMES*(NA)),tempish);
-		
-		printf("big (0,2,8,5) %d ",nCos_b_0_2_8_5);
-		tempish=(double)nCos_b_0_2_8_5/(double)(FRAMES*(NA));
-		printf("denom %.15lg big (0,2,8,5) %.15lg\n",(double)(FRAMES*(NA)),tempish);
-		
-		printf("big (0,3,6,6) %d ",nCos_b_0_3_6_6);
-		tempish=(double)nCos_b_0_3_6_6/(double)(FRAMES*(NA));
-		printf("denom %.15lg big (0,3,6,6) %.15lg\n",(double)(FRAMES*(NA)),tempish);
-		
-		printf("big (0,1,10,4) %d ",nCos_b_0_1_10_4);
-		tempish=(double)nCos_b_0_1_10_4/(double)(FRAMES*(NA));
-		printf("denom %.15lg big (0,1,10,4) %.15lg\n",(double)(FRAMES*(NA)),tempish);
-	}
 	
 	Setup_FreeStaticVars();
 	Stats_FreeMem();

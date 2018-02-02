@@ -2,7 +2,6 @@
 #ifndef CLUSTERS_H
 #define CLUSTERS_H
 
-//// START: Clusters routines
 void Clusters_Get6Z_C2v(int f) ;   // Detect 6Z clusters from 2 5A clusters
 
 void Clusters_Get7K(int f) ;   // Detect 7K clusters from 2 5A clusters
@@ -32,6 +31,7 @@ void Clusters_Get9K_10K(int f)  ;// Detect 9K & 10K clusters
 int Clusters_Get10K(int f, char *ach, char *ach_cen, char *ach_shell) ;// Detect 10K clusters
 
 void Clusters_Get10A_C3v(int f) ;// Detect 10A D4d clusters
+
 void Clusters_Get10W(int f) ;// Detect 10W clusters
 
 void Clusters_Get11A_12K(int f) ;// Detect 11A D4d & 12K clusters
@@ -45,7 +45,6 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) ;// Re
 void Clusters_Get11F_12E_13K(int f) ;  // Detect 11F C2v & 12E 3h
 
 int Clusters_Get12E_D3h(int f, int j, char *ach) ; // Return 1 is 11F is also 12E
-
 
 int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char *ach_cen, char *ach_shell) ;   // Detect 13A clusters
 

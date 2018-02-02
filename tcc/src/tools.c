@@ -50,17 +50,6 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
     return the_array;
 }
 
-double *resize_1D_double(double *the_array, int old_col_size, int new_col_size) {
-    int i;
-    char errMsg[1000];
-    
-    the_array=realloc(the_array,new_col_size*sizeof(double));
-    if (the_array == NULL) { sprintf(errMsg,"resize_1D_double(): the_array[] out of memory old_col_size %d new_col_size %d\n",old_col_size,new_col_size); Error_no_free(errMsg); }
-    for (i=old_col_size; i<new_col_size; i++) the_array[i]=0.0;
-    
-    return the_array;
-}
-
 void links() {  // sorts all the particles into cells, result given by head-of-chain and linked list arrays
     int i, ic;
     for (ic=1;ic<=ncells;ic++) head[ic]=0;

@@ -10,8 +10,6 @@ int **resize_2D_int(int **, int , int , int , int );
 
 int *resize_1D_int(int *, int , int ) ;
 
-double *resize_1D_double(double *, int , int ) ;
-
 void links() ;  // sorts all the particles into cells, result given by head-of-chain and linked list arrays
 
 int quickSort(int *, int );

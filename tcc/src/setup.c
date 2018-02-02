@@ -2,17 +2,6 @@
 #include "tools.h"
 #include "iniparser.h"
 
-double Setup_GetFirstDoubleFromLine(FILE *stream) { // take and return first double from line in file stream
-    char input[10000], errMsg[1000];
-    char *pch;
-    if (fgets(input,10000,stream)==NULL) {
-        sprintf(errMsg,"Setup_GetFirstDoubleFromLine(): end of input file reached\n");
-        Error_no_free(errMsg);
-    }
-    pch=strtok(input," ");
-    return atof(pch);
-}
-
 void Setup_ReadIniFile(char *filename) {
     
     char errMsg[1000];
@@ -62,15 +51,7 @@ void Setup_ReadIniFile(char *filename) {
     do11AcenXmol = iniparser_getboolean(ini, "output:11a", -1);
     do13AcenXmol = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
-    binWidth = iniparser_getdouble(ini, "output:bin_width", -1);
-    doBLDistros = iniparser_getboolean(ini, "output:bond_length", -1);
-    doClusBLDistros = iniparser_getboolean(ini, "output:bond_length_cluster", -1);
-    doClusBLDeviation = iniparser_getboolean(ini, "output:bond_length_dev", -1);
-    donbDistros = iniparser_getboolean(ini, "output:neighbour_dist", -1);
-    doBondedCen = iniparser_getboolean(ini, "output:bonded_dist", -1);
     doSubClusts = iniparser_getboolean(ini, "output:subclusters", -1);
-
-    doCoslovich = iniparser_getboolean(ini, "extra:coslovich", -1);
     talpha = iniparser_getdouble(ini, "extra:alpha_time", -1);
     PRINTINFO = iniparser_getboolean(ini, "extra:debug", -1);
     iniparser_getdouble(ini, "extra:shear", -1);
@@ -91,9 +72,7 @@ void Setup_ReadIniFile(char *filename) {
     if (NA>N) {
         Error_no_free("Setup_ReadIniFile(): NA > N - something wrong in xmol trajectory params file\n");
     }
-    else if (NA<N) {doBinary=1;}
-    else {doBinary=0;}
-    
+
     sidex=sidey=sidez=pow((double)N/RHO, 1.0/3.0);
     halfSidex=halfSidey=halfSidez=sidex/2.0;
     
@@ -106,9 +85,8 @@ void Setup_ReadIniFile(char *filename) {
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
     printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
-    printf("binWidth %.5lg doBLDistros %d doClusBLDistros %d doClusBLDeviation %d\n",binWidth,doBLDistros,doClusBLDistros,doClusBLDeviation);
-    printf("donbDistros %d doBondedCen %d doSubClusts %d\n",donbDistros,doBondedCen,doSubClusts);
-    printf("doCoslovich %d talpha %lg PRINTINFO %d\n\n",doCoslovich,talpha,PRINTINFO);
+    printf("doSubClusts %d\n",doSubClusts);
+    printf("talpha %lg PRINTINFO %d\n\n",talpha,PRINTINFO);
         
     if (ISNOTCUBIC==0) {
         printf("calculating box sides from RHO\n");
@@ -193,7 +171,6 @@ void Setup_Readxyz(int e, int write, int f, FILE *readin) {     // read configur
 void Setup_InitStaticVars() { // Initialize lots of important variables for static TCC algorithm
     int f, j, k;
     char errMsg[1000];
-    double lengthstemp;
 
     dosp3=dosp3a=dosp3b=dosp3c=1;
     dosp4=dosp4a=dosp4b=dosp4c=1;
@@ -856,223 +833,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         pop_per_frame_BCC_9[f]=0;
         pop_per_frame_BCC_15[f]=0;
     }
-    
-    if (doBLDistros) { // histograms of bond lengths
-        lengthstemp=rcutAA; // calculate number of bins for histogram of bond lengths
-        if (rcutAB>lengthstemp) lengthstemp=rcutAB;
-        if (rcutBB>lengthstemp) lengthstemp=rcutBB;
-        BLDistroNoBins=(int)ceil(lengthstemp/binWidth);
-        
-        BLDistroNoSamples=0;
-        meanBL=0.0;
-        BLDistro=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro[j]=0;
-        if (doBinary==1) {
-            BLDistroNoSamplesAA=BLDistroNoSamplesAB=BLDistroNoSamplesBB=0;
-            meanBLAA=meanBLAB=meanBLBB=0.0;
-            
-            BLDistroAA=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroAA==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroAA[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<BLDistroNoBins; j++) BLDistroAA[j]=0;
-        
-            BLDistroAB=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroAB==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroAB[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<BLDistroNoBins; j++) BLDistroAB[j]=0;
-
-            BLDistroBB=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroBB==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroBB[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<BLDistroNoBins; j++) BLDistroBB[j]=0;
-        }
-    }
-    
-    if (donbDistros==1) { // distributions of number of bonds to each particle
-        nbDistroNoSamples=0;
-        meannb=0.0;
-        nbDistro=malloc((nB+1)*sizeof(int)); if (nbDistro==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nbDistro[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<(nB+1); j++) nbDistro[j]=0;
-        
-        if (doBinary==1) {
-            nbDistroNoSamplesAA=nbDistroNoSamplesAB=nbDistroNoSamplesBA=nbDistroNoSamplesBB=0;  // look at statistics of bonds (mean number of bonds per part, mean number AA bonds per A part etc etc)
-            meannbAA=meannbAB=meannbBA=meannbBB=0.0;
-            
-            nbDistroAA=malloc((nB+1)*sizeof(int)); if (nbDistroAA==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nbDistroAA[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<(nB+1); j++) nbDistroAA[j]=0;
-        
-            nbDistroAB=malloc((nB+1)*sizeof(int)); if (nbDistroAB==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nbDistroAB[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<(nB+1); j++) nbDistroAB[j]=0;
-        
-            nbDistroBA=malloc((nB+1)*sizeof(int)); if (nbDistroBA==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nbDistroBA[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<(nB+1); j++) nbDistroBA[j]=0;
-        
-            nbDistroBB=malloc((nB+1)*sizeof(int)); if (nbDistroBB==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nbDistroBB[] malloc out of memory\n");   Error_no_free(errMsg); }
-            for (j=0; j<(nB+1); j++) nbDistroBB[j]=0;
-        }
-    }
-    
-    if (doBondedCen==1) {   // distribution of number of particles bonded to central particle of a cluster
-        n_distro_bonded_to_cen_9B=malloc((nB+1)*sizeof(int));   if (n_distro_bonded_to_cen_9B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_9B[] malloc out of memory\n");    Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_9K=malloc((nB+1)*sizeof(int));   if (n_distro_bonded_to_cen_9K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_9K[] malloc out of memory\n");    Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_10B=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_10B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_10B[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_10K=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_10K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_10K[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_10W=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_10W==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_10W[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_11A=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_11A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_11A[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_11B=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_11B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_11B[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_11C=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_11C==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_11C[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_11W=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_11W==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_11W[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_12A=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_12A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_12A[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_12B=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_12B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_12B[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_12K=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_12K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_12K[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_13A=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_13A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_13A[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_13K=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_13K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_13K[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_13B=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_13B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_13B[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_FCC=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_FCC==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_FCC[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_HCP=malloc((nB+1)*sizeof(int));  if (n_distro_bonded_to_cen_HCP==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_HCP[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_BCC_9=malloc((nB+1)*sizeof(int));    if (n_distro_bonded_to_cen_BCC_9==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_BCC_9[] malloc out of memory\n");  Error_no_free(errMsg); }
-        n_distro_bonded_to_cen_BCC_15=malloc((nB+1)*sizeof(int));   if (n_distro_bonded_to_cen_BCC_15==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n_distro_bonded_to_cen_BCC_15[] malloc out of memory\n");    Error_no_free(errMsg); }
-        
-        for (j=0; j<nB+1; j++) {    // set variables to zero
-            n_distro_bonded_to_cen_9B[j]=0;
-            n_distro_bonded_to_cen_9K[j]=0;
-            n_distro_bonded_to_cen_10B[j]=0;
-            n_distro_bonded_to_cen_10K[j]=0;
-            n_distro_bonded_to_cen_10W[j]=0;
-            n_distro_bonded_to_cen_11A[j]=0;
-            n_distro_bonded_to_cen_11B[j]=0;
-            n_distro_bonded_to_cen_11C[j]=0;
-            n_distro_bonded_to_cen_11W[j]=0;
-            n_distro_bonded_to_cen_12A[j]=0;
-            n_distro_bonded_to_cen_12B[j]=0;
-            n_distro_bonded_to_cen_12K[j]=0;
-            n_distro_bonded_to_cen_13A[j]=0;
-            n_distro_bonded_to_cen_13B[j]=0;
-            n_distro_bonded_to_cen_13K[j]=0;
-            n_distro_bonded_to_cen_FCC[j]=0;
-            n_distro_bonded_to_cen_HCP[j]=0;
-            n_distro_bonded_to_cen_BCC_9[j]=0;
-            n_distro_bonded_to_cen_BCC_15[j]=0;
-        }
-        // number of samples for number of particles bonded to central particle distributions
-        n_bonded_to_cen_9B=n_bonded_to_cen_9K=0;
-        n_bonded_to_cen_10B=n_bonded_to_cen_10K=n_bonded_to_cen_10W=0;
-        n_bonded_to_cen_11A=n_bonded_to_cen_11B=n_bonded_to_cen_11C=n_bonded_to_cen_11W=0;
-        n_bonded_to_cen_12A=n_bonded_to_cen_12B=n_bonded_to_cen_12K=0;
-        n_bonded_to_cen_13A=n_bonded_to_cen_13B=n_bonded_to_cen_13K=0;
-        n_bonded_to_cen_FCC=n_bonded_to_cen_HCP=n_bonded_to_cen_BCC_9=n_bonded_to_cen_BCC_15=0;
-    }
-    
-    if (doClusBLDistros==1) {   // do bond length distributions between neighbouring particles within a particular cluster
-        BLDistroNoSamplessp3=BLDistroNoSamplessp3a=BLDistroNoSamplessp3b=BLDistroNoSamplessp3c=0;   // number of samples
-        BLDistroNoSamplessp4=BLDistroNoSamplessp4a=BLDistroNoSamplessp4b=BLDistroNoSamplessp4c=0;
-        BLDistroNoSamples6A=0;
-        BLDistroNoSamplessp5=BLDistroNoSamplessp5a=BLDistroNoSamplessp5b=BLDistroNoSamplessp5c=0;
-        BLDistroNoSamples6Z=BLDistroNoSamples7K=0;
-        BLDistroNoSamples8A=BLDistroNoSamples8B=BLDistroNoSamples8K=0;  
-        BLDistroNoSamples9A=BLDistroNoSamples9B=BLDistroNoSamples9K=0;
-        BLDistroNoSamples10A=BLDistroNoSamples10B=BLDistroNoSamples10K=BLDistroNoSamples10W=0;
-        BLDistroNoSamples11A=BLDistroNoSamples11B=BLDistroNoSamples11C=BLDistroNoSamples11E=BLDistroNoSamples11F=BLDistroNoSamples11W=0;
-        BLDistroNoSamples12A=BLDistroNoSamples12B=BLDistroNoSamples12D=BLDistroNoSamples12E=BLDistroNoSamples12K=0;
-        BLDistroNoSamples13A=BLDistroNoSamples13B=BLDistroNoSamples13K=0;
-        BLDistroNoSamplesFCC=BLDistroNoSamplesHCP=BLDistroNoSamplesBCC_9=BLDistroNoSamplesBCC_15=0;
-        
-        meanBLsp3=meanBLsp3a=meanBLsp3b=meanBLsp3c=0;   // mean bond length
-        meanBLsp4=meanBLsp4a=meanBLsp4b=meanBLsp4c=0;
-        meanBL6A=0;
-        meanBLsp5=meanBLsp5a=meanBLsp5b=meanBLsp5c=0;
-        meanBL6Z=meanBL7K=0;
-        meanBL8A=meanBL8B=meanBL8K=0;   
-        meanBL9A=meanBL9B=meanBL9K=0;
-        meanBL10A=meanBL10B=meanBL10K=meanBL10W=0;
-        meanBL11A=meanBL11B=meanBL11C=meanBL11E=meanBL11F=meanBL11W=0;
-        meanBL12A=meanBL12B=meanBL12D=meanBL12E=meanBL12K=0;
-        meanBL13A=meanBL13B=meanBL13K=0;
-        meanBLFCC=meanBLHCP=meanBLBCC_9=meanBLBCC_15=0;
-
-        BLDistrosp3=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp3==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp3[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp3[j]=0;
-        BLDistrosp3a=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp3a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp3a[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp3a[j]=0;
-        BLDistrosp3b=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp3b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp3b[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp3b[j]=0;
-        BLDistrosp3c=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp3c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp3c[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp3c[j]=0;
-
-        BLDistrosp4=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp4==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp4[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp4[j]=0;
-        BLDistrosp4a=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp4a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp4a[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp4a[j]=0;
-        BLDistrosp4b=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp4b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp4b[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp4b[j]=0;
-        BLDistrosp4c=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp4c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp4c[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp4c[j]=0;
-        BLDistro6A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro6A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro6A[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro6A[j]=0;
-        
-        BLDistrosp5=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp5==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp5[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp5[j]=0;
-        BLDistrosp5a=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp5a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp5a[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp5a[j]=0;
-        BLDistrosp5b=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp5b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp5b[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp5b[j]=0;
-        BLDistrosp5c=malloc(BLDistroNoBins*sizeof(int)); if (BLDistrosp5c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistrosp5c[] malloc out of memory\n"); Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistrosp5c[j]=0;
-        BLDistro6Z=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro6Z==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro6Z[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro6Z[j]=0;
-        BLDistro7K=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro7K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro7K[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro7K[j]=0;
-        BLDistro8A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro8A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro8A[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro8A[j]=0;
-        BLDistro8B=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro8B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro8B[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro8B[j]=0;
-        BLDistro8K=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro8K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro8K[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro8K[j]=0;
-        BLDistro9A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro9A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro9A[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro9A[j]=0;
-        BLDistro9B=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro9B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro9B[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro9B[j]=0;
-        BLDistro9K=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro9K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro9K[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro9K[j]=0;
-        BLDistro10A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro10A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro10A[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro10A[j]=0;
-        BLDistro10B=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro10B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro10B[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro10B[j]=0;
-        BLDistro10K=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro10K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro10K[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro10K[j]=0;
-        BLDistro10W=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro10W==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro10W[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro10W[j]=0;
-        BLDistro11A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro11A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro11A[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro11A[j]=0;
-        BLDistro11B=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro11B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro11B[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro11B[j]=0;
-        BLDistro11C=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro11C==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro11C[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro11C[j]=0;
-        BLDistro11E=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro11E==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro11E[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro11E[j]=0;
-        BLDistro11F=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro11F==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro11F[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro11F[j]=0;
-        BLDistro11W=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro11W==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro11W[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro11W[j]=0;
-        BLDistro12A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro12A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro12A[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro12A[j]=0;
-        BLDistro12B=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro12B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro12B[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro12B[j]=0;
-        BLDistro12D=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro12D==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro12D[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro12D[j]=0;
-        BLDistro12E=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro12E==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro12E[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro12E[j]=0;
-        BLDistro12K=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro12K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro12K[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro12K[j]=0;
-        BLDistro13A=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro13A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro13A[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro13A[j]=0;
-        BLDistro13B=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro13B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro13B[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro13B[j]=0;
-        BLDistro13K=malloc(BLDistroNoBins*sizeof(int)); if (BLDistro13K==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistro13K[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistro13K[j]=0;
-        BLDistroFCC=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroFCC==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroFCC[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistroFCC[j]=0;
-        BLDistroHCP=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroHCP==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroHCP[] malloc out of memory\n");    Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistroHCP[j]=0;
-        BLDistroBCC_9=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroBCC_9==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroBCC_9[] malloc out of memory\n");  Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistroBCC_9[j]=0;
-        BLDistroBCC_15=malloc(BLDistroNoBins*sizeof(int)); if (BLDistroBCC_15==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): BLDistroBCC_15[] malloc out of memory\n");   Error_no_free(errMsg); }
-        for (j=0; j<BLDistroNoBins; j++) BLDistroBCC_15[j]=0;
-    }
 }
 
 void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
@@ -1115,22 +875,15 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
     pop_per_frame_13A[f]=pop_per_frame_13B[f]=pop_per_frame_13K[f]=0.0;
     pop_per_frame_FCC[f]=pop_per_frame_HCP[f]=pop_per_frame_BCC_9[f]=pop_per_frame_BCC_15[f]=0.0;
     
-    if (doClusBLDeviation==1) {
-        for (i=0; i<msp3; ++i) {
-            bl_mom_sp3[i]=0.0;
-        }
-    }
+
     for (i=0; i<msp3a; ++i) {
         for (j=0;j<3;++j) sp3a[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp3a[i]=0.0;
     }
     for (i=0; i<msp3b; ++i) {
         for (j=0;j<4;++j) sp3b[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp3b[i]=0.0;
     }
     for (i=0; i<msp3c; ++i) {
         for (j=0;j<5;++j) sp3c[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp3c[i]=0.0;
     }
     for (j=0; j<N; ++j) { 
         for (k=0; k<mmem_sp3b; k++) mem_sp3b[j][k]=-1; 
@@ -1146,175 +899,127 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
         nmem_sp5b[j]=0;
         nmem_sp5c[j]=0;
     }
-    if (doClusBLDeviation==1) {
-        for (i=0; i<msp4; ++i) {
-            bl_mom_sp4[i]=0.0;
-        }
-    }
+
     for (i=0; i<msp4a; ++i) {
         for (j=0;j<4;++j) sp4a[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp4a[i]=0.0;
     }
     for (i=0; i<msp4b; ++i) {
         for (j=0;j<5;++j) sp4b[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp4b[i]=0.0;
     }
     for (i=0; i<msp4c; ++i) {
         for (j=0;j<6;++j) sp4c[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp4c[i]=0.0;
     }
     for (i=0; i<m6A; ++i) {
         for (j=0;j<6;++j) hc6A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_6A[i]=0.0;
-    }
-    
-    if (doClusBLDeviation==1) {
-        for (i=0; i<msp5; ++i) {
-            bl_mom_sp5[i]=0.0;
-        }
     }
     for (i=0; i<msp5a; ++i) { 
         for (j=0;j<5;++j) {
             sp5a[i][j]=-1;
         }
-        if (doClusBLDeviation==1) bl_mom_sp5a[i]=0.0;
     }
     for (i=0; i<msp5b; ++i) {
         for (j=0;j<6;++j) sp5b[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp5b[i]=0.0;
     }
     for (i=0; i<msp5c; ++i) {
         for (j=0;j<7;++j) sp5c[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_sp5c[i]=0.0;
     }
-    
     for (i=0; i<m6Z; ++i) {
         for (j=0;j<6;++j) hc6Z[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_6Z[i]=0.0;
     }
     
     for (i=0; i<m7K; ++i) {
         for (j=0;j<7;++j) hc7K[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_7K[i]=0.0;
     }
     
     for (i=0; i<m8A; ++i) {
         for (j=0;j<8;++j) hc8A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_8A[i]=0.0;
     }
     for (i=0; i<m8B; ++i) {
         for (j=0;j<8;++j) hc8B[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_8B[i]=0.0;
     }
     for (i=0; i<m8K; ++i) {
         for (j=0;j<8;++j) hc8K[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_8K[i]=0.0;
     }
     
     for (i=0; i<m9A; ++i) {
         for (j=0;j<9;++j) hc9A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_9A[i]=0.0;
     }
     for (i=0; i<m9B; ++i) {
         for (j=0;j<9;++j) hc9B[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_9B[i]=0.0;
     }
     for (i=0; i<m9K; ++i) {
         for (j=0;j<9;++j) hc9K[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_9K[i]=0.0;
     }
     
     for (i=0; i<m10A; ++i) {
         for (j=0;j<10;++j) hc10A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_10A[i]=0.0;
     }
     for (i=0; i<m10B; ++i) {
         for (j=0;j<10;++j) hc10B[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_10B[i]=0.0;
     }
     for (i=0; i<m10K; ++i) {
         for (j=0;j<10;++j) hc10K[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_10K[i]=0.0;
     }
     for (i=0; i<m10W; ++i) {
         for (j=0;j<10;++j) hc10W[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_10W[i]=0.0;
     }
     
     for (i=0; i<m11A; ++i) {
         for (j=0;j<11;++j) hc11A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_11A[i]=0.0;
     }
     for (i=0; i<m11B; ++i) {
         for (j=0;j<11;++j) hc11B[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_11B[i]=0.0;
     }
     for (i=0; i<m11C; ++i) {
         for (j=0;j<11;++j) hc11C[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_11C[i]=0.0;
     }
     for (i=0; i<m11E; ++i) {
         for (j=0;j<11;++j) hc11E[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_11E[i]=0.0;
     }
     for (i=0; i<m11F; ++i) {
         for (j=0;j<11;++j) hc11F[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_11F[i]=0.0;
     }
     for (i=0; i<m11W; ++i) {
         for (j=0;j<11;++j) hc11W[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_11W[i]=0.0;
     }
     
     for (i=0; i<m12A; ++i) {
         for (j=0;j<12;++j) hc12A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_12A[i]=0.0;
     }
     for (i=0; i<m12B; ++i) {
         for (j=0;j<12;++j) hc12B[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_12B[i]=0.0;
     }
     for (i=0; i<m12D; ++i) {
         for (j=0;j<12;++j) hc12D[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_12D[i]=0.0;
     }
     for (i=0; i<m12E; ++i) {
         for (j=0;j<12;++j) hc12E[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_12E[i]=0.0;
     }
     for (i=0; i<m12K; ++i) {
         for (j=0;j<12;++j) hc12K[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_12K[i]=0.0;
     }
     
     for (i=0; i<m13A; ++i) {
         for (j=0;j<13;++j) hc13A[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_13A[i]=0.0;
     }
     for (i=0; i<m13B; ++i) {
         for (j=0;j<13;++j) hc13B[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_13B[i]=0.0;
     }
     for (i=0; i<m13K; ++i) {
         for (j=0;j<13;++j) hc13K[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_13K[i]=0.0;
     }
     
     for (i=0; i<mFCC; ++i) {
         for (j=0;j<13;++j) hcFCC[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_FCC[i]=0.0;
     }
     for (i=0; i<mHCP; ++i) {
         for (j=0;j<13;++j) hcHCP[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_HCP[i]=0.0;
     }
     for (i=0; i<mBCC_9; ++i) {
         for (j=0;j<9;++j) hcBCC_9[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_BCC_9[i]=0.0;
     }
     for (i=0; i<mBCC_15; ++i) {
         for (j=0;j<15;++j) hcBCC_15[i][j]=-1;
-        if (doClusBLDeviation==1) bl_mom_BCC_15[i]=0.0;
     }
     
     for (i=0; i<N; ++i) {
@@ -1492,236 +1197,4 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     free(s12A_shell); free(s12B_shell); free(s12K_shell);
     free(s13A_shell); free(s13B_shell); free(s13K_shell);
     free(sFCC_shell); free(sHCP_shell); free(sBCC_9_shell); free(sBCC_15_shell);
-
-    if (doBLDistros==1) {
-        free(BLDistro);
-        if (doBinary==1) {
-            free(BLDistroAA); free(BLDistroAB); free(BLDistroBB); 
-            
-        }
-    }
-
-    if (donbDistros==1) {
-        free(nbDistro); 
-        if (doBinary==1) {
-            free(nbDistroAA); free(nbDistroAB); free(nbDistroBA); free(nbDistroBB);
-        }
-    }
-
-    if (doBondedCen==1) {
-        free(n_distro_bonded_to_cen_9B); free(n_distro_bonded_to_cen_9K);
-        free(n_distro_bonded_to_cen_10B); free(n_distro_bonded_to_cen_10K); free(n_distro_bonded_to_cen_10W);
-        free(n_distro_bonded_to_cen_11A); free(n_distro_bonded_to_cen_11B); free(n_distro_bonded_to_cen_11C); free(n_distro_bonded_to_cen_11W);
-        free(n_distro_bonded_to_cen_12A); free(n_distro_bonded_to_cen_12B); free(n_distro_bonded_to_cen_12K);
-        free(n_distro_bonded_to_cen_13A); free(n_distro_bonded_to_cen_13B); free(n_distro_bonded_to_cen_13K);
-        free(n_distro_bonded_to_cen_FCC); free(n_distro_bonded_to_cen_HCP); free(n_distro_bonded_to_cen_BCC_9); free(n_distro_bonded_to_cen_BCC_15);
-    }
-    
-    if (doClusBLDeviation==1) {
-        free(bl_mom_sp3); free(bl_mom_sp3a); free(bl_mom_sp3b); free(bl_mom_sp3c);
-        free(bl_mom_sp4); free(bl_mom_sp4a); free(bl_mom_sp4b); free(bl_mom_sp4c);
-        free(bl_mom_sp5); free(bl_mom_sp5a); free(bl_mom_sp5b); free(bl_mom_sp5c);
-        free(bl_mom_6A); free(bl_mom_6Z); free(bl_mom_7K);
-        free(bl_mom_8A); free(bl_mom_8B); free(bl_mom_8K);
-        free(bl_mom_9A); free(bl_mom_9B); free(bl_mom_9K);
-        free(bl_mom_10A); free(bl_mom_10B); free(bl_mom_10K); free(bl_mom_10W);
-        free(bl_mom_11A); free(bl_mom_11B); free(bl_mom_11C); free(bl_mom_11E); free(bl_mom_11F); free(bl_mom_11W);
-        free(bl_mom_12A); free(bl_mom_12B); free(bl_mom_12D); free(bl_mom_12E); free(bl_mom_12K);
-        free(bl_mom_13A); free(bl_mom_13B); free(bl_mom_13K);
-        free(bl_mom_FCC); free(bl_mom_HCP); free(bl_mom_BCC_9); free(bl_mom_BCC_15);
-    }
-
-    if (doClusBLDistros==1) {
-        free(BLDistrosp3); free(BLDistrosp3a); free(BLDistrosp3b); free(BLDistrosp3c);
-        free(BLDistrosp4); free(BLDistrosp4a); free(BLDistrosp4b); free(BLDistrosp4c);
-        free(BLDistrosp5); free(BLDistrosp5a); free(BLDistrosp5b); free(BLDistrosp5c);
-        free(BLDistro6A); free(BLDistro6Z); free(BLDistro7K);
-        free(BLDistro8A); free(BLDistro8B); free(BLDistro8K);
-        free(BLDistro9A); free(BLDistro9B); free(BLDistro9K);
-        free(BLDistro10A); free(BLDistro10B); free(BLDistro10K); free(BLDistro10W);
-        free(BLDistro11A); free(BLDistro11B); free(BLDistro11C); free(BLDistro11E); free(BLDistro11F); free(BLDistro11W);
-        free(BLDistro12A); free(BLDistro12B); free(BLDistro12D); free(BLDistro12E); free(BLDistro12K);
-        free(BLDistro13A); free(BLDistro13B); free(BLDistro13K);
-        free(BLDistroFCC); free(BLDistroHCP); free(BLDistroBCC_9); free(BLDistroBCC_15);
-    }
-}
-
-void Setup_InitgsblVars(char *filename) { // Initialize ground state bond length deviation distribution arrays
-    int i;
-    char errMsg[1000];
-    FILE *fin;
-    
-    printf("reading bond length parameters from %s\n",filename);
-    fin=fopen(filename,"r");
-    if (fin==NULL)  {
-        sprintf(errMsg,"Setup_InitgsblVars() : Error opening file %s",filename);    // Always test file open
-        Error_no_free(errMsg);
-    }
-    
-    gsbl_sp3=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp3a=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp3b=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp3c=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_sp3 %lg gsbl_sp3a %lg gsbl_sp3b %lg gsbl_sp3c %lg\n",gsbl_sp3,gsbl_sp3a,gsbl_sp3b,gsbl_sp3c);
-    gsbl_sp4=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp4a=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp4b=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp4c=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_6A=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_sp4 %lg gsbl_sp4a %lg gsbl_sp4b %lg gsbl_sp4c %lg gsbl_6A %lg\n",gsbl_sp4,gsbl_sp4a,gsbl_sp4b,gsbl_sp4c,gsbl_6A);
-    gsbl_sp5=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp5a=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp5b=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_sp5c=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_sp5 %lg gsbl_sp5a %lg gsbl_sp5b %lg gsbl_sp5c %lg\n",gsbl_sp5,gsbl_sp5a,gsbl_sp5b,gsbl_sp5c);
-    gsbl_6Z=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_6Z %lg\n",gsbl_6Z);
-    gsbl_7K=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_7K %lg\n",gsbl_7K);
-    gsbl_8A=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_8B=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_8K=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_8A %lg gsbl_8B %lg gsbl_8K %lg\n",gsbl_8A,gsbl_8B,gsbl_8K);
-    gsbl_9A=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_9B=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_9K=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_9A %lg gsbl_9B %lg gsbl_9K %lg\n",gsbl_9A,gsbl_9B,gsbl_9K);
-    gsbl_10A=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_10B=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_10K=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_10W=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_10A %lg gsbl_10B %lg gsbl_10K %lg gsbl_10W %lg\n",gsbl_10A,gsbl_10B,gsbl_10K,gsbl_10W);
-    gsbl_11A=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_11B=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_11C=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_11E=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_11F=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_11W=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_11A %lg gsbl_11B %lg gsbl_11C %lg gsbl_11E %lg gsbl_11F %lg gsbl_11W %lg\n",gsbl_11A,gsbl_11B,gsbl_11C,gsbl_11E,gsbl_11F,gsbl_11W);
-    gsbl_12A=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_12B=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_12D=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_12E=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_12K=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_12A %lg gsbl_12B %lg gsbl_12D %lg gsbl_12E %lg gsbl_12K %lg\n",gsbl_12A,gsbl_12B,gsbl_12D,gsbl_12E,gsbl_12K);
-    gsbl_13A=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_13B=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_13K=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_13A %lg gsbl_13B %lg gsbl_13K %lg\n",gsbl_13A,gsbl_13B,gsbl_13K);
-    gsbl_FCC=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_HCP=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_BCC_9=Setup_GetFirstDoubleFromLine(fin);
-    gsbl_BCC_15=Setup_GetFirstDoubleFromLine(fin);
-    printf("gsbl_FCC %lg gsbl_HCP %lg gsbl_BCC_9 %lg gsbl_BCC_15 %lg\n\n",gsbl_FCC,gsbl_HCP,gsbl_BCC_9,gsbl_BCC_15);
-    
-    fclose(fin);
-    
-    bl_mom_sp3 = malloc(msp3*sizeof(double));   if (bl_mom_sp3==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp3[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_sp3a = malloc(msp3a*sizeof(double)); if (bl_mom_sp3a==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp3a[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp3b = malloc(msp3b*sizeof(double)); if (bl_mom_sp3b==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp3b[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp3c = malloc(msp3c*sizeof(double)); if (bl_mom_sp3c==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp3c[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp4 = malloc(msp4*sizeof(double));   if (bl_mom_sp4==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp4[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_sp4a = malloc(msp4a*sizeof(double)); if (bl_mom_sp4a==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp4a[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp4b = malloc(msp4b*sizeof(double)); if (bl_mom_sp4b==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp4b[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp4c = malloc(msp4c*sizeof(double)); if (bl_mom_sp4c==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp4c[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_6A = malloc(m6A*sizeof(double)); if (bl_mom_6A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_6A[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp5 = malloc(msp5*sizeof(double));   if (bl_mom_sp5==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp5[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_sp5a = malloc(msp5a*sizeof(double)); if (bl_mom_sp5a==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp5a[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp5b = malloc(msp5b*sizeof(double)); if (bl_mom_sp5b==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp5b[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_sp5c = malloc(msp5c*sizeof(double)); if (bl_mom_sp5c==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_sp5c[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    
-    bl_mom_6Z = malloc(m6Z*sizeof(double)); if (bl_mom_6Z==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_6Z[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    
-    bl_mom_7K = malloc(m7K*sizeof(double)); if (bl_mom_7K==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_7K[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-
-    bl_mom_8A = malloc(m8A*sizeof(double)); if (bl_mom_8A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_8A[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_8B = malloc(m8B*sizeof(double)); if (bl_mom_8B==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_8B[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_8K = malloc(m8K*sizeof(double)); if (bl_mom_8K==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_8K[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    
-    bl_mom_9A = malloc(m9A*sizeof(double)); if (bl_mom_9A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_9A[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_9B = malloc(m9B*sizeof(double)); if (bl_mom_9B==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_9B[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    bl_mom_9K = malloc(m9K*sizeof(double)); if (bl_mom_9K==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_9K[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    
-    bl_mom_10A = malloc(m10A*sizeof(double));   if (bl_mom_10A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_10A[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_10B = malloc(m10B*sizeof(double));   if (bl_mom_10B==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_10B[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_10K = malloc(m10K*sizeof(double));   if (bl_mom_10K==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_10K[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_10W = malloc(m10W*sizeof(double));   if (bl_mom_10W==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_10W[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    
-    bl_mom_11A = malloc(m11A*sizeof(double));   if (bl_mom_11A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_11A[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_11B = malloc(m11B*sizeof(double));   if (bl_mom_11B==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_11B[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_11C = malloc(m11C*sizeof(double));   if (bl_mom_11C==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_11C[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_11E = malloc(m11E*sizeof(double));   if (bl_mom_11E==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_11E[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_11F = malloc(m11F*sizeof(double));   if (bl_mom_11F==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_11F[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_11W = malloc(m11W*sizeof(double));   if (bl_mom_11W==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_11W[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    
-    bl_mom_12A = malloc(m12A*sizeof(double));   if (bl_mom_12A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_12A[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_12B = malloc(m12B*sizeof(double));   if (bl_mom_12B==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_12B[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_12D = malloc(m12D*sizeof(double));   if (bl_mom_12D==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_12D[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_12E = malloc(m12E*sizeof(double));   if (bl_mom_12E==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_12E[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_12K = malloc(m12K*sizeof(double));   if (bl_mom_12K==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_12K[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    
-    bl_mom_13A = malloc(m13A*sizeof(double));   if (bl_mom_13A==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_13A[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_13B = malloc(m13B*sizeof(double));   if (bl_mom_13B==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_13B[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_13K = malloc(m13K*sizeof(double));   if (bl_mom_13K==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_13K[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    
-    bl_mom_FCC = malloc(mFCC*sizeof(double));   if (bl_mom_FCC==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_FCC[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_HCP = malloc(mHCP*sizeof(double));   if (bl_mom_HCP==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_HCP[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_BCC_9 = malloc(mBCC_9*sizeof(double));   if (bl_mom_BCC_9==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_BCC_9[] malloc out of memory\bl_mom_");    Error_no_free(errMsg); }
-    bl_mom_BCC_15 = malloc(mBCC_15*sizeof(double)); if (bl_mom_BCC_15==NULL) { sprintf(errMsg,"Setup_Ibl_mom_itgsblVars(): bl_mom_BCC_15[] malloc out of memory\bl_mom_");  Error_no_free(errMsg); }
-    
-    for (i=0; i<msp3; ++i) bl_mom_sp3[i]=0.0;
-    for (i=0; i<msp3a; ++i) bl_mom_sp3a[i]=0.0;
-    for (i=0; i<msp3b; ++i) bl_mom_sp3b[i]=0.0;
-    for (i=0; i<msp3c; ++i) bl_mom_sp3c[i]=0.0;
-    for (i=0; i<msp4; ++i) bl_mom_sp4[i]=0.0;
-    for (i=0; i<msp4a; ++i) bl_mom_sp4a[i]=0.0;
-    for (i=0; i<msp4b; ++i) bl_mom_sp4b[i]=0.0;
-    for (i=0; i<msp4c; ++i) bl_mom_sp4c[i]=0.0;
-    for (i=0; i<m6A; ++i) bl_mom_6A[i]=0.0;
-    for (i=0; i<msp5; ++i) bl_mom_sp5[i]=0.0;
-    for (i=0; i<msp5a; ++i) bl_mom_sp5a[i]=0.0;
-    for (i=0; i<msp5b; ++i) bl_mom_sp5b[i]=0.0;
-    for (i=0; i<msp5c; ++i) bl_mom_sp5c[i]=0.0;
-    for (i=0; i<m6Z; ++i) bl_mom_6Z[i]=0.0;
-    for (i=0; i<m7K; ++i) bl_mom_7K[i]=0.0;
-    for (i=0; i<m8A; ++i) bl_mom_8A[i]=0.0;
-    for (i=0; i<m8B; ++i) bl_mom_8B[i]=0.0;
-    for (i=0; i<m8K; ++i) bl_mom_8K[i]=0.0;
-    for (i=0; i<m9A; ++i) bl_mom_9A[i]=0.0;
-    for (i=0; i<m9B; ++i) bl_mom_9B[i]=0.0;
-    for (i=0; i<m9K; ++i) bl_mom_9K[i]=0.0;
-    for (i=0; i<m10A; ++i) bl_mom_10A[i]=0.0;
-    for (i=0; i<m10B; ++i) bl_mom_10B[i]=0.0;
-    for (i=0; i<m10K; ++i) bl_mom_10K[i]=0.0;
-    for (i=0; i<m10W; ++i) bl_mom_10W[i]=0.0;
-    for (i=0; i<m11A; ++i) bl_mom_11A[i]=0.0;
-    for (i=0; i<m11B; ++i) bl_mom_11B[i]=0.0;
-    for (i=0; i<m11C; ++i) bl_mom_11C[i]=0.0;
-    for (i=0; i<m11E; ++i) bl_mom_11E[i]=0.0;
-    for (i=0; i<m11F; ++i) bl_mom_11F[i]=0.0;
-    for (i=0; i<m11W; ++i) bl_mom_11W[i]=0.0;
-    for (i=0; i<m12A; ++i) bl_mom_12A[i]=0.0;
-    for (i=0; i<m12B; ++i) bl_mom_12B[i]=0.0;
-    for (i=0; i<m12D; ++i) bl_mom_12D[i]=0.0;
-    for (i=0; i<m12E; ++i) bl_mom_12E[i]=0.0;
-    for (i=0; i<m12K; ++i) bl_mom_12K[i]=0.0;
-    for (i=0; i<m13A; ++i) bl_mom_13A[i]=0.0;
-    for (i=0; i<m13B; ++i) bl_mom_13B[i]=0.0;
-    for (i=0; i<m13K; ++i) bl_mom_13K[i]=0.0;
-    for (i=0; i<mFCC; ++i) bl_mom_FCC[i]=0.0;
-    for (i=0; i<mHCP; ++i) bl_mom_HCP[i]=0.0;
-    for (i=0; i<mBCC_9; ++i) bl_mom_BCC_9[i]=0.0;
-    for (i=0; i<mBCC_15; ++i) bl_mom_BCC_15[i]=0.0;
-
-    mean_bl_mom_sp3=mean_bl_mom_sp3a=mean_bl_mom_sp3b=mean_bl_mom_sp3c=0.0; // mean_bl_mom_ax size of **sp** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_sp4=mean_bl_mom_sp4a=mean_bl_mom_sp4b=mean_bl_mom_sp4c=0.0; // mean_bl_mom_ax size of **sp** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_sp5=mean_bl_mom_sp5a=mean_bl_mom_sp5b=mean_bl_mom_sp5c=0.0; // mean_bl_mom_ax size of **sp** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_6A=mean_bl_mom_6Z=mean_bl_mom_7K=0.0;   // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_8A=mean_bl_mom_8B=mean_bl_mom_8K=0.0;   // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_9A=mean_bl_mom_9B=mean_bl_mom_9K=0.0;   // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_10A=mean_bl_mom_10B=mean_bl_mom_10K=mean_bl_mom_10W=0.0;    // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_11A=mean_bl_mom_11B=mean_bl_mom_11C=mean_bl_mom_11E=mean_bl_mom_11F=mean_bl_mom_11W=0.0;    // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_12A=mean_bl_mom_12B=mean_bl_mom_12D=mean_bl_mom_12E=mean_bl_mom_12K=0.0;    // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_13A=mean_bl_mom_13B=mean_bl_mom_13K=0.0;    // mean_bl_mom_ax size of mean_bl_mom_** arrays in dimean_bl_mom_ension i
-    mean_bl_mom_FCC=mean_bl_mom_HCP=mean_bl_mom_BCC_9=mean_bl_mom_BCC_15=0.0;   // mean_bl_mom_ax size of **sp** arrays in dimean_bl_mom_ension i
 }

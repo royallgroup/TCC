@@ -88,162 +88,6 @@ void Bonds_WriteBonds(int f) {
     }
 }
 
-void Bonds_TickBLDistro(double length, int *histo, int *count) {
-    int k;
-    char errMsg[1000];
-    
-    k = (int)(length/binWidth);
-    if (k>=BLDistroNoBins) {
-        sprintf(errMsg,"Bonds_TickBLDistro():  interaction bondlength %lg binwidth %lg k %d nobins %d",length,binWidth,k,BLDistroNoBins);
-        Error(errMsg);
-    }
-    histo[k]=histo[k]+1;
-    (*count)=(*count)+1;
-}
-
-void Bonds_WriteBLDistro(char *filename, int *histo, int *count, double *meanRtn) {
-    int i;
-    double lengthtemp, mean;
-    char errMsg[1000];
-    FILE *writeout;
-    
-    writeout=fopen(filename,"w");
-    if (writeout==NULL)  {
-        sprintf(errMsg,"Bonds_WriteBLDistro(): Error opening file %s",filename);    // Always test file open
-        Error(errMsg);
-    }
-    
-    if ((*count)%2!=0) {
-        sprintf(errMsg,"Bonds_WriteBLDistro(): total no samples %d is not even",*count);    // Always test file open
-        Error(errMsg);
-    }
-    (*count)=(*count)/2;
-    
-    fprintf(writeout,"%s\n",filename);
-    fprintf(writeout,"bond length   frequency   normalized frequency (%d samples)\n",(*count));
-    
-    lengthtemp=mean=0.0;
-    for (i=0; i<BLDistroNoBins; i++) {
-        if ((histo[i])%2!=0) {
-            sprintf(errMsg,"Bonds_WriteBLDistro(): no samples %d is not even",histo[i]);    // Always test file open
-            Error(errMsg);
-        }
-        histo[i]=histo[i]/2;
-        
-        fprintf(writeout,"%.15lg    %d  %.15lg\n",lengthtemp,histo[i],(double)(histo[i])/(*count));
-        mean+=(lengthtemp+binWidth/2.0)*histo[i];
-        lengthtemp+=binWidth;
-    }
-    (*meanRtn)=mean/(double)(*count);
-    fprintf(writeout,"mean nearest neighbour bond length    %.15lg\n",meanBL);
-    fclose(writeout);
-    printf("Written %s\n",filename);
-}
-
-void Bonds_WriteBLDistroClust(char *filename, int *histo, int *count,double *meanRtn) {
-    int i;
-    double lengthtemp, mean;
-    char errMsg[1000];
-    FILE *writeout;
-    
-    writeout=fopen(filename,"w");
-    if (writeout==NULL)  {
-        sprintf(errMsg,"Bonds_WriteBLDistroClust(): Error opening file %s",filename);   // Always test file open
-        Error(errMsg);
-    }
-
-    fprintf(writeout,"%s\n",filename);
-    fprintf(writeout,"bond length   frequency   normalized frequency (%d samples)\n",(*count));
-    
-    lengthtemp=mean=0.0;
-    for (i=0; i<BLDistroNoBins; i++) {
-        fprintf(writeout,"%.15lg    %d  %.15lg\n",lengthtemp,histo[i],(double)(histo[i])/(*count));
-        mean+=(lengthtemp+binWidth/2.0)*histo[i];
-        lengthtemp+=binWidth;
-    }
-    (*meanRtn)=mean/(double)(*count);
-    fprintf(writeout,"mean nearest neighbour bond length    %.15lg\n",(*meanRtn));
-    fclose(writeout);
-    printf("Written %s\n",filename);
-}
-
-void Bonds_TallynbDistro() {
-    int i, j, noA;
-    char errMsg[1000];
-    
-    for (i=0; i<N; i++) {
-        if (cnb[i]>=0 && cnb[i]<=nB) {
-            nbDistro[cnb[i]]++;
-            nbDistroNoSamples++;
-        }
-        else {
-            sprintf(errMsg,"Bonds_TallynbDistro(): cnb[%d] %d is less than 0 or greater than nB %d\n",i,cnb[i],nB);
-            Error(errMsg);
-        }
-        
-        if (doBinary==1) {
-            noA=0;
-            if (rtype[i]==1) {
-                for (j=0; j<cnb[i]; j++) {
-                    if (rtype[bNums[i][j]]==1) noA++;
-                }
-                if (noA>=0 && noA<=cnb[i]) {
-                    nbDistroAA[noA]++;
-                    nbDistroNoSamplesAA++;
-                    nbDistroAB[cnb[i]-noA]++;
-                    nbDistroNoSamplesAB++;
-                }
-                else {
-                    sprintf(errMsg,"Bonds_TallynbDistro(): noA %d is less than 0 or greater than cnb[%d] %d \n",noA,i,cnb[i]);
-                    Error(errMsg);
-                }
-            }
-            else {
-                for (j=0; j<cnb[i]; j++) {
-                    if (rtype[bNums[i][j]]==1) noA++;
-                }
-                if (noA>=0 && noA<=cnb[i]) {
-                    nbDistroBA[noA]++;
-                    nbDistroNoSamplesBA++;
-                    nbDistroBB[cnb[i]-noA]++;
-                    nbDistroNoSamplesBB++;
-                }
-                else {
-                    sprintf(errMsg,"Bonds_TallynbDistro(): noA %d is less than 0 or greater than cnb[%d] %d \n",noA,i,cnb[i]);  // Always test file open
-                    Error(errMsg);
-                }
-            }
-        }
-    }
-}
-
-void Bonds_WritenbDistro(char *filename, int *histo, int *count, double *meannbRtn) {
-    int i;
-    int mean;
-    char errMsg[1000];
-    FILE *writeout;
-    
-    writeout=fopen(filename,"w");
-    if (writeout==NULL)  {
-        sprintf(errMsg,"Bonds_WritenbDistro(): Error opening file %s",filename);    // Always test file open
-        Error(errMsg);
-    }
-    
-    fprintf(writeout,"%s\n",filename);
-    fprintf(writeout,"no Bonds  frequency   normalized frequency (%d samples)\n",(*count));
-    
-    for (i=0; i<=nB; i++) fprintf(writeout,"%d  %d  %.15lg\n",i,histo[i],(double)(histo[i])/(double)(*count));
-    
-    mean=0;
-    for (i=0; i<=nB; i++) {
-        mean+=i*histo[i];
-    }
-    (*meannbRtn)=(double)(mean)/(double)(*count);
-    fprintf(writeout,"mean nB   %.15lg\n",*meannbRtn);
-    fclose(writeout);
-    printf("Written %s\n",filename);
-}
-
 void Bonds_CheckSymmetric() {
     int i, j, k;
     //char errMsg[1000];
@@ -270,20 +114,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (USELIST==0) Bonds_GetBondsV();
         else Bonds_GetBondsV_CellList();
         Bonds_CheckSymmetric();
-        if (doBLDistros==1) {
-            for (i=0; i<N; ++i) {
-                for (j=0; j<cnb[i]; ++j) {
-                    Bonds_TickBLDistro(bondlengths[i][j],BLDistro,&BLDistroNoSamples);
-                    if (doBinary==1) {
-                        if (rtype[i]==1 && rtype[bNums[i][j]]==1) Bonds_TickBLDistro(bondlengths[i][j],BLDistroAA,&BLDistroNoSamplesAA);
-                        else if (rtype[i]==2 && rtype[bNums[i][j]]==2) Bonds_TickBLDistro(bondlengths[i][j],BLDistroBB,&BLDistroNoSamplesBB);
-                        else Bonds_TickBLDistro(bondlengths[i][j],BLDistroAB,&BLDistroNoSamplesAB);
-                    }
-                }
-            }
-        }
         if (doWriteBonds==1) Bonds_WriteBonds(f);
-        if (donbDistros==1) Bonds_TallynbDistro();
         printf("Got Bonds\n");
         return;
     }
@@ -349,21 +180,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBonds(): particle %d of %d done\n",i+1,N);
     }
     printf("\n");
-    
-    if (doBLDistros==1) {
-        for (i=0; i<N; ++i) {
-            for (j=0; j<cnb[i]; ++j) {
-                Bonds_TickBLDistro(bondlengths[i][j],BLDistro,&BLDistroNoSamples);
-                if (doBinary==1) {
-                    if (rtype[i]==1 && rtype[bNums[i][j]]==1) Bonds_TickBLDistro(bondlengths[i][j],BLDistroAA,&BLDistroNoSamplesAA);
-                    else if (rtype[i]==2 && rtype[bNums[i][j]]==2) Bonds_TickBLDistro(bondlengths[i][j],BLDistroBB,&BLDistroNoSamplesBB);
-                    else Bonds_TickBLDistro(bondlengths[i][j],BLDistroAB,&BLDistroNoSamplesAB);
-                }
-            }
-        }
-    }
     if (doWriteBonds==1) Bonds_WriteBonds(f);
-    if (donbDistros==1) Bonds_TallynbDistro();
     printf("Got Bonds\n");
 }
 
@@ -868,14 +685,4 @@ int Bonds_BondCheck(int i, int j) { // Returns 1 if i & j are bonded; 0 otherwis
         if (bNums[i][k] == j) return 1;
     } 
     return 0;
-}
-
-int Bonds_cnb_j(int i, int j) { // Returns number k of if bNums[i][k]=j; -1 if i and j unbonded
-    int k;
-
-    for (k=0; k<cnb[i]; ++k) {
-        if (bNums[i][k] == j) return k;
-    }
-    
-    return -1;
 }
