@@ -10,9 +10,11 @@ void Write_Raw(int f);
 void Write_Raw_Close();
 void Write_Cluster_Init();
 void Write_Cluster_Close();
-void Write_Cluster(int f, FILE *writeout, int *n, int **hc, int clusSize);
+void Write_Cluster_Xmol(int f, FILE *writeout, int *n, int **hc, int clusSize);
+void Write_Cluster(int f);
 void Write_Cluster_sp3(int f, FILE *writeout);
 void Write_Cluster_sp4(int f, FILE *writeout);
 void Write_Cluster_sp5(int f, FILE *writeout);
+void Write_Pop_Per_Frame(int f);
 
 #endif //TCC_OUTPUT_H

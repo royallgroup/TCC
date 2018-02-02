@@ -52,7 +52,6 @@ void Setup_ReadIniFile(char *filename) {
     do13AcenXmol = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
     doSubClusts = iniparser_getboolean(ini, "output:subclusters", -1);
-    talpha = iniparser_getdouble(ini, "extra:alpha_time", -1);
     PRINTINFO = iniparser_getboolean(ini, "extra:debug", -1);
     iniparser_getdouble(ini, "extra:shear", -1);
 
@@ -85,9 +84,8 @@ void Setup_ReadIniFile(char *filename) {
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
     printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
-    printf("doSubClusts %d\n",doSubClusts);
-    printf("talpha %lg PRINTINFO %d\n\n",talpha,PRINTINFO);
-        
+    printf("doSubClusts %d PRINTINFO %d\n",doSubClusts, PRINTINFO);
+
     if (ISNOTCUBIC==0) {
         printf("calculating box sides from RHO\n");
         printf("box side length = %.5lg, half side: %.5lg\n\n",sidex,halfSidex);
