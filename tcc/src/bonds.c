@@ -65,26 +65,6 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
 
 }
 
-
-void Bonds_WriteBondNetwork(int f) {
-    int i,j,k;
-    char input[1000];
-    FILE *writeout;
-
-    sprintf(input,"bondnetwork.f%d.matrix_bonds",f);
-    writeout=fopen(input, "w");
-    for (i=0; i<N; ++i) {
-        for (j=0; j<N; ++j) {
-            if (Bonds_BondCheck(i,j)==1) k=1;
-            else k=0;
-            fprintf(writeout,"%d",k);
-        }
-        fprintf(writeout,"\n");
-    }
-    fclose(writeout);
-    printf("Bonds_WriteBondNetwork(): Written bondnetwork matrix to %s\n\n",input);
-}
-
 void Bonds_WriteBonds(int f) {
     int i, j, sum;
     char errMsg[1000];
@@ -287,8 +267,8 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
     double dr2;
 
     if (Vor==1) {
-        if (USELIST==0) Bonds_GetBondsV(f);
-        else Bonds_GetBondsV_CellList(f);
+        if (USELIST==0) Bonds_GetBondsV();
+        else Bonds_GetBondsV_CellList();
         Bonds_CheckSymmetric();
         if (doBLDistros==1) {
             for (i=0; i<N; ++i) {
@@ -387,7 +367,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
     printf("Got Bonds\n");
 }
 
-void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
+void Bonds_GetBondsV()  {  // Get bonds using Voronoi
     int i, j, k, l, m;
     const int nBs = 4 * nB;
     int cnbs, cnbs2;
@@ -608,7 +588,7 @@ void Bonds_GetBondsV(int f)  {  // Get bonds using Voronoi
     free(store_dr2);
 }
 
-void Bonds_GetBondsV_CellList(int f) {  // Get bonds using Voronoi
+void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
     int i, j, k, l, m;
     int ic, jcell0, jcell,nabor;    // various counters
     const int nBs = 4 * nB;

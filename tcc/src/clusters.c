@@ -4563,7 +4563,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                 if(sp5c[i][5] != sp1) hc13A[n13A[f]][k++] = sp5c[i][5]; 
                 if(sp5c[i][6] != sp1) hc13A[n13A[f]][k++] = sp5c[i][6]; 
                 if(sp5c[j][5] != sp1) hc13A[n13A[f]][k++] = sp5c[j][5]; 
-                if(sp5c[j][6] != sp1) hc13A[n13A[f]][k++] = sp5c[j][6];  
+                if(sp5c[j][6] != sp1) hc13A[n13A[f]][k] = sp5c[j][6];
                 hc13A[n13A[f]][3] = sp5c[i][0];
                 hc13A[n13A[f]][4] = sp5c[i][1];
                 hc13A[n13A[f]][5] = sp5c[i][2];
@@ -4685,7 +4685,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                 if(sp5c[i][5] != sp2) hc13A[n13A[f]][k++] = sp5c[i][5]; 
                 if(sp5c[i][6] != sp2) hc13A[n13A[f]][k++] = sp5c[i][6]; 
                 if(sp5c[j][5] != sp2) hc13A[n13A[f]][k++] = sp5c[j][5]; 
-                if(sp5c[j][6] != sp2) hc13A[n13A[f]][k++] = sp5c[j][6];  
+                if(sp5c[j][6] != sp2) hc13A[n13A[f]][k] = sp5c[j][6];
                 hc13A[n13A[f]][3] = sp5c[i][0];
                 hc13A[n13A[f]][4] = sp5c[i][1];
                 hc13A[n13A[f]][5] = sp5c[i][2];
@@ -5618,7 +5618,7 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
                 hcHCP[nHCP[f]][l++] = sp3c[mem_sp3c[sp3c[i][j2]][k]][3];
                 hcHCP[nHCP[f]][l++] = sp3c[i][4];
                 hcHCP[nHCP[f]][l++] = sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
-                hcHCP[nHCP[f]][l++] = sp3c[mem_sp3c[sp3c[i][j2]][k]][4];
+                hcHCP[nHCP[f]][l] = sp3c[mem_sp3c[sp3c[i][j2]][k]][4];
                 quickSort(&hcHCP[nHCP[f]][1],6);
                 quickSort(&hcHCP[nHCP[f]][7],6);
 

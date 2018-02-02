@@ -48,9 +48,6 @@ int donbDistros;        // do distribution of number of bonds to a particle
 int doBondedCen;    // look at cluster bond lengths relative to ground state
 int doClusComp; // look at composition of clusters in terms of A and B species
 
-int doPotential;    // do potential energy calculations
-int WHICHPOTENTIAL; // which potential to use
-
 int doCoslovich;    // do Coslovich voronoi faces analysis
 
 int initNoStatic;   // initial size of static cluster arrays
@@ -70,34 +67,15 @@ int correctedBonds; // max number of bonds to one particle
 
 int BLDistroNoBins; // number of bins in bond network histogram
 
-int M, M_pot, ncells, ncells_pot;   // number of cells per box length, total number of cells
-int *head, *head_pot;   // head of cell array
-int *llist, *llist_pot; // linked list array
-int *map, *map_pot; // list of neighbouring cells for cell i
+int M, ncells, ncells_pot;   // number of cells per box length, total number of cells
+int *head;   // head of cell array
+int *llist; // linked list array
+int *map; // list of neighbouring cells for cell i
 double cellSide, invcellSide, cellSide_pot, invcellSide_pot;
 
 double sigma_AB, sigma_BB, epsilon_AB, epsilon_BB;
-double sigma_AB6, sigma_BB6, quarteruTail_AA, quarteruTail_AB, quarteruTail_BB;
-double rcut, rcut_AB, rcut_BB;
-double rcut2, rcut_AB2, rcut_BB2;
-double stoddardford_AA, stoddardford_AB, stoddardford_BB;
-double *psigma;
-char fSigmaName[1000];
-double RHO0, mepsilon, mcut;
-double uMorseTail, mcut2;
-double KAPPA, yukepsilon, yukcut;
-double uYukTail, yukcut2;
-double ipl_exp, ipl_pre;
-double half_ipl_exp;
-double sigma_AB2, sigma_BB2;
-double uTail_AA, uTail_AB, uTail_BB;
-double cubic_a_AA, cubic_a_AB, cubic_a_BB;
-double cubic_a_AA2, cubic_a_AB2, cubic_a_BB2;
-double cubicA_AA, cubicA_AB, cubicA_BB;
-double cubicB_AA, cubicB_AB, cubicB_BB;
 
-double TWOPARTRHO, NOPOTENTIALBINS, WRITEPOTMIN, WRITEPOTMAX;
-double *part_pot, potential, av_potential, av_pot_check;
+double *part_pot;
 
 char *s_s_0_2_8, *s_s_1_2_5_3, *s_s_1_2_5_2, *s_s_0_3_6, *s_s_0_0_12;
 int nCos_s_0_2_8, nCos_s_1_2_5_3, nCos_s_1_2_5_2, nCos_s_0_3_6, nCos_s_0_0_12;
@@ -298,46 +276,6 @@ double mean_pop_per_frame_11A, mean_pop_per_frame_11B, mean_pop_per_frame_11C, m
 double mean_pop_per_frame_12A, mean_pop_per_frame_12B, mean_pop_per_frame_12D, mean_pop_per_frame_12E, mean_pop_per_frame_12K;
 double mean_pop_per_frame_13A, mean_pop_per_frame_13B, mean_pop_per_frame_13K;
 double mean_pop_per_frame_FCC, mean_pop_per_frame_HCP, mean_pop_per_frame_BCC_9, mean_pop_per_frame_BCC_15;
-
-double av_pot_sp3, av_pot_sp3a, av_pot_sp3b, av_pot_sp3c;
-double av_pot_sp4, av_pot_sp4a, av_pot_sp4b, av_pot_sp4c;
-double av_pot_sp5, av_pot_sp5a, av_pot_sp5b, av_pot_sp5c;
-double av_pot_6A, av_pot_6Z, av_pot_7K;
-double av_pot_8A, av_pot_8B, av_pot_8K;
-double av_pot_9A, av_pot_9B, av_pot_9K;
-double av_pot_10A, av_pot_10B, av_pot_10K, av_pot_10W;
-double av_pot_11A, av_pot_11B, av_pot_11C, av_pot_11E, av_pot_11F, av_pot_11W;
-double av_pot_12A, av_pot_12B, av_pot_12D, av_pot_12E, av_pot_12K;
-double av_pot_13A, av_pot_13B, av_pot_13K;
-double av_pot_FCC, av_pot_HCP, av_pot_BCC_9, av_pot_BCC_15;
-
-double av_pot_cen_9B, av_pot_cen_9K;
-double av_pot_cen_10B, av_pot_cen_10K, av_pot_cen_10W;
-double av_pot_cen_11A, av_pot_cen_11B, av_pot_cen_11C, av_pot_cen_11W;
-double av_pot_cen_12A, av_pot_cen_12B, av_pot_cen_12K;
-double av_pot_cen_13A, av_pot_cen_13B, av_pot_cen_13K;
-double av_pot_cen_FCC, av_pot_cen_HCP, av_pot_cen_BCC_9, av_pot_cen_BCC_15;
-
-int cnt_av_pot_cen_9B, cnt_av_pot_cen_9K;
-int cnt_av_pot_cen_10B, cnt_av_pot_cen_10K, cnt_av_pot_cen_10W;
-int cnt_av_pot_cen_11A, cnt_av_pot_cen_11B, cnt_av_pot_cen_11C, cnt_av_pot_cen_11W;
-int cnt_av_pot_cen_12A, cnt_av_pot_cen_12B, cnt_av_pot_cen_12K;
-int cnt_av_pot_cen_13A, cnt_av_pot_cen_13B, cnt_av_pot_cen_13K;
-int cnt_av_pot_cen_FCC, cnt_av_pot_cen_HCP, cnt_av_pot_cen_BCC_9, cnt_av_pot_cen_BCC_15;
-
-double av_pot_shell_9B, av_pot_shell_9K;
-double av_pot_shell_10B, av_pot_shell_10K, av_pot_shell_10W;
-double av_pot_shell_11A, av_pot_shell_11B, av_pot_shell_11C, av_pot_shell_11W;
-double av_pot_shell_12A, av_pot_shell_12B, av_pot_shell_12K;
-double av_pot_shell_13A, av_pot_shell_13B, av_pot_shell_13K;
-double av_pot_shell_FCC, av_pot_shell_HCP, av_pot_shell_BCC_9, av_pot_shell_BCC_15;
-
-int cnt_av_pot_shell_9B, cnt_av_pot_shell_9K;
-int cnt_av_pot_shell_10B, cnt_av_pot_shell_10K, cnt_av_pot_shell_10W;
-int cnt_av_pot_shell_11A, cnt_av_pot_shell_11B, cnt_av_pot_shell_11C, cnt_av_pot_shell_11W;
-int cnt_av_pot_shell_12A, cnt_av_pot_shell_12B, cnt_av_pot_shell_12K;
-int cnt_av_pot_shell_13A, cnt_av_pot_shell_13B, cnt_av_pot_shell_13K;
-int cnt_av_pot_shell_FCC, cnt_av_pot_shell_HCP, cnt_av_pot_shell_BCC_9, cnt_av_pot_shell_BCC_15;
 
 int *n_distro_bonded_to_cen_9B, *n_distro_bonded_to_cen_9K;
 int *n_distro_bonded_to_cen_10B, *n_distro_bonded_to_cen_10K, *n_distro_bonded_to_cen_10W;

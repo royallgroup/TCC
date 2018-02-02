@@ -1380,409 +1380,7 @@ void Pop_Per_Frame(int f) {
 	mean_pop_per_frame_BCC_15+=pop_per_frame_BCC_15[f];
 }
 
-void Update_Potential(int f) {
-	int i;
-	
-	for(i=0; i<N; ++i){
-		if(ssp3[i] != 'C') {
-			av_pot_sp3+=part_pot[i];
-		}
-		if(ssp3a[i] != 'C') av_pot_sp3a+=part_pot[i];
-		if(ssp3b[i] != 'C') av_pot_sp3b+=part_pot[i];
-		if(s5A[i] != 'C') av_pot_sp3c+=part_pot[i];
-		if(ssp4[i] != 'C') av_pot_sp4+=part_pot[i];
-		if(ssp4a[i] != 'C') av_pot_sp4a+=part_pot[i];
-		if(ssp4b[i] != 'C') av_pot_sp4b+=part_pot[i];
-		if(s6A[i] != 'C') {
-			av_pot_sp4c+=part_pot[i];
-			av_pot_6A+=part_pot[i];
-		}
-		if(s6Z[i] != 'C') av_pot_6Z+=part_pot[i];
-		if(ssp5[i] != 'C') av_pot_sp5+=part_pot[i];
-		if(ssp5a[i] != 'C') av_pot_sp5a+=part_pot[i];
-		if(ssp5b[i] != 'C') av_pot_sp5b+=part_pot[i];
-		if(s7A[i] != 'C') av_pot_sp5c+=part_pot[i];
-		if(s7K[i] != 'C') av_pot_7K+=part_pot[i];
-		if(s8A[i] != 'C') av_pot_8A+=part_pot[i];
-		if(s8B[i] != 'C') av_pot_8B+=part_pot[i];
-		if(s8K[i] != 'C') av_pot_8K+=part_pot[i];
-		if(s9A[i] != 'C') av_pot_9A+=part_pot[i];
-		if(s9B[i] != 'C') av_pot_9B+=part_pot[i];
-		if(s9K[i] != 'C') av_pot_9K+=part_pot[i];
-		if(s10A[i] != 'C') av_pot_10A+=part_pot[i];
-		if(s10B[i] != 'C') av_pot_10B+=part_pot[i];
-		if(s10K[i] != 'C') av_pot_10K+=part_pot[i];
-		if(s10W[i] != 'C') av_pot_10W+=part_pot[i];
-		if(s11A[i] != 'C') av_pot_11A+=part_pot[i];
-		if(s11B[i] != 'C') av_pot_11B+=part_pot[i];
-		if(s11C[i] != 'C') av_pot_11C+=part_pot[i];
-		if(s11E[i] != 'C') av_pot_11E+=part_pot[i];
-		if(s11F[i] != 'C') av_pot_11F+=part_pot[i];
-		if(s11W[i] != 'C') av_pot_11W+=part_pot[i];
-		if(s12A[i] != 'C') av_pot_12A+=part_pot[i];
-		if(s12B[i] != 'C') av_pot_12B+=part_pot[i];
-		if(s12D[i] != 'C') av_pot_12D+=part_pot[i];
-		if(s12E[i] != 'C') av_pot_12E+=part_pot[i];
-		if(s12K[i] != 'C') av_pot_12K+=part_pot[i];
-		if(s13A[i] != 'C') av_pot_13A+=part_pot[i];
-		if(s13B[i] != 'C') av_pot_13B+=part_pot[i];
-		if(s13K[i] != 'C') av_pot_13K+=part_pot[i];
-		if(sFCC[i] != 'C') av_pot_FCC+=part_pot[i];
-		if(sHCP[i] != 'C') av_pot_HCP+=part_pot[i];
-		if(sBCC_9[i] != 'C') av_pot_BCC_9+=part_pot[i];
-		if(sBCC_15[i] != 'C') av_pot_BCC_15+=part_pot[i];
-		
-		if(s9B_cen[i] != 'C') {
-			av_pot_cen_9B+=part_pot[i];
-			cnt_av_pot_cen_9B++;
-		}
-		if(s9K_cen[i] != 'C') {
-			av_pot_cen_9K+=part_pot[i];
-			cnt_av_pot_cen_9K++;
-		}
-		if(s10B_cen[i] != 'C') {
-			av_pot_cen_10B+=part_pot[i];
-			cnt_av_pot_cen_10B++;
-		}
-		if(s10K_cen[i] != 'C') {
-			av_pot_cen_10K+=part_pot[i];
-			cnt_av_pot_cen_10K++;
-		}
-		if(s10W_cen[i] != 'C') {
-			av_pot_cen_10W+=part_pot[i];
-			cnt_av_pot_cen_10W++;
-		}
-		if(s11A_cen[i] != 'C') {
-			av_pot_cen_11A+=part_pot[i];
-			cnt_av_pot_cen_11A++;
-		}
-		if(s11B_cen[i] != 'C') {
-			av_pot_cen_11B+=part_pot[i];
-			cnt_av_pot_cen_11B++;
-		}
-		if(s11C_cen[i] != 'C') {
-			av_pot_cen_11C+=part_pot[i];
-			cnt_av_pot_cen_11C++;
-		}
-		if(s11W_cen[i] != 'C') {
-			av_pot_cen_11W+=part_pot[i];
-			cnt_av_pot_cen_11W++;
-		}
-		if(s12A_cen[i] != 'C') {
-			av_pot_cen_12A+=part_pot[i];
-			cnt_av_pot_cen_12A++;
-		}
-		if(s12B_cen[i] != 'C') {
-			av_pot_cen_12B+=part_pot[i];
-			cnt_av_pot_cen_12B++;
-		}
-		if(s12K_cen[i] != 'C') {
-			av_pot_cen_12K+=part_pot[i];
-			cnt_av_pot_cen_12K++;
-		}
-		if(s13A_cen[i] != 'C') {
-			av_pot_cen_13A+=part_pot[i];
-			cnt_av_pot_cen_13A++;
-		}
-		if(s13B_cen[i] != 'C') {
-			av_pot_cen_13B+=part_pot[i];
-			cnt_av_pot_cen_13B++;
-		}
-		if(s13K_cen[i] != 'C') {
-			av_pot_cen_13K+=part_pot[i];
-			cnt_av_pot_cen_13K++;
-		}
-		if(sFCC_cen[i] != 'C') {
-			av_pot_cen_FCC+=part_pot[i];
-			cnt_av_pot_cen_FCC++;
-		}
-		if(sHCP_cen[i] != 'C') {
-			av_pot_cen_HCP+=part_pot[i];
-			cnt_av_pot_cen_HCP++;
-		}
-		if(sBCC_9_cen[i] != 'C') {
-			av_pot_cen_BCC_9+=part_pot[i];
-			cnt_av_pot_cen_BCC_9++;
-		}
-		if(sBCC_15_cen[i] != 'C') {
-			av_pot_cen_BCC_15+=part_pot[i];
-			cnt_av_pot_cen_BCC_15++;
-		}
-		
-		if(s9B_shell[i] != 'C') {
-			av_pot_shell_9B+=part_pot[i];
-			cnt_av_pot_shell_9B++;
-		}
-		if(s9K_shell[i] != 'C') {
-			av_pot_shell_9K+=part_pot[i];
-			cnt_av_pot_shell_9K++;
-		}
-		if(s10B_shell[i] != 'C') {
-			av_pot_shell_10B+=part_pot[i];
-			cnt_av_pot_shell_10B++;
-		}
-		if(s10K_shell[i] != 'C') {
-			av_pot_shell_10K+=part_pot[i];
-			cnt_av_pot_shell_10K++;
-		}
-		if(s10W_shell[i] != 'C') {
-			av_pot_shell_10W+=part_pot[i];
-			cnt_av_pot_shell_10W++;
-		}
-		if(s11A_shell[i] != 'C') {
-			av_pot_shell_11A+=part_pot[i];
-			cnt_av_pot_shell_11A++;
-		}
-		if(s11B_shell[i] != 'C') {
-			av_pot_shell_11B+=part_pot[i];
-			cnt_av_pot_shell_11B++;
-		}
-		if(s11C_shell[i] != 'C') {
-			av_pot_shell_11C+=part_pot[i];
-			cnt_av_pot_shell_11C++;
-		}
-		if(s11W_shell[i] != 'C') {
-			av_pot_shell_11W+=part_pot[i];
-			cnt_av_pot_shell_11W++;
-		}
-		if(s12A_shell[i] != 'C') {
-			av_pot_shell_12A+=part_pot[i];
-			cnt_av_pot_shell_12A++;
-		}
-		if(s12B_shell[i] != 'C') {
-			av_pot_shell_12B+=part_pot[i];
-			cnt_av_pot_shell_12B++;
-		}
-		if(s12K_shell[i] != 'C') {
-			av_pot_shell_12K+=part_pot[i];
-			cnt_av_pot_shell_12K++;
-		}
-		if(s13A_shell[i] != 'C') {
-			av_pot_shell_13A+=part_pot[i];
-			cnt_av_pot_shell_13A++;
-		}
-		if(s13B_shell[i] != 'C') {
-			av_pot_shell_13B+=part_pot[i];
-			cnt_av_pot_shell_13B++;
-		}
-		if(s13K_shell[i] != 'C') {
-			av_pot_shell_13K+=part_pot[i];
-			cnt_av_pot_shell_13K++;
-		}
-		if(sFCC_shell[i] != 'C') {
-			av_pot_shell_FCC+=part_pot[i];
-			cnt_av_pot_shell_FCC++;
-		}
-		if(sHCP_shell[i] != 'C') {
-			av_pot_shell_HCP+=part_pot[i];
-			cnt_av_pot_shell_HCP++;
-		}
-		if(sBCC_9_shell[i] != 'C') {
-			av_pot_shell_BCC_9+=part_pot[i];
-			cnt_av_pot_shell_BCC_9++;
-		}
-		if(sBCC_15_shell[i] != 'C') {
-			av_pot_shell_BCC_15+=part_pot[i];
-			cnt_av_pot_shell_BCC_15++;
-		}
-	}
-}
-
-void Norm_Write_Potential(char *filename) {
-	FILE *fPotentialOutput;
-	char  errMsg[1000];
-	
-	av_potential=av_potential/(N*FRAMES);
-	av_pot_check=av_pot_check/(N*2.0);
-	av_pot_sp3=av_pot_sp3/(ngsp3*2.0);
-	av_pot_sp3a=av_pot_sp3a/(ngsp3a*2.0);
-	av_pot_sp3b=av_pot_sp3b/(ngsp3b*2.0);
-	av_pot_sp3c=av_pot_sp3c/(ng5A*2.0);
-	av_pot_sp4=av_pot_sp4/(ngsp4*2.0);
-	av_pot_sp4a=av_pot_sp4a/(ngsp4a*2.0);
-	av_pot_sp4b=av_pot_sp4b/(ngsp4b*2.0);
-	av_pot_sp4c=av_pot_sp4c/(ng6A*2.0);
-	av_pot_6A=av_pot_6A/(ng6A*2.0);
-	av_pot_sp5=av_pot_sp5/(ngsp5*2.0);
-	av_pot_sp5a=av_pot_sp5a/(ngsp5a*2.0);
-	av_pot_sp5b=av_pot_sp5b/(ngsp5b*2.0);
-	av_pot_sp5c=av_pot_sp5c/(ng7A*2.0);
-	av_pot_6Z=av_pot_6Z/(ng6Z*2.0);
-	av_pot_7K=av_pot_7K/(ng7K*2.0);
-	av_pot_8A=av_pot_8A/(ng8A*2.0);
-	av_pot_8B=av_pot_8B/(ng8B*2.0);
-	av_pot_8K=av_pot_8K/(ng8K*2.0);
-	av_pot_9A=av_pot_9A/(ng9A*2.0);
-	av_pot_9B=av_pot_9B/(ng9B*2.0);
-	av_pot_9K=av_pot_9K/(ng9K*2.0);
-	av_pot_10A=av_pot_10A/(ng10A*2.0);
-	av_pot_10B=av_pot_10B/(ng10B*2.0);
-	av_pot_10K=av_pot_10K/(ng10K*2.0);
-	av_pot_10W=av_pot_10W/(ng10W*2.0);
-	av_pot_11A=av_pot_11A/(ng11A*2.0);
-	av_pot_11B=av_pot_11B/(ng11B*2.0);
-	av_pot_11C=av_pot_11C/(ng11C*2.0);
-	av_pot_11E=av_pot_11E/(ng11E*2.0);
-	av_pot_11F=av_pot_11F/(ng11F*2.0);
-	av_pot_11W=av_pot_11W/(ng11W*2.0);
-	av_pot_12A=av_pot_12A/(ng12A*2.0);
-	av_pot_12B=av_pot_12B/(ng12B*2.0);
-	av_pot_12D=av_pot_12D/(ng12D*2.0);
-	av_pot_12E=av_pot_12E/(ng12E*2.0);
-	av_pot_12K=av_pot_12K/(ng12K*2.0);
-	av_pot_13A=av_pot_13A/(ng13A*2.0);
-	av_pot_13B=av_pot_13B/(ng13B*2.0);
-	av_pot_13K=av_pot_13K/(ng13K*2.0);
-	av_pot_FCC=av_pot_FCC/(ngFCC*2.0);
-	av_pot_HCP=av_pot_HCP/(ngHCP*2.0);
-	av_pot_BCC_9=av_pot_BCC_9/(ngBCC_9*2.0);
-	av_pot_BCC_15=av_pot_BCC_15/(ngBCC_15*2.0);
-	
-	av_pot_cen_9B=av_pot_cen_9B/(cnt_av_pot_cen_9B*2.0);
-	av_pot_cen_9K=av_pot_cen_9K/(cnt_av_pot_cen_9K*2.0);
-	av_pot_cen_10B=av_pot_cen_10B/(cnt_av_pot_cen_10B*2.0);
-	av_pot_cen_10K=av_pot_cen_10K/(cnt_av_pot_cen_10K*2.0);
-	av_pot_cen_10W=av_pot_cen_10W/(cnt_av_pot_cen_10W*2.0);
-	av_pot_cen_11A=av_pot_cen_11A/(cnt_av_pot_cen_11A*2.0);
-	av_pot_cen_11B=av_pot_cen_11B/(cnt_av_pot_cen_11B*2.0);
-	av_pot_cen_11C=av_pot_cen_11C/(cnt_av_pot_cen_11C*2.0);
-	av_pot_cen_11W=av_pot_cen_11W/(cnt_av_pot_cen_11W*2.0);
-	av_pot_cen_12A=av_pot_cen_12A/(cnt_av_pot_cen_12A*2.0);
-	av_pot_cen_12B=av_pot_cen_12B/(cnt_av_pot_cen_12B*2.0);
-	av_pot_cen_12K=av_pot_cen_12K/(cnt_av_pot_cen_12K*2.0);
-	av_pot_cen_13A=av_pot_cen_13A/(cnt_av_pot_cen_13A*2.0);
-	av_pot_cen_13B=av_pot_cen_13B/(cnt_av_pot_cen_13B*2.0);
-	av_pot_cen_13K=av_pot_cen_13K/(cnt_av_pot_cen_13K*2.0);
-	av_pot_cen_FCC=av_pot_cen_FCC/(cnt_av_pot_cen_FCC*2.0);
-	av_pot_cen_HCP=av_pot_cen_HCP/(cnt_av_pot_cen_HCP*2.0);
-	av_pot_cen_BCC_9=av_pot_cen_BCC_9/(cnt_av_pot_cen_BCC_9*2.0);
-	av_pot_cen_BCC_15=av_pot_cen_BCC_15/(cnt_av_pot_cen_BCC_15*2.0);
-	
-	av_pot_shell_9B=av_pot_shell_9B/(cnt_av_pot_shell_9B*2.0);
-	av_pot_shell_9K=av_pot_shell_9K/(cnt_av_pot_shell_9K*2.0);
-	av_pot_shell_10B=av_pot_shell_10B/(cnt_av_pot_shell_10B*2.0);
-	av_pot_shell_10K=av_pot_shell_10K/(cnt_av_pot_shell_10K*2.0);
-	av_pot_shell_10W=av_pot_shell_10W/(cnt_av_pot_shell_10W*2.0);
-	av_pot_shell_11A=av_pot_shell_11A/(cnt_av_pot_shell_11A*2.0);
-	av_pot_shell_11B=av_pot_shell_11B/(cnt_av_pot_shell_11B*2.0);
-	av_pot_shell_11C=av_pot_shell_11C/(cnt_av_pot_shell_11C*2.0);
-	av_pot_shell_11W=av_pot_shell_11W/(cnt_av_pot_shell_11W*2.0);
-	av_pot_shell_12A=av_pot_shell_12A/(cnt_av_pot_shell_12A*2.0);
-	av_pot_shell_12B=av_pot_shell_12B/(cnt_av_pot_shell_12B*2.0);
-	av_pot_shell_12K=av_pot_shell_12K/(cnt_av_pot_shell_12K*2.0);
-	av_pot_shell_13A=av_pot_shell_13A/(cnt_av_pot_shell_13A*2.0);
-	av_pot_shell_13B=av_pot_shell_13B/(cnt_av_pot_shell_13B*2.0);
-	av_pot_shell_13K=av_pot_shell_13K/(cnt_av_pot_shell_13K*2.0);
-	av_pot_shell_FCC=av_pot_shell_FCC/(cnt_av_pot_shell_FCC*2.0);
-	av_pot_shell_HCP=av_pot_shell_HCP/(cnt_av_pot_shell_HCP*2.0);
-	av_pot_shell_BCC_9=av_pot_shell_BCC_9/(cnt_av_pot_shell_BCC_9*2.0);
-	av_pot_shell_BCC_15=av_pot_shell_BCC_15/(cnt_av_pot_shell_BCC_15*2.0);
-	
-	printf("\nPotential Energy analysis\n");
-	printf("Clust	potential	diff from mean	central part potential	cen diff from mean	shell part potential	shell diff from mean\n");
-	printf("sp3	%lg	%lg\n",av_pot_sp3,-av_potential+av_pot_sp3);
-	printf("sp3a	%lg	%lg\n",av_pot_sp3a,-av_potential+av_pot_sp3a);
-	printf("sp3b	%lg	%lg\n",av_pot_sp3b,-av_potential+av_pot_sp3b);
-	printf("5A_D3h	%lg	%lg\n",av_pot_sp3c,-av_potential+av_pot_sp3c);
-	printf("sp4	%lg	%lg\n",av_pot_sp4,-av_potential+av_pot_sp4);
-	printf("sp4a	%lg	%lg\n",av_pot_sp4a,-av_potential+av_pot_sp4a);
-	printf("sp4b	%lg	%lg\n",av_pot_sp4b,-av_potential+av_pot_sp4b);
-	printf("sp4c	%lg	%lg\n",av_pot_sp4c,-av_potential+av_pot_sp4c);
-	printf("6A_Oh	%lg	%lg\n",av_pot_6A,-av_potential+av_pot_6A);
-	printf("6Z_C2v	%lg	%lg\n",av_pot_6Z,-av_potential+av_pot_6Z);
-	printf("sp5	%lg	%lg\n",av_pot_sp5,-av_potential+av_pot_sp5);
-	printf("sp5a	%lg	%lg\n",av_pot_sp5a,-av_potential+av_pot_sp5a);
-	printf("sp5b	%lg	%lg\n",av_pot_sp5b,-av_potential+av_pot_sp5b);
-	printf("7A_D5h	%lg	%lg\n",av_pot_sp5c,-av_potential+av_pot_sp5c);
-	printf("7K	%lg	%lg\n",av_pot_7K,-av_potential+av_pot_7K);
-	printf("8A_D2d	%lg	%lg\n",av_pot_8A,-av_potential+av_pot_8A);
-	printf("8B_Cs	%lg	%lg\n",av_pot_8B,-av_potential+av_pot_8B);
-	printf("8K	%lg	%lg\n",av_pot_8K,-av_potential+av_pot_8K);
-	printf("9A_D3h	%lg	%lg\n",av_pot_9A,-av_potential+av_pot_9A);
-	printf("9B_C2v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_9B,-av_potential+av_pot_9B,av_pot_cen_9B,-av_potential+av_pot_cen_9B,av_pot_shell_9B,-av_potential+av_pot_shell_9B);
-	printf("9K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_9K,-av_potential+av_pot_9K,av_pot_cen_9K,-av_potential+av_pot_cen_9K,av_pot_shell_9K,-av_potential+av_pot_shell_9K);
-	printf("10A_D4d	%lg	%lg\n",av_pot_10A,-av_potential+av_pot_10A);
-	printf("10B_C3v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_10B,-av_potential+av_pot_10B,av_pot_cen_10B,-av_potential+av_pot_cen_10B,av_pot_shell_10B,-av_potential+av_pot_shell_10B);
-	printf("10K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_10K,-av_potential+av_pot_10K,av_pot_cen_10K,-av_potential+av_pot_cen_10K,av_pot_shell_10K,-av_potential+av_pot_shell_10K);
-	printf("10W	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_10W,-av_potential+av_pot_10W,av_pot_cen_10W,-av_potential+av_pot_cen_10W,av_pot_shell_10W,-av_potential+av_pot_shell_10W);
-	printf("11A_D4d	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11A,-av_potential+av_pot_11A,av_pot_cen_11A,-av_potential+av_pot_cen_11A,av_pot_shell_11A,-av_potential+av_pot_shell_11A);
-	printf("11B_C2v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11B,-av_potential+av_pot_11B,av_pot_cen_11B,-av_potential+av_pot_cen_11B,av_pot_shell_11B,-av_potential+av_pot_shell_11B);
-	printf("11CD	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11C,-av_potential+av_pot_11C,av_pot_cen_11C,-av_potential+av_pot_cen_11C,av_pot_shell_11C,-av_potential+av_pot_shell_11C);
-	printf("11E_C2	%lg	%lg\n",av_pot_11E,-av_potential+av_pot_11E);
-	printf("11F_C2v	%lg	%lg\n",av_pot_11F,-av_potential+av_pot_11F);
-	printf("11W	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11W,-av_potential+av_pot_11W,av_pot_cen_11W,-av_potential+av_pot_cen_11W,av_pot_shell_11W,-av_potential+av_pot_shell_11W);
-	printf("12A_C2v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_12A,-av_potential+av_pot_12A,av_pot_cen_12A,-av_potential+av_pot_cen_12A,av_pot_shell_12A,-av_potential+av_pot_shell_12A);
-	printf("12BC	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_12B,-av_potential+av_pot_12B,av_pot_cen_12B,-av_potential+av_pot_cen_12B,av_pot_shell_12B,-av_potential+av_pot_shell_12B);
-	printf("12D_D2d	%lg	%lg\n",av_pot_12D,-av_potential+av_pot_12D);
-	printf("12E_D3h	%lg	%lg\n",av_pot_12E,-av_potential+av_pot_12E);
-	printf("12K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_12K,-av_potential+av_pot_12K,av_pot_cen_12K,-av_potential+av_pot_cen_12K,av_pot_shell_12K,-av_potential+av_pot_shell_12K);
-	printf("13A_Ih	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_13A,-av_potential+av_pot_13A,av_pot_cen_13A,-av_potential+av_pot_cen_13A,av_pot_shell_13A,-av_potential+av_pot_shell_13A);
-	printf("13B_D5h	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_13B,-av_potential+av_pot_13B,av_pot_cen_13B,-av_potential+av_pot_cen_13B,av_pot_shell_13B,-av_potential+av_pot_shell_13B);
-	printf("13K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_13K,-av_potential+av_pot_13K,av_pot_cen_13K,-av_potential+av_pot_cen_13K,av_pot_shell_13K,-av_potential+av_pot_shell_13K);
-	printf("FCC_m13	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_FCC,-av_potential+av_pot_FCC,av_pot_cen_FCC,-av_potential+av_pot_cen_FCC,av_pot_shell_FCC,-av_potential+av_pot_shell_FCC);
-	printf("HCP_m13	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_HCP,-av_potential+av_pot_HCP,av_pot_cen_HCP,-av_potential+av_pot_cen_HCP,av_pot_shell_HCP,-av_potential+av_pot_shell_HCP);
-	printf("BCC_m9	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_BCC_9,-av_potential+av_pot_BCC_9,av_pot_cen_BCC_9,-av_potential+av_pot_cen_BCC_9,av_pot_shell_BCC_9,-av_potential+av_pot_shell_BCC_9);
-	printf("BCC_m15	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_BCC_15,-av_potential+av_pot_BCC_15,av_pot_cen_BCC_15,-av_potential+av_pot_cen_BCC_15,av_pot_shell_BCC_15,-av_potential+av_pot_shell_BCC_15);
-	printf("mean	%lg\n",av_potential);
-		
-	fPotentialOutput=fopen(filename,"w");
-	if (fPotentialOutput==NULL)  {
-		sprintf(errMsg,"Norm_Write_Potential(): Error opening file %s",filename);	// Always test file open
-		Error(errMsg);
-	}
-	fprintf(fPotentialOutput,"%s\n",filename);
-	
-	fprintf(fPotentialOutput,"Clust	potential	diff from mean	central part potential	cen diff from mean	shell part potential	shell diff from mean\n");
-	fprintf(fPotentialOutput,"sp3	%lg	%lg\n",av_pot_sp3,-av_potential+av_pot_sp3);
-	fprintf(fPotentialOutput,"sp3a	%lg	%lg\n",av_pot_sp3a,-av_potential+av_pot_sp3a);
-	fprintf(fPotentialOutput,"sp3b	%lg	%lg\n",av_pot_sp3b,-av_potential+av_pot_sp3b);
-	fprintf(fPotentialOutput,"5A_D3h	%lg	%lg\n",av_pot_sp3c,-av_potential+av_pot_sp3c);
-	fprintf(fPotentialOutput,"sp4	%lg	%lg\n",av_pot_sp4,-av_potential+av_pot_sp4);
-	fprintf(fPotentialOutput,"sp4a	%lg	%lg\n",av_pot_sp4a,-av_potential+av_pot_sp4a);
-	fprintf(fPotentialOutput,"sp4b	%lg	%lg\n",av_pot_sp4b,-av_potential+av_pot_sp4b);
-	fprintf(fPotentialOutput,"sp4c	%lg	%lg\n",av_pot_sp4c,-av_potential+av_pot_sp4c); 
-	fprintf(fPotentialOutput,"6A_Oh	%lg	%lg\n",av_pot_6A,-av_potential+av_pot_6A); 
-	fprintf(fPotentialOutput,"6Z_C2v	%lg	%lg\n",av_pot_6Z,-av_potential+av_pot_6Z);
-	fprintf(fPotentialOutput,"sp5	%lg	%lg\n",av_pot_sp5,-av_potential+av_pot_sp5);
-	fprintf(fPotentialOutput,"sp5a	%lg	%lg\n",av_pot_sp5a,-av_potential+av_pot_sp5a);
-	fprintf(fPotentialOutput,"sp5b	%lg	%lg\n",av_pot_sp5b,-av_potential+av_pot_sp5b);
-	fprintf(fPotentialOutput,"7A_D5h	%lg	%lg\n",av_pot_sp5c,-av_potential+av_pot_sp5c);
-	fprintf(fPotentialOutput,"7K_C2v	%lg	%lg\n",av_pot_7K,-av_potential+av_pot_7K);
-	fprintf(fPotentialOutput,"8A_D2d	%lg	%lg\n",av_pot_8A,-av_potential+av_pot_8A);
-	fprintf(fPotentialOutput,"8B_Cs	%lg	%lg\n",av_pot_8B,-av_potential+av_pot_8B);
-	fprintf(fPotentialOutput,"8K	%lg	%lg\n",av_pot_8K,-av_potential+av_pot_8K);
-	fprintf(fPotentialOutput,"9A_D3h	%lg	%lg\n",av_pot_9A,-av_potential+av_pot_9A);
-	fprintf(fPotentialOutput,"9B_C2v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_9B,-av_potential+av_pot_9B,av_pot_cen_9B,-av_potential+av_pot_cen_9B,av_pot_shell_9B,-av_potential+av_pot_shell_9B);
-	fprintf(fPotentialOutput,"9K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_9K,-av_potential+av_pot_9K,av_pot_cen_9K,-av_potential+av_pot_cen_9K,av_pot_shell_9K,-av_potential+av_pot_shell_9K);
-	fprintf(fPotentialOutput,"10A_D4d	%lg	%lg\n",av_pot_10A,-av_potential+av_pot_10A);
-	fprintf(fPotentialOutput,"10B_C3v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_10B,-av_potential+av_pot_10B,av_pot_cen_10B,-av_potential+av_pot_cen_10B,av_pot_shell_10B,-av_potential+av_pot_shell_10B);
-	fprintf(fPotentialOutput,"10K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_10K,-av_potential+av_pot_10K,av_pot_cen_10K,-av_potential+av_pot_cen_10K,av_pot_shell_10K,-av_potential+av_pot_shell_10K);
-	fprintf(fPotentialOutput,"10W	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_10W,-av_potential+av_pot_10W,av_pot_cen_10W,-av_potential+av_pot_cen_10W,av_pot_shell_10W,-av_potential+av_pot_shell_10W);
-	fprintf(fPotentialOutput,"11A_D4d	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11A,-av_potential+av_pot_11A,av_pot_cen_11A,-av_potential+av_pot_cen_11A,av_pot_shell_11A,-av_potential+av_pot_shell_11A);
-	fprintf(fPotentialOutput,"11B_C2v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11B,-av_potential+av_pot_11B,av_pot_cen_11B,-av_potential+av_pot_cen_11B,av_pot_shell_11B,-av_potential+av_pot_shell_11B);
-	fprintf(fPotentialOutput,"11CD	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11C,-av_potential+av_pot_11C,av_pot_cen_11C,-av_potential+av_pot_cen_11C,av_pot_shell_11C,-av_potential+av_pot_shell_11C);
-	fprintf(fPotentialOutput,"11E_C2	%lg	%lg\n",av_pot_11E,-av_potential+av_pot_11E);
-	fprintf(fPotentialOutput,"11F_C2v	%lg	%lg\n",av_pot_11F,-av_potential+av_pot_11F);
-	fprintf(fPotentialOutput,"11W	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_11W,-av_potential+av_pot_11W,av_pot_cen_11W,-av_potential+av_pot_cen_11W,av_pot_shell_11W,-av_potential+av_pot_shell_11W);
-	fprintf(fPotentialOutput,"12A_C2v	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_12A,-av_potential+av_pot_12A,av_pot_cen_12A,-av_potential+av_pot_cen_12A,av_pot_shell_12A,-av_potential+av_pot_shell_12A);
-	fprintf(fPotentialOutput,"12BC	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_12B,-av_potential+av_pot_12B,av_pot_cen_12B,-av_potential+av_pot_cen_12B,av_pot_shell_12B,-av_potential+av_pot_shell_12B);
-	fprintf(fPotentialOutput,"12D_D2d	%lg	%lg\n",av_pot_12D,-av_potential+av_pot_12D);
-	fprintf(fPotentialOutput,"12E_D3h	%lg	%lg\n",av_pot_12E,-av_potential+av_pot_12E);
-	fprintf(fPotentialOutput,"12K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_12K,-av_potential+av_pot_12K,av_pot_cen_12K,-av_potential+av_pot_cen_12K,av_pot_shell_12K,-av_potential+av_pot_shell_12K);
-	fprintf(fPotentialOutput,"13A_Ih	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_13A,-av_potential+av_pot_13A,av_pot_cen_13A,-av_potential+av_pot_cen_13A,av_pot_shell_13A,-av_potential+av_pot_shell_13A);
-	fprintf(fPotentialOutput,"13B_D5h	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_13B,-av_potential+av_pot_13B,av_pot_cen_13B,-av_potential+av_pot_cen_13B,av_pot_shell_13B,-av_potential+av_pot_shell_13B);
-	fprintf(fPotentialOutput,"13K	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_13K,-av_potential+av_pot_13K,av_pot_cen_13K,-av_potential+av_pot_cen_13K,av_pot_shell_13K,-av_potential+av_pot_shell_13K);
-	fprintf(fPotentialOutput,"FCC_m13	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_FCC,-av_potential+av_pot_FCC,av_pot_cen_FCC,-av_potential+av_pot_cen_FCC,av_pot_shell_FCC,-av_potential+av_pot_shell_FCC);
-	fprintf(fPotentialOutput,"HCP_m13	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_HCP,-av_potential+av_pot_HCP,av_pot_cen_HCP,-av_potential+av_pot_cen_HCP,av_pot_shell_HCP,-av_potential+av_pot_shell_HCP);
-	fprintf(fPotentialOutput,"BCC_m9	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_BCC_9,-av_potential+av_pot_BCC_9,av_pot_cen_BCC_9,-av_potential+av_pot_cen_BCC_9,av_pot_shell_BCC_9,-av_potential+av_pot_shell_BCC_9);
-	fprintf(fPotentialOutput,"BCC_m15	%lg	%lg	%lg	%lg	%lg	%lg\n",av_pot_BCC_15,-av_potential+av_pot_BCC_15,av_pot_cen_BCC_15,-av_potential+av_pot_cen_BCC_15,av_pot_shell_BCC_15,-av_potential+av_pot_shell_BCC_15);
-	fprintf(fPotentialOutput,"mean	%lg\n",av_potential);
-	
-	fclose(fPotentialOutput);
-	printf("\ndWritten %s\n\n",filename);
-}
-
-void Norm_Write_bonded_to_cen_distro(char *output, int *the_array, int clusSize, int normFactor) {
+void Norm_Write_bonded_to_cen_distro(char *output, int *the_array, int clusSize, double normFactor) {
 	FILE *fOut;
 	int i;
 	char errMsg[1000];
@@ -1797,7 +1395,7 @@ void Norm_Write_bonded_to_cen_distro(char *output, int *the_array, int clusSize,
 	
 	fprintf(fOut,"N_A in clus	N_B in clus	Freq	Norm\n");
 	for (i=0; i<nB+1; i++) {
-		tempratio=(double)the_array[i]/(double)(normFactor);
+		tempratio=(double)the_array[i]/(normFactor);
 		fprintf(fOut,"%d	%d %d	%.15lg\n",i,clusSize-i,the_array[i],tempratio);
 	}
 	
@@ -2798,7 +2396,6 @@ int main(int argc, char **argv) {
 	char errMsg[1000], output[1000], other[1000];
 	int ix, iy, iz;
 	int imap;
-	int **dummy_sub=NULL;
 	FILE *rXmol;
 	FILE *rSizes; //NPT_FIX
 	FILE *clusBinFile, *cos_pop_per_frame, *file_s_0_0_12;
@@ -2813,11 +2410,6 @@ int main(int argc, char **argv) {
 		sprintf(errMsg,"main() : Error! Need switch cell list off for non-cubic/NPT system");	// Always test file open
 		Error(errMsg);
 		}
-		if (doPotential==1) {
-		sprintf(errMsg,"main() : Error! Need switch off potential calc. for non-cubic/NPT system");	// Always test file open
-		Error(errMsg);
-		}
-		
 	}
 	//NPT stuff
 	//read in box data if noncubic/NPT
@@ -2834,11 +2426,10 @@ int main(int argc, char **argv) {
 			printf("sidex: %f, sidey: %f, sidez: %f\n", sidex,sidey,sidez);
 		}
 		if  (ISNOTCUBIC==3) {
-			printf("======> Triclinic Box \n");
-		}
-	}
-    fclose(rSizes);
-	
+            printf("======> Triclinic Box \n");
+        }
+    }
+
 	printf("reading coordinate frames from %s\n\n",fXmolName);
 	rXmol=fopen(fXmolName,"r");	// open xmol trajecotry
 
@@ -2891,42 +2482,6 @@ int main(int argc, char **argv) {
 					map[imap+11]=icell(ix	 ,iy+1,iz+1	);
 					map[imap+12]=icell(ix-1 ,iy+1,iz+1);
 					map[imap+13]=icell(ix	 ,iy	,iz+1	);
-				}
-			}
-		}
-	}
-
-	if (doPotential==1) {
-		sprintf(fPotentialParamsName,"potentialparams.in");
-		Setup_InitPotentialVars(fPotentialParamsName);
-		Setup_print_U_r();
-		if (USELIST==1) {
-		
-			map_pot=malloc(((13*ncells_pot)+1)*sizeof(int));	if (map_pot==NULL) { sprintf(errMsg,"main(): map_pot[] malloc out of memory\n");	Error_no_free(errMsg); }
-			for (i=0; i<(13*ncells_pot+1); i++) map_pot[i]=0;
-			head_pot=malloc((ncells_pot+1)*sizeof(int));	if (head_pot==NULL) { sprintf(errMsg,"main(): head_pot[] malloc out of memory\n");	Error_no_free(errMsg); }
-			for (i=0; i<(ncells_pot+1); i++) head_pot[i]=0;
-			llist_pot=malloc((N+1)*sizeof(int));	if (llist_pot==NULL) { sprintf(errMsg,"main(): llist_pot[] malloc out of memory\n");	Error_no_free(errMsg); }
-			for (i=0; i<(N+1); i++) llist_pot[i]=0;
-			
-			for (iz=1; iz<=M_pot; iz++) {
-				for (iy=1; iy<=M_pot; iy++) {
-					for (ix=1; ix<=M_pot; ix++) {
-						imap = (icell_pot(ix,iy,iz)-1)*13;
-						map_pot[imap+1 ]=icell_pot(ix+1,iy	,iz	);
-						map_pot[imap+2 ]=icell_pot(ix+1,iy+1,iz	);
-						map_pot[imap+3 ]=icell_pot(ix	 ,iy+1,iz	);
-						map_pot[imap+4 ]=icell_pot(ix-1 ,iy+1,iz	);
-						map_pot[imap+5 ]=icell_pot(ix+1,iy	,iz-1	);
-						map_pot[imap+6 ]=icell_pot(ix+1,iy+1,iz-1	);
-						map_pot[imap+7 ]=icell_pot(ix	 ,iy+1,iz-1	);
-						map_pot[imap+8 ]=icell_pot(ix-1 ,iy+1,iz-1	);
-						map_pot[imap+9 ]=icell_pot(ix+1,iy	,iz+1	);
-						map_pot[imap+10]=icell_pot(ix+1,iy+1,iz+1	);
-						map_pot[imap+11]=icell_pot(ix	 ,iy+1,iz+1	);
-						map_pot[imap+12]=icell_pot(ix-1 ,iy+1,iz+1);
-						map_pot[imap+13]=icell_pot(ix	 ,iy	,iz+1	);
-					}
 				}
 			}
 		}
@@ -3039,28 +2594,6 @@ int main(int argc, char **argv) {
 		Setup_Readxyz(e,write,f,rXmol);
 		
 		if (write==1) {
-			if (doPotential==1) {
-				if (USELIST==0) { 
-					if (WHICHPOTENTIAL==0) BLJ();
-					else if (WHICHPOTENTIAL==1) BLJSF();
-					else if (WHICHPOTENTIAL==2) MorYuk();
-					else if (WHICHPOTENTIAL==4)  BIPL();
-					else if (WHICHPOTENTIAL==5)  BLJ_WCA_s();
-					else if (WHICHPOTENTIAL==6)  SFBIPL();
-					else if (WHICHPOTENTIAL==7)  CRVT();
-				}
-				else {
-					links_pot();
-					if (WHICHPOTENTIAL==0) listBLJ();
-					else if (WHICHPOTENTIAL==1) listBLJSF();
-					else if (WHICHPOTENTIAL==2) listMorYuk();
-					else if (WHICHPOTENTIAL==4)  listBIPL();
-					else if (WHICHPOTENTIAL==5)  listBLJ_WCA_s();
-					else if (WHICHPOTENTIAL==6)  listSFBIPL();
-				}
-				av_potential+=potential;
-				for (i=0; i<N; i++) av_pot_check+=part_pot[i];
-			}
 			Bonds_GetBonds(f);
 
 			for(i=0; i<N; i++) {
@@ -3162,8 +2695,7 @@ int main(int argc, char **argv) {
 			Stats_Analyse();
 			Pop_Per_Frame(f);
 			if (doClusBLDeviation==1) Update_bl_mom(f);
-			if (doPotential==1) Update_Potential(f);
-			
+
 			printf("f%d complete\n",f);
 			f++;
 		}
@@ -3514,11 +3046,6 @@ int main(int argc, char **argv) {
 	Stats_Report(output);
 	printf("\nWritten %s\n\n",output);
 
-	if (doPotential==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.potential",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		Norm_Write_Potential(output);
-	}
-	
 	if (doClusComp==1) {
 		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
 		Norm_Write_ClusComp(output);
@@ -3571,8 +3098,9 @@ int main(int argc, char **argv) {
 	
 	Setup_FreeStaticVars();
 	Stats_FreeMem();
-	if (doPotential==1) Setup_FreePotentialVars();
-
+	if (ISNOTCUBIC > 0) {
+        fclose(rSizes);
+    }
 	printf("\n\nFIN \n\n");
 	return 0;
 }

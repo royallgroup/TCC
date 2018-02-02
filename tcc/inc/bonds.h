@@ -24,10 +24,9 @@ void Bonds_CheckSymmetric();
 
 void Bonds_GetBonds(int ) ;    // Get bonds using simple lengths
 
-void Bonds_GetBondsV(int )  ;  // Get bonds using Voronoi
+void Bonds_GetBondsV()  ;  // Get bonds using Voronoi
 
-void Bonds_GetBondsV_CellList(int ) ; // Get bonds using Voronoi
-
+void Bonds_GetBondsV_CellList() ; // Get bonds using Voronoi
 
 int Bonds_BondCheck(int , int ) ; // Returns 1 if i & j are bonded; 0 otherwise
 

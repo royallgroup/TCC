@@ -1,6 +1,7 @@
 #include "rings.h"
 #include "globals.h"
 #include "bonds.h"
+
 void Rings_gSP4(int f, int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
     int i;
     int n3;
