@@ -2,6 +2,30 @@
 #include "globals.h"
 #include "bonds.h"
 
+void Rings_gSP3(int f, int n0) {	// get SP3/4/5 rings including particle n0
+    int i,j;
+    int n1, n2;
+
+    for (i=0; i<cnb[n0]-1; i++){
+        n1=bNums[n0][i];
+        if (n1 < n0) continue;
+        for (j=i+1; j<cnb[n0]; ++j){
+            n2=bNums[n0][j];
+            if (n2<n0) continue;
+            if (Bonds_BondCheck(n1,n2)) { // is n1 bonded to n2
+                if (n1<n2) Rings_aSP3(f,n0,n1,n2); // SP3 found, check type and store
+                else Rings_aSP3(f,n0,n2,n1); // SP3 found, check type and store
+            }
+            else { // not SP3, search for SP4 & SP5
+                if (dosp4==1) {
+                    if (n1<n2) Rings_gSP4(f,n0,n1,n2);
+                    else Rings_gSP4(f,n0,n2,n1);
+                }
+            }
+        }
+    }
+}
+
 void Rings_gSP4(int f, int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
     int i;
     int n3;

@@ -3198,7 +3198,6 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 1
     return 0;
 }
 
-
 int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char *ach_cen, char *ach_shell) {
     /* Function Clusters_Get13K - Take an 11F particle and determine if it meets the criteria for the presence of a 13K
      *

@@ -10,7 +10,6 @@ void Error_no_free(char *msg) { // Exit program printing error message but don't
     exit(1); 
 } // Quit
 
-
 void Error(char *msg) { // Exit program printing error message and trying to free any allocated memory
     printf("\n%s\n",msg);
     
@@ -37,7 +36,6 @@ int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new
     
     return the_array;
 }
-
 
 int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
     int i;
