@@ -46,7 +46,6 @@ int doClusBLDistros;    // calculate bond length distributions for each cluster 
 int doClusBLDeviation;  // look at cluster bond lengths relative to ground state
 int donbDistros;        // do distribution of number of bonds to a particle
 int doBondedCen;    // look at cluster bond lengths relative to ground state
-int doClusComp; // look at composition of clusters in terms of A and B species
 
 int doCoslovich;    // do Coslovich voronoi faces analysis
 

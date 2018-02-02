@@ -46,8 +46,7 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
     int bcheck;
     int binAcnt;
-    int number_of_A, number_of_A_ring;
-    
+
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
         j = bNums[n0][i];
@@ -88,25 +87,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             
             Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3a,&BLDistroNoSamplessp3a);
             Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-        }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                if (rtype[sp3a[nsp3a[f]][binAcnt]]==1) {
-                    nAsp3a++;
-                    number_of_A++;
-                    nAsp3++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp3a++;
-                    nBsp3++;
-                }
-            }
-            n_distro_sp3a[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
         }
         
         if (doClusBLDeviation==1) {
@@ -220,27 +200,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)],BLDistrosp3b,&BLDistroNoSamplessp3b);
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)],BLDistrosp3b,&BLDistroNoSamplessp3b);
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-        }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[sp3b[nsp3b[f]][binAcnt]]==1) {
-                    nAsp3b++;
-                    number_of_A++;
-                    if (binAcnt<3) {
-                        nAsp3++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp3b++;
-                    if (binAcnt<3) nBsp3++;
-                }
-            }
-            n_distro_sp3b[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
         }
         
         if (doClusBLDeviation==1) {
@@ -409,27 +368,7 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             
             if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp3c,&BLDistroNoSamplessp3c);
         }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp3c[nsp3c[f]][binAcnt]]==1) {
-                    nAsp3c++;
-                    number_of_A++;
-                    if (binAcnt<3) {
-                        nAsp3++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp3c++;
-                    if (binAcnt<3) nBsp3++;
-                }
-            }
-            n_distro_sp3c[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
-        }
+
         
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
@@ -562,25 +501,6 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
         }
         
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                if (rtype[sp3a[nsp3a[f]][binAcnt]]==1) {
-                    nAsp3a++;
-                    number_of_A++;
-                    nAsp3++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp3a++;
-                    nBsp3++;
-                }
-            }
-            n_distro_sp3a[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
-        }
-        
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a);
@@ -640,7 +560,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
     int flg;
     int trial[6];
     int binAcnt;
-    int number_of_A, number_of_A_ring;
 
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
@@ -687,26 +606,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
         }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[sp4a[nsp4a[f]][binAcnt]]==1) {
-                    nAsp4a++;
-                    number_of_A++;
-                    nAsp4++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp4a++;
-                    nBsp4++;
-                }
-            }
-            n_distro_sp4a[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
+
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a);
@@ -846,28 +746,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp4b,&BLDistroNoSamplessp4b);
             Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)],BLDistrosp4b,&BLDistroNoSamplessp4b);
         }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp4b[nsp4b[f]][binAcnt]]==1) {
-                    nAsp4b++;
-                    number_of_A++;
-                    if (binAcnt<4) {
-                        nAsp4++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp4b++;
-                    if (binAcnt<4) nBsp4++;
-                }
-            }
-            n_distro_sp4b[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
+
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b);
@@ -1060,18 +939,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
                 if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistro6A,&BLDistroNoSamples6A);
             }
             
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<6; binAcnt++) {
-                    if (rtype[hc6A[n6A[f]][binAcnt]]==1) {
-                        number_of_A++;
-                        nA6A++;
-                    }
-                    else nB6A++;
-                }
-                n_distro_6A[number_of_A]++;
-            }
-            
             if (doClusBLDeviation==1) {
                 if (rtype[n0]==1 && rtype[n1]==1) {
                     bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A);
@@ -1226,28 +1093,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         }
             
         // hc6A key: (SP4_1, SP4_2, SP4_3, SP4_4, s1, s2)
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                if (rtype[sp4c[nsp4c[f]][binAcnt]]==1) {
-                    nAsp4c++;
-                    number_of_A++;
-                    if (binAcnt<4) {
-                        nAsp4++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp4c++;
-                    if (binAcnt<4) nBsp4++;
-                }
-            }
-            n_distro_sp4c[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
+
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c);
@@ -1357,26 +1203,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
             Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
         }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[sp4a[nsp4a[f]][binAcnt]]==1) {
-                    nAsp4a++;
-                    number_of_A++;
-                    nAsp4++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp4a++;
-                    nBsp4++;
-                }
-            }
-            n_distro_sp4a[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
+
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a);
@@ -1447,7 +1274,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
     int bcheck;
     int binAcnt;
-    int number_of_A, number_of_A_ring;
 
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
@@ -1497,25 +1323,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5a,&BLDistroNoSamplessp5a);
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
-        }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp5a[nsp5a[f]][binAcnt]]==1) {
-                    nAsp5a++;
-                    number_of_A++;
-                    nAsp5++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp5a++;
-                    nBsp5++;
-                }
-            }
-            n_distro_sp5a[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
         }
         
         if (doClusBLDeviation==1) {
@@ -1682,27 +1489,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
             Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
-        }
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                if (rtype[sp5b[nsp5b[f]][binAcnt]]==1) {
-                    nAsp5b++;
-                    number_of_A++;
-                    if (binAcnt<5) {
-                        nAsp5++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp5b++;
-                    if (binAcnt<5) nBsp5++;
-                }
-            }
-            n_distro_sp5b[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
         }
         
         if (doClusBLDeviation==1) {
@@ -1910,27 +1696,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
         }
         
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<7; binAcnt++) {
-                if (rtype[sp5c[nsp5c[f]][binAcnt]]==1) {
-                    nAsp5c++;
-                    number_of_A++;
-                    if (binAcnt<5) {
-                        nAsp5++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp5c++;
-                    if (binAcnt<5) nBsp5++;
-                }
-            }
-            n_distro_sp5c[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
-        }
-        
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c);
@@ -2059,25 +1824,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
         }
 
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp5a[nsp5a[f]][binAcnt]]==1) {
-                    nAsp5a++;
-                    number_of_A++;
-                    nAsp5++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp5a++;
-                    nBsp5++;
-                }
-            }
-            n_distro_sp5a[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
-        }
-        
         if (doClusBLDeviation==1) {
             if (rtype[n0]==1 && rtype[n1]==1) {
                 bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a);

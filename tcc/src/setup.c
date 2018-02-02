@@ -68,7 +68,6 @@ void Setup_ReadIniFile(char *filename) {
     doClusBLDeviation = iniparser_getboolean(ini, "output:bond_length_dev", -1);
     donbDistros = iniparser_getboolean(ini, "output:neighbour_dist", -1);
     doBondedCen = iniparser_getboolean(ini, "output:bonded_dist", -1);
-    doClusComp = iniparser_getboolean(ini, "output:cluster_composition", -1);
     doSubClusts = iniparser_getboolean(ini, "output:subclusters", -1);
 
     doCoslovich = iniparser_getboolean(ini, "extra:coslovich", -1);
@@ -108,7 +107,7 @@ void Setup_ReadIniFile(char *filename) {
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
     printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
     printf("binWidth %.5lg doBLDistros %d doClusBLDistros %d doClusBLDeviation %d\n",binWidth,doBLDistros,doClusBLDistros,doClusBLDeviation);
-    printf("donbDistros %d doBondedCen %d doClusComp %d doSubClusts %d\n",donbDistros,doBondedCen,doClusComp,doSubClusts);
+    printf("donbDistros %d doBondedCen %d doSubClusts %d\n",donbDistros,doBondedCen,doSubClusts);
     printf("doCoslovich %d talpha %lg PRINTINFO %d\n\n",doCoslovich,talpha,PRINTINFO);
         
     if (ISNOTCUBIC==0) {
@@ -1545,148 +1544,6 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
         free(BLDistro13A); free(BLDistro13B); free(BLDistro13K);
         free(BLDistroFCC); free(BLDistroHCP); free(BLDistroBCC_9); free(BLDistroBCC_15);
     }
-}
-
-void Setup_ClusComp() { // zero arrays for cluster compostion analysis
-    int i;
-    
-    for (i=0; i<4; i++) n_distro_sp3[i]=0;
-    for (i=0; i<4; i++) n_distro_sp3a[i]=0;
-    for (i=0; i<5; i++) n_distro_sp3b[i]=0;
-    for (i=0; i<6; i++) n_distro_sp3c[i]=0;
-    for (i=0; i<5; i++) n_distro_sp4[i]=0;
-    for (i=0; i<5; i++) n_distro_sp4a[i]=0;
-    for (i=0; i<6; i++) n_distro_sp4b[i]=0;
-    for (i=0; i<7; i++) n_distro_sp4c[i]=0;
-    for (i=0; i<7; i++) n_distro_6A[i]=0;
-    for (i=0; i<6; i++) n_distro_sp5[i]=0;
-    for (i=0; i<6; i++) n_distro_sp5a[i]=0;
-    for (i=0; i<7; i++) n_distro_sp5b[i]=0;
-    for (i=0; i<8; i++) n_distro_sp5c[i]=0;
-    for (i=0; i<7; i++) n_distro_6Z[i]=0;
-    for (i=0; i<8; i++) n_distro_7K[i]=0;
-    for (i=0; i<9; i++) n_distro_8A[i]=0;
-    for (i=0; i<9; i++) n_distro_8B[i]=0;
-    for (i=0; i<9; i++) n_distro_8K[i]=0;
-    for (i=0; i<10; i++) n_distro_9A[i]=0;
-    for (i=0; i<10; i++) n_distro_9B[i]=0;
-    for (i=0; i<10; i++) n_distro_9K[i]=0;
-    for (i=0; i<11; i++) n_distro_10A[i]=0;
-    for (i=0; i<11; i++) n_distro_10B[i]=0;
-    for (i=0; i<11; i++) n_distro_10K[i]=0;
-    for (i=0; i<11; i++) n_distro_10W[i]=0;
-    for (i=0; i<12; i++) n_distro_11A[i]=0;
-    for (i=0; i<12; i++) n_distro_11B[i]=0;
-    for (i=0; i<12; i++) n_distro_11C[i]=0;
-    for (i=0; i<12; i++) n_distro_11E[i]=0;
-    for (i=0; i<12; i++) n_distro_11F[i]=0;
-    for (i=0; i<12; i++) n_distro_11W[i]=0;
-    for (i=0; i<13; i++) n_distro_12A[i]=0;
-    for (i=0; i<13; i++) n_distro_12B[i]=0;
-    for (i=0; i<13; i++) n_distro_12D[i]=0;
-    for (i=0; i<13; i++) n_distro_12E[i]=0;
-    for (i=0; i<13; i++) n_distro_12K[i]=0;
-    for (i=0; i<14; i++) n_distro_13A[i]=0;
-    for (i=0; i<14; i++) n_distro_13B[i]=0;
-    for (i=0; i<14; i++) n_distro_13K[i]=0;
-    for (i=0; i<14; i++) n_distro_FCC[i]=0;
-    for (i=0; i<14; i++) n_distro_HCP[i]=0;
-    for (i=0; i<10; i++) n_distro_BCC_9[i]=0;
-    for (i=0; i<16; i++) n_distro_BCC_15[i]=0;
-    
-    for (i=0; i<2; i++) {
-        n_distro_cen_9B[i]=0;
-        n_distro_cen_9K[i]=0;
-        n_distro_cen_10B[i]=0;
-        n_distro_cen_10K[i]=0;
-        n_distro_cen_10W[i]=0;
-        n_distro_cen_11A[i]=0;
-        n_distro_cen_11B[i]=0;
-        n_distro_cen_11C[i]=0;
-        n_distro_cen_11W[i]=0;
-        n_distro_cen_12A[i]=0;
-        n_distro_cen_12B[i]=0;
-        n_distro_cen_12K[i]=0;
-        n_distro_cen_13A[i]=0;
-        n_distro_cen_13B[i]=0;
-        n_distro_cen_13K[i]=0;
-        n_distro_cen_FCC[i]=0;
-        n_distro_cen_HCP[i]=0;
-        n_distro_cen_BCC_9[i]=0;
-        n_distro_cen_BCC_15[i]=0;
-    }
-    
-    for (i=0; i<9; i++) n_distro_shell_9B[i]=0;
-    for (i=0; i<9; i++) n_distro_shell_9K[i]=0;
-    for (i=0; i<10; i++) n_distro_shell_10B[i]=0;
-    for (i=0; i<10; i++) n_distro_shell_10K[i]=0;
-    for (i=0; i<10; i++) n_distro_shell_10W[i]=0;
-    for (i=0; i<11; i++) n_distro_shell_11A[i]=0;
-    for (i=0; i<11; i++) n_distro_shell_11B[i]=0;
-    for (i=0; i<11; i++) n_distro_shell_11C[i]=0;
-    for (i=0; i<11; i++) n_distro_shell_11W[i]=0;
-    for (i=0; i<12; i++) n_distro_shell_12A[i]=0;
-    for (i=0; i<12; i++) n_distro_shell_12B[i]=0;
-    for (i=0; i<12; i++) n_distro_shell_12K[i]=0;
-    for (i=0; i<13; i++) n_distro_shell_13A[i]=0;
-    for (i=0; i<13; i++) n_distro_shell_13B[i]=0;
-    for (i=0; i<13; i++) n_distro_shell_13K[i]=0;
-    for (i=0; i<13; i++) n_distro_shell_FCC[i]=0;
-    for (i=0; i<13; i++) n_distro_shell_HCP[i]=0;
-    for (i=0; i<9; i++) n_distro_shell_BCC_9[i]=0;
-    for (i=0; i<15; i++) n_distro_shell_BCC_15[i]=0;
-    
-    nAsp3=nAsp3a=nAsp3b=nAsp3c=0;
-    nAsp4=nAsp4a=nAsp4b=nAsp4c=nA6A=0;
-    nAsp5=nAsp5a=nAsp5b=nAsp5c=0;
-    nA6Z=nA7K=0;
-    nA8A=nA8B=nA8K=0;
-    nA9A=nA9B=nA9K=0;
-    nA10A=nA10B=nA10K=nA10W=0;
-    nA11A=nA11B=nA11C=nA11E=nA11F=nA11W=0;
-    nA12A=nA12B=nA12D=nA12E=nA12K=0;
-    nA13A=nA13B=nA13K=0;
-    nAFCC=nAHCP=nABCC_9=nABCC_15=0;
-
-    nA_cen_9B=nA_cen_9K=0;
-    nA_cen_10B=nA_cen_10K=nA_cen_10W=0;
-    nA_cen_11A=nA_cen_11B=nA_cen_11C=nA_cen_11W=0;
-    nA_cen_12A=nA_cen_12B=nA_cen_12K=0;
-    nA_cen_13A=nA_cen_13B=nA_cen_13K=0;
-    nA_cen_FCC=nA_cen_HCP=nA_cen_BCC_9=nA_cen_BCC_15=0;
-
-    nA_shell_9B=nA_shell_9K=0;
-    nA_shell_10B=nA_shell_10K=nA_shell_10W=0;
-    nA_shell_11A=nA_shell_11B=nA_shell_11C=nA_shell_11W=0;
-    nA_shell_12A=nA_shell_12B=nA_shell_12K=0;
-    nA_shell_13A=nA_shell_13B=nA_shell_13K=0;
-    nA_shell_FCC=nA_shell_HCP=nA_shell_BCC_9=nA_shell_BCC_15=0;
-
-    nBsp3=nBsp3a=nBsp3b=nBsp3c=0;
-    nBsp4=nBsp4a=nBsp4b=nBsp4c=nB6A=0;
-    nBsp5=nBsp5a=nBsp5b=nBsp5c=0;
-    nB6Z=nB7K=0;
-    nB8A=nB8B=nB8K=0;
-    nB9A=nB9B=nB9K=0;
-    nB10A=nB10B=nB10K=nB10W=0;
-    nB11A=nB11B=nB11C=nB11E=nB11F=nB11W=0;
-    nB12A=nB12B=nB12D=nB12E=nB12K=0;
-    nB13A=nB13B=nB13K=0;
-    nBFCC=nBHCP=nBBCC_9=nBBCC_15=0;
-
-    nB_cen_9B=nB_cen_9K=0;
-    nB_cen_10B=nB_cen_10K=nB_cen_10W=0;
-    nB_cen_11A=nB_cen_11B=nB_cen_11C=nB_cen_11W=0;
-    nB_cen_12A=nB_cen_12B=nB_cen_12K=0;
-    nB_cen_13A=nB_cen_13B=nB_cen_13K=0;
-    nB_cen_FCC=nB_cen_HCP=nB_cen_BCC_9=nB_cen_BCC_15=0;
-
-    nB_shell_9B=nB_shell_9K=0;
-    nB_shell_10B=nB_shell_10K=nB_shell_10W=0;
-    nB_shell_11A=nB_shell_11B=nB_shell_11C=nB_shell_11W=0;
-    nB_shell_12A=nB_shell_12B=nB_shell_12K=0;
-    nB_shell_13A=nB_shell_13B=nB_shell_13K=0;
-    nB_shell_FCC=nB_shell_HCP=nB_shell_BCC_9=nB_shell_BCC_15=0;
 }
 
 void Setup_InitgsblVars(char *filename) { // Initialize ground state bond length deviation distribution arrays

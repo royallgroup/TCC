@@ -9,7 +9,6 @@ void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int s1a, s2a, s1b, s2b;
     char *ach, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=6;
 
     s1a=s2a=s1b=s2b=-1;
@@ -18,121 +17,108 @@ void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     
     for (i=0; i<nsp3c[f]-1; ++i) {  // loop over all 5A_i
         for (j2=0; j2<1; ++j2) {
-        for (j=0; j<nmem_sp3c[sp3c[i][j2]]; ++j) {  // loop over all 5A_j
-            if (mem_sp3c[sp3c[i][j2]][j]<=i) continue;
-            if (sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][3] || sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][4]) continue;   // no spindles of 5A_i and 5A_j are common
-            if (sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][3] || sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][4]) continue;
-            
-            // for each cluster one spindle particle is in sp3 ring of other 5A and other spindle isn't
-            cnt = 0;    // check one 5A_i spindle are in sp3 ring of 5A_j
-            flg = sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][0] || sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][1] || sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][2];
-            if (flg==1){
-                s1a = sp3c[i][3];
-                s2a = sp3c[i][4];
-                ++cnt;
-            }
-            flg = sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][0] || sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][1] || sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][2];
-            if (flg==1){
-                s1a = sp3c[i][4];
-                s2a = sp3c[i][3];
-                ++cnt;
-            }
-            if (cnt != 1) continue;
-            cnt = 0;    // check one 5A_j spindle are in sp3 ring of 5A_i
-            flg = sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == sp3c[i][0] || sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == sp3c[i][1] || sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == sp3c[i][2];
-            if (flg==1){
-                s1b = sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
-                s2b = sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
-                ++cnt;
-            }
-            flg = sp3c[mem_sp3c[sp3c[i][j2]][j]][4] == sp3c[i][0] || sp3c[mem_sp3c[sp3c[i][j2]][j]][4] == sp3c[i][1] || sp3c[mem_sp3c[sp3c[i][j2]][j]][4] == sp3c[i][2];
-            if (flg==1){
-                s1b = sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
-                s2b = sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
-                ++cnt;
-            }
-            if (cnt != 1) continue;
-            if (!Bonds_BondCheck(s1a, s1b)) continue;   // check spindles of i and j in sp3 ring of j and i respectively are bonded
-            
-            cnt = 0;    // check 2 particles in the sp3 rings of 5A_i and 5A_j are common
-            for (k=0; k<3; ++k){
-                for (l=0; l<3; ++l){
-                    if(sp3c[i][k] == sp3c[mem_sp3c[sp3c[i][j2]][j]][l]){
-                        ++cnt;
-                        break;
-                    }
+            for (j=0; j<nmem_sp3c[sp3c[i][j2]]; ++j) {  // loop over all 5A_j
+                if (mem_sp3c[sp3c[i][j2]][j]<=i) continue;
+                if (sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][3] || sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][4]) continue;   // no spindles of 5A_i and 5A_j are common
+                if (sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][3] || sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][4]) continue;
+
+                // for each cluster one spindle particle is in sp3 ring of other 5A and other spindle isn't
+                cnt = 0;    // check one 5A_i spindle are in sp3 ring of 5A_j
+                flg = sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][0] || sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][1] || sp3c[i][3] == sp3c[mem_sp3c[sp3c[i][j2]][j]][2];
+                if (flg==1){
+                    s1a = sp3c[i][3];
+                    s2a = sp3c[i][4];
+                    ++cnt;
                 }
-            }
-            if (cnt != 2) continue; 
-            
-            if (n6Z[f]==m6Z) { 
-                hc6Z=resize_2D_int(hc6Z,m6Z,m6Z+incrStatic,clusSize,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_6Z=resize_1D_double(bl_mom_6Z,m6Z,m6Z+incrStatic);
+                flg = sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][0] || sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][1] || sp3c[i][4] == sp3c[mem_sp3c[sp3c[i][j2]][j]][2];
+                if (flg==1){
+                    s1a = sp3c[i][4];
+                    s2a = sp3c[i][3];
+                    ++cnt;
                 }
-                m6Z=m6Z+incrStatic;
-            }
-            // Now we have found the 6Z cluster
-            if (s1a<s1b) {
-                hc6Z[n6Z[f]][0]=s1a;    // insert cluster
-                hc6Z[n6Z[f]][1]=s1b;
-                hc6Z[n6Z[f]][2]=s2a;
-                hc6Z[n6Z[f]][3]=s2b;
-            }
-            else {
-                hc6Z[n6Z[f]][0]=s1b;    // insert cluster
-                hc6Z[n6Z[f]][1]=s1a;
-                hc6Z[n6Z[f]][2]=s2b;
-                hc6Z[n6Z[f]][3]=s2a;
-            }
-            cnt=4;
-            for (k=0; k<3; ++k) {
-                flg=1;
-                for (l=0; l<4; ++l){
-                    if (sp3c[i][k]==hc6Z[n6Z[f]][l]) {
-                        flg=0;
-                        break;
-                    }
+                if (cnt != 1) continue;
+                cnt = 0;    // check one 5A_j spindle are in sp3 ring of 5A_i
+                flg = sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == sp3c[i][0] || sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == sp3c[i][1] || sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == sp3c[i][2];
+                if (flg==1){
+                    s1b = sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
+                    s2b = sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
+                    ++cnt;
                 }
-                if (flg==1) { hc6Z[n6Z[f]][cnt]=sp3c[i][k]; cnt++; }
-            }
-            if (hc6Z[n6Z[f]][5]<hc6Z[n6Z[f]][4]) {
-                k=hc6Z[n6Z[f]][5];
-                hc6Z[n6Z[f]][5]=hc6Z[n6Z[f]][4];
-                hc6Z[n6Z[f]][4]=k;
-            }
-            // hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
-            ach[hc6Z[n6Z[f]][0]] = 'O';
-            ach[hc6Z[n6Z[f]][1]] = 'O';
-            ach[hc6Z[n6Z[f]][2]] = 'O';
-            ach[hc6Z[n6Z[f]][3]] = 'O';
-            if (ach[hc6Z[n6Z[f]][4]] == 'C') ach[hc6Z[n6Z[f]][4]] = 'B';
-            if (ach[hc6Z[n6Z[f]][5]] == 'C') ach[hc6Z[n6Z[f]][5]] = 'B';
-            
-            if (doClusBLDistros==1) {
-                for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                    for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                        if (Bonds_BondCheck(hc6Z[n6Z[f]][binAcnt],hc6Z[n6Z[f]][binBcnt])==1) {
-                            Bonds_TickBLDistro(bondlengths[hc6Z[n6Z[f]][binAcnt]][Bonds_cnb_j(hc6Z[n6Z[f]][binAcnt],hc6Z[n6Z[f]][binBcnt])],BLDistro6Z,&BLDistroNoSamples6Z);
+                flg = sp3c[mem_sp3c[sp3c[i][j2]][j]][4] == sp3c[i][0] || sp3c[mem_sp3c[sp3c[i][j2]][j]][4] == sp3c[i][1] || sp3c[mem_sp3c[sp3c[i][j2]][j]][4] == sp3c[i][2];
+                if (flg==1){
+                    s1b = sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
+                    s2b = sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
+                    ++cnt;
+                }
+                if (cnt != 1) continue;
+                if (!Bonds_BondCheck(s1a, s1b)) continue;   // check spindles of i and j in sp3 ring of j and i respectively are bonded
+
+                cnt = 0;    // check 2 particles in the sp3 rings of 5A_i and 5A_j are common
+                for (k=0; k<3; ++k){
+                    for (l=0; l<3; ++l){
+                        if(sp3c[i][k] == sp3c[mem_sp3c[sp3c[i][j2]][j]][l]){
+                            ++cnt;
+                            break;
                         }
                     }
                 }
-            }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc6Z[n6Z[f]][binAcnt]]==1) {
-                        nA6Z++;
-                        number_of_A++;
+                if (cnt != 2) continue;
+
+                if (n6Z[f]==m6Z) {
+                    hc6Z=resize_2D_int(hc6Z,m6Z,m6Z+incrStatic,clusSize,-1);
+                    if (doClusBLDeviation==1) {
+                        bl_mom_6Z=resize_1D_double(bl_mom_6Z,m6Z,m6Z+incrStatic);
                     }
-                    else nB6Z++;
+                    m6Z=m6Z+incrStatic;
                 }
-                n_distro_6Z[number_of_A]++;
+                // Now we have found the 6Z cluster
+                if (s1a<s1b) {
+                    hc6Z[n6Z[f]][0]=s1a;    // insert cluster
+                    hc6Z[n6Z[f]][1]=s1b;
+                    hc6Z[n6Z[f]][2]=s2a;
+                    hc6Z[n6Z[f]][3]=s2b;
+                }
+                else {
+                    hc6Z[n6Z[f]][0]=s1b;    // insert cluster
+                    hc6Z[n6Z[f]][1]=s1a;
+                    hc6Z[n6Z[f]][2]=s2b;
+                    hc6Z[n6Z[f]][3]=s2a;
+                }
+                cnt=4;
+                for (k=0; k<3; ++k) {
+                    flg=1;
+                    for (l=0; l<4; ++l){
+                        if (sp3c[i][k]==hc6Z[n6Z[f]][l]) {
+                            flg=0;
+                            break;
+                        }
+                    }
+                    if (flg==1) { hc6Z[n6Z[f]][cnt]=sp3c[i][k]; cnt++; }
+                }
+                if (hc6Z[n6Z[f]][5]<hc6Z[n6Z[f]][4]) {
+                    k=hc6Z[n6Z[f]][5];
+                    hc6Z[n6Z[f]][5]=hc6Z[n6Z[f]][4];
+                    hc6Z[n6Z[f]][4]=k;
+                }
+                // hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
+                ach[hc6Z[n6Z[f]][0]] = 'O';
+                ach[hc6Z[n6Z[f]][1]] = 'O';
+                ach[hc6Z[n6Z[f]][2]] = 'O';
+                ach[hc6Z[n6Z[f]][3]] = 'O';
+                if (ach[hc6Z[n6Z[f]][4]] == 'C') ach[hc6Z[n6Z[f]][4]] = 'B';
+                if (ach[hc6Z[n6Z[f]][5]] == 'C') ach[hc6Z[n6Z[f]][5]] = 'B';
+
+                if (doClusBLDistros==1) {
+                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                            if (Bonds_BondCheck(hc6Z[n6Z[f]][binAcnt],hc6Z[n6Z[f]][binBcnt])==1) {
+                                Bonds_TickBLDistro(bondlengths[hc6Z[n6Z[f]][binAcnt]][Bonds_cnb_j(hc6Z[n6Z[f]][binAcnt],hc6Z[n6Z[f]][binBcnt])],BLDistro6Z,&BLDistroNoSamples6Z);
+                            }
+                        }
+                    }
+                }
+                ++n6Z[f];
             }
-            
-            ++n6Z[f]; 
-        }
         }
     }
     for (i=0; i<N; ++i) s6Z[i]=ach[i];
@@ -144,7 +130,6 @@ void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
     int scom, sother[2], sp3_com[2], sp3c_i_other, sp3c_j_other;
     char *ach, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=7;
 
     scom=sother[0]=sother[1]=sp3_com[0]=sp3_com[1]=sp3c_i_other=sp3c_j_other=-1;
@@ -154,168 +139,155 @@ void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
     
     for (i=0; i<nsp3c[f]-1; ++i) {  // loop over all 5A_i
         for (j2=3; j2<5; ++j2) {    // loop over both spindles of 5A_i
-        for (j=0; j<nmem_sp3c[sp3c[i][j2]]; ++j) {  // loop over all 5A_j common with spindle of 5A_i
-            if (mem_sp3c[sp3c[i][j2]][j]<=i) continue;  // don't find 7K twice
-            
-            m=0; 
-            for (k=3; k<5; k++) {
-                for (l=3; l<5; l++) {
-                    if (sp3c[i][k] == sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
+            for (j=0; j<nmem_sp3c[sp3c[i][j2]]; ++j) {  // loop over all 5A_j common with spindle of 5A_i
+                if (mem_sp3c[sp3c[i][j2]][j]<=i) continue;  // don't find 7K twice
+
+                m=0;
+                for (k=3; k<5; k++) {
+                    for (l=3; l<5; l++) {
+                        if (sp3c[i][k] == sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
+                            if (m>=1) {
+                                m++;
+                                break;
+                            }
+                            scom=sp3c[i][k];
+                            m++;
+                        }
+                    }
+                    if (m>=2) break;
+                }
+                if (m!=1) continue; // exactly one common spindle between 5A_i and 5A_j
+
+                if (sp3c[i][3] == scom) sother[0]=sp3c[i][4];
+                else sother[0]=sp3c[i][3];
+                if (sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == scom) sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
+                else sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
+
+                m=0;
+                for (k=0; k<5; k++) {
+                    if (sother[0]==sp3c[mem_sp3c[sp3c[i][j2]][j]][k]) {
+                        m++;
+                        break;
+                    }
+                }
+                if (m!=0 && k!=5) continue; // other spindle of 5A_i distinct from whole 5A_j
+
+                m=0;
+                for (k=0; k<5; k++) {
+                    if (sother[1]==sp3c[i][k]) {
+                        m++;
+                        break;
+                    }
+                }
+                if (m!=0 && k!=5) continue; // other spindle of 5A_j distinct from whole 5A_i
+
+                m=0;
+                for (k=0; k<3; k++) {
+                    for (l=0; l<3; l++) {
+                        if (sp3c[i][k] == sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
+                            if (m>=2) {
+                                m++;
+                                break;
+                            }
+                            sp3_com[m]=sp3c[i][k];
+                            m++;
+                        }
+                    }
+                    if (m>=3) break;
+                }
+                if (m!=2) continue; // exactly two common particles in SP3 rings of 5A_i and 5A_j
+
+                m=0;
+                for (k=0; k<3; k++) {
+                    for (l=0; l<2; l++) {
+                        if (sp3c[i][k] == sp3_com[l]) break;
+                    }
+                    if (l==2) {
                         if (m>=1) {
                             m++;
                             break;
                         }
-                        scom=sp3c[i][k];
+                        sp3c_i_other=sp3c[i][k];
                         m++;
                     }
                 }
-                if (m>=2) break;
-            }
-            if (m!=1) continue; // exactly one common spindle between 5A_i and 5A_j
-                    
-            if (sp3c[i][3] == scom) sother[0]=sp3c[i][4];
-            else sother[0]=sp3c[i][3];
-            if (sp3c[mem_sp3c[sp3c[i][j2]][j]][3] == scom) sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
-            else sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
-            
-            m=0; 
-            for (k=0; k<5; k++) {
-                if (sother[0]==sp3c[mem_sp3c[sp3c[i][j2]][j]][k]) {
-                    m++;
-                    break;
-                }
-            }
-            if (m!=0 && k!=5) continue; // other spindle of 5A_i distinct from whole 5A_j
-            
-            m=0; 
-            for (k=0; k<5; k++) {
-                if (sother[1]==sp3c[i][k]) {
-                    m++;
-                    break;
-                }
-            }
-            if (m!=0 && k!=5) continue; // other spindle of 5A_j distinct from whole 5A_i
-            
-            m=0; 
-            for (k=0; k<3; k++) {
-                for (l=0; l<3; l++) {
-                    if (sp3c[i][k] == sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
-                        if (m>=2) {
+                if (m!=1) continue; // found other uncommon particle from SP3 ring of 5A_i
+
+                m=0;
+                for (k=0; k<3; k++) {
+                    for (l=0; l<2; l++) {
+                        if (sp3c[mem_sp3c[sp3c[i][j2]][j]][k] == sp3_com[l]) break;
+                    }
+                    if (l==2) {
+                        if (m>=1) {
                             m++;
                             break;
                         }
-                        sp3_com[m]=sp3c[i][k];
+                        sp3c_j_other=sp3c[mem_sp3c[sp3c[i][j2]][j]][k];
                         m++;
                     }
                 }
-                if (m>=3) break;
-            }
-            if (m!=2) continue; // exactly two common particles in SP3 rings of 5A_i and 5A_j
-            
-            m=0; 
-            for (k=0; k<3; k++) {
-                for (l=0; l<2; l++) {
-                    if (sp3c[i][k] == sp3_com[l]) break;
-                }
-                if (l==2) {
-                    if (m>=1) {
+                if (m!=1) continue; // found other uncommon particle from SP3 ring of 5A_i
+
+                m=0;
+                for (k=0; k<5; k++) {
+                    if (sp3c_i_other==sp3c[mem_sp3c[sp3c[i][j2]][j]][k]) {
                         m++;
                         break;
                     }
-                    sp3c_i_other=sp3c[i][k];
-                    m++;
                 }
-            }
-            if (m!=1) continue; // found other uncommon particle from SP3 ring of 5A_i
-            
-            m=0; 
-            for (k=0; k<3; k++) {
-                for (l=0; l<2; l++) {
-                    if (sp3c[mem_sp3c[sp3c[i][j2]][j]][k] == sp3_com[l]) break;
-                }
-                if (l==2) {
-                    if (m>=1) {
+                if (m!=0 && k!=5) continue; // other ring of 5A_i distinct from whole 5A_j
+
+                m=0;
+                for (k=0; k<5; k++) {
+                    if (sp3c_j_other==sp3c[i][k]) {
                         m++;
                         break;
                     }
-                    sp3c_j_other=sp3c[mem_sp3c[sp3c[i][j2]][j]][k];
-                    m++;
                 }
-            }
-            if (m!=1) continue; // found other uncommon particle from SP3 ring of 5A_i
-            
-            m=0; 
-            for (k=0; k<5; k++) {
-                if (sp3c_i_other==sp3c[mem_sp3c[sp3c[i][j2]][j]][k]) {
-                    m++;
-                    break;
+                if (m!=0 && k!=5) continue; // other ring of 5A_j distinct from whole 5A_i
+
+                if (n7K[f]==m7K) {
+                    hc7K=resize_2D_int(hc7K,m7K,m7K+incrStatic,clusSize,-1);
+                    if (doClusBLDeviation==1) {
+                        bl_mom_7K=resize_1D_double(bl_mom_7K,m7K,m7K+incrStatic);
+                    }
+                    m7K=m7K+incrStatic;
                 }
-            }
-            if (m!=0 && k!=5) continue; // other ring of 5A_i distinct from whole 5A_j
-            
-            m=0; 
-            for (k=0; k<5; k++) {
-                if (sp3c_j_other==sp3c[i][k]) {
-                    m++;
-                    break;
-                }
-            }
-            if (m!=0 && k!=5) continue; // other ring of 5A_j distinct from whole 5A_i
-            
-            if (n7K[f]==m7K) { 
-                hc7K=resize_2D_int(hc7K,m7K,m7K+incrStatic,clusSize,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_7K=resize_1D_double(bl_mom_7K,m7K,m7K+incrStatic);
-                }
-                m7K=m7K+incrStatic;
-            }
-            // Now we have found the 7K cluster
-            
-            hc7K[n7K[f]][0]=scom;
-            hc7K[n7K[f]][1]=sother[0];
-            hc7K[n7K[f]][2]=sother[1];
-            hc7K[n7K[f]][3]=sp3_com[0];
-            hc7K[n7K[f]][4]=sp3_com[1];
-            hc7K[n7K[f]][5]=sp3c_i_other;
-            hc7K[n7K[f]][6]=sp3c_j_other;
-            
-            quickSort(&hc7K[n7K[f]][1],2);
-            quickSort(&hc7K[n7K[f]][3],2);
-            quickSort(&hc7K[n7K[f]][5],2);
-            
-            // hc7K key: (scom, sother, ring_com, ring_other)
-            ach[hc7K[n7K[f]][0]] = 'O';
-            ach[hc7K[n7K[f]][1]] = 'O';
-            ach[hc7K[n7K[f]][2]] = 'O';
-            if (ach[hc7K[n7K[f]][3]] == 'C') ach[hc7K[n7K[f]][3]] = 'B';
-            if (ach[hc7K[n7K[f]][4]] == 'C') ach[hc7K[n7K[f]][4]] = 'B';
-            if (ach[hc7K[n7K[f]][5]] == 'C') ach[hc7K[n7K[f]][5]] = 'B';
-            if (ach[hc7K[n7K[f]][6]] == 'C') ach[hc7K[n7K[f]][6]] = 'B';
-            
-            if (doClusBLDistros==1) {
-                for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                    for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                        if (Bonds_BondCheck(hc7K[n7K[f]][binAcnt],hc7K[n7K[f]][binBcnt])==1) {
-                            Bonds_TickBLDistro(bondlengths[hc7K[n7K[f]][binAcnt]][Bonds_cnb_j(hc7K[n7K[f]][binAcnt],hc7K[n7K[f]][binBcnt])],BLDistro7K,&BLDistroNoSamples7K);
+                // Now we have found the 7K cluster
+
+                hc7K[n7K[f]][0]=scom;
+                hc7K[n7K[f]][1]=sother[0];
+                hc7K[n7K[f]][2]=sother[1];
+                hc7K[n7K[f]][3]=sp3_com[0];
+                hc7K[n7K[f]][4]=sp3_com[1];
+                hc7K[n7K[f]][5]=sp3c_i_other;
+                hc7K[n7K[f]][6]=sp3c_j_other;
+
+                quickSort(&hc7K[n7K[f]][1],2);
+                quickSort(&hc7K[n7K[f]][3],2);
+                quickSort(&hc7K[n7K[f]][5],2);
+
+                // hc7K key: (scom, sother, ring_com, ring_other)
+                ach[hc7K[n7K[f]][0]] = 'O';
+                ach[hc7K[n7K[f]][1]] = 'O';
+                ach[hc7K[n7K[f]][2]] = 'O';
+                if (ach[hc7K[n7K[f]][3]] == 'C') ach[hc7K[n7K[f]][3]] = 'B';
+                if (ach[hc7K[n7K[f]][4]] == 'C') ach[hc7K[n7K[f]][4]] = 'B';
+                if (ach[hc7K[n7K[f]][5]] == 'C') ach[hc7K[n7K[f]][5]] = 'B';
+                if (ach[hc7K[n7K[f]][6]] == 'C') ach[hc7K[n7K[f]][6]] = 'B';
+
+                if (doClusBLDistros==1) {
+                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                            if (Bonds_BondCheck(hc7K[n7K[f]][binAcnt],hc7K[n7K[f]][binBcnt])==1) {
+                                Bonds_TickBLDistro(bondlengths[hc7K[n7K[f]][binAcnt]][Bonds_cnb_j(hc7K[n7K[f]][binAcnt],hc7K[n7K[f]][binBcnt])],BLDistro7K,&BLDistroNoSamples7K);
+                            }
                         }
                     }
                 }
+                ++n7K[f];
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc7K[n7K[f]][binAcnt]]==1) {
-                        nA7K++;
-                        number_of_A++;
-                    }
-                    else nB7K++;
-                }
-                n_distro_7K[number_of_A]++;
-            }
-            
-            ++n7K[f]; 
-        }
         }
     }
     for (i=0; i<N; ++i) s7K[i]=ach[i];
@@ -332,7 +304,6 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
     int trial[8];
     char *ach, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=8;
     int *used_sp5b;
 
@@ -445,22 +416,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                             }
                         }
                     }
-
-
-                    if (doClusComp==1) {
-                        number_of_A=0;
-                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                            if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
-                                nA8A++;
-                                number_of_A++;
-                            }
-                            else nB8A++;
-                        }
-                        n_distro_8A[number_of_A]++;
-                    }
-
                     ++n8A[f];
-
                     // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
                 }
             }
@@ -566,21 +522,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                             }
                         }
                     }
-
-                    if (doClusComp==1) {
-                        number_of_A=0;
-                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                            if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
-                                nA8A++;
-                                number_of_A++;
-                            }
-                            else nB8A++;
-                        }
-                        n_distro_8A[number_of_A]++;
-                    }
-
                     ++n8A[f];
-
                     // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
                 }
             }
@@ -684,21 +626,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                             }
                         }
                     }
-
-                    if (doClusComp==1) {
-                        number_of_A=0;
-                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                            if (rtype[hc8A[n8A[f]][binAcnt]]==1) {
-                                nA8A++;
-                                number_of_A++;
-                            }
-                            else nB8A++;
-                        }
-                        n_distro_8A[number_of_A]++;
-                    }
-
                     ++n8A[f];
-
                     // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
                 }
             }
@@ -716,7 +644,6 @@ void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
     int break_out;
     char *ach, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=8;
 
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8B_Cs(): ach[] malloc out of memory\n");   Error(errMsg); }
@@ -792,21 +719,7 @@ void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
                     }
                 }
             }
-
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc8B[n8B[f]][binAcnt]]==1) {
-                        nA8B++;
-                        number_of_A++;
-                    }
-                    else nB8B++;
-                }
-                n_distro_8B[number_of_A]++;
-            }
-            
             ++n8B[f];
-            
         }
         for (j=0; j<cnb[s2]; ++j) {
             n1 = bNums[s2][j];
@@ -875,19 +788,6 @@ void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc8B[n8B[f]][binAcnt]]==1) {
-                        nA8B++;
-                        number_of_A++;
-                    }
-                    else nB8B++;
-                }
-                n_distro_8B[number_of_A]++;
-            }
-            
             ++n8B[f];
         }
     } 
@@ -901,7 +801,6 @@ void Clusters_Get8K(int f) {    // Detect 8K clusters
     int trial[8];
     char *ach, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=8;
 
     cp[0]=cp[1]=unc[0]=unc[1]=unc[2]=scom=sother[0]=sother[1]=-1;
@@ -1068,19 +967,6 @@ void Clusters_Get8K(int f) {    // Detect 8K clusters
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc8K[n8K[f]][binAcnt]]==1) {
-                            nA8K++;
-                            number_of_A++;
-                        }
-                        else nB8K++;
-                    }
-                    n_distro_8K[number_of_A]++;
-                }
-                
                 ++n8K[f];
             }
         }
@@ -1097,7 +983,6 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
     int flg;
     char *ach, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=9;
 
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get9A_D3h(): ach[] malloc out of memory\n");  Error(errMsg); }
@@ -1105,187 +990,174 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
     
     for (i=0; i<nsp4b[f]-2; ++i) {  // loop over all sp4b_i
         for (j2=0; j2<1; j2++) {
-        for (j=0; j<nmem_sp4b[sp4b[i][j2]]; ++j) { // loop over all sp4b_j
-            if (mem_sp4b[sp4b[i][j2]][j]<=i) continue;
-            if (sp4b[i][4] == sp4b[mem_sp4b[sp4b[i][j2]][j]][4]) continue;  // if spindles common continue
-            if (Bonds_BondCheck(sp4b[i][4], sp4b[mem_sp4b[sp4b[i][j2]][j]][4])) continue;   // if spindles bonded continue
-            m = 0;
-            for(k=0; k<4; ++k) {
-                for(l=0; l<4; ++l) {
-                    if(sp4b[i][k] == sp4b[mem_sp4b[sp4b[i][j2]][j]][l]){ 
-                        if(m<2) db[m] = sp4b[i][k];
-                        ++m;
-                    }
-                }
-            }
-            if (m!=2) continue;         // two common particles between SP4 rings of sp4b_i and sp4b_j
-                
-            m = 0;
-            for (k=0; k<4; ++k) {
-                if(sp4b[i][k] == db[0] || sp4b[i][k] == db[1]) continue;  // find particles in SP4 ring of sp4b_i not common to SP4 ring of sp4b_j
-                for(l=0; l<4; ++l){
-                    if(sp4b[mem_sp4b[sp4b[i][j2]][j]][l] == db[0] || sp4b[mem_sp4b[sp4b[i][j2]][j]][l] == db[1]) continue;    // find particles in SP4 ring of sp4b_j not common to SP4 ring of sp4b_i
-                    if(Bonds_BondCheck(sp4b[i][k], sp4b[mem_sp4b[sp4b[i][j2]][j]][l])) {    // check non-common SP4 ring particles from sp4b_i and sp4b_j are bonded
-                        if(m<4) ob[m] = sp4b[i][k];
-                        ++m;
-                        if(m<4) ob[m] = sp4b[mem_sp4b[sp4b[i][j2]][j]][l];
-                        ++m;
-                    }   
-                }
-            }
-            if (m!=4) continue; 
-            // POSSIBLE IMPROVEMENT!! could make detection faster here by looping over sp4b clusters bonded to uncommon particles to sp4b_i
-            for(k=mem_sp4b[sp4b[i][j2]][j]+1; k<nsp4b[f]; k++) {    // loop over all sp4b_k
-                // ERROR!! need to check spindle of sp4b_k distinct from spindles of sp4b_i and sp4b_j and no bonds between these three particles 
-                n = 0;
-                for(l=0; l<4; ++l){
-                    for(m=0; m<4; ++m){
-                        if(sp4b[k][l] == ob[m]){
-                            ++n;
-                            break;
-                        }   
-                    }
-                }
-                if (n != 4) continue;
-                
-                // Now we have found the 9A D3h cluster
-                if (n9A[f]==m9A) { 
-                    hc9A=resize_2D_int(hc9A,m9A,m9A+incrStatic,clusSize,-1);
-                        if (doClusBLDeviation==1) {
-                            bl_mom_9A=resize_1D_double(bl_mom_9A,m9A,m9A+incrStatic);
+            for (j=0; j<nmem_sp4b[sp4b[i][j2]]; ++j) { // loop over all sp4b_j
+                if (mem_sp4b[sp4b[i][j2]][j]<=i) continue;
+                if (sp4b[i][4] == sp4b[mem_sp4b[sp4b[i][j2]][j]][4]) continue;  // if spindles common continue
+                if (Bonds_BondCheck(sp4b[i][4], sp4b[mem_sp4b[sp4b[i][j2]][j]][4])) continue;   // if spindles bonded continue
+                m = 0;
+                for(k=0; k<4; ++k) {
+                    for(l=0; l<4; ++l) {
+                        if(sp4b[i][k] == sp4b[mem_sp4b[sp4b[i][j2]][j]][l]){
+                            if(m<2) db[m] = sp4b[i][k];
+                            ++m;
                         }
-                        m9A=m9A+incrStatic;
                     }
-                    if (sp4b[i][4]<sp4b[mem_sp4b[sp4b[i][j2]][j]][4] && sp4b[i][4]<sp4b[k][4]) {
-                        hc9A[n9A[f]][6]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
-                        hc9A[n9A[f]][0]=sp4b[i][0];
-                        hc9A[n9A[f]][1]=sp4b[i][1];
-                        hc9A[n9A[f]][2]=sp4b[i][2];
-                        hc9A[n9A[f]][3]=sp4b[i][3];
+                }
+                if (m!=2) continue;         // two common particles between SP4 rings of sp4b_i and sp4b_j
 
-                        if (Bonds_BondCheck(sp4b[mem_sp4b[sp4b[i][j2]][j]][4],hc9A[n9A[f]][0])) {
-                            hc9A[n9A[f]][7]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
-                            hc9A[n9A[f]][8]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
+                m = 0;
+                for (k=0; k<4; ++k) {
+                    if(sp4b[i][k] == db[0] || sp4b[i][k] == db[1]) continue;  // find particles in SP4 ring of sp4b_i not common to SP4 ring of sp4b_j
+                    for(l=0; l<4; ++l){
+                        if(sp4b[mem_sp4b[sp4b[i][j2]][j]][l] == db[0] || sp4b[mem_sp4b[sp4b[i][j2]][j]][l] == db[1]) continue;    // find particles in SP4 ring of sp4b_j not common to SP4 ring of sp4b_i
+                        if(Bonds_BondCheck(sp4b[i][k], sp4b[mem_sp4b[sp4b[i][j2]][j]][l])) {    // check non-common SP4 ring particles from sp4b_i and sp4b_j are bonded
+                            if(m<4) ob[m] = sp4b[i][k];
+                            ++m;
+                            if(m<4) ob[m] = sp4b[mem_sp4b[sp4b[i][j2]][j]][l];
+                            ++m;
                         }
-                        else {
-                            hc9A[n9A[f]][7]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
-                            hc9A[n9A[f]][8]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
+                    }
+                }
+                if (m!=4) continue;
+                // POSSIBLE IMPROVEMENT!! could make detection faster here by looping over sp4b clusters bonded to uncommon particles to sp4b_i
+                for(k=mem_sp4b[sp4b[i][j2]][j]+1; k<nsp4b[f]; k++) {    // loop over all sp4b_k
+                    // ERROR!! need to check spindle of sp4b_k distinct from spindles of sp4b_i and sp4b_j and no bonds between these three particles
+                    n = 0;
+                    for(l=0; l<4; ++l){
+                        for(m=0; m<4; ++m){
+                            if(sp4b[k][l] == ob[m]){
+                                ++n;
+                                break;
+                            }
                         }
+                    }
+                    if (n != 4) continue;
 
-                        for (l=0;l<4;l++) {
-                            flg=1;
-                            for (m=0;m<4;m++) {
-                                if (ob[l]==hc9A[n9A[f]][m]) {
-                                    flg=0;
-                                    break;
+                    // Now we have found the 9A D3h cluster
+                    if (n9A[f]==m9A) {
+                        hc9A=resize_2D_int(hc9A,m9A,m9A+incrStatic,clusSize,-1);
+                            if (doClusBLDeviation==1) {
+                                bl_mom_9A=resize_1D_double(bl_mom_9A,m9A,m9A+incrStatic);
+                            }
+                            m9A=m9A+incrStatic;
+                        }
+                        if (sp4b[i][4]<sp4b[mem_sp4b[sp4b[i][j2]][j]][4] && sp4b[i][4]<sp4b[k][4]) {
+                            hc9A[n9A[f]][6]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
+                            hc9A[n9A[f]][0]=sp4b[i][0];
+                            hc9A[n9A[f]][1]=sp4b[i][1];
+                            hc9A[n9A[f]][2]=sp4b[i][2];
+                            hc9A[n9A[f]][3]=sp4b[i][3];
+
+                            if (Bonds_BondCheck(sp4b[mem_sp4b[sp4b[i][j2]][j]][4],hc9A[n9A[f]][0])) {
+                                hc9A[n9A[f]][7]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
+                                hc9A[n9A[f]][8]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
+                            }
+                            else {
+                                hc9A[n9A[f]][7]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
+                                hc9A[n9A[f]][8]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
+                            }
+
+                            for (l=0;l<4;l++) {
+                                flg=1;
+                                for (m=0;m<4;m++) {
+                                    if (ob[l]==hc9A[n9A[f]][m]) {
+                                        flg=0;
+                                        break;
+                                    }
+                                }
+                                if (flg==1 && Bonds_BondCheck(ob[l],hc9A[n9A[f]][0])) {
+                                    hc9A[n9A[f]][4]=ob[l];
+                                }
+                                else if (flg==1) {
+                                    hc9A[n9A[f]][5]=ob[l];
                                 }
                             }
-                            if (flg==1 && Bonds_BondCheck(ob[l],hc9A[n9A[f]][0])) {
-                                hc9A[n9A[f]][4]=ob[l];
-                            }
-                            else if (flg==1) {
-                                hc9A[n9A[f]][5]=ob[l];
-                            }
-                        }
-                    }
-                
-                    else if (sp4b[mem_sp4b[sp4b[i][j2]][j]][4]<sp4b[i][4] && sp4b[mem_sp4b[sp4b[i][j2]][j]][4]<sp4b[k][4]) {
-                        hc9A[n9A[f]][6]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
-                        hc9A[n9A[f]][0]=sp4b[mem_sp4b[sp4b[i][j2]][j]][0];
-                        hc9A[n9A[f]][1]=sp4b[mem_sp4b[sp4b[i][j2]][j]][1];
-                        hc9A[n9A[f]][2]=sp4b[mem_sp4b[sp4b[i][j2]][j]][2];
-                        hc9A[n9A[f]][3]=sp4b[mem_sp4b[sp4b[i][j2]][j]][3];
-
-                        if (Bonds_BondCheck(sp4b[i][4],hc9A[n9A[f]][0])) {
-                            hc9A[n9A[f]][7]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
-                            hc9A[n9A[f]][8]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
-                        }
-                        else {
-                            hc9A[n9A[f]][7]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
-                            hc9A[n9A[f]][8]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
                         }
 
-                        for (l=0;l<4;l++) {
-                            flg=1;
-                            for (m=0;m<4;m++) {
-                                if (ob[l]==hc9A[n9A[f]][m]) {
-                                    flg=0;
-                                    break;
+                        else if (sp4b[mem_sp4b[sp4b[i][j2]][j]][4]<sp4b[i][4] && sp4b[mem_sp4b[sp4b[i][j2]][j]][4]<sp4b[k][4]) {
+                            hc9A[n9A[f]][6]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
+                            hc9A[n9A[f]][0]=sp4b[mem_sp4b[sp4b[i][j2]][j]][0];
+                            hc9A[n9A[f]][1]=sp4b[mem_sp4b[sp4b[i][j2]][j]][1];
+                            hc9A[n9A[f]][2]=sp4b[mem_sp4b[sp4b[i][j2]][j]][2];
+                            hc9A[n9A[f]][3]=sp4b[mem_sp4b[sp4b[i][j2]][j]][3];
+
+                            if (Bonds_BondCheck(sp4b[i][4],hc9A[n9A[f]][0])) {
+                                hc9A[n9A[f]][7]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
+                                hc9A[n9A[f]][8]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
+                            }
+                            else {
+                                hc9A[n9A[f]][7]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
+                                hc9A[n9A[f]][8]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
+                            }
+
+                            for (l=0;l<4;l++) {
+                                flg=1;
+                                for (m=0;m<4;m++) {
+                                    if (ob[l]==hc9A[n9A[f]][m]) {
+                                        flg=0;
+                                        break;
+                                    }
+                                }
+                                if (flg==1 && Bonds_BondCheck(ob[l],hc9A[n9A[f]][0])) {
+                                    hc9A[n9A[f]][4]=ob[l];
+                                }
+                                else if (flg==1) {
+                                    hc9A[n9A[f]][5]=ob[l];
                                 }
                             }
-                            if (flg==1 && Bonds_BondCheck(ob[l],hc9A[n9A[f]][0])) {
-                                hc9A[n9A[f]][4]=ob[l];
-                            }
-                            else if (flg==1) {
-                                hc9A[n9A[f]][5]=ob[l];
-                            }
                         }
-                    }
 
-                    else {
-                        hc9A[n9A[f]][6]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
-                        hc9A[n9A[f]][0]=sp4b[k][0];
-                        hc9A[n9A[f]][1]=sp4b[k][1];
-                        hc9A[n9A[f]][2]=sp4b[k][2];
-                        hc9A[n9A[f]][3]=sp4b[k][3];
-
-                        if (Bonds_BondCheck(sp4b[i][4],hc9A[n9A[f]][0])) {
-                            hc9A[n9A[f]][7]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
-                            hc9A[n9A[f]][8]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
-                        }
                         else {
-                            hc9A[n9A[f]][7]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
-                            hc9A[n9A[f]][8]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
+                            hc9A[n9A[f]][6]=sp4b[k][4]; // spindle of sp4 ring ob[0],ob[2],ob[1],ob[3] of sp4b[f][k][.] cluster
+                            hc9A[n9A[f]][0]=sp4b[k][0];
+                            hc9A[n9A[f]][1]=sp4b[k][1];
+                            hc9A[n9A[f]][2]=sp4b[k][2];
+                            hc9A[n9A[f]][3]=sp4b[k][3];
+
+                            if (Bonds_BondCheck(sp4b[i][4],hc9A[n9A[f]][0])) {
+                                hc9A[n9A[f]][7]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
+                                hc9A[n9A[f]][8]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
+                            }
+                            else {
+                                hc9A[n9A[f]][7]=sp4b[mem_sp4b[sp4b[i][j2]][j]][4];  // spindle of sp4 ring db[0],db[1],ob[1],ob[3] of sp4b[f][j][.] cluster
+                                hc9A[n9A[f]][8]=sp4b[i][4]; // spindle of sp4 ring db[0],db[1],ob[0],ob[2] of sp4b[f][i][.] cluster
+                            }
+
+                            if (Bonds_BondCheck(db[0],hc9A[n9A[f]][0])) {
+                                hc9A[n9A[f]][4]=db[0];
+                                hc9A[n9A[f]][5]=db[1];
+                            }
+                            else {
+                                hc9A[n9A[f]][4]=db[1];
+                                hc9A[n9A[f]][5]=db[0];
+                            }
                         }
 
-                        if (Bonds_BondCheck(db[0],hc9A[n9A[f]][0])) {
-                            hc9A[n9A[f]][4]=db[0];
-                            hc9A[n9A[f]][5]=db[1];
-                        }
-                        else {
-                            hc9A[n9A[f]][4]=db[1];
-                            hc9A[n9A[f]][5]=db[0];
-                        }
-                    }
-                
-                // hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
-                if(ach[hc9A[n9A[f]][0]] == 'C') ach[hc9A[n9A[f]][0]] = 'B';
-                if(ach[hc9A[n9A[f]][1]] == 'C') ach[hc9A[n9A[f]][1]] = 'B';
-                if(ach[hc9A[n9A[f]][3]] == 'C') ach[hc9A[n9A[f]][3]] = 'B';
-                if(ach[hc9A[n9A[f]][4]] == 'C') ach[hc9A[n9A[f]][4]] = 'B';
-                if(ach[hc9A[n9A[f]][6]] == 'C') ach[hc9A[n9A[f]][6]] = 'B';
-                if(ach[hc9A[n9A[f]][7]] == 'C') ach[hc9A[n9A[f]][7]] = 'B';
-                ach[hc9A[n9A[f]][2]] = 'O';
-                ach[hc9A[n9A[f]][5]] = 'O';
-                ach[hc9A[n9A[f]][8]] = 'O';
-                
-                if (doClusBLDistros==1) {
-                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                            if (Bonds_BondCheck(hc9A[n9A[f]][binAcnt],hc9A[n9A[f]][binBcnt])==1) {
-                                Bonds_TickBLDistro(bondlengths[hc9A[n9A[f]][binAcnt]][Bonds_cnb_j(hc9A[n9A[f]][binAcnt],hc9A[n9A[f]][binBcnt])],BLDistro9A,&BLDistroNoSamples9A);
+                    // hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
+                    if(ach[hc9A[n9A[f]][0]] == 'C') ach[hc9A[n9A[f]][0]] = 'B';
+                    if(ach[hc9A[n9A[f]][1]] == 'C') ach[hc9A[n9A[f]][1]] = 'B';
+                    if(ach[hc9A[n9A[f]][3]] == 'C') ach[hc9A[n9A[f]][3]] = 'B';
+                    if(ach[hc9A[n9A[f]][4]] == 'C') ach[hc9A[n9A[f]][4]] = 'B';
+                    if(ach[hc9A[n9A[f]][6]] == 'C') ach[hc9A[n9A[f]][6]] = 'B';
+                    if(ach[hc9A[n9A[f]][7]] == 'C') ach[hc9A[n9A[f]][7]] = 'B';
+                    ach[hc9A[n9A[f]][2]] = 'O';
+                    ach[hc9A[n9A[f]][5]] = 'O';
+                    ach[hc9A[n9A[f]][8]] = 'O';
+
+                    if (doClusBLDistros==1) {
+                        for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                            for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                                if (Bonds_BondCheck(hc9A[n9A[f]][binAcnt],hc9A[n9A[f]][binBcnt])==1) {
+                                    Bonds_TickBLDistro(bondlengths[hc9A[n9A[f]][binAcnt]][Bonds_cnb_j(hc9A[n9A[f]][binAcnt],hc9A[n9A[f]][binBcnt])],BLDistro9A,&BLDistroNoSamples9A);
+                                }
                             }
                         }
                     }
+                    ++n9A[f];
+
+                    break;
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc9A[n9A[f]][binAcnt]]==1) {
-                            nA9A++;
-                            number_of_A++;
-                        }
-                        else nB9A++;
-                    }
-                    n_distro_9A[number_of_A]++;
-                }
-                
-                ++n9A[f];
-                
-                break;
             }
-        }
         }
     }
 
@@ -1300,7 +1172,6 @@ void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12
     int flg, fb1, fb2;
     char *ach1, *ach1_cen, *ach1_shell, *ach2, *ach2_cen, *ach2_shell, *ach3, *ach4, *ach5, *ach5_cen, *ach5_shell, *ach6, *ach6_cen, *ach6_shell, errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=9;
 
     sp1=sp2i=sp2j=-1;
@@ -1468,35 +1339,6 @@ void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc9B[n9B[f]][binAcnt]]==1) {
-                        nA9B++;
-                        number_of_A++;
-                    }
-                    else nB9B++;
-                    
-                    if (binAcnt!=8) {
-                        if (rtype[hc9B[n9B[f]][binAcnt]]==1) nA_shell_9B++;
-                        else nB_shell_9B++;
-                    }
-                }
-                n_distro_9B[number_of_A]++;
-                
-                if (rtype[hc9B[n9B[f]][8]]==1) {
-                    nA_cen_9B++;
-                    n_distro_cen_9B[1]++;
-                    n_distro_shell_9B[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_9B++;
-                    n_distro_cen_9B[0]++;
-                    n_distro_shell_9B[number_of_A]++;
-                }
-            }
-
             ++n9B[f];
         }
     }
@@ -1540,7 +1382,6 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
     int break_out;
 
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=10;
 
     for (k=j+1; k<nsp5c[f]; ++k) {  // loop over all 7A_k
@@ -1638,34 +1479,6 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
                             Bonds_TickBLDistro(bondlengths[hc10B[n10B[f]][binAcnt]][Bonds_cnb_j(hc10B[n10B[f]][binAcnt],hc10B[n10B[f]][binBcnt])],BLDistro10B,&BLDistroNoSamples10B);
                         }
                     }
-                }
-            }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc10B[n10B[f]][binAcnt]]==1) {
-                        nA10B++;
-                        number_of_A++;
-                    }
-                    else nB10B++;
-                    
-                    if (binAcnt!=9) {
-                        if (rtype[hc10B[n10B[f]][binAcnt]]==1) nA_shell_10B++;
-                        else nB_shell_10B++;
-                    }
-                }
-                n_distro_10B[number_of_A]++;
-                
-                if (rtype[hc10B[n10B[f]][9]]==1) {
-                    nA_cen_10B++;
-                    n_distro_cen_10B[1]++;
-                    n_distro_shell_10B[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_10B++;
-                    n_distro_cen_10B[0]++;
-                    n_distro_shell_10B[number_of_A]++;
                 }
             }
             
@@ -1768,35 +1581,7 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc10B[n10B[f]][binAcnt]]==1) {
-                        nA10B++;
-                        number_of_A++;
-                    }
-                    else nB10B++;
-                    
-                    if (binAcnt!=9) {
-                        if (rtype[hc10B[n10B[f]][binAcnt]]==1) nA_shell_10B++;
-                        else nB_shell_10B++;
-                    }
-                }
-                n_distro_10B[number_of_A]++;
-                
-                if (rtype[hc10B[n10B[f]][9]]==1) {
-                    nA_cen_10B++;
-                    n_distro_cen_10B[1]++;
-                    n_distro_shell_10B[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_10B++;
-                    n_distro_cen_10B[0]++;
-                    n_distro_shell_10B[number_of_A]++;
-                }
-            }
-            
+
             ++n10B[f];
         }
     }
@@ -1815,7 +1600,6 @@ int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // D
     int flg11, flg12, flg21, flg22;
     int break_out;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=11;
 
     if(cnb[hc9B[n9B[f]][8]]!= 10) return 0; // s_com has 10 bonds in total (all forming the shell)
@@ -1916,35 +1700,7 @@ int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // D
             }
         }
     }
-    
-    if (doClusComp==1) {
-        number_of_A=0;
-        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-            if (rtype[hc11B[n11B[f]][binAcnt]]==1) {
-                nA11B++;
-                number_of_A++;
-            }
-            else nB11B++;
-            
-            if (binAcnt!=8) {
-                if (rtype[hc11B[n11B[f]][binAcnt]]==1) nA_shell_11B++;
-                else nB_shell_11B++;
-            }
-        }
-        n_distro_11B[number_of_A]++;
-    
-        if (rtype[hc11B[n11B[f]][8]]==1) {
-            nA_cen_11B++;
-            n_distro_cen_11B[1]++;
-            n_distro_shell_11B[number_of_A-1]++;
-        }
-        else {
-            nB_cen_11B++;
-            n_distro_cen_11B[0]++;
-            n_distro_shell_11B[number_of_A]++;
-        }
-    }
-    
+
     return 1;
 }
 
@@ -1957,7 +1713,6 @@ int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) {  // D
     int ep=-1;
     int break_out;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=11;
 
     if(cnb[hc10B[n10B[f]][9]]!= 10) return 0;   // s_com has 10 bonds in total (all forming the shell)
@@ -2028,35 +1783,7 @@ int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) {  // D
             }
         }
     }
-    
-    if (doClusComp==1) {
-        number_of_A=0;
-        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-            if (rtype[hc11W[n11W[f]][binAcnt]]==1) {
-                nA11W++;
-                number_of_A++;
-            }
-            else nB11W++;
-            
-            if (binAcnt!=10) {
-                if (rtype[hc11W[n11W[f]][binAcnt]]==1) nA_shell_11W++;
-                else nB_shell_11W++;
-            }
-        }
-        n_distro_11W[number_of_A]++;
-    
-        if (rtype[hc11W[n11W[f]][9]]==1) {
-            nA_cen_11W++;
-            n_distro_cen_11W[1]++;
-            n_distro_shell_11W[number_of_A-1]++;
-        }
-        else {
-            nB_cen_11W++;
-            n_distro_cen_11W[0]++;
-            n_distro_shell_11W[number_of_A]++;
-        }
-    }
-    
+
     n11W[f]++;
     
     return 1;
@@ -2074,7 +1801,6 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
     int break_out,break_out2;
     int flg1, flg2, flg3;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=11;
 
     for(k=i+1; k<nsp5c[f]; k++) { // loop over all 7A_k
@@ -2177,19 +1903,7 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc11E[n11E[f]][binAcnt]]==1) {
-                            nA11E++;
-                            number_of_A++;
-                        }
-                        else nB11E++;
-                    }
-                    n_distro_11E[number_of_A]++;
-                }
-                
+
                 ++n11E[f];  
             }   
         }
@@ -2290,18 +2004,6 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                             }
                         }
                     }
-                }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc11E[n11E[f]][binAcnt]]==1) {
-                            nA11E++;
-                            number_of_A++;
-                        }
-                        else nB11E++;
-                    }
-                    n_distro_11E[number_of_A]++;
                 }
                 
                 ++n11E[f];  
@@ -2407,19 +2109,7 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc11E[n11E[f]][binAcnt]]==1) {
-                            nA11E++;
-                            number_of_A++;
-                        }
-                        else nB11E++;
-                    }
-                    n_distro_11E[number_of_A]++;
-                }
-                
+
                 ++n11E[f];  
             }   
         }
@@ -2521,19 +2211,7 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc11E[n11E[f]][binAcnt]]==1) {
-                            nA11E++;
-                            number_of_A++;
-                        }
-                        else nB11E++;
-                    }
-                    n_distro_11E[number_of_A]++;
-                }
-                
+
                 ++n11E[f];  
             }           
         }
@@ -2546,7 +2224,6 @@ int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach)
     int break_out;
     int trial[12];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=12;
 
     if(k > j) m = k;
@@ -2622,19 +2299,6 @@ int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach)
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc12D[n12D[f]][binAcnt]]==1) {
-                        nA12D++;
-                        number_of_A++;
-                    }
-                    else nB12D++;
-                }
-                n_distro_12D[number_of_A]++;
-            }
-            
             return 1;
         }
     }
@@ -2650,7 +2314,6 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
     int trial[9];
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=9;
 
     cp[0]=cp[1]=scom=sother[0]=sother[1]=-1;
@@ -2800,34 +2463,6 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
                     }
                 }
             }
-                
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc9K[n9K[f]][binAcnt]]==1) {
-                        nA9K++;
-                        number_of_A++;
-                    }
-                    else nB9K++;
-                    
-                    if (binAcnt!=8) {
-                        if (rtype[hc9K[n9K[f]][binAcnt]]==1) nA_shell_9K++;
-                        else nB_shell_9K++;
-                    }
-                }
-                n_distro_9K[number_of_A]++;
-                
-                if (rtype[hc9K[n9K[f]][8]]==1) {
-                    nA_cen_9K++;
-                    n_distro_cen_9K[1]++;
-                    n_distro_shell_9K[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_9K++;
-                    n_distro_cen_9K[0]++;
-                    n_distro_shell_9K[number_of_A]++;
-                }
-            }
 
             ++n9K[f];
         }
@@ -2853,7 +2488,6 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
 int Clusters_Get10K(int f, char *ach, char *ach_cen, char *ach_shell) { // Detect 10K clusters
     int i, j, k, ep;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=10;
 
     ep=-1;
@@ -2914,34 +2548,6 @@ int Clusters_Get10K(int f, char *ach, char *ach_cen, char *ach_shell) { // Detec
             }
         }
     }
-                
-    if (doClusComp==1) {
-        number_of_A=0;
-        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-            if (rtype[hc10K[n10K[f]][binAcnt]]==1) {
-                nA10K++;
-                number_of_A++;
-            }
-            else nB10K++;
-            
-            if (binAcnt!=8) {
-                if (rtype[hc10K[n10K[f]][binAcnt]]==1) nA_shell_10K++;
-                else nB_shell_10K++;
-            }
-        }
-        n_distro_10K[number_of_A]++;
-        
-        if (rtype[hc10K[n10K[f]][8]]==1) {
-            nA_cen_10K++;
-            n_distro_cen_10K[1]++;
-            n_distro_shell_10K[number_of_A-1]++;
-        }
-        else {
-            nB_cen_10K++;
-            n_distro_cen_10K[0]++;
-            n_distro_shell_10K[number_of_A]++;
-        }
-    }
 
     return 1;
 }
@@ -2951,7 +2557,6 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
     int i, j, j2, k, l, m;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=10;
     int *used_sp4b;
 
@@ -3029,19 +2634,6 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc10A[n10A[f]][binAcnt]]==1) {
-                            nA10A++;
-                            number_of_A++;
-                        }
-                        else nB10A++;
-                    }
-                    n_distro_10A[number_of_A]++;
-                }
-                
                 ++n10A[f];
             }
         }
@@ -3059,7 +2651,6 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
     char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=10;
 
     sp5b_clusts[0]=sp5b_clusts[1]=sp5b_clusts[2]=sp5b_clusts[3]=sp5b_clusts[4]=-1;
@@ -3145,35 +2736,6 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
                 }
             }
         }
-                
-        if (doClusComp==1) {
-            number_of_A=0;
-            for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                if (rtype[hc10W[n10W[f]][binAcnt]]==1) {
-                    nA10W++;
-                    number_of_A++;
-                }
-                else nB10W++;
-            
-                if (binAcnt!=0) {
-                    if (rtype[hc10W[n10W[f]][binAcnt]]==1) nA_shell_10W++;
-                    else nB_shell_10W++;
-                }
-            }
-            n_distro_10W[number_of_A]++;
-            
-            if (rtype[hc10W[n10W[f]][0]]==1) {
-                nA_cen_10W++;
-                n_distro_cen_10W[1]++;
-                n_distro_shell_10W[number_of_A-1]++;
-            }
-            else {
-                nB_cen_10W++;
-                n_distro_cen_10W[0]++;
-                n_distro_shell_10W[number_of_A]++;
-            }
-        }
-            
         ++n10W[f];
     }
     
@@ -3196,7 +2758,6 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
     int scom, sother[2], shell_SP3[8][3];
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=11;
 
     ach_1=malloc(N*sizeof(char));   if (ach_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_1[] malloc out of memory\n"); Error(errMsg); }
@@ -3348,35 +2909,6 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
                     }
                 }
             }
-                
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc11A[n11A[f]][binAcnt]]==1) {
-                        nA11A++;
-                        number_of_A++;
-                    }
-                    else nB11A++;
-                    
-                    if (binAcnt!=10) {
-                        if (rtype[hc11A[n11A[f]][binAcnt]]==1) nA_shell_11A++;
-                        else nB_shell_11A++;
-                    }
-                }
-                n_distro_11A[number_of_A]++;
-                
-                if (rtype[hc11A[n11A[f]][10]]==1) {
-                    nA_cen_11A++;
-                    n_distro_cen_11A[1]++;
-                    n_distro_shell_11A[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_11A++;
-                    n_distro_cen_11A[0]++;
-                    n_distro_shell_11A[number_of_A]++;
-                }
-            }
-                
             ++n11A[f];
         }
     }
@@ -3401,7 +2933,6 @@ int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach
     int i, j;
     int ep, nep;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=12;
 
     ep=-1;
@@ -3458,35 +2989,6 @@ int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach
             }
         }
     }
-    
-    if (doClusComp==1) {
-        number_of_A=0;
-        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-            if (rtype[hc12K[n12K[f]][binAcnt]]==1) {
-                nA12K++;
-                number_of_A++;
-            }
-            else nB12K++;
-            
-            if (binAcnt!=10) {
-                if (rtype[hc12K[n12K[f]][binAcnt]]==1) nA_shell_12K++;
-                else nB_shell_12K++;
-            }
-        }
-        n_distro_12K[number_of_A]++;
-        
-        if (rtype[hc12K[n12K[f]][10]]==1) {
-            nA_cen_12K++;
-            n_distro_cen_12K[1]++;
-            n_distro_shell_12K[number_of_A-1]++;
-        }
-        else {
-            nB_cen_12K++;
-            n_distro_cen_12K[0]++;
-            n_distro_shell_12K[number_of_A]++;
-        }
-    }
-    
     return 1;
 }
 
@@ -3498,7 +3000,6 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
     int break_out;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=11;
 
     ar[0]=ar[1]=sd[0]=sd[1]=spc=-1;
@@ -3670,35 +3171,6 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
                             }
                         }
                     }
-
-                    if (doClusComp==1) {
-                        number_of_A=0;
-                        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                            if (rtype[hc11C[n11C[f]][binAcnt]]==1) {
-                                nA11C++;
-                                number_of_A++;
-                            }
-                            else nB11C++;
-                
-                            if (binAcnt!=0) {
-                                if (rtype[hc11C[n11C[f]][binAcnt]]==1) nA_shell_11C++;
-                                else nB_shell_11C++;
-                            }
-                        }
-                        n_distro_11C[number_of_A]++;
-                        
-                        if (rtype[hc11C[n11C[f]][0]]==1) {
-                            nA_cen_11C++;
-                            n_distro_cen_11C[1]++;
-                            n_distro_shell_11C[number_of_A-1]++;
-                        }
-                        else {
-                            nB_cen_11C++;
-                            n_distro_cen_11C[0]++;
-                            n_distro_shell_11C[number_of_A]++;
-                        }
-                    }
-                    
                     ++n11C[f];
                 }               
             }
@@ -3727,7 +3199,6 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // R
     int k, l;
     int ep;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=12;
 
     ep=-1;
@@ -3786,34 +3257,6 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // R
                     Bonds_TickBLDistro(bondlengths[hc12A[n12A[f]][binAcnt]][Bonds_cnb_j(hc12A[n12A[f]][binAcnt],hc12A[n12A[f]][binBcnt])],BLDistro12A,&BLDistroNoSamples12A);
                 }
             }
-        }
-    }
-    
-    if (doClusComp==1) {
-        number_of_A=0;
-        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-            if (rtype[hc12A[n12A[f]][binAcnt]]==1) {
-                nA12A++;
-                number_of_A++;
-            }
-            else nB12A++;
-    
-            if (binAcnt!=0) {
-                if (rtype[hc12A[n12A[f]][binAcnt]]==1) nA_shell_12A++;
-                else nB_shell_12A++;
-            }
-        }
-        n_distro_12A[number_of_A]++;
-        
-        if (rtype[hc12A[n12A[f]][0]]==1) {
-            nA_cen_12A++;
-            n_distro_cen_12A[1]++;
-            n_distro_shell_12A[number_of_A-1]++;
-        }
-        else {
-            nB_cen_12A++;
-            n_distro_cen_12A[0]++;
-            n_distro_shell_12A[number_of_A]++;
         }
     }
     
@@ -3980,19 +3423,6 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
                                     }
                                 }
                             }
-                            
-                            if (doClusComp==1) {
-                                number_of_A=0;
-                                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                                    if (rtype[hc11F[n11F[f]][binAcnt]]==1) {
-                                        nA11F++;
-                                        number_of_A++;
-                                    }
-                                    else nB11F++;
-                                }
-                                n_distro_11F[number_of_A]++;
-                            }
-                            
                             ++n11F[f];      
                         }
                     }
@@ -4131,19 +3561,6 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
                                     }
                                 }
                             }
-                        
-                            if (doClusComp==1) {
-                                number_of_A=0;
-                                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                                    if (rtype[hc11F[n11F[f]][binAcnt]]==1) {
-                                        nA11F++;
-                                        number_of_A++;
-                                    }
-                                    else nB11F++;
-                                }
-                                n_distro_11F[number_of_A]++;
-                            }
-                            
                             ++n11F[f];      
                         }
                     }
@@ -4170,7 +3587,6 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 1
     int k, l, m, ncom, common[2], uncom;
     int flg;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=12;
 
     for(k=j+1; k<nsp3c[f]; ++k) {
@@ -4243,24 +3659,6 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 1
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc12E[n12E[f]][binAcnt]]==1) {
-                        nA12E++;
-                        number_of_A++;
-                    }
-                    else nB12E++;
-                }
-                n_distro_12E[number_of_A]++;
-            }
-            /*if (hc12E[n12E[f]][0]==325) {
-                printf("hi i%d j%d k%d n11F[f]%d\n",i,j,k,n11F[f]);
-                printf("sp3c[ %d ] %d %d %d %d %d\n",i,sp3c[i][0],sp3c[i][1],sp3c[i][2],sp3c[i][3],sp3c[i][4]);
-                printf("sp3c[ %d ] %d %d %d %d %d\n",j,sp3c[j][0],sp3c[j][1],sp3c[j][2],sp3c[j][3],sp3c[j][4]);
-                printf("sp3c[ %d ] %d %d %d %d %d\n",k,sp3c[k][0],sp3c[k][1],sp3c[k][2],sp3c[k][3],sp3c[k][4]);
-            }*/
             return 1;   
         }
     }
@@ -4286,7 +3684,6 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     int i, j, k, l;
     int sp3c_i_unc, sp3c_j_unc, ep[2], eclus5A[2], tmp;
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=13;
 
     sp3c_i_unc=sp3c_j_unc=ep[0]=ep[1]=eclus5A[0]=eclus5A[1]=tmp=-1;
@@ -4457,35 +3854,6 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
             }
         }
     }
-    
-    if (doClusComp==1) {
-        number_of_A=0;
-        for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-            if (rtype[hc13K[n13K[f]][binAcnt]]==1) {
-                nA13K++;
-                number_of_A++;
-            }
-            else nB13K++;
-            
-            if (binAcnt!=0) {
-                if (rtype[hc13K[n13K[f]][binAcnt]]==1) nA_shell_13K++;
-                else nB_shell_13K++;
-            }
-        }
-        n_distro_13K[number_of_A]++;
-        
-        if (rtype[hc13K[n13K[f]][0]]==1) {
-            nA_cen_13K++;
-            n_distro_cen_13K[1]++;
-            n_distro_shell_13K[number_of_A-1]++;
-        }
-        else {
-            nB_cen_13K++;
-            n_distro_cen_13K[0]++;
-            n_distro_shell_13K[number_of_A]++;
-        }
-    }
-    
     return 1;
 }
 
@@ -4499,7 +3867,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
     int break_out;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=12;
 
     
@@ -4605,35 +3972,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize+1; binAcnt++) {
-                        if (rtype[hc13A[n13A[f]][binAcnt]]==1) {
-                            nA13A++;
-                            number_of_A++;
-                        }
-                        else nB13A++;
-                    
-                        if (binAcnt!=0) {
-                            if (rtype[hc13A[n13A[f]][binAcnt]]==1) nA_shell_13A++;
-                            else nB_shell_13A++;
-                        }
-                    }
-                    n_distro_13A[number_of_A]++;
-                    
-                    if (rtype[hc13A[n13A[f]][0]]==1) {
-                        nA_cen_13A++;
-                        n_distro_cen_13A[1]++;
-                        n_distro_shell_13A[number_of_A-1]++;
-                    }
-                    else {
-                        nB_cen_13A++;
-                        n_distro_cen_13A[0]++;
-                        n_distro_shell_13A[number_of_A]++;
-                    }
-                }
-                
                 ++n13A[f];
             }
         }
@@ -4726,35 +4064,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize+1; binAcnt++) {
-                        if (rtype[hc13A[n13A[f]][binAcnt]]==1) {
-                            nA13A++;
-                            number_of_A++;
-                        }
-                        else nB13A++;
-                        
-                        if (binAcnt!=0) {
-                            if (rtype[hc13A[n13A[f]][binAcnt]]==1) nA_shell_13A++;
-                            else nB_shell_13A++;
-                        }
-                    }
-                    n_distro_13A[number_of_A]++;
-                    
-                    if (rtype[hc13A[n13A[f]][0]]==1) {
-                        nA_cen_13A++;
-                        n_distro_cen_13A[1]++;
-                        n_distro_shell_13A[number_of_A-1]++;
-                    }
-                    else {
-                        nB_cen_13A++;
-                        n_distro_cen_13A[0]++;
-                        n_distro_shell_13A[number_of_A]++;
-                    }
-                }
-                
                 ++n13A[f];
             }
         }
@@ -4839,35 +4148,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc12B[n12B[f]][binAcnt]]==1) {
-                        nA12B++;
-                        number_of_A++;
-                    }
-                    else nB12B++;
-                
-                    if (binAcnt!=0) {
-                        if (rtype[hc12B[n12B[f]][binAcnt]]==1) nA_shell_12B++;
-                        else nB_shell_12B++;
-                    }   
-                }
-                n_distro_12B[number_of_A]++;
-                
-                if (rtype[hc12B[n12B[f]][0]]==1) {
-                    nA_cen_12B++;
-                    n_distro_cen_12B[1]++;
-                    n_distro_shell_12B[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_12B++;
-                    n_distro_cen_12B[0]++;
-                    n_distro_shell_12B[number_of_A]++;
-                }
-            }
-                
             ++n12B[f];
         }
         
@@ -4948,35 +4228,6 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hc12B[n12B[f]][binAcnt]]==1) {
-                        nA12B++;
-                        number_of_A++;
-                    }
-                    else nB12B++;
-                
-                    if (binAcnt!=0) {
-                        if (rtype[hc12B[n12B[f]][binAcnt]]==1) nA_shell_12B++;
-                        else nB_shell_12B++;
-                    }
-                }
-                n_distro_12B[number_of_A]++;
-            
-                if (rtype[hc12B[n12B[f]][0]]==1) {
-                    nA_cen_12B++;
-                    n_distro_cen_12B[1]++;
-                    n_distro_shell_12B[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_12B++;
-                    n_distro_cen_12B[0]++;
-                    n_distro_shell_12B[number_of_A]++;
-                }
-            }
-            
             ++n12B[f];
         }
     }
@@ -5004,7 +4255,6 @@ void Clusters_Get13B_D5h(int f) {   // Detect 13B D5h clusters, i.e. twisted ico
     char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=13;
 
     cp=-1;
@@ -5103,35 +4353,6 @@ void Clusters_Get13B_D5h(int f) {   // Detect 13B D5h clusters, i.e. twisted ico
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hc13B[n13B[f]][binAcnt]]==1) {
-                            nA13B++;
-                            number_of_A++;
-                        }
-                        else nB13B++;
-                    
-                        if (binAcnt!=0) {
-                            if (rtype[hc13B[n13B[f]][binAcnt]]==1) nA_shell_13B++;
-                            else nB_shell_13B++;
-                        }
-                    }
-                    n_distro_13B[number_of_A]++;
-                
-                    if (rtype[hc13B[n13B[f]][0]]==1) {
-                        nA_cen_13B++;
-                        n_distro_cen_13B[1]++;
-                        n_distro_shell_13B[number_of_A-1]++;
-                    }
-                    else {
-                        nB_cen_13B++;
-                        n_distro_cen_13B[0]++;
-                        n_distro_shell_13B[number_of_A]++;
-                    }
-                }
-                
                 ++n13B[f];
             }   
         }
@@ -5379,37 +4600,8 @@ void Clusters_GetFCC(int f) {   // Detect 13 particle FCC clusters
                         }
                     }
                 }
-
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hcFCC[nFCC[f]][binAcnt]]==1) {
-                            nAFCC++;
-                            number_of_A++;
-                        }
-                        else nBFCC++;
-                    
-                        if (binAcnt!=0) {
-                            if (rtype[hcFCC[nFCC[f]][binAcnt]]==1) nA_shell_FCC++;
-                            else nB_shell_FCC++;
-                        }
-                    }
-                    n_distro_FCC[number_of_A]++;
-                    
-                    if (rtype[hcFCC[nFCC[f]][0]]==1) {
-                        nA_cen_FCC++;
-                        n_distro_cen_FCC[1]++;
-                        n_distro_shell_FCC[number_of_A-1]++;
-                    }
-                    else {
-                        nB_cen_FCC++;
-                        n_distro_cen_FCC[0]++;
-                        n_distro_shell_FCC[number_of_A]++;
-                    }
-                }
-
                 ++nFCC[f];
-            }  // End k loop
+            }
         }
         }
     }
@@ -5432,7 +4624,6 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
     char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=13;
 
     cp=-1;
@@ -5665,35 +4856,6 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hcHCP[nHCP[f]][binAcnt]]==1) {
-                            nAHCP++;
-                            number_of_A++;
-                        }
-                        else nBHCP++;
-                    
-                        if (binAcnt!=0) {
-                            if (rtype[hcHCP[nHCP[f]][binAcnt]]==1) nA_shell_HCP++;
-                            else nB_shell_HCP++;
-                        }
-                    }
-                    n_distro_HCP[number_of_A]++;
-                    
-                    if (rtype[hcHCP[nHCP[f]][0]]==1) {
-                        nA_cen_HCP++;
-                        n_distro_cen_HCP[1]++;
-                        n_distro_shell_HCP[number_of_A-1]++;
-                    }
-                    else {
-                        nB_cen_HCP++;
-                        n_distro_cen_HCP[0]++;
-                        n_distro_shell_HCP[number_of_A]++;
-                    }
-                }
-                
                 ++nHCP[f];
             }
         }
@@ -5717,7 +4879,6 @@ void Clusters_GetBCC_9(int f) {
     char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=9;
 
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach[] malloc out of memory\n");   Error(errMsg); }
@@ -5826,35 +4987,6 @@ void Clusters_GetBCC_9(int f) {
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hcBCC_9[nBCC_9[f]][binAcnt]]==1) {
-                        nABCC_9++;
-                        number_of_A++;
-                    }
-                    else nBBCC_9++;
-                
-                    if (binAcnt!=0) {
-                        if (rtype[hcBCC_9[nBCC_9[f]][binAcnt]]==1) nA_shell_BCC_9++;
-                        else nB_shell_BCC_9++;
-                    }
-                }
-                n_distro_BCC_9[number_of_A]++;
-                
-                if (rtype[hcBCC_9[nBCC_9[f]][0]]==1) {
-                    nA_cen_BCC_9++;
-                    n_distro_cen_BCC_9[1]++;
-                    n_distro_shell_BCC_9[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_BCC_9++;
-                    n_distro_cen_BCC_9[0]++;
-                    n_distro_shell_BCC_9[number_of_A]++;
-                }
-            }
-            
             ++nBCC_9[f];
         }
         }
@@ -5970,35 +5102,6 @@ void Clusters_GetBCC_9(int f) {
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hcBCC_9[nBCC_9[f]][binAcnt]]==1) {
-                        nABCC_9++;
-                        number_of_A++;
-                    }
-                    else nBBCC_9++;
-                
-                    if (binAcnt!=0) {
-                        if (rtype[hcBCC_9[nBCC_9[f]][binAcnt]]==1) nA_shell_BCC_9++;
-                        else nB_shell_BCC_9++;
-                    }
-                }
-                n_distro_BCC_9[number_of_A]++;
-                
-                if (rtype[hcBCC_9[nBCC_9[f]][0]]==1) {
-                    nA_cen_BCC_9++;
-                    n_distro_cen_BCC_9[1]++;
-                    n_distro_shell_BCC_9[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_BCC_9++;
-                    n_distro_cen_BCC_9[0]++;
-                    n_distro_shell_BCC_9[number_of_A]++;
-                }
-            }
-            
             ++nBCC_9[f];
         }
         }
@@ -6006,141 +5109,112 @@ void Clusters_GetBCC_9(int f) {
     
     for (i=0; i<nsp4b[f]; i++) {
         for (j2=4; j2<5; j2++) {
-        for (j=0; j<nmem_sp4c[sp4b[i][j2]]; ++j) { // loop over all sp3c_j
-            m=0;
-            for (k=4; k<6; k++) {
-                if (sp4b[i][4]==sp4c[mem_sp4c[sp4b[i][j2]][j]][k]) {
-                    s_com=sp4b[i][4];
-                    m++;
-                }
-            }
-            if (m==0 || m>1) continue;
-            
-            flg=0;
-            for (k=0; k<4; k++) {
-                for (l=0; l<6; l++) {
-                    if (sp4c[mem_sp4c[sp4b[i][j2]][j]][l]==s_com) continue;
-                    if (sp4b[i][k]==sp4c[mem_sp4c[sp4b[i][j2]][j]][l]) {
-                        flg=1;
-                        break;
+            for (j=0; j<nmem_sp4c[sp4b[i][j2]]; ++j) { // loop over all sp3c_j
+                m=0;
+                for (k=4; k<6; k++) {
+                    if (sp4b[i][4]==sp4c[mem_sp4c[sp4b[i][j2]][j]][k]) {
+                        s_com=sp4b[i][4];
+                        m++;
                     }
                 }
-                if (flg==1) break;
-            }
-            if (flg==1) continue;
-            
-            flg=0;
-            for (k=0; k<4; k++) {
-                m=0;
-                for (l=0; l<4; l++) {
-                    if (Bonds_BondCheck(sp4b[i][k],sp4c[mem_sp4c[sp4b[i][j2]][j]][l])) {
-                        m++;
-                        if (m==2) {
+                if (m==0 || m>1) continue;
+
+                flg=0;
+                for (k=0; k<4; k++) {
+                    for (l=0; l<6; l++) {
+                        if (sp4c[mem_sp4c[sp4b[i][j2]][j]][l]==s_com) continue;
+                        if (sp4b[i][k]==sp4c[mem_sp4c[sp4b[i][j2]][j]][l]) {
                             flg=1;
                             break;
                         }
                     }
+                    if (flg==1) break;
                 }
-                if (flg==1) break;
-            }
-            if (flg==1) continue;
-            
-            flg=0;
-            for (k=0; k<4; k++) {
-                m=0;
-                for (l=0; l<4; l++) {
-                    if (Bonds_BondCheck(sp4c[mem_sp4c[sp4b[i][j2]][j]][k],sp4b[i][l])) {
-                        m++;
-                        if (m==2) {
-                            flg=1;
-                            break;
+                if (flg==1) continue;
+
+                flg=0;
+                for (k=0; k<4; k++) {
+                    m=0;
+                    for (l=0; l<4; l++) {
+                        if (Bonds_BondCheck(sp4b[i][k],sp4c[mem_sp4c[sp4b[i][j2]][j]][l])) {
+                            m++;
+                            if (m==2) {
+                                flg=1;
+                                break;
+                            }
+                        }
+                    }
+                    if (flg==1) break;
+                }
+                if (flg==1) continue;
+
+                flg=0;
+                for (k=0; k<4; k++) {
+                    m=0;
+                    for (l=0; l<4; l++) {
+                        if (Bonds_BondCheck(sp4c[mem_sp4c[sp4b[i][j2]][j]][k],sp4b[i][l])) {
+                            m++;
+                            if (m==2) {
+                                flg=1;
+                                break;
+                            }
+                        }
+                    }
+                    if (flg==1) break;
+                }
+                if (flg==1) continue;
+
+                trial[0]=s_com;
+                for (k=0; k<4; k++) {
+                    trial[k+1]=sp4b[i][k];
+                    trial[k+5]=sp4c[mem_sp4c[sp4b[i][j2]][j]][k];
+                }
+                quickSort(&trial[1],8);
+
+                flg=0;  // check trial cluster not already found
+                for (k=0; k<nBCC_9[f]; ++k) {
+                    for (l=0; l<9; ++l) {
+                        if (trial[l]!=hcBCC_9[k][l]) break;
+                    }
+                    if (l==9) flg=1;
+                }
+                if (flg==1) continue;
+
+                if (nBCC_9[f] == mBCC_9) {
+                    hcBCC_9=resize_2D_int(hcBCC_9,mBCC_9,mBCC_9+incrStatic,clusSize,-1);
+                    if (doClusBLDeviation==1) {
+                        bl_mom_BCC_9=resize_1D_double(bl_mom_BCC_9,mBCC_9,mBCC_9+incrStatic);
+                    }
+                    mBCC_9=mBCC_9+incrStatic;
+                }
+                for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
+
+                if(ach[hcBCC_9[nBCC_9[f]][1]] == 'C') ach[hcBCC_9[nBCC_9[f]][1]] = ach_shell[hcBCC_9[nBCC_9[f]][1]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][2]] == 'C') ach[hcBCC_9[nBCC_9[f]][2]] = ach_shell[hcBCC_9[nBCC_9[f]][2]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][3]] == 'C') ach[hcBCC_9[nBCC_9[f]][3]] = ach_shell[hcBCC_9[nBCC_9[f]][3]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][4]] == 'C') ach[hcBCC_9[nBCC_9[f]][4]] = ach_shell[hcBCC_9[nBCC_9[f]][4]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][5]] == 'C') ach[hcBCC_9[nBCC_9[f]][5]] = ach_shell[hcBCC_9[nBCC_9[f]][5]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][6]] == 'C') ach[hcBCC_9[nBCC_9[f]][6]] = ach_shell[hcBCC_9[nBCC_9[f]][6]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][7]] == 'C') ach[hcBCC_9[nBCC_9[f]][7]] = ach_shell[hcBCC_9[nBCC_9[f]][7]] = 'B';
+                if(ach[hcBCC_9[nBCC_9[f]][8]] == 'C') ach[hcBCC_9[nBCC_9[f]][8]] = ach_shell[hcBCC_9[nBCC_9[f]][8]] = 'B';
+                ach[hcBCC_9[nBCC_9[f]][0]] = ach_cen[hcBCC_9[nBCC_9[f]][0]] = 'F';
+
+                if (doBondedCen==1) {
+                    n_bonded_to_cen_BCC_9+=cnb[hcBCC_9[nBCC_9[f]][0]];
+                    n_distro_bonded_to_cen_BCC_9[cnb[hcBCC_9[nBCC_9[f]][0]]]++;
+                }
+
+                if (doClusBLDistros==1) {
+                    for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
+                        for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
+                            if (Bonds_BondCheck(hcBCC_9[nBCC_9[f]][binAcnt],hcBCC_9[nBCC_9[f]][binBcnt])==1) {
+                                Bonds_TickBLDistro(bondlengths[hcBCC_9[nBCC_9[f]][binAcnt]][Bonds_cnb_j(hcBCC_9[nBCC_9[f]][binAcnt],hcBCC_9[nBCC_9[f]][binBcnt])],BLDistroBCC_9,&BLDistroNoSamplesBCC_9);
+                            }
                         }
                     }
                 }
-                if (flg==1) break;
+                ++nBCC_9[f];
             }
-            if (flg==1) continue;
-            
-            trial[0]=s_com;
-            for (k=0; k<4; k++) {
-                trial[k+1]=sp4b[i][k];
-                trial[k+5]=sp4c[mem_sp4c[sp4b[i][j2]][j]][k];
-            }
-            quickSort(&trial[1],8);
-            
-            flg=0;  // check trial cluster not already found
-            for (k=0; k<nBCC_9[f]; ++k) {
-                for (l=0; l<9; ++l) {
-                    if (trial[l]!=hcBCC_9[k][l]) break;
-                }   
-                if (l==9) flg=1;
-            }
-            if (flg==1) continue;
-
-            if (nBCC_9[f] == mBCC_9) { 
-                hcBCC_9=resize_2D_int(hcBCC_9,mBCC_9,mBCC_9+incrStatic,clusSize,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_BCC_9=resize_1D_double(bl_mom_BCC_9,mBCC_9,mBCC_9+incrStatic);
-                }
-                mBCC_9=mBCC_9+incrStatic;
-            }
-            for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
-            
-            if(ach[hcBCC_9[nBCC_9[f]][1]] == 'C') ach[hcBCC_9[nBCC_9[f]][1]] = ach_shell[hcBCC_9[nBCC_9[f]][1]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][2]] == 'C') ach[hcBCC_9[nBCC_9[f]][2]] = ach_shell[hcBCC_9[nBCC_9[f]][2]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][3]] == 'C') ach[hcBCC_9[nBCC_9[f]][3]] = ach_shell[hcBCC_9[nBCC_9[f]][3]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][4]] == 'C') ach[hcBCC_9[nBCC_9[f]][4]] = ach_shell[hcBCC_9[nBCC_9[f]][4]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][5]] == 'C') ach[hcBCC_9[nBCC_9[f]][5]] = ach_shell[hcBCC_9[nBCC_9[f]][5]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][6]] == 'C') ach[hcBCC_9[nBCC_9[f]][6]] = ach_shell[hcBCC_9[nBCC_9[f]][6]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][7]] == 'C') ach[hcBCC_9[nBCC_9[f]][7]] = ach_shell[hcBCC_9[nBCC_9[f]][7]] = 'B';
-            if(ach[hcBCC_9[nBCC_9[f]][8]] == 'C') ach[hcBCC_9[nBCC_9[f]][8]] = ach_shell[hcBCC_9[nBCC_9[f]][8]] = 'B';
-            ach[hcBCC_9[nBCC_9[f]][0]] = ach_cen[hcBCC_9[nBCC_9[f]][0]] = 'F';
-            
-            if (doBondedCen==1) {
-                n_bonded_to_cen_BCC_9+=cnb[hcBCC_9[nBCC_9[f]][0]];
-                n_distro_bonded_to_cen_BCC_9[cnb[hcBCC_9[nBCC_9[f]][0]]]++;
-            }
-            
-            if (doClusBLDistros==1) {
-                for (binAcnt=0; binAcnt<clusSize-1; binAcnt++) {
-                    for (binBcnt=binAcnt+1; binBcnt<clusSize; binBcnt++) {
-                        if (Bonds_BondCheck(hcBCC_9[nBCC_9[f]][binAcnt],hcBCC_9[nBCC_9[f]][binBcnt])==1) {
-                            Bonds_TickBLDistro(bondlengths[hcBCC_9[nBCC_9[f]][binAcnt]][Bonds_cnb_j(hcBCC_9[nBCC_9[f]][binAcnt],hcBCC_9[nBCC_9[f]][binBcnt])],BLDistroBCC_9,&BLDistroNoSamplesBCC_9);
-                        }
-                    }
-                }
-            }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hcBCC_9[nBCC_9[f]][binAcnt]]==1) {
-                        nABCC_9++;
-                        number_of_A++;
-                    }
-                    else nBBCC_9++;
-
-                    if (binAcnt!=0) {
-                        if (rtype[hcBCC_9[nBCC_9[f]][binAcnt]]==1) nA_shell_BCC_9++;
-                        else nB_shell_BCC_9++;
-                    }
-                }
-                n_distro_BCC_9[number_of_A]++;
-                
-                if (rtype[hcBCC_9[nBCC_9[f]][0]]==1) {
-                    nA_cen_BCC_9++;
-                    n_distro_cen_BCC_9[1]++;
-                    n_distro_shell_BCC_9[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_BCC_9++;
-                    n_distro_cen_BCC_9[0]++;
-                    n_distro_shell_BCC_9[number_of_A]++;
-                }
-            }
-            
-            ++nBCC_9[f];
-        }
         }
     }
     
@@ -6161,7 +5235,6 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
     char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int binAcnt, binBcnt;
-    int number_of_A;
     int clusSize=15;
 
     ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach[] malloc out of memory\n");  Error(errMsg); }
@@ -6270,35 +5343,6 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
                         }
                     }
                 }
-                
-                if (doClusComp==1) {
-                    number_of_A=0;
-                    for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                        if (rtype[hcBCC_15[nBCC_15[f]][binAcnt]]==1) {
-                            nABCC_15++;
-                            number_of_A++;
-                        }
-                        else nBBCC_15++;
-                    
-                        if (binAcnt!=0) {
-                            if (rtype[hcBCC_15[nBCC_15[f]][binAcnt]]==1) nA_shell_BCC_15++;
-                            else nB_shell_BCC_15++;
-                        }
-                    }
-                    n_distro_BCC_15[number_of_A]++;
-                    
-                    if (rtype[hcBCC_15[nBCC_15[f]][0]]==1) {
-                        nA_cen_BCC_15++;
-                        n_distro_cen_BCC_15[1]++;
-                        n_distro_shell_BCC_15[number_of_A-1]++;
-                    }
-                    else {
-                        nB_cen_BCC_15++;
-                        n_distro_cen_BCC_15[0]++;
-                        n_distro_shell_BCC_15[number_of_A]++;
-                    }
-                }
-
                 ++nBCC_15[f];
             }
         }
@@ -6404,35 +5448,6 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
                     }
                 }
             }
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<clusSize; binAcnt++) {
-                    if (rtype[hcBCC_15[nBCC_15[f]][binAcnt]]==1) {
-                        nABCC_15++;
-                        number_of_A++;
-                    }
-                    else nBBCC_15++;
-                    
-                    if (binAcnt!=0) {
-                        if (rtype[hcBCC_15[nBCC_15[f]][binAcnt]]==1) nA_shell_BCC_15++;
-                        else nB_shell_BCC_15++;
-                    }
-                }
-                n_distro_BCC_15[number_of_A]++;
-                
-                if (rtype[hcBCC_15[nBCC_15[f]][0]]==1) {
-                    nA_cen_BCC_15++;
-                    n_distro_cen_BCC_15[1]++;
-                    n_distro_shell_BCC_15[number_of_A-1]++;
-                }
-                else {
-                    nB_cen_BCC_15++;
-                    n_distro_cen_BCC_15[0]++;
-                    n_distro_shell_BCC_15[number_of_A]++;
-                }
-            }
-
             ++nBCC_15[f];
         }
         
