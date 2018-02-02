@@ -9,16 +9,10 @@
 #include "output.h"
 #include "stats.h"
 
-int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
-	return 1 + (tix-1+M)%M + M*((tiy-1+M)%M) + M*M*((tiz-1+M)%M); 
-}
-
 int main(int argc, char **argv) {
 	int e, f, i;
 	int write, remainder;
 	char errMsg[1000], output[1000], other[1000];
-	int ix, iy, iz;
-	int imap;
 	FILE *rXmol;
 	FILE *rSizes;
 
@@ -66,40 +60,9 @@ int main(int argc, char **argv) {
 		}
 	}
 	
-	if (USELIST==1) {
-		M = (int)(side/rcutAA);	// number of cells along box side
-		if (M<3) Error_no_free("main(): M<3, too few cells");
-		ncells = M*M*M;	// total number of cells
-	}
-	
 	Setup_InitStaticVars();
 	
-	if (USELIST==1) {
-		cellSide = side/M;	// length of cells
-		invcellSide = 1.0/cellSide;	// invcellSide
-		printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);
-		// routine to create the thirteen nearest neighbours array map[] of each cell 
-		for (iz=1; iz<=M; iz++) {
-			for (iy=1; iy<=M; iy++) {
-				for (ix=1; ix<=M; ix++) {
-					imap = (icell(ix,iy,iz)-1)*13;
-					map[imap+1 ]=icell(ix+1,iy	,iz	);
-					map[imap+2 ]=icell(ix+1,iy+1,iz	);
-					map[imap+3 ]=icell(ix	 ,iy+1,iz	);
-					map[imap+4 ]=icell(ix-1 ,iy+1,iz	);
-					map[imap+5 ]=icell(ix+1,iy	,iz-1	);
-					map[imap+6 ]=icell(ix+1,iy+1,iz-1	);
-					map[imap+7 ]=icell(ix	 ,iy+1,iz-1	);
-					map[imap+8 ]=icell(ix-1 ,iy+1,iz-1	);
-					map[imap+9 ]=icell(ix+1,iy	,iz+1	);
-					map[imap+10]=icell(ix+1,iy+1,iz+1	);
-					map[imap+11]=icell(ix	 ,iy+1,iz+1	);
-					map[imap+12]=icell(ix-1 ,iy+1,iz+1);
-					map[imap+13]=icell(ix	 ,iy	,iz+1	);
-				}
-			}
-		}
-	}
+    Setup_Cell_List();
 	
 	printf("initializing static variables...");
 	Stats_Init();
@@ -116,22 +79,9 @@ int main(int argc, char **argv) {
 		Write_Raw_Init();
 		printf("completed\n");
 	}
-	
-	if (do11AcenXmol==1) {
-		printf("\ninitializing 11A centre xmol files...");
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		file_11A_cen_xmol=fopen(output, "w");
-		printf("completed\n");
-	}
-	
-	if (do13AcenXmol==1) {
-		printf("\ninitializing 13A centre xmol files...");
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		file_13A_cen_xmol=fopen(output, "w");
-		printf("completed\n");
-	}
 
-	printf("begin main loop\n");
+    // Open the files to print out cluster centers
+    Setup_Centers_Files();
 
 	f=0;
 	for (e=0;e<TOTALFRAMES;e++) {
@@ -216,24 +166,13 @@ int main(int argc, char **argv) {
 		printf("closed!\n\n");
 	}
 	
-	if (do11AcenXmol==1) {
-		printf("Closing 11A centre xmol files....");
-		fclose(file_11A_cen_xmol);
-		printf("closed!\n\n");
-	}
-	
-	if (do13AcenXmol==1) {
-		printf("Closing 13A centre xmol files....");
-		fclose(file_13A_cen_xmol);
-		printf("closed!\n\n");
-	}
-	
+    Close_Centers_Files();
+
 	sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
 	printf("\n");
 	Stats_Report(output);
 	printf("\nWritten %s\n\n",output);
 
-	
 	Setup_FreeStaticVars();
 	Stats_FreeMem();
 	if (ISNOTCUBIC > 0) {

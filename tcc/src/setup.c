@@ -1196,3 +1196,75 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     free(s13A_shell); free(s13B_shell); free(s13K_shell);
     free(sFCC_shell); free(sHCP_shell); free(sBCC_9_shell); free(sBCC_15_shell);
 }
+
+void Setup_Centers_Files() {
+    char output[1000];
+
+    if (do11AcenXmol==1) {
+        printf("\ninitializing 11A centre xmol files...");
+        sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+        file_11A_cen_xmol=fopen(output, "w");
+        printf("completed\n");
+    }
+
+    if (do13AcenXmol==1) {
+        printf("\ninitializing 13A centre xmol files...");
+        sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+        file_13A_cen_xmol=fopen(output, "w");
+        printf("completed\n");
+    }
+}
+
+void Close_Centers_Files() {
+    if (do11AcenXmol==1) {
+        printf("Closing 11A centre xmol files....");
+        fclose(file_11A_cen_xmol);
+        printf("closed!\n\n");
+    }
+
+    if (do13AcenXmol==1) {
+        printf("Closing 13A centre xmol files....");
+        fclose(file_13A_cen_xmol);
+        printf("closed!\n\n");
+    }
+}
+
+int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
+    return 1 + (tix-1+M)%M + M*((tiy-1+M)%M) + M*M*((tiz-1+M)%M);
+}
+
+void Setup_Cell_List() {
+
+    int ix, iy, iz;
+    int imap;
+
+    if (USELIST==1) {
+        M = (int)(side/rcutAA);	// number of cells along box side
+        if (M<3) Error_no_free("main(): M<3, too few cells");
+        ncells = M*M*M;	// total number of cells
+        cellSide = side/M;	// length of cells
+        invcellSide = 1.0/cellSide;	// invcellSide
+        printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);
+        // routine to create the thirteen nearest neighbours array map[] of each cell
+        for (iz=1; iz<=M; iz++) {
+            for (iy=1; iy<=M; iy++) {
+                for (ix=1; ix<=M; ix++) {
+                    imap = (icell(ix,iy,iz)-1)*13;
+                    map[imap+1 ]=icell(ix+1,iy	,iz	);
+                    map[imap+2 ]=icell(ix+1,iy+1,iz	);
+                    map[imap+3 ]=icell(ix	 ,iy+1,iz	);
+                    map[imap+4 ]=icell(ix-1 ,iy+1,iz	);
+                    map[imap+5 ]=icell(ix+1,iy	,iz-1	);
+                    map[imap+6 ]=icell(ix+1,iy+1,iz-1	);
+                    map[imap+7 ]=icell(ix	 ,iy+1,iz-1	);
+                    map[imap+8 ]=icell(ix-1 ,iy+1,iz-1	);
+                    map[imap+9 ]=icell(ix+1,iy	,iz+1	);
+                    map[imap+10]=icell(ix+1,iy+1,iz+1	);
+                    map[imap+11]=icell(ix	 ,iy+1,iz+1	);
+                    map[imap+12]=icell(ix-1 ,iy+1,iz+1);
+                    map[imap+13]=icell(ix	 ,iy	,iz+1	);
+                }
+            }
+        }
+    }
+}
