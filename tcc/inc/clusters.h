@@ -10,6 +10,8 @@ void Clusters_Get8A_D2d(int f)  ;// Detect 8A D2d clusters
 
 void Clusters_Get8B_Cs(int f) ;// Detect 8B Cs clusters
 
+void Clusters_8B_loop(int f, int i, char *ach, int clusSize, int s1, int s2);
+
 void Clusters_Get8K(int f) ;   // Detect 8K clusters
 
 void Clusters_Get9A_D3h(int f) ;   // Detect 9A D3h clusters
@@ -23,6 +25,8 @@ int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) ;// De
 int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) ; // Detect 11W C2s clusters 
 
 void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char *ach1, char *ach2) ;   // Returns number of 11Es for a single 9B
+
+void Clust_Write_11E(int f, char *ach1, int *trial);
 
 int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach) ; // Return 1 if 12B is also 11E
 
@@ -50,6 +54,10 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
 
 void Clusters_Get12B_13A(int f) ;// Detect 12B & 13A D5h clusters together
 
+void Clust_Write_12B(int f, char *ach1, char *ach1_cen, char *ach1_shell);
+
+void Clust_Write_13A(int f, char *ach2, char *ach2_cen, char *ach2_shell);
+
 void Clusters_Get13B_D5h(int f) ;  // Detect 13B D5h clusters, i.e. twisted icosahedra
 
 void Clusters_GetFCC(int f) ;  // Detect 13 particle FCC clusters
@@ -59,5 +67,7 @@ void Clusters_GetHCP(int f) ;  // Detect 13 particle HCP clusters
 void Clusters_GetBCC_9(int f) ;
 
 void Clusters_GetBCC_15(int f) ;   // Detect 15 particle BCC clusters
+
+void Cluster_Write_BCC_15(int f, char *ach, char *ach_cen, char *ach_shell, int clusSize);
 
 #endif
