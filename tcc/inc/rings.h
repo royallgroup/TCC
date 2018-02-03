@@ -13,4 +13,12 @@ void Rings_setSP3c(int) ;// store cluster 5A D3h from Bonds_aSP3
 void Rings_setSP4c(int) ;// store cluster 6A Oh from Bonds_aSP4()
 void Rings_setSP5c(int) ;// store cluster 7A D5h from Bonds_aSP5()
 
+void add_mem_sp3b(int particle_ID, int frame);
+void add_mem_sp3c(int particle_ID, int frame);
+void add_mem_sp4b(int particle_ID, int frame);
+void add_mem_sp4c(int particle_ID, int frame);
+void add_mem_sp5b(int particle_ID, int frame);
+void add_mem_sp5c(int particle_ID, int frame);
+
+
 #endif

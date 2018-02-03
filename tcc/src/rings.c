@@ -109,41 +109,10 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
         sp3b[nsp3b[f]][2] = n2;
         sp3b[nsp3b[f]][3] = cp[0];
 
-        mem_sp3b[n0][nmem_sp3b[n0]]=nsp3b[f];       
-        nmem_sp3b[n0]++;        
-        if (nmem_sp3b[n0] >= mmem_sp3b) {
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        mem_sp3b[n1][nmem_sp3b[n1]]=nsp3b[f];       
-        nmem_sp3b[n1]++;        
-        if (nmem_sp3b[n1] >= mmem_sp3b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        mem_sp3b[n2][nmem_sp3b[n2]]=nsp3b[f];       
-        nmem_sp3b[n2]++;        
-        if (nmem_sp3b[n2] >= mmem_sp3b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        mem_sp3b[cp[0]][nmem_sp3b[cp[0]]]=nsp3b[f]; 
-        nmem_sp3b[cp[0]]++;     
-        if (nmem_sp3b[cp[0]] >= mmem_sp3b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
+        add_mem_sp3b(n0, f);
+        add_mem_sp3b(n1, f);
+        add_mem_sp3b(n2, f);
+        add_mem_sp3b(cp[0], f);
         
         ++nsp3b[f];
     }
@@ -164,52 +133,12 @@ void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP
             sp3c[nsp3c[f]][4] = cp[0];
         }
 
-        mem_sp3c[n0][nmem_sp3c[n0]]=nsp3c[f];       
-        nmem_sp3c[n0]++;        
-        if (nmem_sp3c[n0] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[n1][nmem_sp3c[n1]]=nsp3c[f];       
-        nmem_sp3c[n1]++;        
-        if (nmem_sp3c[n1] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[n2][nmem_sp3c[n2]]=nsp3c[f];       
-        nmem_sp3c[n2]++;        
-        if (nmem_sp3c[n2] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[cp[0]][nmem_sp3c[cp[0]]]=nsp3c[f]; 
-        nmem_sp3c[cp[0]]++;     
-        if (nmem_sp3c[cp[0]] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[cp[1]][nmem_sp3c[cp[1]]]=nsp3c[f]; 
-        nmem_sp3c[cp[1]]++;     
-        if (nmem_sp3c[cp[1]] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        
+        add_mem_sp3c(n0, f);
+        add_mem_sp3c(n1, f);
+        add_mem_sp3c(n2, f);
+        add_mem_sp3c(cp[0], f);
+        add_mem_sp3c(cp[1], f);
+
         if (Bonds_BondCheck(sp3c[nsp3c[f]][3],sp3c[nsp3c[f]][4])==1) nsp3c_spindlebonds[f]++;
         
         ++nsp3c[f];
@@ -279,50 +208,11 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         sp4b[nsp4b[f]][3] = n3;
         sp4b[nsp4b[f]][4] = cp[0];
 
-        mem_sp4b[n0][nmem_sp4b[n0]]=nsp4b[f];       
-        nmem_sp4b[n0]++;        
-        if (nmem_sp4b[n0] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[n1][nmem_sp4b[n1]]=nsp4b[f];       
-        nmem_sp4b[n1]++;        
-        if (nmem_sp4b[n1] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[n2][nmem_sp4b[n2]]=nsp4b[f];       
-        nmem_sp4b[n2]++;        
-        if (nmem_sp4b[n2] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[n3][nmem_sp4b[n3]]=nsp4b[f];       
-        nmem_sp4b[n3]++;        
-        if (nmem_sp4b[n3] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[cp[0]][nmem_sp4b[cp[0]]]=nsp4b[f]; 
-        nmem_sp4b[cp[0]]++;     
-        if (nmem_sp4b[cp[0]] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
+        add_mem_sp4b(n0, f);
+        add_mem_sp4b(n1, f);
+        add_mem_sp4b(n2, f);
+        add_mem_sp4b(n3, f);
+        add_mem_sp4b(cp[0], f);
 
         ++nsp4b[f];
     }
@@ -343,60 +233,13 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
             sp4c[nsp4c[f]][4] = cp[1];
             sp4c[nsp4c[f]][5] = cp[0];
         }
-        mem_sp4c[n0][nmem_sp4c[n0]]=nsp4c[f];       
-        nmem_sp4c[n0]++;        
-        if (nmem_sp4c[n0] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[n1][nmem_sp4c[n1]]=nsp4c[f];       
-        nmem_sp4c[n1]++;        
-        if (nmem_sp4c[n1] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[n2][nmem_sp4c[n2]]=nsp4c[f];       
-        nmem_sp4c[n2]++;        
-        if (nmem_sp4c[n2] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[n3][nmem_sp4c[n3]]=nsp4c[f];       
-        nmem_sp4c[n3]++;        
-        if (nmem_sp4c[n3] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[cp[0]][nmem_sp4c[cp[0]]]=nsp4c[f]; 
-        nmem_sp4c[cp[0]]++;     
-        if (nmem_sp4c[cp[0]] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[cp[1]][nmem_sp4c[cp[1]]]=nsp4c[f]; 
-        nmem_sp4c[cp[1]]++;     
-        if (nmem_sp4c[cp[1]] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
+
+        add_mem_sp4c(n0, f);
+        add_mem_sp4c(n1, f);
+        add_mem_sp4c(n2, f);
+        add_mem_sp4c(cp[0], f);
+        add_mem_sp4c(cp[1], f);
+
         if (Bonds_BondCheck(sp4c[nsp4c[f]][4],sp4c[nsp4c[f]][5])==1) nsp4c_spindlebonds[f]++;
         
         for (i=0;i<6;i++) trial[i]=sp4c[nsp4c[f]][i];
@@ -449,7 +292,6 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
     int bcheck;
-    int binAcnt;
 
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
@@ -493,59 +335,12 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
         sp5b[nsp5b[f]][4] = n4;
         sp5b[nsp5b[f]][5] = cp[0];
 
-        mem_sp5b[n0][nmem_sp5b[n0]]=nsp5b[f];       
-        nmem_sp5b[n0]++;        
-        if (nmem_sp5b[n0] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n1][nmem_sp5b[n1]]=nsp5b[f];       
-        nmem_sp5b[n1]++;        
-        if (nmem_sp5b[n1] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n2][nmem_sp5b[n2]]=nsp5b[f];       
-        nmem_sp5b[n2]++;        
-        if (nmem_sp5b[n2] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n3][nmem_sp5b[n3]]=nsp5b[f];       
-        nmem_sp5b[n3]++;        
-        if (nmem_sp5b[n3] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n4][nmem_sp5b[n4]]=nsp5b[f];       
-        nmem_sp5b[n4]++;        
-        if (nmem_sp5b[n4] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[cp[0]][nmem_sp5b[cp[0]]]=nsp5b[f]; 
-        nmem_sp5b[cp[0]]++;     
-        if (nmem_sp5b[cp[0]] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
+        add_mem_sp5b(n0, f);
+        add_mem_sp5b(n1, f);
+        add_mem_sp5b(n2, f);
+        add_mem_sp5b(n3, f);
+        add_mem_sp5b(n4, f);
+        add_mem_sp5b(cp[0], f);
         
         ++nsp5b[f];
     }
@@ -568,70 +363,14 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
             sp5c[nsp5c[f]][6] = cp[0];
         }
 
-        mem_sp5c[n0][nmem_sp5c[n0]]=nsp5c[f];       
-        nmem_sp5c[n0]++;        
-        if (nmem_sp5c[n0] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n1][nmem_sp5c[n1]]=nsp5c[f];       
-        nmem_sp5c[n1]++;        
-        if (nmem_sp5c[n1] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n2][nmem_sp5c[n2]]=nsp5c[f];       
-        nmem_sp5c[n2]++;        
-        if (nmem_sp5c[n2] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n3][nmem_sp5c[n3]]=nsp5c[f];       
-        nmem_sp5c[n3]++;        
-        if (nmem_sp5c[n3] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n4][nmem_sp5c[n4]]=nsp5c[f];       
-        nmem_sp5c[n4]++;        
-        if (nmem_sp5c[n4] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[cp[0]][nmem_sp5c[cp[0]]]=nsp5c[f]; 
-        nmem_sp5c[cp[0]]++;     
-        if (nmem_sp5c[cp[0]] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[cp[1]][nmem_sp5c[cp[1]]]=nsp5c[f]; 
-        nmem_sp5c[cp[1]]++;     
-        if (nmem_sp5c[cp[1]] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        
+        add_mem_sp5c(n0, f);
+        add_mem_sp5c(n1, f);
+        add_mem_sp5c(n2, f);
+        add_mem_sp5c(n3, f);
+        add_mem_sp5c(n4, f);
+        add_mem_sp5c(cp[0], f);
+        add_mem_sp5c(cp[1], f);
+
         if (Bonds_BondCheck(sp5c[nsp5c[f]][5],sp5c[nsp5c[f]][6])==1) nsp5c_spindlebonds[f]++;
         
         ++nsp5c[f];
@@ -833,4 +572,82 @@ void Rings_setSP5c(int f) { // store cluster 7A D5h from Bonds_aSP5()
     for (i=0; i<N; ++i) ssp5[i]=ach[i];
     
     free(ach);
+}
+
+void add_mem_sp3b(int particle_ID, int frame) {
+    int binAcnt;
+
+    mem_sp3b[particle_ID][nmem_sp3b[particle_ID]]=nsp3b[frame];
+    nmem_sp3b[particle_ID]++;
+    if (nmem_sp3b[particle_ID] >= mmem_sp3b) {
+        for (binAcnt=0; binAcnt<N; binAcnt++) {
+            mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
+        }
+        mmem_sp3b=mmem_sp3b+incrClustPerPart;
+    }
+}
+
+void add_mem_sp3c(int particle_ID, int frame) {
+    int binAcnt;
+
+    mem_sp3c[particle_ID][nmem_sp3c[particle_ID]]=nsp3c[frame];
+    nmem_sp3c[particle_ID]++;
+    if (nmem_sp3c[particle_ID] >= mmem_sp3c) {
+        for (binAcnt=0; binAcnt<N; binAcnt++) {
+            mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
+        }
+        mmem_sp3c=mmem_sp3c+incrClustPerPart;
+    }
+}
+
+void add_mem_sp4b(int particle_ID, int frame) {
+    int binAcnt;
+
+    mem_sp4b[particle_ID][nmem_sp4b[particle_ID]] = nsp4b[frame];
+    nmem_sp4b[particle_ID]++;
+    if (nmem_sp4b[particle_ID] >= mmem_sp4b) {
+        for (binAcnt = 0; binAcnt < N; binAcnt++) {
+            mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrClustPerPart);
+        }
+        mmem_sp4b = mmem_sp4b + incrClustPerPart;
+    }
+}
+
+void add_mem_sp4c(int particle_ID, int frame) {
+    int binAcnt;
+
+    mem_sp4c[particle_ID][nmem_sp4c[particle_ID]] = nsp4c[frame];
+    nmem_sp4c[particle_ID]++;
+    if (nmem_sp4c[particle_ID] >= mmem_sp4c) {
+        for (binAcnt = 0; binAcnt < N; binAcnt++) {
+            mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrClustPerPart);
+        }
+        mmem_sp4c = mmem_sp4c + incrClustPerPart;
+    }
+}
+
+void add_mem_sp5b(int particle_ID, int frame) {
+    int binAcnt;
+
+    mem_sp5b[particle_ID][nmem_sp5b[particle_ID]] = nsp5b[frame];
+    nmem_sp5b[particle_ID]++;
+    if (nmem_sp5b[particle_ID] >= mmem_sp5b) {
+        for (binAcnt = 0; binAcnt < N; binAcnt++) {
+            mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrClustPerPart);
+        }
+        mmem_sp5b = mmem_sp5b + incrClustPerPart;
+    }
+}
+
+void add_mem_sp5c(int particle_ID, int frame) {
+    int binAcnt;
+
+    mem_sp5c[particle_ID][nmem_sp5c[particle_ID]] = nsp5c[frame];
+    nmem_sp5c[particle_ID]++;
+    if (nmem_sp5c[particle_ID] >= mmem_sp5c) {
+        for (binAcnt = 0; binAcnt < N; binAcnt++) {
+            mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrClustPerPart);
+        }
+        mmem_sp5c = mmem_sp5c + incrClustPerPart;
+    }
 }
