@@ -285,10 +285,9 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
     for (i=0; i<N; ++i) ach[i] = 'C';
     
     used_sp5b=malloc(nsp5b[f]*sizeof(int)); if (used_sp5b==NULL) { sprintf(errMsg,"Clusters_Get8A_D2d(): used_sp5b[] malloc out of memory\n");  Error(errMsg); }
-    for (i=0; i<nsp5b[f]; ++i) used_sp5b[i] = 0;
-    
+
     for (i=0; i<nsp5b[f]-1; ++i) {  // loop over all sp5b_i
-        for (j2=0; j2<nsp5b[f]; ++j2) used_sp5b[j2] = 0;
+        memset(used_sp5b, 0, nsp5b[f]*sizeof(*used_sp5b));
         used_sp5b[i]=1;
         for (j2=0; j2<5; ++j2) {
             for (j=0; j<nmem_sp5b[sp5b[i][j2]]; ++j) {  // loop over all sp5b_j
