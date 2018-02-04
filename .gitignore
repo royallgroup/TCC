@@ -11,3 +11,4 @@
 *.o
 *.exe
 *.pyc
+.cache/

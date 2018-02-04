@@ -5,4 +5,3 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 add_subdirectory(iniparser/src)
 add_subdirectory(tcc/src)
-add_subdirectory(dtcc_postprocessing/src)
