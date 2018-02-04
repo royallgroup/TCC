@@ -53,21 +53,33 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) ; // Return 1 is 11F is also 12
 int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char *ach_cen, char *ach_shell) ;   // Detect 13A clusters
 
 void Clusters_Get12B_13A(int f) ;// Detect 12B & 13A D5h clusters together
-
 void Clust_Write_12B(int f, char *ach1, char *ach1_cen, char *ach1_shell);
-
 void Clust_Write_13A(int f, char *ach2, char *ach2_cen, char *ach2_shell);
 
 void Clusters_Get13B_D5h(int f) ;  // Detect 13B D5h clusters, i.e. twisted icosahedra
+void Cluster_Write_13B(int f, char *ach, char *ach_cen, char *ach_shell);
 
 void Clusters_GetFCC(int f) ;  // Detect 13 particle FCC clusters
+void Cluster_Write_FCC(int f, char *ach, char *ach_cen, char *ach_shell);
 
 void Clusters_GetHCP(int f) ;  // Detect 13 particle HCP clusters
+void Cluster_Write_HCP(int f, int i, int j, int j2, int k, char *ach, char *ach_cen, char *ach_shell);
 
 void Clusters_GetBCC_9(int f) ;
+void Cluster_Write_BCC9(int f, char *ach, char *ach_cen, char *ach_shell);
 
 void Clusters_GetBCC_15(int f) ;   // Detect 15 particle BCC clusters
-
 void Cluster_Write_BCC_15(int f, char *ach, char *ach_cen, char *ach_shell, int clusSize);
+
+
+
+
+
+
+
+
+
+
+
 
 #endif
