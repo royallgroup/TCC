@@ -2493,26 +2493,17 @@ int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach
     int clusSize=12;
 
     ep=-1;
-
+    
     nep=0;
     for (i=0; i<cnb[SP3_1]; i++) {
-        if (Bonds_BondCheck(SP3_2, bNums[SP3_1][i]) == 1) {
-            if (Bonds_BondCheck(SP3_3, bNums[SP3_1][i]) == 1) {
-                for (j = 0; j < 11; j++) {
-                    if (bNums[SP3_1][i] == hc11A[n11A[f]][j]) break;
-                }
-                if (j != 11) continue;
-                nep++;
-                if (nep >= 2) break;
-                ep = bNums[SP3_1][i];
-            }
-            else{
-                continue;
-            }
+        if (Bonds_BondCheck(SP3_2,bNums[SP3_1][i])!=1 || Bonds_BondCheck(SP3_3,bNums[SP3_1][i])!=1) continue;
+        for (j=0; j<11; j++) {
+            if (bNums[SP3_1][i]==hc11A[n11A[f]][j]) break;
         }
-        else{
-            continue;
-        }
+        if (j!=11) continue;
+        nep++;
+        if (nep>=2) break;
+        ep=bNums[SP3_1][i];
     }
     if (nep!=1) return 0;
     
