@@ -96,20 +96,23 @@ void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
                     hc6Z[n6Z[f]][5]=hc6Z[n6Z[f]][4];
                     hc6Z[n6Z[f]][4]=k;
                 }
-                // hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
-                ach[hc6Z[n6Z[f]][0]] = 'O';
-                ach[hc6Z[n6Z[f]][1]] = 'O';
-                ach[hc6Z[n6Z[f]][2]] = 'O';
-                ach[hc6Z[n6Z[f]][3]] = 'O';
-                if (ach[hc6Z[n6Z[f]][4]] == 'C') ach[hc6Z[n6Z[f]][4]] = 'B';
-                if (ach[hc6Z[n6Z[f]][5]] == 'C') ach[hc6Z[n6Z[f]][5]] = 'B';
-
-                ++n6Z[f];
+                Cluster_Write_6Z(f, ach);
             }
         }
     }
     for (i=0; i<N; ++i) s6Z[i]=ach[i];
     free(ach);
+}
+
+void Cluster_Write_6Z(int f, char *ach) {// hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
+    ach[hc6Z[n6Z[f]][0]] = 'O';
+    ach[hc6Z[n6Z[f]][1]] = 'O';
+    ach[hc6Z[n6Z[f]][2]] = 'O';
+    ach[hc6Z[n6Z[f]][3]] = 'O';
+    if (ach[hc6Z[n6Z[f]][4]] == 'C') ach[hc6Z[n6Z[f]][4]] = 'B';
+    if (ach[hc6Z[n6Z[f]][5]] == 'C') ach[hc6Z[n6Z[f]][5]] = 'B';
+
+    ++n6Z[f];
 }
 
 void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
@@ -251,21 +254,24 @@ void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
                 quickSort(&hc7K[n7K[f]][3],2);
                 quickSort(&hc7K[n7K[f]][5],2);
 
-                // hc7K key: (scom, sother, ring_com, ring_other)
-                ach[hc7K[n7K[f]][0]] = 'O';
-                ach[hc7K[n7K[f]][1]] = 'O';
-                ach[hc7K[n7K[f]][2]] = 'O';
-                if (ach[hc7K[n7K[f]][3]] == 'C') ach[hc7K[n7K[f]][3]] = 'B';
-                if (ach[hc7K[n7K[f]][4]] == 'C') ach[hc7K[n7K[f]][4]] = 'B';
-                if (ach[hc7K[n7K[f]][5]] == 'C') ach[hc7K[n7K[f]][5]] = 'B';
-                if (ach[hc7K[n7K[f]][6]] == 'C') ach[hc7K[n7K[f]][6]] = 'B';
-
-                ++n7K[f];
+                Cluster_Write_7K(f, ach);
             }
         }
     }
     for (i=0; i<N; ++i) s7K[i]=ach[i];
     free(ach);
+}
+
+void Cluster_Write_7K(int f, char *ach) {// hc7K key: (scom, sother, ring_com, ring_other)
+    ach[hc7K[n7K[f]][0]] = 'O';
+    ach[hc7K[n7K[f]][1]] = 'O';
+    ach[hc7K[n7K[f]][2]] = 'O';
+    if (ach[hc7K[n7K[f]][3]] == 'C') ach[hc7K[n7K[f]][3]] = 'B';
+    if (ach[hc7K[n7K[f]][4]] == 'C') ach[hc7K[n7K[f]][4]] = 'B';
+    if (ach[hc7K[n7K[f]][5]] == 'C') ach[hc7K[n7K[f]][5]] = 'B';
+    if (ach[hc7K[n7K[f]][6]] == 'C') ach[hc7K[n7K[f]][6]] = 'B';
+
+    ++n7K[f];
 }
 
 void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
@@ -367,17 +373,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                 if (flg==0) {
                     for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
 
-                    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-                    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-                    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-                    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-                    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-                    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-                    ach[hc8A[n8A[f]][6]] = 'O';
-                    ach[hc8A[n8A[f]][7]] = 'O';
-
-                    ++n8A[f];
-                    // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+                    Cluster_Write_8A(f, ach);
                 }
             }
         }
@@ -461,17 +457,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                 if (flg==0) {
                     for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
 
-                    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-                    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-                    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-                    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-                    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-                    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-                    ach[hc8A[n8A[f]][6]] = 'O';
-                    ach[hc8A[n8A[f]][7]] = 'O';
-
-                    ++n8A[f];
-                    // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+                    Cluster_Write_8A(f, ach);
                 }
             }
         }
@@ -552,18 +538,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                 }
                 if (flg==0) {
                     for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
-
-                    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-                    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-                    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-                    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-                    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-                    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-                    ach[hc8A[n8A[f]][6]] = 'O';
-                    ach[hc8A[n8A[f]][7]] = 'O';
-
-                    ++n8A[f];
-                    // hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+                    Cluster_Write_8A(f, ach);
                 }
             }
         }
@@ -572,6 +547,19 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
     for(i=0; i<N; ++i) s8A[i]=ach[i];
     free(ach);
     free(used_sp5b);
+}
+
+void Cluster_Write_8A(int f, char *ach) {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
+    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
+    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
+    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
+    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
+    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
+    ach[hc8A[n8A[f]][6]] = 'O';
+    ach[hc8A[n8A[f]][7]] = 'O';
+
+    ++n8A[f];
 }
 
 void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
@@ -597,61 +585,66 @@ void Clusters_8B_loop(int f, int i, char *ach, int clusSize, int primary_spindle
     int break_out;
 
     for (j=0; j < cnb[primary_spindle]; ++j) { // loop over all j particles bonded to first spindle of 7A_i
-            n1 = bNums[primary_spindle][j];
-            for (k=0; k<5; ++k) if (n1 == sp5c[i][k]) break;
-            if (k<5) continue;
-            if (n1 == secondary_spindle) continue; // now is n1 bonded to sp5
-            nbs = 0; // number of bonds
-            for (k=0; k<5; ++k) if (Bonds_BondCheck(n1, sp5c[i][k])) ++nbs;
-            if (nbs != 2) continue;
+        n1 = bNums[primary_spindle][j];
+        for (k=0; k<5; ++k) if (n1 == sp5c[i][k]) break;
+        if (k<5) continue;
+        if (n1 == secondary_spindle) continue; // now is n1 bonded to sp5
+        nbs = 0; // number of bonds
+        for (k=0; k<5; ++k) if (Bonds_BondCheck(n1, sp5c[i][k])) ++nbs;
+        if (nbs != 2) continue;
 
-            // Now we have found the 8B Cs cluster
-            if (n8B[f]==m8B) {
-                hc8B=resize_2D_int(hc8B,m8B,m8B+incrStatic,clusSize,-1);
-                m8B=m8B+incrStatic;
-            }
-            l=0;
-            m=3;
-            break_out=0;
-            for (k=0; k<5; ++k) {
-                if (Bonds_BondCheck(n1, sp5c[i][k])) {
-                    if (m==5) {
-                        break_out=1;
-                        break;
-                    }
-                    hc8B[n8B[f]][m]=sp5c[i][k];
-                    m++;
-                }
-                else {
-                    if (l==3) {
-                        break_out=1;
-                        break;
-                    }
-                    unc[l]=sp5c[i][k];
-                    l++;
-                }
-            }
-            if (break_out==1 || m<5 || l<3) continue;
-
-            quickSort(&hc8B[n8B[f]][3],2);
-            for (k=0;k<3;k++) hc8B[n8B[f]][k]=unc[k];
-            quickSort(&hc8B[n8B[f]][0],3);
-
-            hc8B[n8B[f]][5]=secondary_spindle;
-            hc8B[n8B[f]][6]=primary_spindle;
-            hc8B[n8B[f]][7]=n1;
-            // hc8B key: (SP5_to_4, SP5_to_0/2, SP5_to_3, SP5_to_n1(lower), SP5_to_n1(greater), s, s_to_n1, n1)
-
-            if (ach[hc8B[n8B[f]][7]] == 'C') ach[hc8B[n8B[f]][7]] = 'B';
-            if (ach[hc8B[n8B[f]][0]] == 'C') ach[hc8B[n8B[f]][0]] = 'B';
-            if (ach[hc8B[n8B[f]][1]] == 'C') ach[hc8B[n8B[f]][1]] = 'B';
-            if (ach[hc8B[n8B[f]][2]] == 'C') ach[hc8B[n8B[f]][2]] = 'B';
-            if (ach[hc8B[n8B[f]][3]] == 'C') ach[hc8B[n8B[f]][3]] = 'B';
-            if (ach[hc8B[n8B[f]][4]] == 'C') ach[hc8B[n8B[f]][4]] = 'B';
-            ach[hc8B[n8B[f]][5]] = 'O';
-            ach[hc8B[n8B[f]][6]] = 'O';
-            ++n8B[f];
+        // Now we have found the 8B Cs cluster
+        if (n8B[f]==m8B) {
+            hc8B=resize_2D_int(hc8B,m8B,m8B+incrStatic,clusSize,-1);
+            m8B=m8B+incrStatic;
         }
+        l=0;
+        m=3;
+        break_out=0;
+        for (k=0; k<5; ++k) {
+            if (Bonds_BondCheck(n1, sp5c[i][k])) {
+                if (m==5) {
+                    break_out=1;
+                    break;
+                }
+                hc8B[n8B[f]][m]=sp5c[i][k];
+                m++;
+            }
+            else {
+                if (l==3) {
+                    break_out=1;
+                    break;
+                }
+                unc[l]=sp5c[i][k];
+                l++;
+            }
+        }
+        if (break_out==1 || m<5 || l<3) continue;
+
+        quickSort(&hc8B[n8B[f]][3],2);
+        for (k=0;k<3;k++) hc8B[n8B[f]][k]=unc[k];
+        quickSort(&hc8B[n8B[f]][0],3);
+
+        hc8B[n8B[f]][5]=secondary_spindle;
+        hc8B[n8B[f]][6]=primary_spindle;
+        hc8B[n8B[f]][7]=n1;
+
+
+        Cluster_Write_8B(f, ach);
+    }
+}
+
+void Cluster_Write_8B(int f, char *ach) {
+    // hc8B key: (SP5_to_4, SP5_to_0/2, SP5_to_3, SP5_to_n1(lower), SP5_to_n1(greater), s, s_to_n1, n1)
+    if (ach[hc8B[n8B[f]][7]] == 'C') ach[hc8B[n8B[f]][7]] = 'B';
+    if (ach[hc8B[n8B[f]][0]] == 'C') ach[hc8B[n8B[f]][0]] = 'B';
+    if (ach[hc8B[n8B[f]][1]] == 'C') ach[hc8B[n8B[f]][1]] = 'B';
+    if (ach[hc8B[n8B[f]][2]] == 'C') ach[hc8B[n8B[f]][2]] = 'B';
+    if (ach[hc8B[n8B[f]][3]] == 'C') ach[hc8B[n8B[f]][3]] = 'B';
+    if (ach[hc8B[n8B[f]][4]] == 'C') ach[hc8B[n8B[f]][4]] = 'B';
+    ach[hc8B[n8B[f]][5]] = 'O';
+    ach[hc8B[n8B[f]][6]] = 'O';
+    ++n8B[f];
 }
 
 
@@ -669,158 +662,162 @@ void Clusters_Get8K(int f) {    // Detect 8K clusters
     
     for (i=0; i<nsp3c[f]-2; ++i) {  // loop over all sp3c_i
         for (j2=0; j2<3; j2++) {    // loop over all particles in SP3 ring of sp3c_i
-        for (j=0; j<nmem_sp3c[sp3c[i][j2]]-1; ++j) { // loop over all sp3c_j which sp3c[i][j2] is a member of
-            if (mem_sp3c[sp3c[i][j2]][j]<=i) continue;  // check not used mem_sp3c[sp3c[i][j2]][j] before
-            
-            m = 0;  // check j2 from SP3 ring of sp3c_i is in SP3 ring of mem_sp3c[sp3c[i][j2]][j]
-            for(k=0; k<3; ++k) {
-                if (sp3c[i][j2]==sp3c[mem_sp3c[sp3c[i][j2]][j]][k]) {
-                    cp[0]=sp3c[i][j2];
-                    m++;
-                }
-            }
-            if (m!=1) continue;
-            
-            m = 0;  // find extra 1 particle from SP3 ring of sp3c_i which is also in SP3 ring of mem_sp3c[sp3c[i][j2]][j]
-            for(k=0; k<3; ++k) {
-                if (k==j2) continue;    // don't check j2 again
-                if (sp3c[i][k]<sp3c[i][j2]) continue; // will have found before or do not find after when using different j2 particle
-                for(l=0; l<3; ++l) {
-                    if (sp3c[i][k]==sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
-                        cp[1]=sp3c[i][k];
+            for (j=0; j<nmem_sp3c[sp3c[i][j2]]-1; ++j) { // loop over all sp3c_j which sp3c[i][j2] is a member of
+                if (mem_sp3c[sp3c[i][j2]][j]<=i) continue;  // check not used mem_sp3c[sp3c[i][j2]][j] before
+
+                m = 0;  // check j2 from SP3 ring of sp3c_i is in SP3 ring of mem_sp3c[sp3c[i][j2]][j]
+                for(k=0; k<3; ++k) {
+                    if (sp3c[i][j2]==sp3c[mem_sp3c[sp3c[i][j2]][j]][k]) {
+                        cp[0]=sp3c[i][j2];
                         m++;
                     }
                 }
-            }
-            if (m!=1) continue;
-            
-            m = 0;  // check exactly one common spindle between sp3c_i and mem_sp3c[sp3c[i][j2]][j]
-            for(k=3; k<5; ++k) {
-                for(l=3; l<5; ++l) {
-                    if (sp3c[i][k]==sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
-                        scom=sp3c[i][k];
-                        m++;
-                    }
-                }
-            }
-            if (m!=1) continue;
-            
-            if (sp3c[i][3]==scom) sother[0]=sp3c[i][4];
-            else sother[0]=sp3c[i][3];
-            if (sp3c[mem_sp3c[sp3c[i][j2]][j]][3]==scom) sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
-            else sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
-            
-            k=0;    // find particle from SP3 ring of sp3c_i which is common with 5A mem_sp3c[sp3c[i][j2]][j]
-            for(l=0; l<3; ++l) {
-                if (sp3c[i][l]==cp[0] || sp3c[i][l]==cp[1]) continue;
-                for(m=0; m<5; ++m) {
-                    if (sp3c[i][l]==sp3c[mem_sp3c[sp3c[i][j2]][j]][m]) break;
-                }
-                if (m==5) {
-                    if (k==1) {
-                        k++;
-                        break;
-                    }
-                    unc[0]=sp3c[i][l];
-                    k++;
-                }
-            }
-            if (k!=1) continue;
-            
-            k=0;    // find particle from SP3 ring of mem_sp3c[sp3c[i][j2]][j] which is common with 5A sp3c_i
-            for(l=0; l<3; ++l) {
-                if (sp3c[mem_sp3c[sp3c[i][j2]][j]][l]==cp[0] || sp3c[mem_sp3c[sp3c[i][j2]][j]][l]==cp[1]) continue;
-                for(m=0; m<5; ++m) {
-                    if (sp3c[mem_sp3c[sp3c[i][j2]][j]][l]==sp3c[i][m]) break;
-                }
-                if (m==5) {
-                    if (k==1) {
-                        k++;
-                        break;
-                    }
-                    unc[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][l];
-                    k++;
-                }
-            }
-            if (k!=1) continue;
-            
-            for (k=j+1; k<nmem_sp3c[sp3c[i][j2]]; ++k) { 
-                if (mem_sp3c[sp3c[i][j2]][k]<=i) continue;  // higher index of sp3c cluster than i
-                if (mem_sp3c[sp3c[i][j2]][k]<=mem_sp3c[sp3c[i][j2]][j]) continue;   // higher index of sp3c cluster than mem_sp3c[sp3c[i][j2]][j]
-                
-                n = 0;  // check common SP3 ring particles are exactly cp
-                for(l=0; l<3; ++l) {
-                    for(m=0; m<2; ++m) {
-                        if (cp[m]==sp3c[mem_sp3c[sp3c[i][j2]][k]][l]) {
-                            n++;
+                if (m!=1) continue;
+
+                m = 0;  // find extra 1 particle from SP3 ring of sp3c_i which is also in SP3 ring of mem_sp3c[sp3c[i][j2]][j]
+                for(k=0; k<3; ++k) {
+                    if (k==j2) continue;    // don't check j2 again
+                    if (sp3c[i][k]<sp3c[i][j2]) continue; // will have found before or do not find after when using different j2 particle
+                    for(l=0; l<3; ++l) {
+                        if (sp3c[i][k]==sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
+                            cp[1]=sp3c[i][k];
+                            m++;
                         }
                     }
                 }
-                if (n!=2) continue;
-                
-                n = 0;  // check spindles are exactly sother
-                for(l=3; l<5; ++l) {
-                    for(m=0; m<2; ++m) {
-                        if (sother[m]==sp3c[mem_sp3c[sp3c[i][j2]][k]][l]) {
-                            n++;
+                if (m!=1) continue;
+
+                m = 0;  // check exactly one common spindle between sp3c_i and mem_sp3c[sp3c[i][j2]][j]
+                for(k=3; k<5; ++k) {
+                    for(l=3; l<5; ++l) {
+                        if (sp3c[i][k]==sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) {
+                            scom=sp3c[i][k];
+                            m++;
                         }
                     }
                 }
-                if (n!=2) continue;
-                
-                n=0;    // find particle from SP3 ring of mem_sp3c[sp3c[i][j2]][j] which is common with 5A sp3c_i
+                if (m!=1) continue;
+
+                if (sp3c[i][3]==scom) sother[0]=sp3c[i][4];
+                else sother[0]=sp3c[i][3];
+                if (sp3c[mem_sp3c[sp3c[i][j2]][j]][3]==scom) sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][4];
+                else sother[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][3];
+
+                k=0;    // find particle from SP3 ring of sp3c_i which is common with 5A mem_sp3c[sp3c[i][j2]][j]
                 for(l=0; l<3; ++l) {
-                    if (sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==cp[0] || sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==cp[1]) continue;
+                    if (sp3c[i][l]==cp[0] || sp3c[i][l]==cp[1]) continue;
                     for(m=0; m<5; ++m) {
-                        if (sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==sp3c[i][m] || sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) break;
+                        if (sp3c[i][l]==sp3c[mem_sp3c[sp3c[i][j2]][j]][m]) break;
                     }
                     if (m==5) {
-                        if (n==1) {
-                            n++;
+                        if (k==1) {
+                            k++;
                             break;
                         }
-                        unc[2]=sp3c[mem_sp3c[sp3c[i][j2]][k]][l];
-                        n++;
-                    }   
+                        unc[0]=sp3c[i][l];
+                        k++;
+                    }
                 }
-                if (n!=1) continue;
-            
-                // Now we have found the 8K cluster
-                if (n8K[f]==m8K) {
-                    hc8K=resize_2D_int(hc8K,m8K,m8K+incrStatic,clusSize,-1);
-                    m8K=m8K+incrStatic;
-                }
-                // hc8K key: (SP3_common_1, SP3_common_2, spindle_1, spindle_2, spindle_3, other_SP3_1, other_SP3_2, other_SP3_3)
-                trial[0]=cp[0]; 
-                trial[1]=cp[1]; 
-                trial[2]=scom;
-                trial[3]=sother[0]; 
-                trial[4]=sother[1];
-                trial[5]=unc[0];
-                trial[6]=unc[1];
-                trial[7]=unc[2];
-                
-                quickSort(&trial[0],2);
-                quickSort(&trial[2],3);
-                quickSort(&trial[5],3);
-                for (l=0; l<clusSize; l++) hc8K[n8K[f]][l]=trial[l];
+                if (k!=1) continue;
 
-                if(ach[hc8K[n8K[f]][2]] == 'C') ach[hc8K[n8K[f]][2]] = 'B';
-                if(ach[hc8K[n8K[f]][3]] == 'C') ach[hc8K[n8K[f]][3]] = 'B';
-                if(ach[hc8K[n8K[f]][4]] == 'C') ach[hc8K[n8K[f]][4]] = 'B';
-                if(ach[hc8K[n8K[f]][5]] == 'C') ach[hc8K[n8K[f]][5]] = 'B';
-                if(ach[hc8K[n8K[f]][6]] == 'C') ach[hc8K[n8K[f]][6]] = 'B';
-                if(ach[hc8K[n8K[f]][7]] == 'C') ach[hc8K[n8K[f]][7]] = 'B';
-                ach[hc8K[n8K[f]][0]] = 'O';
-                ach[hc8K[n8K[f]][1]] = 'O';
-                ++n8K[f];
+                k=0;    // find particle from SP3 ring of mem_sp3c[sp3c[i][j2]][j] which is common with 5A sp3c_i
+                for(l=0; l<3; ++l) {
+                    if (sp3c[mem_sp3c[sp3c[i][j2]][j]][l]==cp[0] || sp3c[mem_sp3c[sp3c[i][j2]][j]][l]==cp[1]) continue;
+                    for(m=0; m<5; ++m) {
+                        if (sp3c[mem_sp3c[sp3c[i][j2]][j]][l]==sp3c[i][m]) break;
+                    }
+                    if (m==5) {
+                        if (k==1) {
+                            k++;
+                            break;
+                        }
+                        unc[1]=sp3c[mem_sp3c[sp3c[i][j2]][j]][l];
+                        k++;
+                    }
+                }
+                if (k!=1) continue;
+
+                for (k=j+1; k<nmem_sp3c[sp3c[i][j2]]; ++k) {
+                    if (mem_sp3c[sp3c[i][j2]][k]<=i) continue;  // higher index of sp3c cluster than i
+                    if (mem_sp3c[sp3c[i][j2]][k]<=mem_sp3c[sp3c[i][j2]][j]) continue;   // higher index of sp3c cluster than mem_sp3c[sp3c[i][j2]][j]
+
+                    n = 0;  // check common SP3 ring particles are exactly cp
+                    for(l=0; l<3; ++l) {
+                        for(m=0; m<2; ++m) {
+                            if (cp[m]==sp3c[mem_sp3c[sp3c[i][j2]][k]][l]) {
+                                n++;
+                            }
+                        }
+                    }
+                    if (n!=2) continue;
+
+                    n = 0;  // check spindles are exactly sother
+                    for(l=3; l<5; ++l) {
+                        for(m=0; m<2; ++m) {
+                            if (sother[m]==sp3c[mem_sp3c[sp3c[i][j2]][k]][l]) {
+                                n++;
+                            }
+                        }
+                    }
+                    if (n!=2) continue;
+
+                    n=0;    // find particle from SP3 ring of mem_sp3c[sp3c[i][j2]][j] which is common with 5A sp3c_i
+                    for(l=0; l<3; ++l) {
+                        if (sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==cp[0] || sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==cp[1]) continue;
+                        for(m=0; m<5; ++m) {
+                            if (sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==sp3c[i][m] || sp3c[mem_sp3c[sp3c[i][j2]][k]][l]==sp3c[mem_sp3c[sp3c[i][j2]][j]][l]) break;
+                        }
+                        if (m==5) {
+                            if (n==1) {
+                                n++;
+                                break;
+                            }
+                            unc[2]=sp3c[mem_sp3c[sp3c[i][j2]][k]][l];
+                            n++;
+                        }
+                    }
+                    if (n!=1) continue;
+
+                    // Now we have found the 8K cluster
+                    if (n8K[f]==m8K) {
+                        hc8K=resize_2D_int(hc8K,m8K,m8K+incrStatic,clusSize,-1);
+                        m8K=m8K+incrStatic;
+                    }
+                    // hc8K key: (SP3_common_1, SP3_common_2, spindle_1, spindle_2, spindle_3, other_SP3_1, other_SP3_2, other_SP3_3)
+                    trial[0]=cp[0];
+                    trial[1]=cp[1];
+                    trial[2]=scom;
+                    trial[3]=sother[0];
+                    trial[4]=sother[1];
+                    trial[5]=unc[0];
+                    trial[6]=unc[1];
+                    trial[7]=unc[2];
+
+                    quickSort(&trial[0],2);
+                    quickSort(&trial[2],3);
+                    quickSort(&trial[5],3);
+                    for (l=0; l<clusSize; l++) hc8K[n8K[f]][l]=trial[l];
+
+                    Cluster_Write_8K(f, ach);
+                }
             }
-        }
         }
     }
 
     for(i=0; i<N; ++i) s8K[i]=ach[i];
     free(ach);
+}
+
+void Cluster_Write_8K(int f, char *ach) {
+    if(ach[hc8K[n8K[f]][2]] == 'C') ach[hc8K[n8K[f]][2]] = 'B';
+    if(ach[hc8K[n8K[f]][3]] == 'C') ach[hc8K[n8K[f]][3]] = 'B';
+    if(ach[hc8K[n8K[f]][4]] == 'C') ach[hc8K[n8K[f]][4]] = 'B';
+    if(ach[hc8K[n8K[f]][5]] == 'C') ach[hc8K[n8K[f]][5]] = 'B';
+    if(ach[hc8K[n8K[f]][6]] == 'C') ach[hc8K[n8K[f]][6]] = 'B';
+    if(ach[hc8K[n8K[f]][7]] == 'C') ach[hc8K[n8K[f]][7]] = 'B';
+    ach[hc8K[n8K[f]][0]] = 'O';
+    ach[hc8K[n8K[f]][1]] = 'O';
+    ++n8K[f];
 }
 
 void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
@@ -974,19 +971,7 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
                                 hc9A[n9A[f]][5]=db[0];
                             }
                         }
-
-                    // hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
-                    if(ach[hc9A[n9A[f]][0]] == 'C') ach[hc9A[n9A[f]][0]] = 'B';
-                    if(ach[hc9A[n9A[f]][1]] == 'C') ach[hc9A[n9A[f]][1]] = 'B';
-                    if(ach[hc9A[n9A[f]][3]] == 'C') ach[hc9A[n9A[f]][3]] = 'B';
-                    if(ach[hc9A[n9A[f]][4]] == 'C') ach[hc9A[n9A[f]][4]] = 'B';
-                    if(ach[hc9A[n9A[f]][6]] == 'C') ach[hc9A[n9A[f]][6]] = 'B';
-                    if(ach[hc9A[n9A[f]][7]] == 'C') ach[hc9A[n9A[f]][7]] = 'B';
-                    ach[hc9A[n9A[f]][2]] = 'O';
-                    ach[hc9A[n9A[f]][5]] = 'O';
-                    ach[hc9A[n9A[f]][8]] = 'O';
-                    ++n9A[f];
-
+                    Cluster_Write_9A(f, ach);
                     break;
                 }
             }
@@ -995,6 +980,19 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
 
     for(i=0; i<N; ++i) s9A[i]=ach[i];
     free(ach);
+}
+
+void Cluster_Write_9A(int f, char *ach) {// hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
+    if(ach[hc9A[n9A[f]][0]] == 'C') ach[hc9A[n9A[f]][0]] = 'B';
+    if(ach[hc9A[n9A[f]][1]] == 'C') ach[hc9A[n9A[f]][1]] = 'B';
+    if(ach[hc9A[n9A[f]][3]] == 'C') ach[hc9A[n9A[f]][3]] = 'B';
+    if(ach[hc9A[n9A[f]][4]] == 'C') ach[hc9A[n9A[f]][4]] = 'B';
+    if(ach[hc9A[n9A[f]][6]] == 'C') ach[hc9A[n9A[f]][6]] = 'B';
+    if(ach[hc9A[n9A[f]][7]] == 'C') ach[hc9A[n9A[f]][7]] = 'B';
+    ach[hc9A[n9A[f]][2]] = 'O';
+    ach[hc9A[n9A[f]][5]] = 'O';
+    ach[hc9A[n9A[f]][8]] = 'O';
+    ++n9A[f];
 }
 
 void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12D
@@ -1601,7 +1599,17 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 }
                 if (flg1==0 || flg2==0 || n!=11 || break_out==1) continue; // fetched final 4 particles from 9B not in 7A_i
 
-                Clust_Write_11E(f, ach1, trial);
+                if(n11E[f] == m11E) {
+                    hc11E=resize_2D_int(hc11E,m11E,m11E+incrStatic,clusSize,-1);
+                    m11E=m11E+incrStatic;
+                }
+
+                quickSort(&trial[0],2);
+                quickSort(&trial[2],2);
+                quickSort(&trial[4],7);
+                for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
+
+                Clust_Write_11E(f, ach1);
                 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
                 if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2i, sp5c[k][6], ach2);
@@ -1670,7 +1678,17 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 }
                 if (flg1==0 || flg2==0 || n!=11 || break_out==1) continue;
 
-                Clust_Write_11E(f, ach1, trial);
+                if(n11E[f] == m11E) {
+                    hc11E=resize_2D_int(hc11E,m11E,m11E+incrStatic,clusSize,-1);
+                    m11E=m11E+incrStatic;
+                }
+
+                quickSort(&trial[0],2);
+                quickSort(&trial[2],2);
+                quickSort(&trial[4],7);
+                for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
+
+                Clust_Write_11E(f, ach1);
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
                 if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2i, sp5c[k][5], ach2);
@@ -1740,7 +1758,17 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 }
                 if (flg1==0 || flg2==0 || n!=11 || break_out==1) continue;
 
-                Clust_Write_11E(f, ach1, trial);
+                if(n11E[f] == m11E) {
+                    hc11E=resize_2D_int(hc11E,m11E,m11E+incrStatic,clusSize,-1);
+                    m11E=m11E+incrStatic;
+                }
+
+                quickSort(&trial[0],2);
+                quickSort(&trial[2],2);
+                quickSort(&trial[4],7);
+                for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
+
+                Clust_Write_11E(f, ach1);
                 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
                 if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2j, sp5c[k][6], ach2);
@@ -1808,7 +1836,17 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 }
                 if (flg1==0 || flg2==0 || n!=11 || break_out==1) continue;
 
-                Clust_Write_11E(f, ach1, trial);
+                if(n11E[f] == m11E) {
+                    hc11E=resize_2D_int(hc11E,m11E,m11E+incrStatic,clusSize,-1);
+                    m11E=m11E+incrStatic;
+                }
+
+                quickSort(&trial[0],2);
+                quickSort(&trial[2],2);
+                quickSort(&trial[4],7);
+                for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
+
+                Clust_Write_11E(f, ach1);
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
                 if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2j, sp5c[k][5], ach2);
@@ -1818,20 +1856,7 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
     }
 }
 
-void Clust_Write_11E(int f, char *ach1, int *trial) {
-    int i;
-    int clusSize = 11;
-
-    if(n11E[f] == m11E) {
-        hc11E=resize_2D_int(hc11E,m11E,m11E+incrStatic,clusSize,-1);
-        m11E=m11E+incrStatic;
-    }
-
-    quickSort(&trial[0],2);
-    quickSort(&trial[2],2);
-    quickSort(&trial[4],7);
-    for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
-
+void Clust_Write_11E(int f, char *ach1) {
     if(ach1[hc11E[n11E[f]][4]] == 'C') ach1[hc11E[n11E[f]][4]] = 'B';
     if(ach1[hc11E[n11E[f]][5]] == 'C') ach1[hc11E[n11E[f]][5]] = 'B';
     if(ach1[hc11E[n11E[f]][6]] == 'C') ach1[hc11E[n11E[f]][6]] = 'B';
@@ -2145,67 +2170,71 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
         for (j2=0; j2<nsp4b[f]; ++j2) used_sp4b[j2] = 0;
         used_sp4b[i]=1;
         for (j2=0; j2<cnb[sp4b[i][0]]; ++j2) {
-        for (j=0; j<nmem_sp4b[bNums[sp4b[i][0]][j2]]; ++j) {    // loop over sp4b_j
-            if (mem_sp4b[bNums[sp4b[i][0]][j2]][j]<=i) continue;
-            if (used_sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]]==1) continue;
-            used_sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]]=1;
+            for (j=0; j<nmem_sp4b[bNums[sp4b[i][0]][j2]]; ++j) {    // loop over sp4b_j
+                if (mem_sp4b[bNums[sp4b[i][0]][j2]][j]<=i) continue;
+                if (used_sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]]==1) continue;
+                used_sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]]=1;
 
-            if(sp4b[i][4] == sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4]) continue;
-            if(Bonds_BondCheck(sp4b[i][4], sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4])) continue;
-            for(k=0; k<5; ++k){
-                for(l=0; l<5; ++l){
-                    if(sp4b[i][k] == sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][l]) break;        
+                if(sp4b[i][4] == sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4]) continue;
+                if(Bonds_BondCheck(sp4b[i][4], sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4])) continue;
+                for(k=0; k<5; ++k){
+                    for(l=0; l<5; ++l){
+                        if(sp4b[i][k] == sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][l]) break;
+                    }
+                    if(l<5) break;
                 }
-                if(l<5) break;
-            }
-            if(k<5) continue;
-            for(k=0; k<4; ++k){
-                m = 0;
-                for(l=0; l<4; ++l) if(Bonds_BondCheck(sp4b[i][k], sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][l])) ++m;        
-                if(m!=2) break;
-            }
-            // ERROR: Need to check converse, i. e. each SP4 ring particle from sp4b_j bonded to to exactly two particles from sp4b_i
-            if(k==4) {
-                if(n10A[f] == m10A) { 
-                    hc10A=resize_2D_int(hc10A,m10A,m10A+incrStatic,clusSize,-1);
-                    m10A=m10A+incrStatic;
+                if(k<5) continue;
+                for(k=0; k<4; ++k){
+                    m = 0;
+                    for(l=0; l<4; ++l) if(Bonds_BondCheck(sp4b[i][k], sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][l])) ++m;
+                    if(m!=2) break;
                 }
-        
-                // hc10A key: (SP4s going up, spindles going up)
-                
-                hc10A[n10A[f]][0]=sp4b[i][0];
-                hc10A[n10A[f]][1]=sp4b[i][1];
-                hc10A[n10A[f]][2]=sp4b[i][2];
-                hc10A[n10A[f]][3]=sp4b[i][3];
-                hc10A[n10A[f]][4]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][0];
-                hc10A[n10A[f]][5]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][1];
-                hc10A[n10A[f]][6]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][2];
-                hc10A[n10A[f]][7]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][3];
-                quickSort(&hc10A[n10A[f]][0],8);
-                hc10A[n10A[f]][8]=sp4b[i][4];
-                hc10A[n10A[f]][9]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4];
-                quickSort(&hc10A[n10A[f]][8],2);
-                
-                if(ach[hc10A[n10A[f]][0]] == 'C') ach[hc10A[n10A[f]][0]] = 'B';
-                if(ach[hc10A[n10A[f]][1]] == 'C') ach[hc10A[n10A[f]][1]] = 'B';
-                if(ach[hc10A[n10A[f]][2]] == 'C') ach[hc10A[n10A[f]][2]] = 'B';
-                if(ach[hc10A[n10A[f]][3]] == 'C') ach[hc10A[n10A[f]][3]] = 'B';
-                if(ach[hc10A[n10A[f]][4]] == 'C') ach[hc10A[n10A[f]][4]] = 'B';
-                if(ach[hc10A[n10A[f]][5]] == 'C') ach[hc10A[n10A[f]][5]] = 'B';
-                if(ach[hc10A[n10A[f]][6]] == 'C') ach[hc10A[n10A[f]][6]] = 'B';
-                if(ach[hc10A[n10A[f]][7]] == 'C') ach[hc10A[n10A[f]][7]] = 'B';
-                ach[hc10A[n10A[f]][8]] = 'O';
-                ach[hc10A[n10A[f]][9]] = 'O';
-                
-                ++n10A[f];
+                // ERROR: Need to check converse, i. e. each SP4 ring particle from sp4b_j bonded to to exactly two particles from sp4b_i
+                if(k==4) {
+                    if(n10A[f] == m10A) {
+                        hc10A=resize_2D_int(hc10A,m10A,m10A+incrStatic,clusSize,-1);
+                        m10A=m10A+incrStatic;
+                    }
+
+                    // hc10A key: (SP4s going up, spindles going up)
+
+                    hc10A[n10A[f]][0]=sp4b[i][0];
+                    hc10A[n10A[f]][1]=sp4b[i][1];
+                    hc10A[n10A[f]][2]=sp4b[i][2];
+                    hc10A[n10A[f]][3]=sp4b[i][3];
+                    hc10A[n10A[f]][4]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][0];
+                    hc10A[n10A[f]][5]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][1];
+                    hc10A[n10A[f]][6]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][2];
+                    hc10A[n10A[f]][7]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][3];
+                    quickSort(&hc10A[n10A[f]][0],8);
+                    hc10A[n10A[f]][8]=sp4b[i][4];
+                    hc10A[n10A[f]][9]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4];
+                    quickSort(&hc10A[n10A[f]][8],2);
+
+                    Cluster_Write_10A(f, ach);
+                }
             }
-        }
         }
     }
 
     for (i=0; i<N; ++i) s10A[i]=ach[i];
     free(ach);
     free(used_sp4b);
+}
+
+void Cluster_Write_10A(int f, char *ach) {
+    if(ach[hc10A[n10A[f]][0]] == 'C') ach[hc10A[n10A[f]][0]] = 'B';
+    if(ach[hc10A[n10A[f]][1]] == 'C') ach[hc10A[n10A[f]][1]] = 'B';
+    if(ach[hc10A[n10A[f]][2]] == 'C') ach[hc10A[n10A[f]][2]] = 'B';
+    if(ach[hc10A[n10A[f]][3]] == 'C') ach[hc10A[n10A[f]][3]] = 'B';
+    if(ach[hc10A[n10A[f]][4]] == 'C') ach[hc10A[n10A[f]][4]] = 'B';
+    if(ach[hc10A[n10A[f]][5]] == 'C') ach[hc10A[n10A[f]][5]] = 'B';
+    if(ach[hc10A[n10A[f]][6]] == 'C') ach[hc10A[n10A[f]][6]] = 'B';
+    if(ach[hc10A[n10A[f]][7]] == 'C') ach[hc10A[n10A[f]][7]] = 'B';
+    ach[hc10A[n10A[f]][8]] = 'O';
+    ach[hc10A[n10A[f]][9]] = 'O';
+
+    ++n10A[f];
 }
 
 void Clusters_Get10W(int f) { // Detect 10W clusters
@@ -2269,19 +2298,7 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
         hc10W[n10W[f]][0] = sp5b[i][5]; 
         for (j=0; j<9; j++) hc10W[n10W[f]][j+1]=shell_parts[j];
         quickSort(&hc10W[n10W[f]][1],9);
-        
-        if(ach[hc10W[n10W[f]][1]] == 'C') ach[hc10W[n10W[f]][1]] = ach_shell[hc10W[n10W[f]][1]] = 'B';
-        if(ach[hc10W[n10W[f]][2]] == 'C') ach[hc10W[n10W[f]][2]] = ach_shell[hc10W[n10W[f]][2]] = 'B';
-        if(ach[hc10W[n10W[f]][3]] == 'C') ach[hc10W[n10W[f]][3]] = ach_shell[hc10W[n10W[f]][3]] = 'B';
-        if(ach[hc10W[n10W[f]][4]] == 'C') ach[hc10W[n10W[f]][4]] = ach_shell[hc10W[n10W[f]][4]] = 'B';
-        if(ach[hc10W[n10W[f]][5]] == 'C') ach[hc10W[n10W[f]][5]] = ach_shell[hc10W[n10W[f]][5]] = 'B';
-        if(ach[hc10W[n10W[f]][6]] == 'C') ach[hc10W[n10W[f]][6]] = ach_shell[hc10W[n10W[f]][6]] = 'B';
-        if(ach[hc10W[n10W[f]][7]] == 'C') ach[hc10W[n10W[f]][7]] = ach_shell[hc10W[n10W[f]][7]] = 'B';
-        if(ach[hc10W[n10W[f]][8]] == 'C') ach[hc10W[n10W[f]][8]] = ach_shell[hc10W[n10W[f]][8]] = 'B';
-        if(ach[hc10W[n10W[f]][9]] == 'C') ach[hc10W[n10W[f]][9]] = ach_shell[hc10W[n10W[f]][9]] = 'B';
-        ach[hc10W[n10W[f]][0]] = ach_cen[hc10W[n10W[f]][0]] = 'O';
-
-        ++n10W[f];
+        Cluster_Write_10W(f, ach, ach_cen, ach_shell);
     }
     
     for(i=0; i<N; ++i) {
@@ -2292,6 +2309,21 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
     free(ach);
     free(ach_cen);
     free(ach_shell);
+}
+
+void Cluster_Write_10W(int f, char *ach, char *ach_cen, char *ach_shell) {
+    if(ach[hc10W[n10W[f]][1]] == 'C') ach[hc10W[n10W[f]][1]] = ach_shell[hc10W[n10W[f]][1]] = 'B';
+    if(ach[hc10W[n10W[f]][2]] == 'C') ach[hc10W[n10W[f]][2]] = ach_shell[hc10W[n10W[f]][2]] = 'B';
+    if(ach[hc10W[n10W[f]][3]] == 'C') ach[hc10W[n10W[f]][3]] = ach_shell[hc10W[n10W[f]][3]] = 'B';
+    if(ach[hc10W[n10W[f]][4]] == 'C') ach[hc10W[n10W[f]][4]] = ach_shell[hc10W[n10W[f]][4]] = 'B';
+    if(ach[hc10W[n10W[f]][5]] == 'C') ach[hc10W[n10W[f]][5]] = ach_shell[hc10W[n10W[f]][5]] = 'B';
+    if(ach[hc10W[n10W[f]][6]] == 'C') ach[hc10W[n10W[f]][6]] = ach_shell[hc10W[n10W[f]][6]] = 'B';
+    if(ach[hc10W[n10W[f]][7]] == 'C') ach[hc10W[n10W[f]][7]] = ach_shell[hc10W[n10W[f]][7]] = 'B';
+    if(ach[hc10W[n10W[f]][8]] == 'C') ach[hc10W[n10W[f]][8]] = ach_shell[hc10W[n10W[f]][8]] = 'B';
+    if(ach[hc10W[n10W[f]][9]] == 'C') ach[hc10W[n10W[f]][9]] = ach_shell[hc10W[n10W[f]][9]] = 'B';
+    ach[hc10W[n10W[f]][0]] = ach_cen[hc10W[n10W[f]][0]] = 'O';
+
+    ++n10W[f];
 }
 
 void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
