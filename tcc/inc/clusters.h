@@ -55,7 +55,6 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) ;// Re
 void Clusters_Get11F_12E_13K(int f) ;  // Detect 11F C2v & 12E 3h
 
 int Clusters_Get12E_D3h(int f, int j, char *ach) ; // Return 1 is 11F is also 12E
-int New_Get12E_D3h(int f, int j, char *ach);
 
 int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char *ach_cen, char *ach_shell);   // Detect 13A clusters
 
