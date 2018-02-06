@@ -2447,49 +2447,92 @@ int Check_unique_6A_rings(int first_6A_id, int second_6A_id) {
     return 0;
 }
 
-int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach_cen, char *ach_shell) {    // Detect 12K clusters
-    int i, j;
+void Clusters_Get12K(int f) {    // Detect 12K clusters
+    int i, j, m;
     int ep, nep;
-    int clusSize=12;
+    int sp3_rings[8][3];
+    int ptr_11A, particle_1, particle_2;
 
     ep=-1;
-    
-    nep=0;
-    for (i=0; i<cnb[SP3_1]; i++) {
-        if (Bonds_BondCheck(SP3_2,bNums[SP3_1][i])!=1 || Bonds_BondCheck(SP3_3,bNums[SP3_1][i])!=1) continue;
-        for (j=0; j<11; j++) {
-            if (bNums[SP3_1][i]==hc11A[n11A[f]][j]) break;
+    for(i=0; i<8; i++){
+        for(j=0; j<3; j++){
+            sp3_rings[i][j] = -1;
         }
-        if (j!=11) continue;
-        nep++;
-        if (nep>=2) break;
-        ep=bNums[SP3_1][i];
     }
-    if (nep!=1) return 0;
-    
-    if(n12K[f] == m12K) { 
+    // Identify bonds between ring particles
+    for(ptr_11A=0; ptr_11A<n11A[f]; ptr_11A++) {
+        for(particle_1=0; particle_1<4; particle_1++) {
+            m = 0;
+            sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_1];
+            for(particle_2=4; particle_2<8; particle_2++) {
+                if (Bonds_BondCheck(hc11A[ptr_11A][particle_1], hc11A[ptr_11A][particle_2])) {
+                    m++;
+                    sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_2];
+                }
+            }
+        }
+        for(particle_1=4; particle_1<8; particle_1++) {
+            m = 0;
+            sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_1];
+            for(particle_2=0; particle_2<4; particle_2++) {
+                if (Bonds_BondCheck(hc11A[ptr_11A][particle_1], hc11A[ptr_11A][particle_2])) {
+                    m++;
+                    sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_2];
+                }
+            }
+        }
+        int SP3_1, SP3_2, SP3_3;
+        for(particle_1=0; particle_1<8; particle_1++) {
+            SP3_1 = sp3_rings[particle_1][0];
+            SP3_2 = sp3_rings[particle_1][1];
+            SP3_3 = sp3_rings[particle_1][2];
+            nep = 0;
+            for (i = 0; i < cnb[SP3_1]; i++) {
+                if (Bonds_BondCheck(SP3_2, bNums[SP3_1][i]) != 1 || Bonds_BondCheck(SP3_3, bNums[SP3_1][i]) != 1) continue;
+                for (j = 0; j < 11; j++) { // check that the identified particle isn't already in the 11A
+                    if (bNums[SP3_1][i] == hc11A[ptr_11A][j]) break;
+                }
+                if (j != 11) continue;
+                nep++;
+                if (nep >= 2) break;
+                ep = bNums[SP3_1][i];
+            }
+            if (nep == 1) {
+                Cluster_Write_12K(f, ep, ptr_11A);
+            }
+        }
+    }
+
+
+}
+
+void Cluster_Write_12K(int f, int ep, int id_11A) {
+
+    int i;
+    int clusSize=12;
+
+    if(n12K[f] == m12K) {
         hc12K=resize_2D_int(hc12K,m12K,m12K+incrStatic,clusSize,-1);
         m12K=m12K+incrStatic;
     }
     // hc12K key: (SP4 going up, sd going up, scom, ep)
 
-    for (i=0; i<11; i++) hc12K[n12K[f]][i] = hc11A[n11A[f]][i];
+    for (i=0; i<11; i++) hc12K[n12K[f]][i] = hc11A[id_11A][i];
     hc12K[n12K[f]][11]=ep;
 
-    if(ach[hc12K[n12K[f]][0]]  == 'C') ach[hc12K[n12K[f]][0]] = ach_shell[hc12K[n12K[f]][0]] = 'B';
-    if(ach[hc12K[n12K[f]][1]]  == 'C') ach[hc12K[n12K[f]][1]] = ach_shell[hc12K[n12K[f]][1]] = 'B';
-    if(ach[hc12K[n12K[f]][2]]  == 'C') ach[hc12K[n12K[f]][2]] = ach_shell[hc12K[n12K[f]][2]] = 'B';
-    if(ach[hc12K[n12K[f]][3]]  == 'C') ach[hc12K[n12K[f]][3]] = ach_shell[hc12K[n12K[f]][3]] = 'B';
-    if(ach[hc12K[n12K[f]][4]]  == 'C') ach[hc12K[n12K[f]][4]] = ach_shell[hc12K[n12K[f]][4]] = 'B';
-    if(ach[hc12K[n12K[f]][5]]  == 'C') ach[hc12K[n12K[f]][5]] = ach_shell[hc12K[n12K[f]][5]] = 'B';
-    if(ach[hc12K[n12K[f]][6]]  == 'C') ach[hc12K[n12K[f]][6]] = ach_shell[hc12K[n12K[f]][6]] = 'B';
-    if(ach[hc12K[n12K[f]][7]]  == 'C') ach[hc12K[n12K[f]][7]] = ach_shell[hc12K[n12K[f]][7]] = 'B';
-    ach[hc12K[n12K[f]][8]] = ach_shell[hc12K[n12K[f]][8]] = 'O';
-    ach[hc12K[n12K[f]][9]] = ach_shell[hc12K[n12K[f]][9]] = 'O';
-    ach[hc12K[n12K[f]][10]] = ach_cen[hc12K[n12K[f]][10]] = 'O';
-    ach[hc12K[n12K[f]][11]] = ach_shell[hc12K[n12K[f]][11]] = 'O';
-    
-    return 1;
+    if(s12K[hc12K[n12K[f]][0]]  == 'C') s12K[hc12K[n12K[f]][0]] = s12K_shell[hc12K[n12K[f]][0]] = 'B';
+    if(s12K[hc12K[n12K[f]][1]]  == 'C') s12K[hc12K[n12K[f]][1]] = s12K_shell[hc12K[n12K[f]][1]] = 'B';
+    if(s12K[hc12K[n12K[f]][2]]  == 'C') s12K[hc12K[n12K[f]][2]] = s12K_shell[hc12K[n12K[f]][2]] = 'B';
+    if(s12K[hc12K[n12K[f]][3]]  == 'C') s12K[hc12K[n12K[f]][3]] = s12K_shell[hc12K[n12K[f]][3]] = 'B';
+    if(s12K[hc12K[n12K[f]][4]]  == 'C') s12K[hc12K[n12K[f]][4]] = s12K_shell[hc12K[n12K[f]][4]] = 'B';
+    if(s12K[hc12K[n12K[f]][5]]  == 'C') s12K[hc12K[n12K[f]][5]] = s12K_shell[hc12K[n12K[f]][5]] = 'B';
+    if(s12K[hc12K[n12K[f]][6]]  == 'C') s12K[hc12K[n12K[f]][6]] = s12K_shell[hc12K[n12K[f]][6]] = 'B';
+    if(s12K[hc12K[n12K[f]][7]]  == 'C') s12K[hc12K[n12K[f]][7]] = s12K_shell[hc12K[n12K[f]][7]] = 'B';
+    s12K[hc12K[n12K[f]][8]] = s12K_shell[hc12K[n12K[f]][8]] = 'O';
+    s12K[hc12K[n12K[f]][9]] = s12K_shell[hc12K[n12K[f]][9]] = 'O';
+    s12K[hc12K[n12K[f]][10]] = s12K_cen[hc12K[n12K[f]][10]] = 'O';
+    s12K[hc12K[n12K[f]][11]] = s12K_shell[hc12K[n12K[f]][11]] = 'O';
+    n12K[f]++;
 }
 
 void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters

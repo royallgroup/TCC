@@ -121,6 +121,7 @@ int main(int argc, char **argv) {
 			if (do11C==1) Clusters_Get11C_12A(f);
 			if (do11F==1) Clusters_Get11F_12E_13K(f);
 			if (do12B==1) Clusters_Get12B_13A(f);
+			if (do12K==1) Clusters_Get12K(f);
 			if (do13B==1) Clusters_Get13B_D5h(f);
 			if (doFCC==1) Clusters_GetFCC(f);
 			if (doHCP==1) Clusters_GetHCP(f);
