@@ -235,6 +235,7 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         add_mem_sp4c(n0, f);
         add_mem_sp4c(n1, f);
         add_mem_sp4c(n2, f);
+        add_mem_sp4c(n3, f);
         add_mem_sp4c(cp[0], f);
         add_mem_sp4c(cp[1], f);
 

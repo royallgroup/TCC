@@ -189,11 +189,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     m12A=m12B=m12D=m12E=m12K=initNoStatic;  // max size of m** arrays in dimension i
     m13A=m13B=m13K=initNoStatic;    // max size of m** arrays in dimension i
     mFCC=mHCP=mBCC_9=mBCC_15=initNoStatic;  // max size of **sp** arrays in dimension i
-    
-    msp3=msp3a+msp3b+msp3c;
-    msp4=msp4a+msp4b+msp4c;
-    msp5=msp5a+msp5b+msp5c;
-    
+
     mmem_sp3b=mmem_sp3c=mmem_sp4b=mmem_sp4c=mmem_sp5b=mmem_sp5c=initNoClustPerPart;
     
     if (USELIST==1) {   // if using cell list to detect bond network allocate memory

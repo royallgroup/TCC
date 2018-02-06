@@ -2331,7 +2331,7 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
     // particle. Big gaps in the two 4 membered rings. Does work if the bond length is large
     // enough.
     char *ach_1, *ach_cen_1, *ach_shell_1, *ach_2, *ach_cen_2, *ach_shell_2;
-    int i, j, k, l, m, n;
+    int first_6A_id, i, second_6A_id, k, l, m, n;
     int scom, sother[2], shell_SP3[8][3];
     char errMsg[1000];
     int clusSize=11;
@@ -2353,18 +2353,18 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
     
     scom=sother[0]=sother[1]=-1;
     
-    for(i=0; i<nsp4c[f]-1; ++i){
+    for(first_6A_id=0; first_6A_id<nsp4c[f]-1; ++first_6A_id){
         // POSSIBLE IMPROVEMENT: loop over all sp4c clusters for spindles of sp4c_i
-        for(j=i+1; j<nsp4c[f]; ++j) {
+        for(second_6A_id=first_6A_id+1; second_6A_id<nsp4c[f]; ++second_6A_id) {
             m=0;
             for (k=4; k<6; k++) {
                 for (l=4; l<6; l++) {
-                    if (sp4c[i][k] == sp4c[j][l]) {
+                    if (sp4c[first_6A_id][k] == sp4c[second_6A_id][l]) {
                         if (m>=1) {
                             m++;
                             break;
                         }
-                        scom=sp4c[i][k];
+                        scom=sp4c[first_6A_id][k];
                         m++;
                     }
                 }
@@ -2372,14 +2372,14 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
             }
             if(m!=1) continue;  // one common spindle
             // ERROR !! need to check uncommon spindles are not in other cluster at all
-            if (scom==sp4c[i][4]) sother[0]=sp4c[i][5];
-            else sother[0]=sp4c[i][4];
-            if (scom==sp4c[j][4]) sother[1]=sp4c[j][5];
-            else sother[1]=sp4c[j][4];
+            if (scom==sp4c[first_6A_id][4]) sother[0]=sp4c[first_6A_id][5];
+            else sother[0]=sp4c[first_6A_id][4];
+            if (scom==sp4c[second_6A_id][4]) sother[1]=sp4c[second_6A_id][5];
+            else sother[1]=sp4c[second_6A_id][4];
             
             for(k=0; k<4; ++k) {
                 for(l=0; l<4; ++l) {
-                    if(sp4c[i][k] == sp4c[j][l]) break;     
+                    if(sp4c[first_6A_id][k] == sp4c[second_6A_id][l]) break;
                 }
                 if(l<4) break;
             }
@@ -2392,15 +2392,15 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
             n=0;
             for(k=0; k<4; ++k) {
                 m = 0;
-                shell_SP3[n][m]=sp4c[i][k];
+                shell_SP3[n][m]=sp4c[first_6A_id][k];
                 for(l=0; l<4; ++l) {
-                    if(Bonds_BondCheck(sp4c[i][k], sp4c[j][l])) {
+                    if(Bonds_BondCheck(sp4c[first_6A_id][k], sp4c[second_6A_id][l])) {
                         if (m==2) {
                             m++;
                             break;
                         }
                         m++;
-                        shell_SP3[n][m]=sp4c[j][l];
+                        shell_SP3[n][m]=sp4c[second_6A_id][l];
                     }
                 }
                 if(m!=2) break;
@@ -2411,15 +2411,15 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
             
             for(k=0; k<4; ++k) {
                 m = 0;
-                shell_SP3[n][m]=sp4c[j][k];
+                shell_SP3[n][m]=sp4c[second_6A_id][k];
                 for(l=0; l<4; ++l) {
-                    if(Bonds_BondCheck(sp4c[j][k], sp4c[i][l])) {
+                    if(Bonds_BondCheck(sp4c[second_6A_id][k], sp4c[first_6A_id][l])) {
                         if (m==2) {
                             m++;
                             break;
                         }
                         m++;
-                        shell_SP3[n][m]=sp4c[i][l];
+                        shell_SP3[n][m]=sp4c[first_6A_id][l];
                     }
                 }
                 if(m!=2) break;
@@ -2435,14 +2435,14 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
         
             // hc11A key: (SP4 going up, sd going up, scom)
             
-            hc11A[n11A[f]][0] = sp4c[i][0];
-            hc11A[n11A[f]][1] = sp4c[i][1];
-            hc11A[n11A[f]][2] = sp4c[i][2];
-            hc11A[n11A[f]][3] = sp4c[i][3];
-            hc11A[n11A[f]][4] = sp4c[j][0];
-            hc11A[n11A[f]][5] = sp4c[j][1];
-            hc11A[n11A[f]][6] = sp4c[j][2];
-            hc11A[n11A[f]][7] = sp4c[j][3];
+            hc11A[n11A[f]][0] = sp4c[first_6A_id][0];
+            hc11A[n11A[f]][1] = sp4c[first_6A_id][1];
+            hc11A[n11A[f]][2] = sp4c[first_6A_id][2];
+            hc11A[n11A[f]][3] = sp4c[first_6A_id][3];
+            hc11A[n11A[f]][4] = sp4c[second_6A_id][0];
+            hc11A[n11A[f]][5] = sp4c[second_6A_id][1];
+            hc11A[n11A[f]][6] = sp4c[second_6A_id][2];
+            hc11A[n11A[f]][7] = sp4c[second_6A_id][3];
             hc11A[n11A[f]][8] = sother[0];
             hc11A[n11A[f]][9] = sother[1];
             hc11A[n11A[f]][10] = scom;                 
