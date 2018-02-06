@@ -2,6 +2,8 @@
 #include "clusters.h"
 #include "bonds.h"
 
+
+
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -2377,23 +2379,20 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
             if (scom==sp4c[second_6A_id][4]) sother[1]=sp4c[second_6A_id][5];
             else sother[1]=sp4c[second_6A_id][4];
             
-            for(k=0; k<4; ++k) {
-                for(l=0; l<4; ++l) {
-                    if(sp4c[first_6A_id][k] == sp4c[second_6A_id][l]) break;
-                }
-                if(l<4) break;
+            if (Check_unique_6A_rings(first_6A_id, second_6A_id) == 1){
+                continue;
             }
-            if(k<4) continue; // no common ring particles
-            
+
             for (k=0; k<8; ++k) {
                 for (l=0; l<3; ++l) shell_SP3[k][l]=-1;
             }
-            
+
+            // make sure there are two bonds between ring 1 and ring 2
             n=0;
-            for(k=0; k<4; ++k) {
+            for(k=0; k<4; ++k) { // loop through all first ring particles
                 m = 0;
                 shell_SP3[n][m]=sp4c[first_6A_id][k];
-                for(l=0; l<4; ++l) {
+                for(l=0; l<4; ++l) { // loop through second ring particles
                     if(Bonds_BondCheck(sp4c[first_6A_id][k], sp4c[second_6A_id][l])) {
                         if (m==2) {
                             m++;
@@ -2432,9 +2431,8 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
                 hc11A=resize_2D_int(hc11A,m11A,m11A+incrStatic,clusSize,-1);
                 m11A=m11A+incrStatic;
             }
-        
-            // hc11A key: (SP4 going up, sd going up, scom)
-            
+
+
             hc11A[n11A[f]][0] = sp4c[first_6A_id][0];
             hc11A[n11A[f]][1] = sp4c[first_6A_id][1];
             hc11A[n11A[f]][2] = sp4c[first_6A_id][2];
@@ -2445,11 +2443,8 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
             hc11A[n11A[f]][7] = sp4c[second_6A_id][3];
             hc11A[n11A[f]][8] = sother[0];
             hc11A[n11A[f]][9] = sother[1];
-            hc11A[n11A[f]][10] = scom;                 
-        
-            quickSort(&hc11A[n11A[f]][0],8);
-            quickSort(&hc11A[n11A[f]][8],2);
-                
+            hc11A[n11A[f]][10] = scom;
+
             if(ach_1[hc11A[n11A[f]][0]]  == 'C') ach_1[hc11A[n11A[f]][0]] = ach_shell_1[hc11A[n11A[f]][0]] = 'B';
             if(ach_1[hc11A[n11A[f]][1]]  == 'C') ach_1[hc11A[n11A[f]][1]] = ach_shell_1[hc11A[n11A[f]][1]] = 'B';
             if(ach_1[hc11A[n11A[f]][2]]  == 'C') ach_1[hc11A[n11A[f]][2]] = ach_shell_1[hc11A[n11A[f]][2]] = 'B';
@@ -2485,6 +2480,21 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
     free(ach_2);
     free(ach_cen_2);
     free(ach_shell_2);
+}
+
+int Check_unique_6A_rings(int first_6A_id, int second_6A_id) {
+    // Check that there are no common ring particles between two 6As.
+    // Return 1 if the two 6A rings share a particle, else return 0
+    int first_ring, second_ring;
+
+    for(first_ring=0; first_ring<4; ++first_ring) {
+                for(second_ring=0; second_ring<4; ++second_ring) {
+                    if(sp4c[first_6A_id][first_ring] == sp4c[second_6A_id][second_ring]) {
+                        return 1;
+                    }
+                }
+            }
+    return 0;
 }
 
 int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach_cen, char *ach_shell) {    // Detect 12K clusters

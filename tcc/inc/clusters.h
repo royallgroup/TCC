@@ -45,6 +45,7 @@ void Clusters_Get10W(int f) ;// Detect 10W clusters
 void Cluster_Write_10W(int f, char *ach, char *ach_cen, char *ach_shell);
 
 void Clusters_Get11A_12K(int f) ;// Detect 11A D4d & 12K clusters
+int Check_unique_6A_rings(int first_6A_id, int second_6A_id);
 
 int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach_cen, char *ach_shell) ;   // Detect 12K clusters
 
