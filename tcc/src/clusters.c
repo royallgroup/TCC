@@ -2,8 +2,6 @@
 #include "clusters.h"
 #include "bonds.h"
 
-
-
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -2328,31 +2326,12 @@ void Cluster_Write_10W(int f, char *ach, char *ach_cen, char *ach_shell) {
     ++n10W[f];
 }
 
-void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
-    //  Difficult to be desisive about. Made from 2 sp4c clusters with a common sp4 spindle 
-    // particle. Big gaps in the two 4 membered rings. Does work if the bond length is large
-    // enough.
-    char *ach_1, *ach_cen_1, *ach_shell_1, *ach_2, *ach_cen_2, *ach_shell_2;
-    int first_6A_id, i, second_6A_id, k, l, m, n;
-    int scom, sother[2], shell_SP3[8][3];
-    char errMsg[1000];
-    int clusSize=11;
+void Clusters_Get11A(int f) {
+    // Detect 11A clusters
 
-    ach_1=malloc(N*sizeof(char));   if (ach_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_1[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen_1=malloc(N*sizeof(char));   if (ach_cen_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_cen_1[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell_1=malloc(N*sizeof(char)); if (ach_shell_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_shell_1[] malloc out of memory\n"); Error(errMsg); }
-    ach_2=malloc(N*sizeof(char));   if (ach_2==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_2[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen_2=malloc(N*sizeof(char));   if (ach_cen_2==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_cen_2[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell_2=malloc(N*sizeof(char)); if (ach_shell_2==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_shell_2[] malloc out of memory\n"); Error(errMsg); }
-    for (i=0; i<N; ++i) {
-        ach_1[i] = 'C';
-        ach_cen_1[i] = 'C';
-        ach_shell_1[i] = 'C';
-        ach_2[i] = 'C';
-        ach_cen_2[i] = 'C';
-        ach_shell_2[i] = 'C';
-    }
-    
+    int first_6A_id, second_6A_id, k, l, m;
+    int scom, sother[2];
+
     scom=sother[0]=sother[1]=-1;
     
     for(first_6A_id=0; first_6A_id<nsp4c[f]-1; ++first_6A_id){
@@ -2373,113 +2352,84 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
                 if (m>=2) break;
             }
             if(m!=1) continue;  // one common spindle
-            // ERROR !! need to check uncommon spindles are not in other cluster at all
-            if (scom==sp4c[first_6A_id][4]) sother[0]=sp4c[first_6A_id][5];
-            else sother[0]=sp4c[first_6A_id][4];
-            if (scom==sp4c[second_6A_id][4]) sother[1]=sp4c[second_6A_id][5];
-            else sother[1]=sp4c[second_6A_id][4];
-            
+            // Identify the non-common spindles
+            if (scom == sp4c[first_6A_id][4]) {
+                sother[0] = sp4c[first_6A_id][5];
+            }
+            else {
+                sother[0] = sp4c[first_6A_id][4];
+            }
+            if (scom==sp4c[second_6A_id][4]) {
+                sother[1]=sp4c[second_6A_id][5];
+            }
+            else {
+                sother[1]=sp4c[second_6A_id][4];
+            }
+
             if (Check_unique_6A_rings(first_6A_id, second_6A_id) == 1){
                 continue;
             }
 
-            for (k=0; k<8; ++k) {
-                for (l=0; l<3; ++l) shell_SP3[k][l]=-1;
+            if (Check_6A_rings_bonded(first_6A_id, second_6A_id) == 0) {
+                continue;
             }
 
-            // make sure there are two bonds between ring 1 and ring 2
-            n=0;
-            for(k=0; k<4; ++k) { // loop through all first ring particles
-                m = 0;
-                shell_SP3[n][m]=sp4c[first_6A_id][k];
-                for(l=0; l<4; ++l) { // loop through second ring particles
-                    if(Bonds_BondCheck(sp4c[first_6A_id][k], sp4c[second_6A_id][l])) {
-                        if (m==2) {
-                            m++;
-                            break;
-                        }
-                        m++;
-                        shell_SP3[n][m]=sp4c[second_6A_id][l];
-                    }
-                }
-                if(m!=2) break;
-                n++;
-            }
-            if (k!=4) continue;
-            if (n!=4) continue;
-            
-            for(k=0; k<4; ++k) {
-                m = 0;
-                shell_SP3[n][m]=sp4c[second_6A_id][k];
-                for(l=0; l<4; ++l) {
-                    if(Bonds_BondCheck(sp4c[second_6A_id][k], sp4c[first_6A_id][l])) {
-                        if (m==2) {
-                            m++;
-                            break;
-                        }
-                        m++;
-                        shell_SP3[n][m]=sp4c[first_6A_id][l];
-                    }
-                }
-                if(m!=2) break;
-                n++;
-            }
-            if (k!=4) continue;
-            if (n!=8) continue;
-            
-            if(n11A[f] == m11A) { 
-                hc11A=resize_2D_int(hc11A,m11A,m11A+incrStatic,clusSize,-1);
-                m11A=m11A+incrStatic;
-            }
-
-
-            hc11A[n11A[f]][0] = sp4c[first_6A_id][0];
-            hc11A[n11A[f]][1] = sp4c[first_6A_id][1];
-            hc11A[n11A[f]][2] = sp4c[first_6A_id][2];
-            hc11A[n11A[f]][3] = sp4c[first_6A_id][3];
-            hc11A[n11A[f]][4] = sp4c[second_6A_id][0];
-            hc11A[n11A[f]][5] = sp4c[second_6A_id][1];
-            hc11A[n11A[f]][6] = sp4c[second_6A_id][2];
-            hc11A[n11A[f]][7] = sp4c[second_6A_id][3];
-            hc11A[n11A[f]][8] = sother[0];
-            hc11A[n11A[f]][9] = sother[1];
-            hc11A[n11A[f]][10] = scom;
-
-            if(ach_1[hc11A[n11A[f]][0]]  == 'C') ach_1[hc11A[n11A[f]][0]] = ach_shell_1[hc11A[n11A[f]][0]] = 'B';
-            if(ach_1[hc11A[n11A[f]][1]]  == 'C') ach_1[hc11A[n11A[f]][1]] = ach_shell_1[hc11A[n11A[f]][1]] = 'B';
-            if(ach_1[hc11A[n11A[f]][2]]  == 'C') ach_1[hc11A[n11A[f]][2]] = ach_shell_1[hc11A[n11A[f]][2]] = 'B';
-            if(ach_1[hc11A[n11A[f]][3]]  == 'C') ach_1[hc11A[n11A[f]][3]] = ach_shell_1[hc11A[n11A[f]][3]] = 'B';
-            if(ach_1[hc11A[n11A[f]][4]]  == 'C') ach_1[hc11A[n11A[f]][4]] = ach_shell_1[hc11A[n11A[f]][4]] = 'B';
-            if(ach_1[hc11A[n11A[f]][5]]  == 'C') ach_1[hc11A[n11A[f]][5]] = ach_shell_1[hc11A[n11A[f]][5]] = 'B';
-            if(ach_1[hc11A[n11A[f]][6]]  == 'C') ach_1[hc11A[n11A[f]][6]] = ach_shell_1[hc11A[n11A[f]][6]] = 'B';
-            if(ach_1[hc11A[n11A[f]][7]]  == 'C') ach_1[hc11A[n11A[f]][7]] = ach_shell_1[hc11A[n11A[f]][7]] = 'B';
-            ach_1[hc11A[n11A[f]][8]] = ach_shell_1[hc11A[n11A[f]][8]] = 'O';
-            ach_1[hc11A[n11A[f]][9]] = ach_shell_1[hc11A[n11A[f]][9]] = 'O';
-            ach_1[hc11A[n11A[f]][10]] = ach_cen_1[hc11A[n11A[f]][10]] = 'O';
-            
-            if (do12K==1) { 
-                for (k=0; k<8; k++) {
-                    n12K[f]+=Clusters_Get12K(f,shell_SP3[k][0],shell_SP3[k][1],shell_SP3[k][2],ach_2, ach_cen_2, ach_shell_2);
-                }
-            }
-            ++n11A[f];
+            Cluster_Write_11A(f, first_6A_id, second_6A_id, sother, scom);
         }
     }
+}
 
-    for (i=0; i<N; ++i) {
-        s11A[i]=ach_1[i];
-        s11A_cen[i]=ach_cen_1[i];
-        s11A_shell[i]=ach_shell_1[i];
-        s12K[i]=ach_2[i];
-        s12K_cen[i]=ach_cen_2[i];
-        s12K_shell[i]=ach_shell_2[i];
+void Cluster_Write_11A(int f, int first_6A_id, int second_6A_id, const int sother[], int scom) {
+    int clusSize=11;
+
+    if (n11A[f] == m11A) {
+        hc11A = resize_2D_int(hc11A, m11A, m11A + incrStatic, clusSize, -1);
+        m11A = m11A + incrStatic;
     }
-    free(ach_1);
-    free(ach_cen_1);
-    free(ach_shell_1);
-    free(ach_2);
-    free(ach_cen_2);
-    free(ach_shell_2);
+
+    hc11A[n11A[f]][0] = sp4c[first_6A_id][0];
+    hc11A[n11A[f]][1] = sp4c[first_6A_id][1];
+    hc11A[n11A[f]][2] = sp4c[first_6A_id][2];
+    hc11A[n11A[f]][3] = sp4c[first_6A_id][3];
+    hc11A[n11A[f]][4] = sp4c[second_6A_id][0];
+    hc11A[n11A[f]][5] = sp4c[second_6A_id][1];
+    hc11A[n11A[f]][6] = sp4c[second_6A_id][2];
+    hc11A[n11A[f]][7] = sp4c[second_6A_id][3];
+    hc11A[n11A[f]][8] = sother[0];
+    hc11A[n11A[f]][9] = sother[1];
+    hc11A[n11A[f]][10] = scom;
+
+    if(s11A[hc11A[n11A[f]][0]] == 'C') s11A[hc11A[n11A[f]][0]] = s11A_shell[hc11A[n11A[f]][0]] = 'B';
+    if(s11A[hc11A[n11A[f]][1]]  == 'C') s11A[hc11A[n11A[f]][1]] = s11A_shell[hc11A[n11A[f]][1]] = 'B';
+    if(s11A[hc11A[n11A[f]][2]]  == 'C') s11A[hc11A[n11A[f]][2]] = s11A_shell[hc11A[n11A[f]][2]] = 'B';
+    if(s11A[hc11A[n11A[f]][3]]  == 'C') s11A[hc11A[n11A[f]][3]] = s11A_shell[hc11A[n11A[f]][3]] = 'B';
+    if(s11A[hc11A[n11A[f]][4]]  == 'C') s11A[hc11A[n11A[f]][4]] = s11A_shell[hc11A[n11A[f]][4]] = 'B';
+    if(s11A[hc11A[n11A[f]][5]]  == 'C') s11A[hc11A[n11A[f]][5]] = s11A_shell[hc11A[n11A[f]][5]] = 'B';
+    if(s11A[hc11A[n11A[f]][6]]  == 'C') s11A[hc11A[n11A[f]][6]] = s11A_shell[hc11A[n11A[f]][6]] = 'B';
+    if(s11A[hc11A[n11A[f]][7]]  == 'C') s11A[hc11A[n11A[f]][7]] = s11A_shell[hc11A[n11A[f]][7]] = 'B';
+    s11A[hc11A[n11A[f]][8]] = s11A_shell[hc11A[n11A[f]][8]] = 'O';
+    s11A[hc11A[n11A[f]][9]] = s11A_shell[hc11A[n11A[f]][9]] = 'O';
+    s11A[hc11A[n11A[f]][10]] = s11A_cen[hc11A[n11A[f]][10]] = 'O';
+    ++n11A[f];
+}
+
+int Check_6A_rings_bonded(int first_6A_id, int second_6A_id) {
+    int i, j, num_bonds;
+    // Check if there are two bonds between each particle in ring 1 and particles in ring 2
+    // Returns 1 if all ring 1 particles have 2 bonds to ring 2 particles, return 0 if not
+    // i loops over the particles in the first ring, j loops over the aprticles in the second ring
+    for(i=0; i<4; ++i) { // loop through all first ring particles
+        num_bonds = 0;
+        for(j=0; j<4; ++j) { // loop through second ring particles
+            if(Bonds_BondCheck(sp4c[first_6A_id][i], sp4c[second_6A_id][j])) {
+                num_bonds++;
+            }
+        }
+        if(num_bonds!=2) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int Check_unique_6A_rings(int first_6A_id, int second_6A_id) {
