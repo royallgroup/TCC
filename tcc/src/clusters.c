@@ -2448,39 +2448,16 @@ int Check_unique_6A_rings(int first_6A_id, int second_6A_id) {
 }
 
 void Clusters_Get12K(int f) {    // Detect 12K clusters
-    int i, j, m;
-    int ep, nep;
-    int sp3_rings[8][3];
-    int ptr_11A, particle_1, particle_2;
+    int i, j, nep;
+    int ep = {-1};
+    int ptr_11A, particle_1;
+    int sp3_rings[8][3] = {-1};
 
-    ep=-1;
-    for(i=0; i<8; i++){
-        for(j=0; j<3; j++){
-            sp3_rings[i][j] = -1;
-        }
-    }
     // Identify bonds between ring particles
     for(ptr_11A=0; ptr_11A<n11A[f]; ptr_11A++) {
-        for(particle_1=0; particle_1<4; particle_1++) {
-            m = 0;
-            sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_1];
-            for(particle_2=4; particle_2<8; particle_2++) {
-                if (Bonds_BondCheck(hc11A[ptr_11A][particle_1], hc11A[ptr_11A][particle_2])) {
-                    m++;
-                    sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_2];
-                }
-            }
-        }
-        for(particle_1=4; particle_1<8; particle_1++) {
-            m = 0;
-            sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_1];
-            for(particle_2=0; particle_2<4; particle_2++) {
-                if (Bonds_BondCheck(hc11A[ptr_11A][particle_1], hc11A[ptr_11A][particle_2])) {
-                    m++;
-                    sp3_rings[particle_1][m] = hc11A[ptr_11A][particle_2];
-                }
-            }
-        }
+
+        set_12K_ring_bonds(ptr_11A, sp3_rings);
+
         int SP3_1, SP3_2, SP3_3;
         for(particle_1=0; particle_1<8; particle_1++) {
             SP3_1 = sp3_rings[particle_1][0];
@@ -2502,8 +2479,33 @@ void Clusters_Get12K(int f) {    // Detect 12K clusters
             }
         }
     }
+}
 
+void set_12K_ring_bonds(int id_11A, int *sp3_rings) {
 
+    int m;
+    int particle_1, particle_2;
+
+    for(particle_1=0; particle_1 < 4; particle_1++) {
+        m = 0;
+        sp3_rings[particle_1][m] = hc11A[id_11A][particle_1];
+        for(particle_2=4; particle_2<8; particle_2++) {
+            if (Bonds_BondCheck(hc11A[id_11A][particle_1], hc11A[id_11A][particle_2])) {
+                m++;
+                sp3_rings[particle_1][m] = hc11A[id_11A][particle_2];
+            }
+        }
+    }
+    for(particle_1=4; particle_1<8; particle_1++) {
+        m = 0;
+        sp3_rings[particle_1][m] = hc11A[id_11A][particle_1];
+        for(particle_2=0; particle_2<4; particle_2++) {
+            if (Bonds_BondCheck(hc11A[id_11A][particle_1], hc11A[id_11A][particle_2])) {
+                m++;
+                sp3_rings[particle_1][m] = hc11A[id_11A][particle_2];
+            }
+        }
+    }
 }
 
 void Cluster_Write_12K(int f, int ep, int id_11A) {
