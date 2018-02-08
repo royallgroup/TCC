@@ -2326,31 +2326,12 @@ void Cluster_Write_10W(int f, char *ach, char *ach_cen, char *ach_shell) {
     ++n10W[f];
 }
 
-void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
-    //  Difficult to be desisive about. Made from 2 sp4c clusters with a common sp4 spindle 
-    // particle. Big gaps in the two 4 membered rings. Does work if the bond length is large
-    // enough.
-    char *ach_1, *ach_cen_1, *ach_shell_1, *ach_2, *ach_cen_2, *ach_shell_2;
-    int first_6A_id, i, second_6A_id, k, l, m, n;
-    int scom, sother[2], shell_SP3[8][3];
-    char errMsg[1000];
-    int clusSize=11;
+void Clusters_Get11A(int f) {
+    // Detect 11A clusters
 
-    ach_1=malloc(N*sizeof(char));   if (ach_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_1[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen_1=malloc(N*sizeof(char));   if (ach_cen_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_cen_1[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell_1=malloc(N*sizeof(char)); if (ach_shell_1==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_shell_1[] malloc out of memory\n"); Error(errMsg); }
-    ach_2=malloc(N*sizeof(char));   if (ach_2==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_2[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen_2=malloc(N*sizeof(char));   if (ach_cen_2==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_cen_2[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell_2=malloc(N*sizeof(char)); if (ach_shell_2==NULL) { sprintf(errMsg,"Clusters_Get11A_12K(): ach_shell_2[] malloc out of memory\n"); Error(errMsg); }
-    for (i=0; i<N; ++i) {
-        ach_1[i] = 'C';
-        ach_cen_1[i] = 'C';
-        ach_shell_1[i] = 'C';
-        ach_2[i] = 'C';
-        ach_cen_2[i] = 'C';
-        ach_shell_2[i] = 'C';
-    }
-    
+    int first_6A_id, second_6A_id, k, l, m;
+    int scom, sother[2];
+
     scom=sother[0]=sother[1]=-1;
     
     for(first_6A_id=0; first_6A_id<nsp4c[f]-1; ++first_6A_id){
@@ -2371,165 +2352,212 @@ void Clusters_Get11A_12K(int f) { // Detect 11A D4d & 12K clusters
                 if (m>=2) break;
             }
             if(m!=1) continue;  // one common spindle
-            // ERROR !! need to check uncommon spindles are not in other cluster at all
-            if (scom==sp4c[first_6A_id][4]) sother[0]=sp4c[first_6A_id][5];
-            else sother[0]=sp4c[first_6A_id][4];
-            if (scom==sp4c[second_6A_id][4]) sother[1]=sp4c[second_6A_id][5];
-            else sother[1]=sp4c[second_6A_id][4];
-            
-            for(k=0; k<4; ++k) {
-                for(l=0; l<4; ++l) {
-                    if(sp4c[first_6A_id][k] == sp4c[second_6A_id][l]) break;
-                }
-                if(l<4) break;
+            // Identify the non-common spindles
+            if (scom == sp4c[first_6A_id][4]) {
+                sother[0] = sp4c[first_6A_id][5];
             }
-            if(k<4) continue; // no common ring particles
-            
-            for (k=0; k<8; ++k) {
-                for (l=0; l<3; ++l) shell_SP3[k][l]=-1;
+            else {
+                sother[0] = sp4c[first_6A_id][4];
             }
-            
-            n=0;
-            for(k=0; k<4; ++k) {
-                m = 0;
-                shell_SP3[n][m]=sp4c[first_6A_id][k];
-                for(l=0; l<4; ++l) {
-                    if(Bonds_BondCheck(sp4c[first_6A_id][k], sp4c[second_6A_id][l])) {
-                        if (m==2) {
-                            m++;
-                            break;
-                        }
-                        m++;
-                        shell_SP3[n][m]=sp4c[second_6A_id][l];
-                    }
-                }
-                if(m!=2) break;
-                n++;
+            if (scom==sp4c[second_6A_id][4]) {
+                sother[1]=sp4c[second_6A_id][5];
             }
-            if (k!=4) continue;
-            if (n!=4) continue;
-            
-            for(k=0; k<4; ++k) {
-                m = 0;
-                shell_SP3[n][m]=sp4c[second_6A_id][k];
-                for(l=0; l<4; ++l) {
-                    if(Bonds_BondCheck(sp4c[second_6A_id][k], sp4c[first_6A_id][l])) {
-                        if (m==2) {
-                            m++;
-                            break;
-                        }
-                        m++;
-                        shell_SP3[n][m]=sp4c[first_6A_id][l];
-                    }
-                }
-                if(m!=2) break;
-                n++;
+            else {
+                sother[1]=sp4c[second_6A_id][4];
             }
-            if (k!=4) continue;
-            if (n!=8) continue;
-            
-            if(n11A[f] == m11A) { 
-                hc11A=resize_2D_int(hc11A,m11A,m11A+incrStatic,clusSize,-1);
-                m11A=m11A+incrStatic;
+
+            if (Check_unique_6A_rings(first_6A_id, second_6A_id) == 1){
+                continue;
             }
-        
-            // hc11A key: (SP4 going up, sd going up, scom)
-            
-            hc11A[n11A[f]][0] = sp4c[first_6A_id][0];
-            hc11A[n11A[f]][1] = sp4c[first_6A_id][1];
-            hc11A[n11A[f]][2] = sp4c[first_6A_id][2];
-            hc11A[n11A[f]][3] = sp4c[first_6A_id][3];
-            hc11A[n11A[f]][4] = sp4c[second_6A_id][0];
-            hc11A[n11A[f]][5] = sp4c[second_6A_id][1];
-            hc11A[n11A[f]][6] = sp4c[second_6A_id][2];
-            hc11A[n11A[f]][7] = sp4c[second_6A_id][3];
-            hc11A[n11A[f]][8] = sother[0];
-            hc11A[n11A[f]][9] = sother[1];
-            hc11A[n11A[f]][10] = scom;                 
-        
-            quickSort(&hc11A[n11A[f]][0],8);
-            quickSort(&hc11A[n11A[f]][8],2);
-                
-            if(ach_1[hc11A[n11A[f]][0]]  == 'C') ach_1[hc11A[n11A[f]][0]] = ach_shell_1[hc11A[n11A[f]][0]] = 'B';
-            if(ach_1[hc11A[n11A[f]][1]]  == 'C') ach_1[hc11A[n11A[f]][1]] = ach_shell_1[hc11A[n11A[f]][1]] = 'B';
-            if(ach_1[hc11A[n11A[f]][2]]  == 'C') ach_1[hc11A[n11A[f]][2]] = ach_shell_1[hc11A[n11A[f]][2]] = 'B';
-            if(ach_1[hc11A[n11A[f]][3]]  == 'C') ach_1[hc11A[n11A[f]][3]] = ach_shell_1[hc11A[n11A[f]][3]] = 'B';
-            if(ach_1[hc11A[n11A[f]][4]]  == 'C') ach_1[hc11A[n11A[f]][4]] = ach_shell_1[hc11A[n11A[f]][4]] = 'B';
-            if(ach_1[hc11A[n11A[f]][5]]  == 'C') ach_1[hc11A[n11A[f]][5]] = ach_shell_1[hc11A[n11A[f]][5]] = 'B';
-            if(ach_1[hc11A[n11A[f]][6]]  == 'C') ach_1[hc11A[n11A[f]][6]] = ach_shell_1[hc11A[n11A[f]][6]] = 'B';
-            if(ach_1[hc11A[n11A[f]][7]]  == 'C') ach_1[hc11A[n11A[f]][7]] = ach_shell_1[hc11A[n11A[f]][7]] = 'B';
-            ach_1[hc11A[n11A[f]][8]] = ach_shell_1[hc11A[n11A[f]][8]] = 'O';
-            ach_1[hc11A[n11A[f]][9]] = ach_shell_1[hc11A[n11A[f]][9]] = 'O';
-            ach_1[hc11A[n11A[f]][10]] = ach_cen_1[hc11A[n11A[f]][10]] = 'O';
-            
-            if (do12K==1) { 
-                for (k=0; k<8; k++) {
-                    n12K[f]+=Clusters_Get12K(f,shell_SP3[k][0],shell_SP3[k][1],shell_SP3[k][2],ach_2, ach_cen_2, ach_shell_2);
-                }
+
+            if (Check_6A_rings_bonded(first_6A_id, second_6A_id) == 0) {
+                continue;
             }
-            ++n11A[f];
+
+            Cluster_Write_11A(f, first_6A_id, second_6A_id, sother, scom);
         }
     }
-
-    for (i=0; i<N; ++i) {
-        s11A[i]=ach_1[i];
-        s11A_cen[i]=ach_cen_1[i];
-        s11A_shell[i]=ach_shell_1[i];
-        s12K[i]=ach_2[i];
-        s12K_cen[i]=ach_cen_2[i];
-        s12K_shell[i]=ach_shell_2[i];
-    }
-    free(ach_1);
-    free(ach_cen_1);
-    free(ach_shell_1);
-    free(ach_2);
-    free(ach_cen_2);
-    free(ach_shell_2);
 }
 
-int Clusters_Get12K(int f, int SP3_1, int SP3_2, int SP3_3, char *ach, char *ach_cen, char *ach_shell) {    // Detect 12K clusters
-    int i, j;
-    int ep, nep;
+void Cluster_Write_11A(int f, int first_6A_id, int second_6A_id, const int sother[], int scom) {
+    int clusSize=11;
+
+    if (n11A[f] == m11A) {
+        hc11A = resize_2D_int(hc11A, m11A, m11A + incrStatic, clusSize, -1);
+        m11A = m11A + incrStatic;
+    }
+
+    hc11A[n11A[f]][0] = sp4c[first_6A_id][0];
+    hc11A[n11A[f]][1] = sp4c[first_6A_id][1];
+    hc11A[n11A[f]][2] = sp4c[first_6A_id][2];
+    hc11A[n11A[f]][3] = sp4c[first_6A_id][3];
+    hc11A[n11A[f]][4] = sp4c[second_6A_id][0];
+    hc11A[n11A[f]][5] = sp4c[second_6A_id][1];
+    hc11A[n11A[f]][6] = sp4c[second_6A_id][2];
+    hc11A[n11A[f]][7] = sp4c[second_6A_id][3];
+    hc11A[n11A[f]][8] = sother[0];
+    hc11A[n11A[f]][9] = sother[1];
+    hc11A[n11A[f]][10] = scom;
+
+    if(s11A[hc11A[n11A[f]][0]] == 'C') s11A[hc11A[n11A[f]][0]] = s11A_shell[hc11A[n11A[f]][0]] = 'B';
+    if(s11A[hc11A[n11A[f]][1]]  == 'C') s11A[hc11A[n11A[f]][1]] = s11A_shell[hc11A[n11A[f]][1]] = 'B';
+    if(s11A[hc11A[n11A[f]][2]]  == 'C') s11A[hc11A[n11A[f]][2]] = s11A_shell[hc11A[n11A[f]][2]] = 'B';
+    if(s11A[hc11A[n11A[f]][3]]  == 'C') s11A[hc11A[n11A[f]][3]] = s11A_shell[hc11A[n11A[f]][3]] = 'B';
+    if(s11A[hc11A[n11A[f]][4]]  == 'C') s11A[hc11A[n11A[f]][4]] = s11A_shell[hc11A[n11A[f]][4]] = 'B';
+    if(s11A[hc11A[n11A[f]][5]]  == 'C') s11A[hc11A[n11A[f]][5]] = s11A_shell[hc11A[n11A[f]][5]] = 'B';
+    if(s11A[hc11A[n11A[f]][6]]  == 'C') s11A[hc11A[n11A[f]][6]] = s11A_shell[hc11A[n11A[f]][6]] = 'B';
+    if(s11A[hc11A[n11A[f]][7]]  == 'C') s11A[hc11A[n11A[f]][7]] = s11A_shell[hc11A[n11A[f]][7]] = 'B';
+    s11A[hc11A[n11A[f]][8]] = s11A_shell[hc11A[n11A[f]][8]] = 'O';
+    s11A[hc11A[n11A[f]][9]] = s11A_shell[hc11A[n11A[f]][9]] = 'O';
+    s11A[hc11A[n11A[f]][10]] = s11A_cen[hc11A[n11A[f]][10]] = 'O';
+    ++n11A[f];
+}
+
+int Check_6A_rings_bonded(int first_6A_id, int second_6A_id) {
+    int i, j, num_bonds;
+    // Check if there are two bonds between each particle in ring 1 and particles in ring 2
+    // Returns 1 if all ring 1 particles have 2 bonds to ring 2 particles, return 0 if not
+    // i loops over the particles in the first ring, j loops over the aprticles in the second ring
+    for(i=0; i<4; ++i) { // loop through all first ring particles
+        num_bonds = 0;
+        for(j=0; j<4; ++j) { // loop through second ring particles
+            if(Bonds_BondCheck(sp4c[first_6A_id][i], sp4c[second_6A_id][j])) {
+                num_bonds++;
+            }
+        }
+        if(num_bonds!=2) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int Check_unique_6A_rings(int first_6A_id, int second_6A_id) {
+    // Check that there are no common ring particles between two 6As.
+    // Return 1 if the two 6A rings share a particle, else return 0
+    int first_ring, second_ring;
+
+    for(first_ring=0; first_ring<4; ++first_ring) {
+                for(second_ring=0; second_ring<4; ++second_ring) {
+                    if(sp4c[first_6A_id][first_ring] == sp4c[second_6A_id][second_ring]) {
+                        return 1;
+                    }
+                }
+            }
+    return 0;
+}
+
+void Clusters_Get12K(int f) {
+    // 12K clusters are an 11A with an extra particle bonded to three of the ring particles of the 11A
+    // Since there are 8 possible places to attach an extra particle, there may be more than 1 12K for each 11A.
+
+    int ptr_11A, ring_number;
+    int sp3_rings[8][3] = {-1};
+    int *sp3_ring;
+
+    // Loop over all 11A clusters
+    for(ptr_11A=0; ptr_11A<n11A[f]; ptr_11A++) {
+
+        // Find the particle IDs of the 8 sp3 rings made from the rings of 11A
+        get_12K_ring_bonds(ptr_11A, sp3_rings);
+
+        // Loop through the 8 sp3 rings made by the sp4s of 11A and see if a particle is attached to any of them
+        for(ring_number=0; ring_number<8; ring_number++) {
+            sp3_ring = sp3_rings[ring_number];
+            find_12K_cluster(f, ptr_11A, sp3_ring);
+        }
+    }
+}
+
+void find_12K_cluster(int f, int ptr_11A, const int *sp3_ring) {
+    // Check if there is a particle attached to the sp3 ring of an 11A, if there is write a 12K
+    // It is possible that there are two particles attached to the ring particles in which case we ignore this cluster
+    int i, num_attached_particles;
+    int particle_id, ep = {-1};
+
+    num_attached_particles = 0;
+    // loop through all particles bonded to the first sp3 ring particle
+    for (i = 0; i < cnb[sp3_ring[0]]; i++) {
+        particle_id = bNums[sp3_ring[0]][i];
+        if (Bonds_BondCheck(sp3_ring[1], particle_id) == 1) {
+            if (Bonds_BondCheck(sp3_ring[2], particle_id) == 1) {
+                if (is_particle_in_11A(ptr_11A, particle_id) == 0) {
+                    num_attached_particles++;
+                    ep = particle_id;
+                }
+            }
+        }
+    }
+    if (num_attached_particles == 1) {
+        Cluster_Write_12K(f, ep, ptr_11A);
+    }
+}
+
+int is_particle_in_11A(int id_11A, int id_particle) {
+    // Returns 0 if particle is not in specified 11A
+    int i;
+    for (i = 0; i < 11; i++) {
+        if (id_particle == hc11A[id_11A][i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void get_12K_ring_bonds(int id_11A, int (*sp3_rings)[3]) {
+
+    int m;
+    int particle_1, particle_2;
+
+    for(particle_1=0; particle_1<4; particle_1++) {
+        m = 0;
+        sp3_rings[particle_1][m] = hc11A[id_11A][particle_1];
+        for(particle_2=4; particle_2<8; particle_2++) {
+            if (Bonds_BondCheck(hc11A[id_11A][particle_1], hc11A[id_11A][particle_2])) {
+                m++;
+                sp3_rings[particle_1][m] = hc11A[id_11A][particle_2];
+            }
+        }
+    }
+    for(particle_1=4; particle_1<8; particle_1++) {
+        m = 0;
+        sp3_rings[particle_1][m] = hc11A[id_11A][particle_1];
+        for(particle_2=0; particle_2<4; particle_2++) {
+            if (Bonds_BondCheck(hc11A[id_11A][particle_1], hc11A[id_11A][particle_2])) {
+                m++;
+                sp3_rings[particle_1][m] = hc11A[id_11A][particle_2];
+            }
+        }
+    }
+}
+
+void Cluster_Write_12K(int f, int ep, int id_11A) {
+
+    int i;
     int clusSize=12;
 
-    ep=-1;
-    
-    nep=0;
-    for (i=0; i<cnb[SP3_1]; i++) {
-        if (Bonds_BondCheck(SP3_2,bNums[SP3_1][i])!=1 || Bonds_BondCheck(SP3_3,bNums[SP3_1][i])!=1) continue;
-        for (j=0; j<11; j++) {
-            if (bNums[SP3_1][i]==hc11A[n11A[f]][j]) break;
-        }
-        if (j!=11) continue;
-        nep++;
-        if (nep>=2) break;
-        ep=bNums[SP3_1][i];
-    }
-    if (nep!=1) return 0;
-    
-    if(n12K[f] == m12K) { 
+    if(n12K[f] == m12K) {
         hc12K=resize_2D_int(hc12K,m12K,m12K+incrStatic,clusSize,-1);
         m12K=m12K+incrStatic;
     }
     // hc12K key: (SP4 going up, sd going up, scom, ep)
 
-    for (i=0; i<11; i++) hc12K[n12K[f]][i] = hc11A[n11A[f]][i];
+    for (i=0; i<11; i++) hc12K[n12K[f]][i] = hc11A[id_11A][i];
     hc12K[n12K[f]][11]=ep;
 
-    if(ach[hc12K[n12K[f]][0]]  == 'C') ach[hc12K[n12K[f]][0]] = ach_shell[hc12K[n12K[f]][0]] = 'B';
-    if(ach[hc12K[n12K[f]][1]]  == 'C') ach[hc12K[n12K[f]][1]] = ach_shell[hc12K[n12K[f]][1]] = 'B';
-    if(ach[hc12K[n12K[f]][2]]  == 'C') ach[hc12K[n12K[f]][2]] = ach_shell[hc12K[n12K[f]][2]] = 'B';
-    if(ach[hc12K[n12K[f]][3]]  == 'C') ach[hc12K[n12K[f]][3]] = ach_shell[hc12K[n12K[f]][3]] = 'B';
-    if(ach[hc12K[n12K[f]][4]]  == 'C') ach[hc12K[n12K[f]][4]] = ach_shell[hc12K[n12K[f]][4]] = 'B';
-    if(ach[hc12K[n12K[f]][5]]  == 'C') ach[hc12K[n12K[f]][5]] = ach_shell[hc12K[n12K[f]][5]] = 'B';
-    if(ach[hc12K[n12K[f]][6]]  == 'C') ach[hc12K[n12K[f]][6]] = ach_shell[hc12K[n12K[f]][6]] = 'B';
-    if(ach[hc12K[n12K[f]][7]]  == 'C') ach[hc12K[n12K[f]][7]] = ach_shell[hc12K[n12K[f]][7]] = 'B';
-    ach[hc12K[n12K[f]][8]] = ach_shell[hc12K[n12K[f]][8]] = 'O';
-    ach[hc12K[n12K[f]][9]] = ach_shell[hc12K[n12K[f]][9]] = 'O';
-    ach[hc12K[n12K[f]][10]] = ach_cen[hc12K[n12K[f]][10]] = 'O';
-    ach[hc12K[n12K[f]][11]] = ach_shell[hc12K[n12K[f]][11]] = 'O';
-    
-    return 1;
+    if(s12K[hc12K[n12K[f]][0]]  == 'C') s12K[hc12K[n12K[f]][0]] = s12K_shell[hc12K[n12K[f]][0]] = 'B';
+    if(s12K[hc12K[n12K[f]][1]]  == 'C') s12K[hc12K[n12K[f]][1]] = s12K_shell[hc12K[n12K[f]][1]] = 'B';
+    if(s12K[hc12K[n12K[f]][2]]  == 'C') s12K[hc12K[n12K[f]][2]] = s12K_shell[hc12K[n12K[f]][2]] = 'B';
+    if(s12K[hc12K[n12K[f]][3]]  == 'C') s12K[hc12K[n12K[f]][3]] = s12K_shell[hc12K[n12K[f]][3]] = 'B';
+    if(s12K[hc12K[n12K[f]][4]]  == 'C') s12K[hc12K[n12K[f]][4]] = s12K_shell[hc12K[n12K[f]][4]] = 'B';
+    if(s12K[hc12K[n12K[f]][5]]  == 'C') s12K[hc12K[n12K[f]][5]] = s12K_shell[hc12K[n12K[f]][5]] = 'B';
+    if(s12K[hc12K[n12K[f]][6]]  == 'C') s12K[hc12K[n12K[f]][6]] = s12K_shell[hc12K[n12K[f]][6]] = 'B';
+    if(s12K[hc12K[n12K[f]][7]]  == 'C') s12K[hc12K[n12K[f]][7]] = s12K_shell[hc12K[n12K[f]][7]] = 'B';
+    s12K[hc12K[n12K[f]][8]] = s12K_shell[hc12K[n12K[f]][8]] = 'O';
+    s12K[hc12K[n12K[f]][9]] = s12K_shell[hc12K[n12K[f]][9]] = 'O';
+    s12K[hc12K[n12K[f]][10]] = s12K_cen[hc12K[n12K[f]][10]] = 'O';
+    s12K[hc12K[n12K[f]][11]] = s12K_shell[hc12K[n12K[f]][11]] = 'O';
+    n12K[f]++;
 }
 
 void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
