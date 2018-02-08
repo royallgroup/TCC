@@ -2447,46 +2447,69 @@ int Check_unique_6A_rings(int first_6A_id, int second_6A_id) {
     return 0;
 }
 
-void Clusters_Get12K(int f) {    // Detect 12K clusters
-    int i, j, nep;
-    int ep = {-1};
-    int ptr_11A, particle_1;
-    int sp3_rings[8][3] = {-1};
+void Clusters_Get12K(int f) {
+    // 12K clusters are an 11A with an extra particle bonded to three of the ring particles of the 11A
+    // Since there are 8 possible places to attach an extra particle, there may be more than 1 12K for each 11A.
 
-    // Identify bonds between ring particles
+    int ptr_11A, ring_number;
+    int sp3_rings[8][3] = {-1};
+    int *sp3_ring;
+
+    // Loop over all 11A clusters
     for(ptr_11A=0; ptr_11A<n11A[f]; ptr_11A++) {
 
-        set_12K_ring_bonds(ptr_11A, sp3_rings);
+        // Find the particle IDs of the 8 sp3 rings made from the rings of 11A
+        get_12K_ring_bonds(ptr_11A, sp3_rings);
 
-        int SP3_1, SP3_2, SP3_3;
-        for(particle_1=0; particle_1<8; particle_1++) {
-            SP3_1 = sp3_rings[particle_1][0];
-            SP3_2 = sp3_rings[particle_1][1];
-            SP3_3 = sp3_rings[particle_1][2];
-            nep = 0;
-            for (i = 0; i < cnb[SP3_1]; i++) {
-                if (Bonds_BondCheck(SP3_2, bNums[SP3_1][i]) != 1 || Bonds_BondCheck(SP3_3, bNums[SP3_1][i]) != 1) continue;
-                for (j = 0; j < 11; j++) { // check that the identified particle isn't already in the 11A
-                    if (bNums[SP3_1][i] == hc11A[ptr_11A][j]) break;
-                }
-                if (j != 11) continue;
-                nep++;
-                if (nep >= 2) break;
-                ep = bNums[SP3_1][i];
-            }
-            if (nep == 1) {
-                Cluster_Write_12K(f, ep, ptr_11A);
-            }
+        // Loop through the 8 sp3 rings made by the sp4s of 11A and see if a particle is attached to any of them
+        for(ring_number=0; ring_number<8; ring_number++) {
+            sp3_ring = sp3_rings[ring_number];
+            find_12K_cluster(f, ptr_11A, sp3_ring);
         }
     }
 }
 
-void set_12K_ring_bonds(int id_11A, int *sp3_rings) {
+void find_12K_cluster(int f, int ptr_11A, const int *sp3_ring) {
+    // Check if there is a particle attached to the sp3 ring of an 11A, if there is write a 12K
+    // It is possible that there are two particles attached to the ring particles in which case we ignore this cluster
+    int i, num_attached_particles;
+    int particle_id, ep = {-1};
+
+    num_attached_particles = 0;
+    // loop through all particles bonded to the first sp3 ring particle
+    for (i = 0; i < cnb[sp3_ring[0]]; i++) {
+        particle_id = bNums[sp3_ring[0]][i];
+        if (Bonds_BondCheck(sp3_ring[1], particle_id) == 1) {
+            if (Bonds_BondCheck(sp3_ring[2], particle_id) == 1) {
+                if (is_particle_in_11A(ptr_11A, particle_id) == 0) {
+                    num_attached_particles++;
+                    ep = particle_id;
+                }
+            }
+        }
+    }
+    if (num_attached_particles == 1) {
+        Cluster_Write_12K(f, ep, ptr_11A);
+    }
+}
+
+int is_particle_in_11A(int id_11A, int id_particle) {
+    // Returns 0 if particle is not in specified 11A
+    int i;
+    for (i = 0; i < 11; i++) {
+        if (id_particle == hc11A[id_11A][i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void get_12K_ring_bonds(int id_11A, int (*sp3_rings)[3]) {
 
     int m;
     int particle_1, particle_2;
 
-    for(particle_1=0; particle_1 < 4; particle_1++) {
+    for(particle_1=0; particle_1<4; particle_1++) {
         m = 0;
         sp3_rings[particle_1][m] = hc11A[id_11A][particle_1];
         for(particle_2=4; particle_2<8; particle_2++) {
