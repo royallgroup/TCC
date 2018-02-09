@@ -34,10 +34,11 @@ void Clust_Write_11E(int f, char *ach1);
 int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach); // Return 1 if 12B is also 11E
 
 void Clusters_Get9K_10K(int f);// Detect 9K & 10K clusters
-int is_particle_in_9K(int id_9k, int id_particle);
+
 
 void Clusters_Get10K(int f);// Detect 10K clusters
-void Cluster_Write_10K(int f, int ep);
+int is_particle_in_9K(int id_9k, int id_particle);
+void Cluster_Write_10K(int f, int id_9K, int ep);
 
 void Clusters_Get10A_C3v(int f);// Detect 10A D4d clusters
 void Cluster_Write_10A(int f, char *ach);

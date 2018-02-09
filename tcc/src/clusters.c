@@ -2,8 +2,6 @@
 #include "clusters.h"
 #include "bonds.h"
 
-
-
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -2095,27 +2093,29 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
 }
 
 void Clusters_Get10K(int f) { // Detect 10K clusters
-    int i, extra_particle;
-    int num_extra_particles = {0};
+    // A 10K is a 9K with a SINGLE particle bonded to the common spindle of 9K.
+    int bonded_to_spindle_id, num_extra_particles, extra_particle = 0;
     int id_9K, id_9K_common;
 
-    // There are some particles bonded to a 9K central particle, but most of them are from the 9K,
-    // the extra particle should be separate from any of the 9K shell particles
     for (id_9K=0; id_9K<n9K[f]; id_9K++) {
-        num_extra_particles=0;
         id_9K_common = hc9K[id_9K][8];
-        for (i=0; i<cnb[id_9K_common]; i++) {
-            num_extra_particles += is_particle_in_9K(id_9K, bNums[id_9K_common][i]);
-            if (num_extra_particles>=2) break;
+        if (cnb[id_9K_common] < 10) {
+            num_extra_particles = 0;
+            for (bonded_to_spindle_id = 0; bonded_to_spindle_id < cnb[id_9K_common]; bonded_to_spindle_id++) {
+                if (is_particle_in_9K(id_9K, bNums[id_9K_common][bonded_to_spindle_id])) {
+                    num_extra_particles++;
+                    extra_particle = bNums[id_9K_common][bonded_to_spindle_id];
+                }
+            }
+            if (num_extra_particles == 1) {
+                Cluster_Write_10K(f, id_9K, extra_particle);
+            }
         }
-    }
-    if (num_extra_particles==1) {
-        Cluster_Write_10K(f, extra_particle);
     }
 }
 
 int is_particle_in_9K(int id_9K, int id_particle){
-    // Returns 1 if particle is not in the specified 9K
+    // Returns 0 if particle is not in the specified 9K, else returns 1
     int i;
 
     for (i=0; i<9; i++) {
@@ -2126,7 +2126,9 @@ int is_particle_in_9K(int id_9K, int id_particle){
     return 1;
 }
 
-void Cluster_Write_10K(int f, int extra_particle) {
+void Cluster_Write_10K(int f, int id_9k, int extra_particle) {
+    // hc10K key: (common_SP4_1, common_SP4_2, other_SP4*4, other_spindle_1, other_spindle_2, scom, ep)
+
     int i;
     int clusSize=10;
 
@@ -2134,23 +2136,20 @@ void Cluster_Write_10K(int f, int extra_particle) {
         hc10K=resize_2D_int(hc10K,m10K,m10K+incrStatic,clusSize,-1);
         m10K=m10K+incrStatic;
     }
-    // hc10K key: (common_SP4_1, common_SP4_2, other_SP4*4, other_spindle_1, other_spindle_2, scom, ep)
 
-    for (i=0; i<9; i++) {
-        hc10K[n10K[f]][i]=hc9K[n9K[f]][i];
+    for(i=0; i<9; i++) {
+        hc10K[n10K[f]][i]=hc9K[id_9k][i];
     }
     hc10K[n10K[f]][9]=extra_particle;
 
-    if(s10K[hc10K[n10K[f]][0]]  == 'C') s10K[hc10K[n10K[f]][0]] = s10K_shell[hc10K[n10K[f]][0]] = 'B';
-    if(s10K[hc10K[n10K[f]][1]]  == 'C') s10K[hc10K[n10K[f]][1]] = s10K_shell[hc10K[n10K[f]][1]] = 'B';
-    if(s10K[hc10K[n10K[f]][2]]  == 'C') s10K[hc10K[n10K[f]][2]] = s10K_shell[hc10K[n10K[f]][2]] = 'B';
-    if(s10K[hc10K[n10K[f]][3]]  == 'C') s10K[hc10K[n10K[f]][3]] = s10K_shell[hc10K[n10K[f]][3]] = 'B';
-    if(s10K[hc10K[n10K[f]][4]]  == 'C') s10K[hc10K[n10K[f]][4]] = s10K_shell[hc10K[n10K[f]][4]] = 'B';
-    if(s10K[hc10K[n10K[f]][5]]  == 'C') s10K[hc10K[n10K[f]][5]] = s10K_shell[hc10K[n10K[f]][5]] = 'B';
+    for(i=0; i<6; i++) {
+        if (s10K[hc10K[n10K[f]][i]] == 'C') s10K[hc10K[n10K[f]][i]] = s10K_shell[hc10K[n10K[f]][i]] = 'B';
+    }
     s10K[hc10K[n10K[f]][6]] = s10K_shell[hc10K[n10K[f]][6]] = 'O';
     s10K[hc10K[n10K[f]][7]] = s10K_shell[hc10K[n10K[f]][7]] = 'O';
     s10K[hc10K[n10K[f]][8]] = s10K_cen[hc10K[n10K[f]][8]] = 'O';
     s10K[hc10K[n10K[f]][9]] = s10K_shell[hc10K[n10K[f]][9]] = 'O';
+
     n10K[f]++;
 }
 
@@ -2224,14 +2223,11 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
 }
 
 void Cluster_Write_10A(int f, char *ach) {
-    if(ach[hc10A[n10A[f]][0]] == 'C') ach[hc10A[n10A[f]][0]] = 'B';
-    if(ach[hc10A[n10A[f]][1]] == 'C') ach[hc10A[n10A[f]][1]] = 'B';
-    if(ach[hc10A[n10A[f]][2]] == 'C') ach[hc10A[n10A[f]][2]] = 'B';
-    if(ach[hc10A[n10A[f]][3]] == 'C') ach[hc10A[n10A[f]][3]] = 'B';
-    if(ach[hc10A[n10A[f]][4]] == 'C') ach[hc10A[n10A[f]][4]] = 'B';
-    if(ach[hc10A[n10A[f]][5]] == 'C') ach[hc10A[n10A[f]][5]] = 'B';
-    if(ach[hc10A[n10A[f]][6]] == 'C') ach[hc10A[n10A[f]][6]] = 'B';
-    if(ach[hc10A[n10A[f]][7]] == 'C') ach[hc10A[n10A[f]][7]] = 'B';
+    int i;
+
+    for(i=0; i<8; i++) {
+        if (ach[hc10A[n10A[f]][i]] == 'C') ach[hc10A[n10A[f]][i]] = 'B';
+    }
     ach[hc10A[n10A[f]][8]] = 'O';
     ach[hc10A[n10A[f]][9]] = 'O';
 
@@ -2313,15 +2309,11 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
 }
 
 void Cluster_Write_10W(int f, char *ach, char *ach_cen, char *ach_shell) {
-    if(ach[hc10W[n10W[f]][1]] == 'C') ach[hc10W[n10W[f]][1]] = ach_shell[hc10W[n10W[f]][1]] = 'B';
-    if(ach[hc10W[n10W[f]][2]] == 'C') ach[hc10W[n10W[f]][2]] = ach_shell[hc10W[n10W[f]][2]] = 'B';
-    if(ach[hc10W[n10W[f]][3]] == 'C') ach[hc10W[n10W[f]][3]] = ach_shell[hc10W[n10W[f]][3]] = 'B';
-    if(ach[hc10W[n10W[f]][4]] == 'C') ach[hc10W[n10W[f]][4]] = ach_shell[hc10W[n10W[f]][4]] = 'B';
-    if(ach[hc10W[n10W[f]][5]] == 'C') ach[hc10W[n10W[f]][5]] = ach_shell[hc10W[n10W[f]][5]] = 'B';
-    if(ach[hc10W[n10W[f]][6]] == 'C') ach[hc10W[n10W[f]][6]] = ach_shell[hc10W[n10W[f]][6]] = 'B';
-    if(ach[hc10W[n10W[f]][7]] == 'C') ach[hc10W[n10W[f]][7]] = ach_shell[hc10W[n10W[f]][7]] = 'B';
-    if(ach[hc10W[n10W[f]][8]] == 'C') ach[hc10W[n10W[f]][8]] = ach_shell[hc10W[n10W[f]][8]] = 'B';
-    if(ach[hc10W[n10W[f]][9]] == 'C') ach[hc10W[n10W[f]][9]] = ach_shell[hc10W[n10W[f]][9]] = 'B';
+    int i;
+
+    for(i=1; i<10; i++) {
+        if (ach[hc10W[n10W[f]][i]] == 'C') ach[hc10W[n10W[f]][i]] = ach_shell[hc10W[n10W[f]][i]] = 'B';
+    }
     ach[hc10W[n10W[f]][0]] = ach_cen[hc10W[n10W[f]][0]] = 'O';
 
     ++n10W[f];
@@ -2352,36 +2344,32 @@ void Clusters_Get11A(int f) {
                 }
                 if (m>=2) break;
             }
-            if(m!=1) continue;  // one common spindle
-            // Identify the non-common spindles
-            if (scom == sp4c[first_6A_id][4]) {
-                sother[0] = sp4c[first_6A_id][5];
-            }
-            else {
-                sother[0] = sp4c[first_6A_id][4];
-            }
-            if (scom==sp4c[second_6A_id][4]) {
-                sother[1]=sp4c[second_6A_id][5];
-            }
-            else {
-                sother[1]=sp4c[second_6A_id][4];
-            }
+            if(m==1) {  // one common spindle
+                // Identify the non-common spindles
+                if (scom == sp4c[first_6A_id][4]) {
+                    sother[0] = sp4c[first_6A_id][5];
+                } else {
+                    sother[0] = sp4c[first_6A_id][4];
+                }
+                if (scom == sp4c[second_6A_id][4]) {
+                    sother[1] = sp4c[second_6A_id][5];
+                } else {
+                    sother[1] = sp4c[second_6A_id][4];
+                }
 
-            if (Check_unique_6A_rings(first_6A_id, second_6A_id) == 1){
-                continue;
+                if (Check_unique_6A_rings(first_6A_id, second_6A_id) == 0) {
+                    if (Check_6A_rings_bonded(first_6A_id, second_6A_id) == 1) {
+                        Cluster_Write_11A(f, first_6A_id, second_6A_id, sother, scom);
+                    }
+                }
             }
-
-            if (Check_6A_rings_bonded(first_6A_id, second_6A_id) == 0) {
-                continue;
-            }
-
-            Cluster_Write_11A(f, first_6A_id, second_6A_id, sother, scom);
         }
     }
 }
 
 void Cluster_Write_11A(int f, int first_6A_id, int second_6A_id, const int sother[], int scom) {
     int clusSize=11;
+    int i;
 
     if (n11A[f] == m11A) {
         hc11A = resize_2D_int(hc11A, m11A, m11A + incrStatic, clusSize, -1);
@@ -2400,17 +2388,12 @@ void Cluster_Write_11A(int f, int first_6A_id, int second_6A_id, const int sothe
     hc11A[n11A[f]][9] = sother[1];
     hc11A[n11A[f]][10] = scom;
 
-    if(s11A[hc11A[n11A[f]][0]] == 'C') s11A[hc11A[n11A[f]][0]] = s11A_shell[hc11A[n11A[f]][0]] = 'B';
-    if(s11A[hc11A[n11A[f]][1]]  == 'C') s11A[hc11A[n11A[f]][1]] = s11A_shell[hc11A[n11A[f]][1]] = 'B';
-    if(s11A[hc11A[n11A[f]][2]]  == 'C') s11A[hc11A[n11A[f]][2]] = s11A_shell[hc11A[n11A[f]][2]] = 'B';
-    if(s11A[hc11A[n11A[f]][3]]  == 'C') s11A[hc11A[n11A[f]][3]] = s11A_shell[hc11A[n11A[f]][3]] = 'B';
-    if(s11A[hc11A[n11A[f]][4]]  == 'C') s11A[hc11A[n11A[f]][4]] = s11A_shell[hc11A[n11A[f]][4]] = 'B';
-    if(s11A[hc11A[n11A[f]][5]]  == 'C') s11A[hc11A[n11A[f]][5]] = s11A_shell[hc11A[n11A[f]][5]] = 'B';
-    if(s11A[hc11A[n11A[f]][6]]  == 'C') s11A[hc11A[n11A[f]][6]] = s11A_shell[hc11A[n11A[f]][6]] = 'B';
-    if(s11A[hc11A[n11A[f]][7]]  == 'C') s11A[hc11A[n11A[f]][7]] = s11A_shell[hc11A[n11A[f]][7]] = 'B';
-    s11A[hc11A[n11A[f]][8]] = s11A_shell[hc11A[n11A[f]][8]] = 'O';
-    s11A[hc11A[n11A[f]][9]] = s11A_shell[hc11A[n11A[f]][9]] = 'O';
-    s11A[hc11A[n11A[f]][10]] = s11A_cen[hc11A[n11A[f]][10]] = 'O';
+    for(i=0; i<8; i++) {
+        if (s11A[hc11A[n11A[f]][i]] == 'C') s11A[hc11A[n11A[f]][i]] = s11A_shell[hc11A[n11A[f]][i]] = 'B';
+    }
+    for(i=8; i<11; i++) {
+        s11A[hc11A[n11A[f]][i]] = s11A_shell[hc11A[n11A[f]][i]] = 'O';
+    }
     ++n11A[f];
 }
 
@@ -2418,7 +2401,7 @@ int Check_6A_rings_bonded(int first_6A_id, int second_6A_id) {
     int i, j, num_bonds;
     // Check if there are two bonds between each particle in ring 1 and particles in ring 2
     // Returns 1 if all ring 1 particles have 2 bonds to ring 2 particles, return 0 if not
-    // i loops over the particles in the first ring, j loops over the aprticles in the second ring
+    // i loops over the particles in the first ring, j loops over the particles in the second ring
     for(i=0; i<4; ++i) { // loop through all first ring particles
         num_bonds = 0;
         for(j=0; j<4; ++j) { // loop through second ring particles
