@@ -1852,14 +1852,11 @@ void Cluster_Write_12D(int f) {
 }
 
 void Clusters_Get9K(int f)  {
-    // Detect 9K clusters
-    // Made from 2 sp4c clusters with a common sp4c spindle
-    // particl and two common SP4 ring particles
+    // 9K are made from 2 6A clusters with a common spindle and two common SP4 ring particles
     int j2, j, k, l, m;
     int cp[2], scom, sother[2];
     int trial[9];
     int id_first_6A, id_second_6A;
-    int clusSize=9;
 
     cp[0]=cp[1]=scom=sother[0]=sother[1]=-1;
 
@@ -1888,15 +1885,7 @@ void Clusters_Get9K(int f)  {
 
                 m=0;        // check sother[0] is not in cluster sp4c_mem_sp4c[sp4c[i][j2]][j]
                 for(k=0; k<6; ++k) {
-                    if(sother[0] == sp4c[id_second_6A][k]) {
-                        m++;
-                    }
-                }
-                if(m!=0) continue;
-
-                m=0;        // check sother[1] is not in cluster sp4c_mem_sp4c[sp4c[i][j2]][j]
-                for(k=0; k<6; ++k) {
-                    if(sother[1] == sp4c[id_first_6A][k]) {
+                    if(sother[0] == sp4c[id_second_6A][k] || sother[1] == sp4c[id_first_6A][k]) {
                         m++;
                     }
                 }
@@ -2402,14 +2391,9 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
     for (i=0; i<11; i++) hc12K[n12K[f]][i] = hc11A[id_11A][i];
     hc12K[n12K[f]][11]=ep;
 
-    if(s12K[hc12K[n12K[f]][0]]  == 'C') s12K[hc12K[n12K[f]][0]] = s12K_shell[hc12K[n12K[f]][0]] = 'B';
-    if(s12K[hc12K[n12K[f]][1]]  == 'C') s12K[hc12K[n12K[f]][1]] = s12K_shell[hc12K[n12K[f]][1]] = 'B';
-    if(s12K[hc12K[n12K[f]][2]]  == 'C') s12K[hc12K[n12K[f]][2]] = s12K_shell[hc12K[n12K[f]][2]] = 'B';
-    if(s12K[hc12K[n12K[f]][3]]  == 'C') s12K[hc12K[n12K[f]][3]] = s12K_shell[hc12K[n12K[f]][3]] = 'B';
-    if(s12K[hc12K[n12K[f]][4]]  == 'C') s12K[hc12K[n12K[f]][4]] = s12K_shell[hc12K[n12K[f]][4]] = 'B';
-    if(s12K[hc12K[n12K[f]][5]]  == 'C') s12K[hc12K[n12K[f]][5]] = s12K_shell[hc12K[n12K[f]][5]] = 'B';
-    if(s12K[hc12K[n12K[f]][6]]  == 'C') s12K[hc12K[n12K[f]][6]] = s12K_shell[hc12K[n12K[f]][6]] = 'B';
-    if(s12K[hc12K[n12K[f]][7]]  == 'C') s12K[hc12K[n12K[f]][7]] = s12K_shell[hc12K[n12K[f]][7]] = 'B';
+    for (i=0; i<8; i++) {
+        if (s12K[hc12K[n12K[f]][i]] == 'C') s12K[hc12K[n12K[f]][i]] = s12K_shell[hc12K[n12K[f]][i]] = 'B';
+    }
     s12K[hc12K[n12K[f]][8]] = s12K_shell[hc12K[n12K[f]][8]] = 'O';
     s12K[hc12K[n12K[f]][9]] = s12K_shell[hc12K[n12K[f]][9]] = 'O';
     s12K[hc12K[n12K[f]][10]] = s12K_cen[hc12K[n12K[f]][10]] = 'O';
