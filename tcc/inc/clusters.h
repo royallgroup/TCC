@@ -33,7 +33,7 @@ void Clust_Write_11E(int f, char *ach1);
 
 int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach); // Return 1 if 12B is also 11E
 
-void Clusters_Get9K_10K(int f);// Detect 9K & 10K clusters
+void Clusters_Get9K(int f);// Detect 9K & 10K clusters
 
 
 void Clusters_Get10K(int f);// Detect 10K clusters

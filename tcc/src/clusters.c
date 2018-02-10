@@ -2,6 +2,8 @@
 #include "clusters.h"
 #include "bonds.h"
 
+void Cluster_Write_9k(int f);
+
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -1943,52 +1945,44 @@ int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach)
     return 0;
 }
 
-void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
+void Clusters_Get9K(int f)  {
+    // Detect 9K clusters
     // Made from 2 sp4c clusters with a common sp4c spindle
     // particl and two common SP4 ring particles
-    char *ach_1, *ach_cen_1, *ach_shell_1;
-    int i, j2, j, k, l, m;
+    int j2, j, k, l, m;
     int cp[2], scom, sother[2];
     int trial[9];
-    char errMsg[1000];
+    int id_first_6A, id_second_6A;
     int clusSize=9;
 
     cp[0]=cp[1]=scom=sother[0]=sother[1]=-1;
 
-    ach_1=malloc(N*sizeof(char));   if (ach_1==NULL) { sprintf(errMsg,"Clusters_Get9K_10K(): ach_1[] malloc out of memory\n");  Error(errMsg); }
-    ach_cen_1=malloc(N*sizeof(char));   if (ach_cen_1==NULL) { sprintf(errMsg,"Clusters_Get9K_10K): ach_cen_1[] malloc out of memory\n");   Error(errMsg); }
-    ach_shell_1=malloc(N*sizeof(char)); if (ach_shell_1==NULL) { sprintf(errMsg,"Clusters_Get9K_10K(): ach_shell_1[] malloc out of memory\n");  Error(errMsg); }
 
-    for (i=0; i<N; ++i) {
-        ach_1[i] = 'C';
-        ach_cen_1[i] = 'C';
-        ach_shell_1[i] = 'C';
-    }
-
-    for(i=0; i<nsp4c[f]-1; ++i) {   // loop over all sp4c_i
+    for(id_first_6A=0; id_first_6A<nsp4c[f]-1; ++id_first_6A) {   // loop over all sp4c_i
         for (j2=4; j2<6; j2++) {    // loop over all spindles of sp4c_i
-            for (j=0; j<nmem_sp4c[sp4c[i][j2]]; ++j) {
-                if (mem_sp4c[sp4c[i][j2]][j]<=i) continue; // don't find again 9K twice
+            for (j=0; j<nmem_sp4c[sp4c[id_first_6A][j2]]; ++j) {
+                id_second_6A = mem_sp4c[sp4c[id_first_6A][j2]][j];
+                if (id_second_6A<=id_first_6A) continue; // don't find again 9K twice
 
                 m=0;        // sp4c_i and sp4c_mem_sp4c[sp4c[i][j2]][j] have exactly one common spindle
                 for(k=4; k<6; ++k) {
                     for(l=4; l<6; ++l) {
-                        if(sp4c[i][k] == sp4c[mem_sp4c[sp4c[i][j2]][j]][l]) {
+                        if(sp4c[id_first_6A][k] == sp4c[id_second_6A][l]) {
                             m++;
-                            scom=sp4c[i][k];
+                            scom=sp4c[id_first_6A][k];
                         }
                     }
                 }
                 if(m!=1) continue;
 
-                if (sp4c[i][4]==scom) sother[0]=sp4c[i][5];
-                else sother[0]=sp4c[i][4];
-                if (sp4c[mem_sp4c[sp4c[i][j2]][j]][4]==scom) sother[1]=sp4c[mem_sp4c[sp4c[i][j2]][j]][5];
-                else sother[1]=sp4c[mem_sp4c[sp4c[i][j2]][j]][4];
+                if (sp4c[id_first_6A][4]==scom) sother[0]=sp4c[id_first_6A][5];
+                else sother[0]=sp4c[id_first_6A][4];
+                if (sp4c[id_second_6A][4]==scom) sother[1]=sp4c[id_second_6A][5];
+                else sother[1]=sp4c[id_second_6A][4];
 
                 m=0;        // check sother[0] is not in cluster sp4c_mem_sp4c[sp4c[i][j2]][j]
                 for(k=0; k<6; ++k) {
-                    if(sother[0] == sp4c[mem_sp4c[sp4c[i][j2]][j]][k]) {
+                    if(sother[0] == sp4c[id_second_6A][k]) {
                         m++;
                     }
                 }
@@ -1996,7 +1990,7 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
 
                 m=0;        // check sother[1] is not in cluster sp4c_mem_sp4c[sp4c[i][j2]][j]
                 for(k=0; k<6; ++k) {
-                    if(sother[1] == sp4c[i][k]) {
+                    if(sother[1] == sp4c[id_first_6A][k]) {
                         m++;
                     }
                 }
@@ -2005,12 +1999,12 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
                 m=0;        // SP4 ring from sp4c_i and SP4 ring from sp4c_mem_sp4c[sp4c[i][j2]][j] have exactly two common particles
                 for(k=0; k<4; ++k) {
                     for(l=0; l<4; ++l) {
-                        if(sp4c[i][k] == sp4c[mem_sp4c[sp4c[i][j2]][j]][l]) {
+                        if(sp4c[id_first_6A][k] == sp4c[id_second_6A][l]) {
                             if (m>=2) {
                                 m=3;
                                 break;
                             }
-                            cp[m]=sp4c[i][k];
+                            cp[m]=sp4c[id_first_6A][k];
                             m++;
                         }
                     }
@@ -2035,61 +2029,54 @@ void Clusters_Get9K_10K(int f)  { // Detect 9K & 10K clusters
                 m=2;        // find uncommon SP4 ring particles in sp4c[i][k]
                 for(k=0; k<4; ++k) {
                     for (l=0; l<2; l++) {
-                        if (sp4c[i][k]==cp[l]) break;
+                        if (sp4c[id_first_6A][k]==cp[l]) break;
                     }
                     if (l==2) {
                         if (m>=4) {
                             m++;
                             break;
                         }
-                        trial[m]=sp4c[i][k];
+                        trial[m]=sp4c[id_first_6A][k];
                         m++;
                     }
                 }
-                if(m!=4) { sprintf(errMsg,"Clusters_Get9K_10K(): n9K[%d] %d, too many or too few uncommon SP4 ring particles found in cluster sp4c[i=%d][k]\n",f,n9K[f],i); Error(errMsg); }
+                if(m!=4) continue;
 
                 for(k=0; k<4; ++k) { // find uncommon SP4 ring particles in sp4c[mem_sp4c[sp4c[i][j2]][j]][k]
                     for (l=0; l<2; l++) {
-                        if (sp4c[mem_sp4c[sp4c[i][j2]][j]][k]==cp[l]) break;
+                        if (sp4c[id_second_6A][k]==cp[l]) break;
                     }
                     if (l==2) {
                         if (m>=6) {
                             m++;
                             break;
                         }
-                        trial[m]=sp4c[mem_sp4c[sp4c[i][j2]][j]][k];
+                        trial[m]=sp4c[id_second_6A][k];
                         m++;
                     }
                 }
-                if(m!=6) { sprintf(errMsg,"Clusters_Get9K_10K(): n9K[%d] %d, too many or too few uncommon SP4 ring particles found in cluster sp4c[mem_sp4c[sp4c[i=%d][j2=%d]][j=%d]][k]\n",f,n9K[f],i,j2,j);   Error(errMsg); }
+                if(m!=6) continue;
 
                 quickSort(&trial[2],4);
                 for (k=0; k<9; k++) hc9K[n9K[f]][k]=trial[k];
 
-                if(ach_1[hc9K[n9K[f]][0]]  == 'C') ach_1[hc9K[n9K[f]][0]] = ach_shell_1[hc9K[n9K[f]][0]] = 'B';
-                if(ach_1[hc9K[n9K[f]][1]]  == 'C') ach_1[hc9K[n9K[f]][1]] = ach_shell_1[hc9K[n9K[f]][1]] = 'B';
-                if(ach_1[hc9K[n9K[f]][2]]  == 'C') ach_1[hc9K[n9K[f]][2]] = ach_shell_1[hc9K[n9K[f]][2]] = 'B';
-                if(ach_1[hc9K[n9K[f]][3]]  == 'C') ach_1[hc9K[n9K[f]][3]] = ach_shell_1[hc9K[n9K[f]][3]] = 'B';
-                if(ach_1[hc9K[n9K[f]][4]]  == 'C') ach_1[hc9K[n9K[f]][4]] = ach_shell_1[hc9K[n9K[f]][4]] = 'B';
-                if(ach_1[hc9K[n9K[f]][5]]  == 'C') ach_1[hc9K[n9K[f]][5]] = ach_shell_1[hc9K[n9K[f]][5]] = 'B';
-                ach_1[hc9K[n9K[f]][6]] = ach_shell_1[hc9K[n9K[f]][6]] = 'O';
-                ach_1[hc9K[n9K[f]][7]] = ach_shell_1[hc9K[n9K[f]][7]] = 'O';
-                ach_1[hc9K[n9K[f]][8]] = ach_cen_1[hc9K[n9K[f]][8]] = 'O';
-
-                ++n9K[f];
+                Cluster_Write_9k(f);
             }
         }
     }
+}
 
-    for (i=0; i<N; ++i) {
-        s9K[i]=ach_1[i];
-        s9K_cen[i]=ach_cen_1[i];
-        s9K_shell[i]=ach_shell_1[i];
+void Cluster_Write_9k(int f) {
+    int i;
 
+    for(i=0; i<6; i++) {
+        if (s9K[hc9K[n9K[f]][i]] == 'C') s9K[hc9K[n9K[f]][i]] = s9K_shell[hc9K[n9K[f]][i]] = 'B';
     }
-    free(ach_1);
-    free(ach_cen_1);
-    free(ach_shell_1);
+    s9K[hc9K[n9K[f]][6]] = s9K_shell[hc9K[n9K[f]][6]] = 'O';
+    s9K[hc9K[n9K[f]][7]] = s9K_shell[hc9K[n9K[f]][7]] = 'O';
+    s9K[hc9K[n9K[f]][8]] = s9K_cen[hc9K[n9K[f]][8]] = 'O';
+
+    ++n9K[f];
 }
 
 void Clusters_Get10K(int f) { // Detect 10K clusters
