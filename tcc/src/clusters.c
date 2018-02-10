@@ -1180,9 +1180,6 @@ void Clusters_Get10B_C3v(int f, int i, int j) {        // Return 1 if 9B is also
             for (l=0;l<10;l++) hc10B[n10B[f]][l]=trial[l];
 
             Cluster_Write_10B(f);
-
-            if (do11W==1) Clusters_Get11W_Cs(f);
-            ++n10B[f];
         }
 
         if (sp5c[k][6] == hc9B[n9B[f]][8]) {    // check one spindle of 7A_k is the common spindle of 9B (hc9B[id9B][.] at this point)
@@ -1252,9 +1249,6 @@ void Clusters_Get10B_C3v(int f, int i, int j) {        // Return 1 if 9B is also
 
             // hc10B key: (ordered shell particles, s1, s2, s3 (ordered), s_com)
             Cluster_Write_10B(f);
-
-            if (do11W==1) Clusters_Get11W_Cs(f);
-            ++n10B[f];
         }
     }
 }
@@ -1270,6 +1264,7 @@ void Cluster_Write_10B(int f) {
         s10B[hc10B[n10B[f]][i]] = s10B_shell[hc10B[n10B[f]][i]] = 'O';
     }
     s10B[hc10B[n10B[f]][9]] = s10B_cen[hc10B[n10B[f]][9]] = 'O';
+    ++n10B[f];
 }
 
 int Clusters_Get11B_C2v(int f) { // Detect 11B C2v clusters
@@ -1361,68 +1356,91 @@ int Clusters_Get11B_C2v(int f) { // Detect 11B C2v clusters
 
 void Cluster_Write_11B(int f) {
     // hc11B key: (as 9B, ep_1_to_9B_0, ep_2_to_9B_1)
-    if(s11B[hc11B[n11B[f]][0]] == 'C') s11B[hc11B[n11B[f]][0]] = s11B_shell[hc11B[n11B[f]][0]] = 'B';
-    if(s11B[hc11B[n11B[f]][1]] == 'C') s11B[hc11B[n11B[f]][1]] = s11B_shell[hc11B[n11B[f]][1]] = 'B';
-    if(s11B[hc11B[n11B[f]][2]] == 'C') s11B[hc11B[n11B[f]][2]] = s11B_shell[hc11B[n11B[f]][2]] = 'B';
-    if(s11B[hc11B[n11B[f]][3]] == 'C') s11B[hc11B[n11B[f]][3]] = s11B_shell[hc11B[n11B[f]][3]] = 'B';
-    if(s11B[hc11B[n11B[f]][4]] == 'C') s11B[hc11B[n11B[f]][4]] = s11B_shell[hc11B[n11B[f]][4]] = 'B';
-    if(s11B[hc11B[n11B[f]][5]] == 'C') s11B[hc11B[n11B[f]][5]] = s11B_shell[hc11B[n11B[f]][5]] = 'B';
-    if(s11B[hc11B[n11B[f]][9]] == 'C') s11B[hc11B[n11B[f]][9]] = s11B_shell[hc11B[n11B[f]][9]] = 'B';
-    if(s11B[hc11B[n11B[f]][10]] == 'C') s11B[hc11B[n11B[f]][10]] = s11B_shell[hc11B[n11B[f]][10]] = 'B';
+    int i;
+    for(i=0; i<6; i++) {
+        if (s11B[hc11B[n11B[f]][i]] == 'C') s11B[hc11B[n11B[f]][i]] = s11B_shell[hc11B[n11B[f]][i]] = 'B';
+    }
     s11B[hc11B[n11B[f]][6]] = s11B_shell[hc11B[n11B[f]][6]] = 'O';
     s11B[hc11B[n11B[f]][7]] = s11B_shell[hc11B[n11B[f]][7]] = 'O';
     s11B[hc11B[n11B[f]][8]] = s11B_cen[hc11B[n11B[f]][8]] = 'O';
+    if(s11B[hc11B[n11B[f]][9]] == 'C') s11B[hc11B[n11B[f]][9]] = s11B_shell[hc11B[n11B[f]][9]] = 'B';
+    if(s11B[hc11B[n11B[f]][10]] == 'C') s11B[hc11B[n11B[f]][10]] = s11B_shell[hc11B[n11B[f]][10]] = 'B';
 }
 
-int Clusters_Get11W_Cs(int f) {  // Detect 11W C2s clusters
-    //  11W is the ground state of the 11 Wahnstrom particles
-    // Call from 10B, the central particle must have exactly 10 particles bonded to it.
-    // One extra particle bonded to 10B central particle but not bonded to three shell spindles of 7A in 10B
+void Clusters_Get11W(int f) {
+    // 10B with 1 extra particle. The central particle of 10B must have exactly 10 particles bonded to it.
+    // The extra particle is bonded to 10B central particle but not bonded to three shell spindles of 7A in 10B
 
-    int i, k, l, m;
-    int ep=-1;
-    int break_out;
+    int id_10B, spindle_10B;
+    int extra_particle;
+
+    for(id_10B=0;id_10B<n10B[f]; id_10B++) {
+        spindle_10B = hc10B[id_10B][9];
+        if (cnb[spindle_10B] == 10) {   // s_com has 10 bonds in total (all forming the shell)
+
+            extra_particle = get_11W_extra_particle(id_10B, spindle_10B);
+
+            // extra particle must not be bonded to three 7A spindles in shell of 10B
+            if (is_particle_bonded_to_7As(id_10B, extra_particle)) continue;
+
+            resize_hc11W(f);
+            populate_hc11W(f, id_10B, extra_particle);
+            populate_s11W(f);
+            n11W[f]++;
+        }
+    }
+}
+
+void populate_hc11W(int f, int id_10B, int extra_particle) {
+    int i;
+    for (i = 0; i < 10; i++){
+                hc11W[n11W[f]][i] = hc10B[id_10B][i];
+            }
+    hc11W[n11W[f]][10] = extra_particle;
+}
+
+void resize_hc11W(int f) {
     int clusSize=11;
 
-    if(cnb[hc10B[n10B[f]][9]]!= 10) return 0;   // s_com has 10 bonds in total (all forming the shell)
-
-    m = 0;  // find extra particle
-    break_out=0;
-    for(k=0; k<10; ++k) {
-        for(l=0; l<9; ++l) {
-            if(bNums[hc10B[n10B[f]][9]][k] == hc10B[n10B[f]][l]) break;
-        }
-        if(l==9){
-            if(m==1) {
-                break_out=1;
-                break;
-            }
-            ep= bNums[hc10B[n10B[f]][9]][k];    // two extra particles
-            m++;
-        }
+    if (n11W[f] == m11W) {
+        hc11W = resize_2D_int(hc11W, m11W, m11W + incrStatic, clusSize, -1);
+        m11W = m11W + incrStatic;
     }
-
-    if(break_out==1 || m<1) return 0;
-    if(Bonds_BondCheck(ep, hc10B[n10B[f]][6])==1) return 0; // extra particles must not be bonded to three 7A spindles in shell of 10B
-    if(Bonds_BondCheck(ep, hc10B[n10B[f]][7])==1) return 0; // extra particles must not be bonded to three 7A spindles in shell of 10B
-    if(Bonds_BondCheck(ep, hc10B[n10B[f]][8])==1) return 0; // extra particles must not be bonded to three 7A spindles in shell of 10B
-    // Found 11W add as hc11W key: (as 10B, ep)
-
-    if(n11W[f] == m11W) {
-        hc11W=resize_2D_int(hc11W,m11W,m11W+incrStatic,clusSize,-1);
-        m11W=m11W+incrStatic;
-    }
-
-    for(i=0; i<10; i++);
-    hc11W[n11W[f]][i] = hc10B[n10B[f]][i];
-    hc11W[n11W[f]][10] = ep;
-
-    Write_Cluster_11W(f);
-
-    return 1;
 }
 
-void Write_Cluster_11W(int f) {
+int is_particle_bonded_to_7As(int id_10B, int extra_particle) {
+    int i;
+
+    for(i=6; i < 9; i++) {
+        if (Bonds_BondCheck(extra_particle, hc10B[id_10B][i]) == 1){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int get_11W_extra_particle(int id_10B, int spindle_10B) {
+    int i;
+    for (i = 0; i < 10; ++i) {
+        if (is_particle_in_10B(bNums[spindle_10B][i], id_10B) == 0) {
+            return bNums[spindle_10B][i];
+        }
+    }
+}
+
+int is_particle_in_10B(int particle_id, int id_10B) {
+    // Returns 1 if particle_id is in id_10B else returns 0
+    int i;
+
+    for (i=0; i<9; i++) {
+        if (particle_id == hc10B[id_10B][i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void populate_s11W(int f) {
     int i;
 
     for(i=0; i<9; i++) {
@@ -1430,8 +1448,6 @@ void Write_Cluster_11W(int f) {
     }
     if (s11W[hc11W[n11W[f]][9]] == 'C') s11W[hc11W[n11W[f]][9]] = s11W_cen[hc11W[n11W[f]][9]] = 'B';
     s11W[hc11W[n11W[f]][10]] = s11W_shell[hc11W[n11W[f]][10]] = 'O';
-
-    n11W[f]++;
 }
 
 void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j) {    // Returns number of 11Es for a single 9B
