@@ -795,11 +795,7 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
     int i, j, j2, k, l, m, n;
     int db[2], ob[4];
     int flg;
-    char *ach, errMsg[1000];
     int clusSize=9;
-
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get9A_D3h(): ach[] malloc out of memory\n");  Error(errMsg); }
-    for (i=0; i<N; ++i) ach[i] = 'C';
 
     for (i=0; i<nsp4b[f]-2; ++i) {  // loop over all sp4b_i
         for (j2=0; j2<1; j2++) {
@@ -942,27 +938,25 @@ void Clusters_Get9A_D3h(int f) {    // Detect 9A D3h clusters
                                 hc9A[n9A[f]][5]=db[0];
                             }
                         }
-                    Cluster_Write_9A(f, ach);
+                    Cluster_Write_9A(f);
                     break;
                 }
             }
         }
     }
-
-    for(i=0; i<N; ++i) s9A[i]=ach[i];
-    free(ach);
 }
 
-void Cluster_Write_9A(int f, char *ach) {// hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
-    if(ach[hc9A[n9A[f]][0]] == 'C') ach[hc9A[n9A[f]][0]] = 'B';
-    if(ach[hc9A[n9A[f]][1]] == 'C') ach[hc9A[n9A[f]][1]] = 'B';
-    if(ach[hc9A[n9A[f]][3]] == 'C') ach[hc9A[n9A[f]][3]] = 'B';
-    if(ach[hc9A[n9A[f]][4]] == 'C') ach[hc9A[n9A[f]][4]] = 'B';
-    if(ach[hc9A[n9A[f]][6]] == 'C') ach[hc9A[n9A[f]][6]] = 'B';
-    if(ach[hc9A[n9A[f]][7]] == 'C') ach[hc9A[n9A[f]][7]] = 'B';
-    ach[hc9A[n9A[f]][2]] = 'O';
-    ach[hc9A[n9A[f]][5]] = 'O';
-    ach[hc9A[n9A[f]][8]] = 'O';
+void Cluster_Write_9A(int f) {
+    // hc9A key: (SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_lowest_s, SP4_to_0_in_SP4_lowest_s, SP4_to_1_in_SP4_lowest_s, s_lowest, s_to_0_in_SP4_lowest_s,s_to_2_in_SP4_lowest_s)
+    if(s9A[hc9A[n9A[f]][0]] == 'C') s9A[hc9A[n9A[f]][0]] = 'B';
+    if(s9A[hc9A[n9A[f]][1]] == 'C') s9A[hc9A[n9A[f]][1]] = 'B';
+    if(s9A[hc9A[n9A[f]][3]] == 'C') s9A[hc9A[n9A[f]][3]] = 'B';
+    if(s9A[hc9A[n9A[f]][4]] == 'C') s9A[hc9A[n9A[f]][4]] = 'B';
+    if(s9A[hc9A[n9A[f]][6]] == 'C') s9A[hc9A[n9A[f]][6]] = 'B';
+    if(s9A[hc9A[n9A[f]][7]] == 'C') s9A[hc9A[n9A[f]][7]] = 'B';
+    s9A[hc9A[n9A[f]][2]] = 'O';
+    s9A[hc9A[n9A[f]][5]] = 'O';
+    s9A[hc9A[n9A[f]][8]] = 'O';
     ++n9A[f];
 }
 
@@ -971,25 +965,9 @@ void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12
     int sp5com[2];
     int i, j, k, l, m;
     int flg, fb1, fb2;
-    char *ach1, *ach1_cen, *ach1_shell, *ach2, *ach2_cen, *ach2_shell, *ach3, *ach4, *ach5, *ach5_cen, *ach5_shell, *ach6, *ach6_cen, *ach6_shell, errMsg[1000];
     int clusSize=9;
 
     sp1=sp2i=sp2j=-1;
-    ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach1[] malloc out of memory\n");    Error(errMsg); }
-    ach1_cen=malloc(N*sizeof(char));    if (ach1_cen==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach1_cen[] malloc out of memory\n");    Error(errMsg); }
-    ach1_shell=malloc(N*sizeof(char));  if (ach1_shell==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach1_shell[] malloc out of memory\n");    Error(errMsg); }
-    ach2=malloc(N*sizeof(char));    if (ach2==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach2[] malloc out of memory\n");    Error(errMsg); }
-    ach2_cen=malloc(N*sizeof(char));    if (ach2_cen==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach2_cen[] malloc out of memory\n");    Error(errMsg); }
-    ach2_shell=malloc(N*sizeof(char));  if (ach2_shell==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach2_shell[] malloc out of memory\n");    Error(errMsg); }
-    ach3=malloc(N*sizeof(char));    if (ach3==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach3[] malloc out of memory\n");    Error(errMsg); }
-    ach4=malloc(N*sizeof(char));    if (ach4==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach4[] malloc out of memory\n");    Error(errMsg); }
-    ach5=malloc(N*sizeof(char));    if (ach5==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach5[] malloc out of memory\n");    Error(errMsg); }
-    ach5_cen=malloc(N*sizeof(char));    if (ach5_cen==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach5_cen[] malloc out of memory\n");    Error(errMsg); }
-    ach5_shell=malloc(N*sizeof(char));  if (ach5_shell==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach5_shell[] malloc out of memory\n");    Error(errMsg); }
-    ach6=malloc(N*sizeof(char));    if (ach6==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach6[] malloc out of memory\n");    Error(errMsg); }
-    ach6_cen=malloc(N*sizeof(char));    if (ach6_cen==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach6_cen[] malloc out of memory\n");    Error(errMsg); }
-    ach6_shell=malloc(N*sizeof(char));  if (ach6_shell==NULL) { sprintf(errMsg,"Clusters_Get9B_10B_11B_11E_12D(): ach6_shell[] malloc out of memory\n");    Error(errMsg); }
-    for(i=0; i<N; ++i) ach1[i] = ach1_cen[i] = ach1_shell[i] = ach2[i] = ach2_cen[i] = ach2_shell[i] = ach3[i] = ach4[i] = ach5[i] = ach5_cen[i] = ach5_shell[i] = ach6[i] = ach6_cen[i] = ach6_shell[i] = 'C';
 
     for (i=0; i<nsp5c[f]-1; ++i) {  // loop over all 7A_i
         // POSSIBLE IMPROVEMENT!! - 2 loops: over all 7A clusters which each spindle is in
@@ -1101,64 +1079,34 @@ void Clusters_Get9B_10B_11B_11E_12D(int f) {    // Detect 9B, 10B, 11A, 11E & 12
                 }
             }
             hc9B[n9B[f]][8]=sp1;
+            Cluster_Write_9B(f);
 
-            // hc9B key: (SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com)
-            if (ach1[hc9B[n9B[f]][0]] == 'C') ach1[hc9B[n9B[f]][0]] = ach1_shell[hc9B[n9B[f]][0]] = 'B';
-            if (ach1[hc9B[n9B[f]][1]] == 'C') ach1[hc9B[n9B[f]][1]] = ach1_shell[hc9B[n9B[f]][1]] = 'B';
-            if (ach1[hc9B[n9B[f]][2]] == 'C') ach1[hc9B[n9B[f]][2]] = ach1_shell[hc9B[n9B[f]][2]] = 'B';
-            if (ach1[hc9B[n9B[f]][3]] == 'C') ach1[hc9B[n9B[f]][3]] = ach1_shell[hc9B[n9B[f]][3]] = 'B';
-            if (ach1[hc9B[n9B[f]][4]] == 'C') ach1[hc9B[n9B[f]][4]] = ach1_shell[hc9B[n9B[f]][4]] = 'B';
-            if (ach1[hc9B[n9B[f]][5]] == 'C') ach1[hc9B[n9B[f]][5]] = ach1_shell[hc9B[n9B[f]][5]] = 'B';
-            ach1[hc9B[n9B[f]][6]] = ach1_shell[hc9B[n9B[f]][6]] = 'O';
-            ach1[hc9B[n9B[f]][7]] = ach1_shell[hc9B[n9B[f]][7]] = 'O';
-            ach1[hc9B[n9B[f]][8]] = ach1_cen[hc9B[n9B[f]][8]] = 'O';
-
-            if (do10B==1) Clusters_Get10B_C3v(f,i,j,ach2,ach2_cen,ach2_shell,ach6,ach6_cen,ach6_shell);
+            if (do10B==1) Clusters_Get10B_C3v(f,i,j);
             if (do11B==1) {
-                if (Clusters_Get11B_C2v(f,ach5,ach5_cen,ach5_shell)) {
-                    ach5_cen[hc9B[n9B[f]][8]] = 'O';
+                if (Clusters_Get11B_C2v(f)) {
+                    s11B_cen[hc9B[n9B[f]][8]] = 'O';
                     ++n11B[f];
                 }
             }
-            if (do11E==1) Clusters_Get11E_12D(f,i,j,sp1,sp2i,sp2j,ach3,ach4);
+            if (do11E==1) Clusters_Get11E_12D(f,i,j,sp1,sp2i,sp2j);
 
             ++n9B[f];
         }
     }
-
-    for(i=0; i<N; ++i) {
-        s9B[i]=ach1[i];
-        s9B_cen[i]=ach1_cen[i];
-        s9B_shell[i]=ach1_shell[i];
-        s10B[i]=ach2[i];
-        s10B_cen[i]=ach2_cen[i];
-        s10B_shell[i]=ach2_shell[i];
-        s11B[i]=ach5[i];
-        s11B_cen[i]=ach5_cen[i];
-        s11B_shell[i]=ach5_shell[i];
-        s11E[i]=ach3[i];
-        s11W[i]=ach6[i];
-        s11W_cen[i]=ach6_cen[i];
-        s11W_shell[i]=ach6_shell[i];
-        s12D[i]=ach4[i];
-    }
-    free(ach1);
-    free(ach1_cen);
-    free(ach1_shell);
-    free(ach2);
-    free(ach2_cen);
-    free(ach2_shell);
-    free(ach3);
-    free(ach4);
-    free(ach5);
-    free(ach5_cen);
-    free(ach5_shell);
-    free(ach6);
-    free(ach6_cen);
-    free(ach6_shell);
 }
 
-void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ach_shell, char *ach1, char *ach1_cen, char *ach1_shell) {        // Return 1 if 9B is also 10B cluster
+void Cluster_Write_9B(int f) {
+    // hc9B key: (SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com)
+    int i;
+    for(i=0; i<6; i++) {
+        if (s9B[hc9B[n9B[f]][i]] == 'C') s9B[hc9B[n9B[f]][i]] = s9B_shell[hc9B[n9B[f]][i]] = 'B';
+    }
+    s9B[hc9B[n9B[f]][6]] = s9B_shell[hc9B[n9B[f]][6]] = 'O';
+    s9B[hc9B[n9B[f]][7]] = s9B_shell[hc9B[n9B[f]][7]] = 'O';
+    s9B[hc9B[n9B[f]][8]] = s9B_cen[hc9B[n9B[f]][8]] = 'O';
+}
+
+void Clusters_Get10B_C3v(int f, int i, int j) {        // Return 1 if 9B is also 10B cluster
     int k,l,m;
     int flg1, flg2;
     int trial[10];
@@ -1231,19 +1179,9 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
             quickSort(&trial[6],3);
             for (l=0;l<10;l++) hc10B[n10B[f]][l]=trial[l];
 
-            // hc10B key: (ordered shell particles, s1, s2, s3 (ordered), s_com)
-            if(ach[hc10B[n10B[f]][0]] == 'C') ach[hc10B[n10B[f]][0]] = ach_shell[hc10B[n10B[f]][0]] = 'B';
-            if(ach[hc10B[n10B[f]][1]] == 'C') ach[hc10B[n10B[f]][1]] = ach_shell[hc10B[n10B[f]][1]] = 'B';
-            if(ach[hc10B[n10B[f]][2]] == 'C') ach[hc10B[n10B[f]][2]] = ach_shell[hc10B[n10B[f]][2]] = 'B';
-            if(ach[hc10B[n10B[f]][3]] == 'C') ach[hc10B[n10B[f]][3]] = ach_shell[hc10B[n10B[f]][3]] = 'B';
-            if(ach[hc10B[n10B[f]][4]] == 'C') ach[hc10B[n10B[f]][4]] = ach_shell[hc10B[n10B[f]][4]] = 'B';
-            if(ach[hc10B[n10B[f]][5]] == 'C') ach[hc10B[n10B[f]][5]] = ach_shell[hc10B[n10B[f]][5]] = 'B';
-            ach[hc10B[n10B[f]][6]] = ach_shell[hc10B[n10B[f]][6]] = 'O';
-            ach[hc10B[n10B[f]][7]] = ach_shell[hc10B[n10B[f]][7]] = 'O';
-            ach[hc10B[n10B[f]][8]] = ach_shell[hc10B[n10B[f]][8]] = 'O';
-            ach[hc10B[n10B[f]][9]] = ach_cen[hc10B[n10B[f]][9]] = 'O';
+            Cluster_Write_10B(f);
 
-            if (do11W==1) Clusters_Get11W_Cs(f,ach1,ach1_cen,ach1_shell);
+            if (do11W==1) Clusters_Get11W_Cs(f);
             ++n10B[f];
         }
 
@@ -1313,24 +1251,28 @@ void Clusters_Get10B_C3v(int f, int i, int j, char *ach, char *ach_cen, char *ac
             for (l=0;l<10;l++) hc10B[n10B[f]][l]=trial[l];
 
             // hc10B key: (ordered shell particles, s1, s2, s3 (ordered), s_com)
-            if(ach[hc10B[n10B[f]][0]] == 'C') ach[hc10B[n10B[f]][0]] = ach_shell[hc10B[n10B[f]][0]] = 'B';
-            if(ach[hc10B[n10B[f]][1]] == 'C') ach[hc10B[n10B[f]][1]] = ach_shell[hc10B[n10B[f]][1]] = 'B';
-            if(ach[hc10B[n10B[f]][2]] == 'C') ach[hc10B[n10B[f]][2]] = ach_shell[hc10B[n10B[f]][2]] = 'B';
-            if(ach[hc10B[n10B[f]][3]] == 'C') ach[hc10B[n10B[f]][3]] = ach_shell[hc10B[n10B[f]][3]] = 'B';
-            if(ach[hc10B[n10B[f]][4]] == 'C') ach[hc10B[n10B[f]][4]] = ach_shell[hc10B[n10B[f]][4]] = 'B';
-            if(ach[hc10B[n10B[f]][5]] == 'C') ach[hc10B[n10B[f]][5]] = ach_shell[hc10B[n10B[f]][5]] = 'B';
-            ach[hc10B[n10B[f]][6]] = ach_shell[hc10B[n10B[f]][6]] = 'O';
-            ach[hc10B[n10B[f]][7]] = ach_shell[hc10B[n10B[f]][7]] = 'O';
-            ach[hc10B[n10B[f]][8]] = ach_shell[hc10B[n10B[f]][8]] = 'O';
-            ach[hc10B[n10B[f]][9]] = ach_cen[hc10B[n10B[f]][9]] = 'O';
+            Cluster_Write_10B(f);
 
-            if (do11W==1) Clusters_Get11W_Cs(f,ach1,ach1_cen,ach1_shell);
+            if (do11W==1) Clusters_Get11W_Cs(f);
             ++n10B[f];
         }
     }
 }
 
-int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // Detect 11B C2v clusters
+void Cluster_Write_10B(int f) {
+    // hc10B key: (ordered shell particles, s1, s2, s3 (ordered), s_com)
+    int i;
+
+    for(i=0; i<6; i++) {
+        if (s10B[hc10B[n10B[f]][i]] == 'C') s10B[hc10B[n10B[f]][i]] = s10B_shell[hc10B[n10B[f]][i]] = 'B';
+    }
+    for(i=6; i<9; i++) {
+        s10B[hc10B[n10B[f]][i]] = s10B_shell[hc10B[n10B[f]][i]] = 'O';
+    }
+    s10B[hc10B[n10B[f]][9]] = s10B_cen[hc10B[n10B[f]][9]] = 'O';
+}
+
+int Clusters_Get11B_C2v(int f) { // Detect 11B C2v clusters
     //  11B is very similar to 11C & 11D
     // Call from 9B, the central particle must have 11 particles bonded to it.
     // The 10th & 11th particles are bonded to each other. They are both bonded
@@ -1412,28 +1354,32 @@ int Clusters_Get11B_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // D
         hc11B[n11B[f]][9] = ep[1];
         hc11B[n11B[f]][10] = ep[0];
     }
-    // hc11B key: (as 9B, ep_1_to_9B_0, ep_2_to_9B_1)
-    if(ach[hc11B[n11B[f]][0]] == 'C') ach[hc11B[n11B[f]][0]] = ach_shell[hc11B[n11B[f]][0]] = 'B';
-    if(ach[hc11B[n11B[f]][1]] == 'C') ach[hc11B[n11B[f]][1]] = ach_shell[hc11B[n11B[f]][1]] = 'B';
-    if(ach[hc11B[n11B[f]][2]] == 'C') ach[hc11B[n11B[f]][2]] = ach_shell[hc11B[n11B[f]][2]] = 'B';
-    if(ach[hc11B[n11B[f]][3]] == 'C') ach[hc11B[n11B[f]][3]] = ach_shell[hc11B[n11B[f]][3]] = 'B';
-    if(ach[hc11B[n11B[f]][4]] == 'C') ach[hc11B[n11B[f]][4]] = ach_shell[hc11B[n11B[f]][4]] = 'B';
-    if(ach[hc11B[n11B[f]][5]] == 'C') ach[hc11B[n11B[f]][5]] = ach_shell[hc11B[n11B[f]][5]] = 'B';
-    if(ach[hc11B[n11B[f]][9]] == 'C') ach[hc11B[n11B[f]][9]] = ach_shell[hc11B[n11B[f]][9]] = 'B';
-    if(ach[hc11B[n11B[f]][10]] == 'C') ach[hc11B[n11B[f]][10]] = ach_shell[hc11B[n11B[f]][10]] = 'B';
-    ach[hc11B[n11B[f]][6]] = ach_shell[hc11B[n11B[f]][6]] = 'O';
-    ach[hc11B[n11B[f]][7]] = ach_shell[hc11B[n11B[f]][7]] = 'O';
-    ach[hc11B[n11B[f]][8]] = ach_cen[hc11B[n11B[f]][8]] = 'O';
+    Cluster_Write_11B(f);
 
     return 1;
 }
 
-int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) {  // Detect 11W C2s clusters
+void Cluster_Write_11B(int f) {
+    // hc11B key: (as 9B, ep_1_to_9B_0, ep_2_to_9B_1)
+    if(s11B[hc11B[n11B[f]][0]] == 'C') s11B[hc11B[n11B[f]][0]] = s11B_shell[hc11B[n11B[f]][0]] = 'B';
+    if(s11B[hc11B[n11B[f]][1]] == 'C') s11B[hc11B[n11B[f]][1]] = s11B_shell[hc11B[n11B[f]][1]] = 'B';
+    if(s11B[hc11B[n11B[f]][2]] == 'C') s11B[hc11B[n11B[f]][2]] = s11B_shell[hc11B[n11B[f]][2]] = 'B';
+    if(s11B[hc11B[n11B[f]][3]] == 'C') s11B[hc11B[n11B[f]][3]] = s11B_shell[hc11B[n11B[f]][3]] = 'B';
+    if(s11B[hc11B[n11B[f]][4]] == 'C') s11B[hc11B[n11B[f]][4]] = s11B_shell[hc11B[n11B[f]][4]] = 'B';
+    if(s11B[hc11B[n11B[f]][5]] == 'C') s11B[hc11B[n11B[f]][5]] = s11B_shell[hc11B[n11B[f]][5]] = 'B';
+    if(s11B[hc11B[n11B[f]][9]] == 'C') s11B[hc11B[n11B[f]][9]] = s11B_shell[hc11B[n11B[f]][9]] = 'B';
+    if(s11B[hc11B[n11B[f]][10]] == 'C') s11B[hc11B[n11B[f]][10]] = s11B_shell[hc11B[n11B[f]][10]] = 'B';
+    s11B[hc11B[n11B[f]][6]] = s11B_shell[hc11B[n11B[f]][6]] = 'O';
+    s11B[hc11B[n11B[f]][7]] = s11B_shell[hc11B[n11B[f]][7]] = 'O';
+    s11B[hc11B[n11B[f]][8]] = s11B_cen[hc11B[n11B[f]][8]] = 'O';
+}
+
+int Clusters_Get11W_Cs(int f) {  // Detect 11W C2s clusters
     //  11W is the ground state of the 11 Wahnstrom particles
     // Call from 10B, the central particle must have exactly 10 particles bonded to it.
     // One extra particle bonded to 10B central particle but not bonded to three shell spindles of 7A in 10B
 
-    int k, l, m;
+    int i, k, l, m;
     int ep=-1;
     int break_out;
     int clusSize=11;
@@ -1461,40 +1407,34 @@ int Clusters_Get11W_Cs(int f, char *ach, char *ach_cen, char *ach_shell) {  // D
     if(Bonds_BondCheck(ep, hc10B[n10B[f]][7])==1) return 0; // extra particles must not be bonded to three 7A spindles in shell of 10B
     if(Bonds_BondCheck(ep, hc10B[n10B[f]][8])==1) return 0; // extra particles must not be bonded to three 7A spindles in shell of 10B
     // Found 11W add as hc11W key: (as 10B, ep)
+
     if(n11W[f] == m11W) {
         hc11W=resize_2D_int(hc11W,m11W,m11W+incrStatic,clusSize,-1);
         m11W=m11W+incrStatic;
     }
-    hc11W[n11W[f]][0] = hc10B[n10B[f]][0];
-    hc11W[n11W[f]][1] = hc10B[n10B[f]][1];
-    hc11W[n11W[f]][2] = hc10B[n10B[f]][2];
-    hc11W[n11W[f]][3] = hc10B[n10B[f]][3];
-    hc11W[n11W[f]][4] = hc10B[n10B[f]][4];
-    hc11W[n11W[f]][5] = hc10B[n10B[f]][5];
-    hc11W[n11W[f]][6] = hc10B[n10B[f]][6];
-    hc11W[n11W[f]][7] = hc10B[n10B[f]][7];
-    hc11W[n11W[f]][8] = hc10B[n10B[f]][8];
-    hc11W[n11W[f]][9] = hc10B[n10B[f]][9];
+
+    for(i=0; i<10; i++);
+    hc11W[n11W[f]][i] = hc10B[n10B[f]][i];
     hc11W[n11W[f]][10] = ep;
 
-    if(ach[hc11W[n11W[f]][0]] == 'C') ach[hc11W[n11W[f]][0]] = ach_shell[hc11W[n11W[f]][0]] = 'B';
-    if(ach[hc11W[n11W[f]][1]] == 'C') ach[hc11W[n11W[f]][1]] = ach_shell[hc11W[n11W[f]][1]] = 'B';
-    if(ach[hc11W[n11W[f]][2]] == 'C') ach[hc11W[n11W[f]][2]] = ach_shell[hc11W[n11W[f]][2]] = 'B';
-    if(ach[hc11W[n11W[f]][3]] == 'C') ach[hc11W[n11W[f]][3]] = ach_shell[hc11W[n11W[f]][3]] = 'B';
-    if(ach[hc11W[n11W[f]][4]] == 'C') ach[hc11W[n11W[f]][4]] = ach_shell[hc11W[n11W[f]][4]] = 'B';
-    if(ach[hc11W[n11W[f]][5]] == 'C') ach[hc11W[n11W[f]][5]] = ach_shell[hc11W[n11W[f]][5]] = 'B';
-    if(ach[hc11W[n11W[f]][6]] == 'C') ach[hc11W[n11W[f]][6]] = ach_shell[hc11W[n11W[f]][6]] = 'B';
-    if(ach[hc11W[n11W[f]][7]] == 'C') ach[hc11W[n11W[f]][7]] = ach_shell[hc11W[n11W[f]][7]] = 'B';
-    if(ach[hc11W[n11W[f]][8]] == 'C') ach[hc11W[n11W[f]][8]] = ach_shell[hc11W[n11W[f]][8]] = 'B';
-    if(ach[hc11W[n11W[f]][9]] == 'C') ach[hc11W[n11W[f]][9]] = ach_cen[hc11W[n11W[f]][9]] = 'B';
-    ach[hc11W[n11W[f]][10]] = ach_shell[hc11W[n11W[f]][10]] = 'O';
-
-    n11W[f]++;
+    Write_Cluster_11W(f);
 
     return 1;
 }
 
-void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char *ach1, char *ach2) {    // Returns number of 11Es for a single 9B
+void Write_Cluster_11W(int f) {
+    int i;
+
+    for(i=0; i<9; i++) {
+        if (s11W[hc11W[n11W[f]][i]] == 'C') s11W[hc11W[n11W[f]][i]] = s11W_shell[hc11W[n11W[f]][i]] = 'B';
+    }
+    if (s11W[hc11W[n11W[f]][9]] == 'C') s11W[hc11W[n11W[f]][9]] = s11W_cen[hc11W[n11W[f]][9]] = 'B';
+    s11W[hc11W[n11W[f]][10]] = s11W_shell[hc11W[n11W[f]][10]] = 'O';
+
+    n11W[f]++;
+}
+
+void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j) {    // Returns number of 11Es for a single 9B
     //  ###### NOTE #####
     //  for 11E C2 we sterically assume that given that two members of the SP5 ring of 7A_k are new, the other three are
     // 1) sp1
@@ -1580,10 +1520,10 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
 
-                Clust_Write_11E(f, ach1);
+                Clust_Write_11E(f);
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2i, sp5c[k][6], ach2);
+                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, j, k, sp2i, sp5c[k][6]);
 
                 ++n11E[f];
             }
@@ -1659,10 +1599,10 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
 
-                Clust_Write_11E(f, ach1);
+                Clust_Write_11E(f);
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2i, sp5c[k][5], ach2);
+                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, j, k, sp2i, sp5c[k][5]);
                 ++n11E[f];
             }
         }
@@ -1739,10 +1679,10 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
 
-                Clust_Write_11E(f, ach1);
+                Clust_Write_11E(f);
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2j, sp5c[k][6], ach2);
+                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, j, k, sp2j, sp5c[k][6]);
                 ++n11E[f];
             }
         }
@@ -1817,31 +1757,28 @@ void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j, char 
                 quickSort(&trial[4],7);
                 for (i=0;i<11;i++) hc11E[n11E[f]][i]=trial[i];
 
-                Clust_Write_11E(f, ach1);
+                Clust_Write_11E(f);
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, i, j, k, sp2j, sp5c[k][5], ach2);
+                if (do12D==1) n12D[f] += Clusters_Get12D_D2d(f, j, k, sp2j, sp5c[k][5]);
                 ++n11E[f];
             }
         }
     }
 }
 
-void Clust_Write_11E(int f, char *ach1) {
-    if(ach1[hc11E[n11E[f]][4]] == 'C') ach1[hc11E[n11E[f]][4]] = 'B';
-    if(ach1[hc11E[n11E[f]][5]] == 'C') ach1[hc11E[n11E[f]][5]] = 'B';
-    if(ach1[hc11E[n11E[f]][6]] == 'C') ach1[hc11E[n11E[f]][6]] = 'B';
-    if(ach1[hc11E[n11E[f]][7]] == 'C') ach1[hc11E[n11E[f]][7]] = 'B';
-    if(ach1[hc11E[n11E[f]][8]] == 'C') ach1[hc11E[n11E[f]][8]] = 'B';
-    if(ach1[hc11E[n11E[f]][9]] == 'C') ach1[hc11E[n11E[f]][9]] = 'B';
-    if(ach1[hc11E[n11E[f]][10]] == 'C') ach1[hc11E[n11E[f]][10]] = 'B';
-    ach1[hc11E[n11E[f]][0]] = 'O';
-    ach1[hc11E[n11E[f]][1]] = 'O';
-    ach1[hc11E[n11E[f]][2]] = 'O';
-    ach1[hc11E[n11E[f]][3]] = 'O';
+void Clust_Write_11E(int f) {
+    int i;
+
+    for(i=0; i<4; i++) {
+        s11E[hc11E[n11E[f]][i]] = 'O';
+    }
+    for(i=4; i<11; i++) {
+        if (s11E[hc11E[n11E[f]][i]] == 'C') s11E[hc11E[n11E[f]][i]] = 'B';
+    }
 }
 
-int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach) {  // Return 1 if 12B is also 11E
+int Clusters_Get12D_D2d(int f, int j, int k, int sp1, int sp2) {  // Return 1 if 12B is also 11E
     int l, m, n, o, p, q;
     int flg1, flg2;
     int break_out;
@@ -1896,22 +1833,22 @@ int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach)
 
             for(m=0; m<12; ++m) hc12D[n12D[f]][m] = trial[m];
 
-            if(ach[hc12D[n12D[f]][4]] == 'C') ach[hc12D[n12D[f]][4]] = 'B';
-            if(ach[hc12D[n12D[f]][5]] == 'C') ach[hc12D[n12D[f]][5]] = 'B';
-            if(ach[hc12D[n12D[f]][6]] == 'C') ach[hc12D[n12D[f]][6]] = 'B';
-            if(ach[hc12D[n12D[f]][7]] == 'C') ach[hc12D[n12D[f]][7]] = 'B';
-            if(ach[hc12D[n12D[f]][8]] == 'C') ach[hc12D[n12D[f]][8]] = 'B';
-            if(ach[hc12D[n12D[f]][9]] == 'C') ach[hc12D[n12D[f]][9]] = 'B';
-            if(ach[hc12D[n12D[f]][10]] == 'C') ach[hc12D[n12D[f]][10]] = 'B';
-            if(ach[hc12D[n12D[f]][11]] == 'C') ach[hc12D[n12D[f]][11]] = 'B';
-            ach[hc12D[n12D[f]][0]] = 'O';
-            ach[hc12D[n12D[f]][1]] = 'O';
-            ach[hc12D[n12D[f]][2]] = 'O';
-            ach[hc12D[n12D[f]][3]] = 'O';
+            Cluster_Write_12D(f);
             return 1;
         }
     }
     return 0;
+}
+
+void Cluster_Write_12D(int f) {
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        s12D[hc12D[n12D[f]][i]] = 'O';
+    }
+    for (i = 4; i < 12; i++) {
+        if (s12D[hc12D[n12D[f]][i]] == 'C') s12D[hc12D[n12D[f]][i]] = 'B';
+    }
 }
 
 void Clusters_Get9K(int f)  {
@@ -2112,14 +2049,10 @@ void Cluster_Write_10K(int f, int id_9k, int extra_particle) {
 }
 
 void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
-    char *ach;
     int i, j, j2, k, l, m;
     char errMsg[1000];
     int clusSize=10;
     int *used_sp4b;
-
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get10A_C3v(): ach[] malloc out of memory\n"); Error(errMsg); }
-    for (i=0; i<N; ++i) ach[i] = 'C';
 
     used_sp4b=malloc(nsp4b[f]*sizeof(int)); if (used_sp4b==NULL) { sprintf(errMsg,"Clusters_Get10A_C3v(): used_sp4b[] malloc out of memory\n"); Error(errMsg); }
     for (i=0; i<nsp4b[f]; ++i) used_sp4b[i] = 0;
@@ -2169,25 +2102,22 @@ void Clusters_Get10A_C3v(int f) { // Detect 10A D4d clusters
                     hc10A[n10A[f]][9]=sp4b[mem_sp4b[bNums[sp4b[i][0]][j2]][j]][4];
                     quickSort(&hc10A[n10A[f]][8],2);
 
-                    Cluster_Write_10A(f, ach);
+                    Cluster_Write_10A(f);
                 }
             }
         }
     }
-
-    for (i=0; i<N; ++i) s10A[i]=ach[i];
-    free(ach);
     free(used_sp4b);
 }
 
-void Cluster_Write_10A(int f, char *ach) {
+void Cluster_Write_10A(int f) {
     int i;
 
     for(i=0; i<8; i++) {
-        if (ach[hc10A[n10A[f]][i]] == 'C') ach[hc10A[n10A[f]][i]] = 'B';
+        if (s10A[hc10A[n10A[f]][i]] == 'C') s10A[hc10A[n10A[f]][i]] = 'B';
     }
-    ach[hc10A[n10A[f]][8]] = 'O';
-    ach[hc10A[n10A[f]][9]] = 'O';
+    s10A[hc10A[n10A[f]][8]] = 'O';
+    s10A[hc10A[n10A[f]][9]] = 'O';
 
     ++n10A[f];
 }
@@ -2195,16 +2125,10 @@ void Cluster_Write_10A(int f, char *ach) {
 void Clusters_Get10W(int f) { // Detect 10W clusters
     int i, j, k, l, m;
     int sp5b_clusts[5], shell_parts[9];
-    char *ach, *ach_cen, *ach_shell;
-    char errMsg[1000];
     int clusSize=10;
 
     sp5b_clusts[0]=sp5b_clusts[1]=sp5b_clusts[2]=sp5b_clusts[3]=sp5b_clusts[4]=-1;
 
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get10W(): ach[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_Get10W(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_Get10W(): ach_shell[] malloc out of memory\n"); Error(errMsg); }
-    for (i=0; i<N; ++i) ach[i] = ach_cen[i] = ach_shell[i] = 'C';
 
     for (i=0; i<nsp5b[f]; ++i) { // loop over all sp5b
         if (cnb[sp5b[i][5]]!=9) continue;   // central particle must have coordination number 9
@@ -2253,26 +2177,17 @@ void Clusters_Get10W(int f) { // Detect 10W clusters
         hc10W[n10W[f]][0] = sp5b[i][5];
         for (j=0; j<9; j++) hc10W[n10W[f]][j+1]=shell_parts[j];
         quickSort(&hc10W[n10W[f]][1],9);
-        Cluster_Write_10W(f, ach, ach_cen, ach_shell);
+        Cluster_Write_10W(f);
     }
-
-    for(i=0; i<N; ++i) {
-        s10W[i]=ach[i];
-        s10W_cen[i]=ach_cen[i];
-        s10W_shell[i]=ach_shell[i];
-    }
-    free(ach);
-    free(ach_cen);
-    free(ach_shell);
 }
 
-void Cluster_Write_10W(int f, char *ach, char *ach_cen, char *ach_shell) {
+void Cluster_Write_10W(int f) {
     int i;
 
     for(i=1; i<10; i++) {
-        if (ach[hc10W[n10W[f]][i]] == 'C') ach[hc10W[n10W[f]][i]] = ach_shell[hc10W[n10W[f]][i]] = 'B';
+        if (s10W[hc10W[n10W[f]][i]] == 'C') s10W[hc10W[n10W[f]][i]] = s10W_shell[hc10W[n10W[f]][i]] = 'B';
     }
-    ach[hc10W[n10W[f]][0]] = ach_cen[hc10W[n10W[f]][0]] = 'O';
+    s10W[hc10W[n10W[f]][0]] = s10W_cen[hc10W[n10W[f]][0]] = 'O';
 
     ++n10W[f];
 }
@@ -2503,22 +2418,13 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
 }
 
 void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
-    char *ach1, *ach1_cen, *ach1_shell, *ach2, *ach2_cen, *ach2_shell;
     int ar[2],sd[2];
     int i, j, k, l, m, ncom, spc;
     int flg;
     int break_out;
-    char errMsg[1000];
     int clusSize=11;
 
     ar[0]=ar[1]=sd[0]=sd[1]=spc=-1;
-    ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach1[] malloc out of memory\n");   Error(errMsg); }
-    ach1_cen=malloc(N*sizeof(char));    if (ach1_cen==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach1_cen[] malloc out of memory\n");   Error(errMsg); }
-    ach1_shell=malloc(N*sizeof(char));  if (ach1_shell==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach1_shell[] malloc out of memory\n");   Error(errMsg); }
-    ach2=malloc(N*sizeof(char));    if (ach2==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach2[] malloc out of memory\n");   Error(errMsg); }
-    ach2_cen=malloc(N*sizeof(char));    if (ach2_cen==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach2_cen[] malloc out of memory\n");   Error(errMsg); }
-    ach2_shell=malloc(N*sizeof(char));  if (ach2_shell==NULL) { sprintf(errMsg,"Clusters_Get11C_12A(): ach2_shell[] malloc out of memory\n");   Error(errMsg); }
-    for(i=0; i<N; ++i) ach1[i]=ach1_cen[i]=ach1_shell[i]=ach2[i]=ach2_cen[i]=ach2_shell[i]='C';
 
     for (i=0; i<nsp5c[f]-1; ++i) {
         // POSSIBLE IMPROVEMENT: loop over all spindles of 7A_i
@@ -2644,21 +2550,11 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
                     quickSort(&hc11C[n11C[f]][5],4);
                     quickSort(&hc11C[n11C[f]][9],2);
 
-                    if(ach1[hc11C[n11C[f]][3]] == 'C') ach1[hc11C[n11C[f]][3]] = ach1_shell[hc11C[n11C[f]][3]] = 'B';
-                    if(ach1[hc11C[n11C[f]][4]] == 'C') ach1[hc11C[n11C[f]][4]] = ach1_shell[hc11C[n11C[f]][4]] = 'B';
-                    if(ach1[hc11C[n11C[f]][5]] == 'C') ach1[hc11C[n11C[f]][5]] = ach1_shell[hc11C[n11C[f]][5]] = 'B';
-                    if(ach1[hc11C[n11C[f]][6]] == 'C') ach1[hc11C[n11C[f]][6]] = ach1_shell[hc11C[n11C[f]][6]] = 'B';
-                    if(ach1[hc11C[n11C[f]][7]] == 'C') ach1[hc11C[n11C[f]][7]] = ach1_shell[hc11C[n11C[f]][7]] = 'B';
-                    if(ach1[hc11C[n11C[f]][8]] == 'C') ach1[hc11C[n11C[f]][8]] = ach1_shell[hc11C[n11C[f]][8]] = 'B';
-                    if(ach1[hc11C[n11C[f]][9]] == 'C') ach1[hc11C[n11C[f]][9]] = ach1_shell[hc11C[n11C[f]][9]] = 'B';
-                    if(ach1[hc11C[n11C[f]][10]] == 'C') ach1[hc11C[n11C[f]][10]] = ach1_shell[hc11C[n11C[f]][10]] = 'B';
-                    ach1[hc11C[n11C[f]][0]] = ach1_cen[hc11C[n11C[f]][0]] = 'O';
-                    ach1[hc11C[n11C[f]][1]] = ach1_shell[hc11C[n11C[f]][1]] = 'O';
-                    ach1[hc11C[n11C[f]][2]] = ach1_shell[hc11C[n11C[f]][2]] = 'O';
+                    Cluster_Write_11C(f);
 
                     if (do12A==1) {
-                        if(Clusters_Get12A_C2v(f, ach2, ach2_cen, ach2_shell)) {
-                            ach2_cen[hc11C[n11C[f]][0]] = 'O';
+                        if(Clusters_Get12A_C2v(f)) {
+                            s12A[hc11C[n11C[f]][0]] = 'O';
                             ++n12A[f];
                         }
                     }
@@ -2667,24 +2563,20 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
             }
         }
     }
-
-    for(i=0; i<N; ++i) {
-        s11C[i]=ach1[i];
-        s11C_cen[i]=ach1_cen[i];
-        s11C_shell[i]=ach1_shell[i];
-        s12A[i]=ach2[i];
-        s12A_cen[i]=ach2_cen[i];
-        s12A_shell[i]=ach2_shell[i];
-    }
-    free(ach1);
-    free(ach1_cen);
-    free(ach1_shell);
-    free(ach2);
-    free(ach2_cen);
-    free(ach2_shell);
 }
 
-int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // Return 1 if 11C C2v is also 12A C2v
+void Cluster_Write_11C(int f) {
+    int i;
+
+    s11C[hc11C[n11C[f]][0]] = s11C_cen[hc11C[n11C[f]][0]] = 'O';
+    s11C[hc11C[n11C[f]][1]] = s11C_shell[hc11C[n11C[f]][1]] = 'O';
+    s11C[hc11C[n11C[f]][2]] = s11C_shell[hc11C[n11C[f]][2]] = 'O';
+    for(i=3; i< 11; i++) {
+        if (s11C[hc11C[n11C[f]][i]] == 'C') s11C[hc11C[n11C[f]][i]] = s11C_shell[hc11C[n11C[f]][i]] = 'B';
+    }
+}
+
+int Clusters_Get12A_C2v(int f) { // Return 1 if 11C C2v is also 12A C2v
     //  the central particle must have 11 particles bonded to it. The 11th
     // particle is only bonded to 2 other outer shell particles.
     int k, l;
@@ -2719,38 +2611,32 @@ int Clusters_Get12A_C2v(int f, char *ach, char *ach_cen, char *ach_shell) { // R
     for(k=0;k<11;k++) hc12A[n12A[f]][k]=hc11C[n11C[f]][k];
     hc12A[n12A[f]][11]=ep;
 
-    if(ach[hc12A[n12A[f]][3]] == 'C') ach[hc12A[n12A[f]][3]] = ach_shell[hc12A[n12A[f]][3]] = 'B';
-    if(ach[hc12A[n12A[f]][4]] == 'C') ach[hc12A[n12A[f]][4]] = ach_shell[hc12A[n12A[f]][4]] = 'B';
-    if(ach[hc12A[n12A[f]][5]] == 'C') ach[hc12A[n12A[f]][5]] = ach_shell[hc12A[n12A[f]][5]] = 'B';
-    if(ach[hc12A[n12A[f]][6]] == 'C') ach[hc12A[n12A[f]][6]] = ach_shell[hc12A[n12A[f]][6]] = 'B';
-    if(ach[hc12A[n12A[f]][7]] == 'C') ach[hc12A[n12A[f]][7]] = ach_shell[hc12A[n12A[f]][7]] = 'B';
-    if(ach[hc12A[n12A[f]][8]] == 'C') ach[hc12A[n12A[f]][8]] = ach_shell[hc12A[n12A[f]][8]] = 'B';
-    if(ach[hc12A[n12A[f]][9]] == 'C') ach[hc12A[n12A[f]][9]] = ach_shell[hc12A[n12A[f]][9]] = 'B';
-    if(ach[hc12A[n12A[f]][10]] == 'C') ach[hc12A[n12A[f]][10]] = 'B';
-    ach[hc12A[n12A[f]][0]] = ach_cen[hc12A[n12A[f]][0]] = 'O';
-    ach[hc12A[n12A[f]][1]] = ach_shell[hc12A[n12A[f]][1]] = 'O';
-    ach[hc12A[n12A[f]][2]] = ach_shell[hc12A[n12A[f]][2]] = 'O';
-    ach[hc12A[n12A[f]][11]] = ach_shell[hc12A[n12A[f]][11]] = 'O';
+    Cluster_Write_12A(f);
 
     return 1;
 }
 
+void Cluster_Write_12A(int f) {
+    int i;
+    s12A[hc12A[n12A[f]][0]] = s12A_cen[hc12A[n12A[f]][0]] = 'O';
+    s12A[hc12A[n12A[f]][1]] = s12A_shell[hc12A[n12A[f]][1]] = 'O';
+    s12A[hc12A[n12A[f]][2]] = s12A_shell[hc12A[n12A[f]][2]] = 'O';
+    for(i=3; i<10; i++) {
+        if (s12A[hc12A[n12A[f]][i]] == 'C') s12A[hc12A[n12A[f]][i]] = s12A_shell[hc12A[n12A[f]][i]] = 'B';
+    }
+    if(s12A[hc12A[n12A[f]][10]] == 'C') s12A[hc12A[n12A[f]][10]] = 'B';
+    s12A[hc12A[n12A[f]][11]] = s12A_shell[hc12A[n12A[f]][11]] = 'O';
+
+}
+
 void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
-    char *ach1, *ach2, *ach3, *ach3_cen, *ach3_shell;
     int cp, bpi, bpj, ep1, ep2, the6A_i, the6A_j;
     int i, j, j2, k, l, m;
     int flg, flg1, flg2;
     int break_out;
-    char errMsg[1000];
     int clusSize=11;
 
     cp=bpi=bpj=ep1=ep2=the6A_i=the6A_j=-1;
-    ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get11F_12E_13K(): ach1[] malloc out of memory\n");   Error(errMsg); }
-    ach2=malloc(N*sizeof(char));    if (ach2==NULL) { sprintf(errMsg,"Clusters_Get11F_12E_13K(): ach2[] malloc out of memory\n");   Error(errMsg); }
-    ach3=malloc(N*sizeof(char));    if (ach3==NULL) { sprintf(errMsg,"Clusters_Get11F_12E_13K(): ach3[] malloc out of memory\n");   Error(errMsg); }
-    ach3_cen=malloc(N*sizeof(char));    if (ach3_cen==NULL) { sprintf(errMsg,"Clusters_Get11F_12E_13K(): ach3_cen[] malloc out of memory\n");   Error(errMsg); }
-    ach3_shell=malloc(N*sizeof(char));  if (ach3_shell==NULL) { sprintf(errMsg,"Clusters_Get11F_12E_13K(): ach3_shell[] malloc out of memory\n");   Error(errMsg); }
-    for(i=0; i<N; ++i) ach1[i] = ach2[i] = ach3[i] = ach3_cen[i] = ach3_shell[i] ='C';
 
     for(i=0; i<nsp3c[f]-1; i++) {   // loop over all sp3c clusters
         for (j2=0; j2<3; j2++) {    // loop over only the rings of the sp3c clusters
@@ -2866,25 +2752,14 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
                                     quickSort(&hc11F[n11F[f]][3], 4);
                                     quickSort(&hc11F[n11F[f]][7], 4);
 
-                                    if (ach1[hc11F[n11F[f]][0]] == 'C') ach1[hc11F[n11F[f]][0]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][7]] == 'C') ach1[hc11F[n11F[f]][7]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][8]] == 'C') ach1[hc11F[n11F[f]][8]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][9]] == 'C') ach1[hc11F[n11F[f]][9]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][10]] == 'C') ach1[hc11F[n11F[f]][10]] = 'B';
-                                    ach1[hc11F[n11F[f]][1]] = 'O';
-                                    ach1[hc11F[n11F[f]][2]] = 'O';
-                                    ach1[hc11F[n11F[f]][3]] = 'O';
-                                    ach1[hc11F[n11F[f]][4]] = 'O';
-                                    ach1[hc11F[n11F[f]][5]] = 'O';
-                                    ach1[hc11F[n11F[f]][6]] = 'O';
+                                    Cluster_Write_11F(f);
 
                                     if (do12E == 1) {
-                                        if (Clusters_Get12E_D3h(f, mem_sp3c[sp3c[i][j2]][j], ach2)) ++n12E[f];
+                                        if (Clusters_Get12E_D3h(f, mem_sp3c[sp3c[i][j2]][j])) ++n12E[f];
                                     }
 
                                     if (do13K == 1) {
-                                        if (Clusters_Get13K(f, i, mem_sp3c[sp3c[i][j2]][j], the6A_i, ach3, ach3_cen,
-                                                            ach3_shell))
+                                        if (Clusters_Get13K(f, i, mem_sp3c[sp3c[i][j2]][j], the6A_i))
                                             ++n13K[f];
                                     }
                                     ++n11F[f];
@@ -2997,25 +2872,14 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
                                     quickSort(&hc11F[n11F[f]][3], 4);
                                     quickSort(&hc11F[n11F[f]][7], 4);
 
-                                    if (ach1[hc11F[n11F[f]][0]] == 'C') ach1[hc11F[n11F[f]][0]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][7]] == 'C') ach1[hc11F[n11F[f]][7]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][8]] == 'C') ach1[hc11F[n11F[f]][8]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][9]] == 'C') ach1[hc11F[n11F[f]][9]] = 'B';
-                                    if (ach1[hc11F[n11F[f]][10]] == 'C') ach1[hc11F[n11F[f]][10]] = 'B';
-                                    ach1[hc11F[n11F[f]][1]] = 'O';
-                                    ach1[hc11F[n11F[f]][2]] = 'O';
-                                    ach1[hc11F[n11F[f]][3]] = 'O';
-                                    ach1[hc11F[n11F[f]][4]] = 'O';
-                                    ach1[hc11F[n11F[f]][5]] = 'O';
-                                    ach1[hc11F[n11F[f]][6]] = 'O';
+                                    Cluster_Write_11F(f);
 
                                     if (do12K == 1) {
-                                        if (Clusters_Get12E_D3h(f, mem_sp3c[sp3c[i][j2]][j], ach2)) ++n12E[f];
+                                        if (Clusters_Get12E_D3h(f, mem_sp3c[sp3c[i][j2]][j])) ++n12E[f];
                                     }
 
                                     if (do13K == 1) {
-                                        if (Clusters_Get13K(f, i, mem_sp3c[sp3c[i][j2]][j], the6A_i, ach3, ach3_cen,
-                                                            ach3_shell))
+                                        if (Clusters_Get13K(f, i, mem_sp3c[sp3c[i][j2]][j], the6A_i))
                                             ++n13K[f];
                                     }
                                     ++n11F[f];
@@ -3027,20 +2891,20 @@ void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h
             }
         }
     }
-
-    for(i=0; i<N; ++i) s11F[i]=ach1[i];
-    for(i=0; i<N; ++i) s12E[i]=ach2[i];
-    for(i=0; i<N; ++i) s13K[i]=ach3[i];
-    for(i=0; i<N; ++i) s13K_cen[i]=ach3_cen[i];
-    for(i=0; i<N; ++i) s13K_shell[i]=ach3_shell[i];
-    free(ach1);
-    free(ach2);
-    free(ach3);
-    free(ach3_cen);
-    free(ach3_shell);
 }
 
-int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 12E
+void Cluster_Write_11F(int f) {
+    int i;
+    if (s11F[hc11F[n11F[f]][0]] == 'C') s11F[hc11F[n11F[f]][0]] = 'B';
+    for(i=1; i<7; i++) {
+        s11F[hc11F[n11F[f]][i]] = 'O';
+    }
+    for(i=7; i<11; i++) {
+        if (s11F[hc11F[n11F[f]][i]] == 'C') s11F[hc11F[n11F[f]][i]] = 'B';
+    }
+}
+
+int Clusters_Get12E_D3h(int f, int j) {  // Return 1 is 11F is also 12E
     //  Made from three sp3c or 5A clusters
     int k, l, m, ncom, common[2], uncom;
     int flg;
@@ -3091,34 +2955,30 @@ int Clusters_Get12E_D3h(int f, int j, char *ach) {  // Return 1 is 11F is also 1
             quickSort(&hc12E[n12E[f]][0],6);
             quickSort(&hc12E[n12E[f]][6],6);
 
-            if(ach[hc12E[n12E[f]][6]] == 'C') ach[hc12E[n12E[f]][6]] = 'B';
-            if(ach[hc12E[n12E[f]][7]] == 'C') ach[hc12E[n12E[f]][7]] = 'B';
-            if(ach[hc12E[n12E[f]][8]] == 'C') ach[hc12E[n12E[f]][8]] = 'B';
-            if(ach[hc12E[n12E[f]][9]] == 'C') ach[hc12E[n12E[f]][9]] = 'B';
-            if(ach[hc12E[n12E[f]][10]] == 'C') ach[hc12E[n12E[f]][10]] = 'B';
-            if(ach[hc12E[n12E[f]][11]] == 'C') ach[hc12E[n12E[f]][11]] = 'B';
-            ach[hc12E[n12E[f]][0]] = 'O';
-            ach[hc12E[n12E[f]][1]] = 'O';
-            ach[hc12E[n12E[f]][2]] = 'O';
-            ach[hc12E[n12E[f]][3]] = 'O';
-            ach[hc12E[n12E[f]][4]] = 'O';
-            ach[hc12E[n12E[f]][5]] = 'O';
+            Cluster_Write_12E(f);
             return 1;
         }
     }
     return 0;
 }
 
-int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char *ach_cen, char *ach_shell) {
+void Cluster_Write_12E(int f) {
+    int i;
+    for(i=0; i<6; i++){
+        s12E[hc12E[n12E[f]][i]] = 'O';
+    }
+    for(i=6; i<12; i++){
+        if(s12E[hc12E[n12E[f]][i]] == 'C') s12E[hc12E[n12E[f]][i]] = 'B';
+    }
+}
+
+int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i) {
     /* Function Clusters_Get13K - Take an 11F particle and determine if it meets the criteria for the presence of a 13K
      *
      * f: Frame number currently being analysed
      * sp3c_i: The id of a relevant 5A cluster
      * sp3c_i: The id of a different relevant 5A cluster
      * the6A_i: The id of a relevant 6A ring
-     * ach: A list keeping track of which particles are in a 13K
-     * ach_cen: A list keeping track of which particles are in the center of a 13K
-     * ach_shell: A list keeping track of which particles are in the shell of a 13K
      *
      * Returns 1 if a 13K is successfully detected
      * Returns 0 if no 13K is detected
@@ -3265,21 +3125,19 @@ int Clusters_Get13K(int f, int sp3c_i, int sp3c_j, int the6A_i, char *ach, char 
     quickSort(&hc13K[n13K[f]][11],2);
     quickSort(&eclus5A[0],2);
 
-    if(ach[hc13K[n13K[f]][1]]  == 'C') ach[hc13K[n13K[f]][1]] = ach_shell[hc13K[n13K[f]][1]] = 'B';
-    if(ach[hc13K[n13K[f]][2]]  == 'C') ach[hc13K[n13K[f]][2]] = ach_shell[hc13K[n13K[f]][2]] = 'B';
-    if(ach[hc13K[n13K[f]][3]]  == 'C') ach[hc13K[n13K[f]][3]] = ach_shell[hc13K[n13K[f]][3]] = 'B';
-    if(ach[hc13K[n13K[f]][4]]  == 'C') ach[hc13K[n13K[f]][4]] = ach_shell[hc13K[n13K[f]][4]] = 'B';
-    if(ach[hc13K[n13K[f]][5]]  == 'C') ach[hc13K[n13K[f]][5]] = ach_shell[hc13K[n13K[f]][5]] = 'B';
-    if(ach[hc13K[n13K[f]][6]]  == 'C') ach[hc13K[n13K[f]][6]] = ach_shell[hc13K[n13K[f]][6]] = 'B';
-    if(ach[hc13K[n13K[f]][7]]  == 'C') ach[hc13K[n13K[f]][7]] = ach_shell[hc13K[n13K[f]][7]] = 'B';
-    if(ach[hc13K[n13K[f]][8]]  == 'C') ach[hc13K[n13K[f]][8]] = ach_shell[hc13K[n13K[f]][8]] = 'B';
-    if(ach[hc13K[n13K[f]][9]]  == 'C') ach[hc13K[n13K[f]][9]] = ach_shell[hc13K[n13K[f]][9]] = 'B';
-    if(ach[hc13K[n13K[f]][10]]  == 'C') ach[hc13K[n13K[f]][10]] = ach_shell[hc13K[n13K[f]][10]] = 'B';
-    ach[hc13K[n13K[f]][0]] = ach_cen[hc13K[n13K[f]][0]] = 'O';
-    ach[hc13K[n13K[f]][11]] = ach_shell[hc13K[n13K[f]][11]] = 'O';
-    ach[hc13K[n13K[f]][12]] = ach_shell[hc13K[n13K[f]][12]] = 'O';
+    Cluster_Write_13K(f);
 
     return 1;
+}
+
+void Cluster_Write_13K(int f) {
+    int i;
+    for(i=1; i<11; i++) {
+        if (s13K[hc13K[n13K[f]][i]] == 'C') s13K[hc13K[n13K[f]][i]] = s13K_shell[hc13K[n13K[f]][i]] = 'B';
+    }
+    s13K[hc13K[n13K[f]][0]] = s13K_cen[hc13K[n13K[f]][0]] = 'O';
+    s13K[hc13K[n13K[f]][11]] = s13K_shell[hc13K[n13K[f]][11]] = 'O';
+    s13K[hc13K[n13K[f]][12]] = s13K_shell[hc13K[n13K[f]][12]] = 'O';
 }
 
 void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
@@ -3287,20 +3145,9 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
     int sp1, sp2;
     int sj1[5], sj2[5];
     int nSB1, nSB2;
-    char *ach1, *ach1_cen, *ach1_shell, *ach2, *ach2_cen, *ach2_shell;
     int flg;
     int break_out;
-    char errMsg[1000];
     int clusSize=12;
-
-
-    ach1=malloc(N*sizeof(char));    if (ach1==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach1[] malloc out of memory\n");   Error(errMsg); }
-    ach1_cen=malloc(N*sizeof(char));    if (ach1_cen==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach1_cen[] malloc out of memory\n");   Error(errMsg); }
-    ach1_shell=malloc(N*sizeof(char));  if (ach1_shell==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach1_shell[] malloc out of memory\n");   Error(errMsg); }
-    ach2=malloc(N*sizeof(char));    if (ach2==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach2[] malloc out of memory\n");   Error(errMsg); }
-    ach2_cen=malloc(N*sizeof(char));    if (ach2_cen==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach2_cen[] malloc out of memory\n");   Error(errMsg); }
-    ach2_shell=malloc(N*sizeof(char));  if (ach2_shell==NULL) { sprintf(errMsg,"Clusters_Get12B_13A(): ach2_shell[] malloc out of memory\n");   Error(errMsg); }
-    for (i=0; i<N; ++i) ach1[i] = ach1_cen[i] = ach1_shell[i] = ach2[i] = ach2_cen[i] = ach2_shell[i] = 'C';
 
     for (i=0; i<nsp5c[f]; ++i) { //first 7A
         sp1 = sp5c[i][5];
@@ -3364,7 +3211,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                 hc13A[n13A[f]][12] = sp5c[j][4];
                 quickSort(&hc13A[n13A[f]][1],12);
 
-                Clust_Write_13A(f, ach2, ach2_cen, ach2_shell);
+                Clust_Write_13A(f);
             }
         }
 
@@ -3425,7 +3272,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
                 hc13A[n13A[f]][12] = sp5c[j][4];
                 quickSort(&hc13A[n13A[f]][1],12);
 
-                Clust_Write_13A(f, ach2, ach2_cen, ach2_shell);
+                Clust_Write_13A(f);
             }
         }
 
@@ -3479,7 +3326,7 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
             quickSort(&hc12B[n12B[f]][2], 5);
             quickSort(&hc12B[n12B[f]][7],5);
 
-            Clust_Write_12B(f, ach1, ach1_cen, ach1_shell);
+            Clust_Write_12B(f);
         }
 
         for (j=0; j<i; ++j) {
@@ -3529,60 +3376,38 @@ void Clusters_Get12B_13A(int f) { // Detect 12B & 13A D5h clusters together
             quickSort(&hc12B[n12B[f]][2], 5);
             quickSort(&hc12B[n12B[f]][7],5);
 
-            Clust_Write_12B(f, ach1, ach1_cen, ach1_shell);
+            Clust_Write_12B(f);
 
         }
     }
-
-    for(i=0; i<N; ++i) {
-        s12B[i]=ach1[i];
-        s12B_cen[i]=ach1_cen[i];
-        s12B_shell[i]=ach1_shell[i];
-        s13A[i]=ach2[i];
-        s13A_cen[i]=ach2_cen[i];
-        s13A_shell[i]=ach2_shell[i];
-    }
-    free(ach1);
-    free(ach1_cen);
-    free(ach1_shell);
-    free(ach2);
-    free(ach2_cen);
-    free(ach2_shell);
 }
 
-void Clust_Write_12B(int f, char *ach1, char *ach1_cen, char *ach1_shell) {
+void Clust_Write_12B(int f) {
 
-    ach1[hc12B[n12B[f]][0]] = ach1_cen[hc12B[n12B[f]][0]] = 'O';
-    ach1[hc12B[n12B[f]][2]] = ach1_shell[hc12B[n12B[f]][2]] = 'O';
-    ach1[hc12B[n12B[f]][3]] = ach1_shell[hc12B[n12B[f]][3]] = 'O';
-    ach1[hc12B[n12B[f]][4]] = ach1_shell[hc12B[n12B[f]][4]] = 'O';
-    ach1[hc12B[n12B[f]][5]] = ach1_shell[hc12B[n12B[f]][5]] = 'O';
-    ach1[hc12B[n12B[f]][6]] = ach1_shell[hc12B[n12B[f]][6]] = 'O';
-    if(ach1[hc12B[n12B[f]][1]] == 'C') ach1[hc12B[n12B[f]][1]] = ach1_shell[hc12B[n12B[f]][1]] = 'B';
-    if(ach1[hc12B[n12B[f]][7]] == 'C') ach1[hc12B[n12B[f]][7]] = ach1_shell[hc12B[n12B[f]][7]] = 'B';
-    if(ach1[hc12B[n12B[f]][8]] == 'C') ach1[hc12B[n12B[f]][8]] = ach1_shell[hc12B[n12B[f]][8]] = 'B';
-    if(ach1[hc12B[n12B[f]][9]] == 'C') ach1[hc12B[n12B[f]][9]] = ach1_shell[hc12B[n12B[f]][9]] = 'B';
-    if(ach1[hc12B[n12B[f]][10]] == 'C') ach1[hc12B[n12B[f]][10]] = ach1_shell[hc12B[n12B[f]][10]] = 'B';
-    if(ach1[hc12B[n12B[f]][11]] == 'C') ach1[hc12B[n12B[f]][11]] = ach1_shell[hc12B[n12B[f]][11]] = 'B';
+    s12B[hc12B[n12B[f]][0]] = s12B_cen[hc12B[n12B[f]][0]] = 'O';
+    s12B[hc12B[n12B[f]][2]] = s12B_shell[hc12B[n12B[f]][2]] = 'O';
+    s12B[hc12B[n12B[f]][3]] = s12B_shell[hc12B[n12B[f]][3]] = 'O';
+    s12B[hc12B[n12B[f]][4]] = s12B_shell[hc12B[n12B[f]][4]] = 'O';
+    s12B[hc12B[n12B[f]][5]] = s12B_shell[hc12B[n12B[f]][5]] = 'O';
+    s12B[hc12B[n12B[f]][6]] = s12B_shell[hc12B[n12B[f]][6]] = 'O';
+    if(s12B[hc12B[n12B[f]][1]] == 'C') s12B[hc12B[n12B[f]][1]] = s12B_shell[hc12B[n12B[f]][1]] = 'B';
+    if(s12B[hc12B[n12B[f]][7]] == 'C') s12B[hc12B[n12B[f]][7]] = s12B_shell[hc12B[n12B[f]][7]] = 'B';
+    if(s12B[hc12B[n12B[f]][8]] == 'C') s12B[hc12B[n12B[f]][8]] = s12B_shell[hc12B[n12B[f]][8]] = 'B';
+    if(s12B[hc12B[n12B[f]][9]] == 'C') s12B[hc12B[n12B[f]][9]] = s12B_shell[hc12B[n12B[f]][9]] = 'B';
+    if(s12B[hc12B[n12B[f]][10]] == 'C') s12B[hc12B[n12B[f]][10]] = s12B_shell[hc12B[n12B[f]][10]] = 'B';
+    if(s12B[hc12B[n12B[f]][11]] == 'C') s12B[hc12B[n12B[f]][11]] = s12B_shell[hc12B[n12B[f]][11]] = 'B';
 
     ++n12B[f];
 }
 
-void Clust_Write_13A(int f, char *ach2, char *ach2_cen, char *ach2_shell) {
-
-    if(ach2[hc13A[n13A[f]][3]] == 'C') ach2[hc13A[n13A[f]][3]] = ach2_shell[hc13A[n13A[f]][3]] = 'B';
-    if(ach2[hc13A[n13A[f]][4]] == 'C') ach2[hc13A[n13A[f]][4]] = ach2_shell[hc13A[n13A[f]][4]] = 'B';
-    if(ach2[hc13A[n13A[f]][5]] == 'C') ach2[hc13A[n13A[f]][5]] = ach2_shell[hc13A[n13A[f]][5]] = 'B';
-    if(ach2[hc13A[n13A[f]][6]] == 'C') ach2[hc13A[n13A[f]][6]] = ach2_shell[hc13A[n13A[f]][6]] = 'B';
-    if(ach2[hc13A[n13A[f]][7]] == 'C') ach2[hc13A[n13A[f]][7]] = ach2_shell[hc13A[n13A[f]][7]] = 'B';
-    if(ach2[hc13A[n13A[f]][8]] == 'C') ach2[hc13A[n13A[f]][8]] = ach2_shell[hc13A[n13A[f]][8]] = 'B';
-    if(ach2[hc13A[n13A[f]][9]] == 'C') ach2[hc13A[n13A[f]][9]] = ach2_shell[hc13A[n13A[f]][9]] = 'B';
-    if(ach2[hc13A[n13A[f]][10]] == 'C') ach2[hc13A[n13A[f]][10]] = ach2_shell[hc13A[n13A[f]][10]] = 'B';
-    if(ach2[hc13A[n13A[f]][11]] == 'C') ach2[hc13A[n13A[f]][11]] = ach2_shell[hc13A[n13A[f]][11]] = 'B';
-    if(ach2[hc13A[n13A[f]][12]] == 'C') ach2[hc13A[n13A[f]][12]] = ach2_shell[hc13A[n13A[f]][12]] = 'B';
-    ach2[hc13A[n13A[f]][0]] = ach2_cen[hc13A[n13A[f]][0]] = 'O';
-    ach2[hc13A[n13A[f]][1]] = ach2_shell[hc13A[n13A[f]][1]] = 'O';
-    ach2[hc13A[n13A[f]][2]] = ach2_shell[hc13A[n13A[f]][2]] = 'O';
+void Clust_Write_13A(int f) {
+    int i;
+    s13A[hc13A[n13A[f]][0]] = s13A_cen[hc13A[n13A[f]][0]] = 'O';
+    s13A[hc13A[n13A[f]][1]] = s13A_shell[hc13A[n13A[f]][1]] = 'O';
+    s13A[hc13A[n13A[f]][2]] = s13A_shell[hc13A[n13A[f]][2]] = 'O';
+    for(i=3; i<13; i++){
+        if (s13A[hc13A[n13A[f]][i]] == 'C') s13A[hc13A[n13A[f]][i]] = s13A_shell[hc13A[n13A[f]][i]] = 'B';
+    }
 
     ++n13A[f];
 }
@@ -3591,15 +3416,10 @@ void Clusters_Get13B_D5h(int f) {   // Detect 13B D5h clusters, i.e. twisted ico
     int cp;
     int i, j, k, l, m;
     int flg;
-    char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int clusSize=13;
 
     cp=-1;
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get13B_D5h(): ach[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_Get13B_D5h(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_Get13B_D5h(): ach_shell[] malloc out of memory\n"); Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = ach_cen[i] = ach_shell[i] = 'C';
 
     for(i=0; i<nsp5c[f]-1; ++i){
         // POSSIBLE IMPROVEMENT: use 7A clusters of spindles of 7A_i
@@ -3660,34 +3480,20 @@ void Clusters_Get13B_D5h(int f) {   // Detect 13B D5h clusters, i.e. twisted ico
                 quickSort(&hc13B[n13B[f]][1],2);
                 quickSort(&hc13B[n13B[f]][3],10);
 
-                Cluster_Write_13B(f, ach, ach_cen, ach_shell);
+                Cluster_Write_13B(f);
             }
         }
     }
-    for(i=0; i<N; ++i) {
-        s13B[i]=ach[i];
-        s13B_cen[i]=ach_cen[i];
-        s13B_shell[i]=ach_shell[i];
-    }
-    free(ach);
-    free(ach_cen);
-    free(ach_shell);
 }
 
-void Cluster_Write_13B(int f, char *ach, char *ach_cen, char *ach_shell) {
-    if(ach[hc13B[n13B[f]][3]] == 'C') ach[hc13B[n13B[f]][3]] = ach_shell[hc13B[n13B[f]][3]] = 'B';
-    if(ach[hc13B[n13B[f]][4]] == 'C') ach[hc13B[n13B[f]][4]] = ach_shell[hc13B[n13B[f]][4]] = 'B';
-    if(ach[hc13B[n13B[f]][5]] == 'C') ach[hc13B[n13B[f]][5]] = ach_shell[hc13B[n13B[f]][5]] = 'B';
-    if(ach[hc13B[n13B[f]][6]] == 'C') ach[hc13B[n13B[f]][6]] = ach_shell[hc13B[n13B[f]][6]] = 'B';
-    if(ach[hc13B[n13B[f]][7]] == 'C') ach[hc13B[n13B[f]][7]] = ach_shell[hc13B[n13B[f]][7]] = 'B';
-    if(ach[hc13B[n13B[f]][8]] == 'C') ach[hc13B[n13B[f]][8]] = ach_shell[hc13B[n13B[f]][8]] = 'B';
-    if(ach[hc13B[n13B[f]][9]] == 'C') ach[hc13B[n13B[f]][9]] = ach_shell[hc13B[n13B[f]][9]] = 'B';
-    if(ach[hc13B[n13B[f]][10]] == 'C') ach[hc13B[n13B[f]][10]] = ach_shell[hc13B[n13B[f]][10]] = 'B';
-    if(ach[hc13B[n13B[f]][11]] == 'C') ach[hc13B[n13B[f]][11]] = ach_shell[hc13B[n13B[f]][11]] = 'B';
-    if(ach[hc13B[n13B[f]][12]] == 'C') ach[hc13B[n13B[f]][12]] = ach_shell[hc13B[n13B[f]][12]] = 'B';
-    ach[hc13B[n13B[f]][0]] = ach_cen[hc13B[n13B[f]][0]] = 'O';
-    ach[hc13B[n13B[f]][1]] = ach_shell[hc13B[n13B[f]][1]] = 'O';
-    ach[hc13B[n13B[f]][2]] = ach_shell[hc13B[n13B[f]][2]] = 'O';
+void Cluster_Write_13B(int f) {
+    int i;
+    s13B[hc13B[n13B[f]][0]] = s13B_cen[hc13B[n13B[f]][0]] = 'O';
+    s13B[hc13B[n13B[f]][1]] = s13B_shell[hc13B[n13B[f]][1]] = 'O';
+    s13B[hc13B[n13B[f]][2]] = s13B_shell[hc13B[n13B[f]][2]] = 'O';
+    for(i=3; i<13; i++) {
+        if (s13B[hc13B[n13B[f]][i]] == 'C') s13B[hc13B[n13B[f]][i]] = s13B_shell[hc13B[n13B[f]][i]] = 'B';
+    }
 
     ++n13B[f];
 }
@@ -3698,15 +3504,10 @@ void Clusters_GetFCC(int f) {   // Detect 13 particle FCC clusters
     int cp, bpi, bpj, nbpi, nbpj;
     int flg1, flg2, flg3;
     int l_clust_type; // 0 if l-clust is sp3b, 1 if is sp3c
-    char *ach, *ach_cen, *ach_shell;
-    char errMsg[1000];
     int clusSize=13;
 
     cp=bpi=bpj=nbpi=nbpj=i3=-1;
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetFCC(): ach[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetFCC(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_GetFCC(): ach_shell[] malloc out of memory\n"); Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = ach_cen[i] = ach_shell[i] = 'C';
+
 
     for (i=0; i<nsp3b[f]-2; ++i) { // loop over all sp3b_i
         for (j2=0; j2<3; j2++) {
@@ -3889,35 +3690,27 @@ void Clusters_GetFCC(int f) {   // Detect 13 particle FCC clusters
                     hcFCC[nFCC[f]][9] = i2;
                     quickSort(&hcFCC[nFCC[f]][1],12);
 
-                    Cluster_Write_FCC(f, ach, ach_cen, ach_shell);
+                    Cluster_Write_FCC(f);
                 }
             }
         }
     }
-    for(i=0; i<N; ++i) {
-        sFCC[i]=ach[i];
-        sFCC_cen[i]=ach_cen[i];
-        sFCC_shell[i]=ach_shell[i];
-    }
-    free(ach);
-    free(ach_cen);
-    free(ach_shell);
 }
 
-void Cluster_Write_FCC(int f, char *ach, char *ach_cen, char *ach_shell) {
-    if(ach[hcFCC[nFCC[f]][1]] == 'C') ach[hcFCC[nFCC[f]][1]] = ach_shell[hcFCC[nFCC[f]][1]] = 'B';
-    if(ach[hcFCC[nFCC[f]][2]] == 'C') ach[hcFCC[nFCC[f]][2]] = ach_shell[hcFCC[nFCC[f]][2]] = 'B';
-    if(ach[hcFCC[nFCC[f]][5]] == 'C') ach[hcFCC[nFCC[f]][5]] = ach_shell[hcFCC[nFCC[f]][5]] = 'B';
-    if(ach[hcFCC[nFCC[f]][6]] == 'C') ach[hcFCC[nFCC[f]][6]] = ach_shell[hcFCC[nFCC[f]][6]] = 'B';
-    if(ach[hcFCC[nFCC[f]][8]] == 'C') ach[hcFCC[nFCC[f]][8]] = ach_shell[hcFCC[nFCC[f]][8]] = 'B';
-    if(ach[hcFCC[nFCC[f]][9]] == 'C') ach[hcFCC[nFCC[f]][9]] = ach_shell[hcFCC[nFCC[f]][9]] = 'B';
-    ach[hcFCC[nFCC[f]][3]] = ach_shell[hcFCC[nFCC[f]][3]] = 'O';
-    ach[hcFCC[nFCC[f]][4]] = ach_shell[hcFCC[nFCC[f]][4]] = 'O';
-    ach[hcFCC[nFCC[f]][7]] = ach_shell[hcFCC[nFCC[f]][7]] = 'O';
-    ach[hcFCC[nFCC[f]][10]] = ach_shell[hcFCC[nFCC[f]][10]] = 'O';
-    ach[hcFCC[nFCC[f]][11]] = ach_shell[hcFCC[nFCC[f]][11]] = 'O';
-    ach[hcFCC[nFCC[f]][12]] = ach_shell[hcFCC[nFCC[f]][12]] = 'O';
-    ach[hcFCC[nFCC[f]][0]] = ach_cen[hcFCC[nFCC[f]][0]] = 'F';
+void Cluster_Write_FCC(int f) {
+    if(sFCC[hcFCC[nFCC[f]][1]] == 'C') sFCC[hcFCC[nFCC[f]][1]] = sFCC_shell[hcFCC[nFCC[f]][1]] = 'B';
+    if(sFCC[hcFCC[nFCC[f]][2]] == 'C') sFCC[hcFCC[nFCC[f]][2]] = sFCC_shell[hcFCC[nFCC[f]][2]] = 'B';
+    if(sFCC[hcFCC[nFCC[f]][5]] == 'C') sFCC[hcFCC[nFCC[f]][5]] = sFCC_shell[hcFCC[nFCC[f]][5]] = 'B';
+    if(sFCC[hcFCC[nFCC[f]][6]] == 'C') sFCC[hcFCC[nFCC[f]][6]] = sFCC_shell[hcFCC[nFCC[f]][6]] = 'B';
+    if(sFCC[hcFCC[nFCC[f]][8]] == 'C') sFCC[hcFCC[nFCC[f]][8]] = sFCC_shell[hcFCC[nFCC[f]][8]] = 'B';
+    if(sFCC[hcFCC[nFCC[f]][9]] == 'C') sFCC[hcFCC[nFCC[f]][9]] = sFCC_shell[hcFCC[nFCC[f]][9]] = 'B';
+    sFCC[hcFCC[nFCC[f]][3]] = sFCC_shell[hcFCC[nFCC[f]][3]] = 'O';
+    sFCC[hcFCC[nFCC[f]][4]] = sFCC_shell[hcFCC[nFCC[f]][4]] = 'O';
+    sFCC[hcFCC[nFCC[f]][7]] = sFCC_shell[hcFCC[nFCC[f]][7]] = 'O';
+    sFCC[hcFCC[nFCC[f]][10]] = sFCC_shell[hcFCC[nFCC[f]][10]] = 'O';
+    sFCC[hcFCC[nFCC[f]][11]] = sFCC_shell[hcFCC[nFCC[f]][11]] = 'O';
+    sFCC[hcFCC[nFCC[f]][12]] = sFCC_shell[hcFCC[nFCC[f]][12]] = 'O';
+    sFCC[hcFCC[nFCC[f]][0]] = sFCC_cen[hcFCC[nFCC[f]][0]] = 'F';
 
     ++nFCC[f];
 }
@@ -3928,15 +3721,10 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
     int cp, x;
     int h1i, h1j, h2i, h2j;
     int flg1, flg2, flg3;
-    char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int clusSize=13;
 
     cp=-1;
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetHCP(): ach[] malloc out of memory\n"); Error(errMsg); }
-    ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetHCP(): ach_cen[] malloc out of memory\n"); Error(errMsg); }
-    ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_GetHCP(): ach_shell[] malloc out of memory\n"); Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = ach_cen[i] = ach_shell[i] = 'C';
 
     for (i=0; i<nsp3c[f]-2; ++i) { // loop over all sp3c_i
         for (j2=0; j2<3; j2++) {
@@ -4116,50 +3904,31 @@ void Clusters_GetHCP(int f) {   // Detect 13 particle HCP clusters
                 quickSort(&hcHCP[nHCP[f]][1],6);
                 quickSort(&hcHCP[nHCP[f]][7],6);
 
-                Cluster_Write_HCP(f, i, j, j2, k, ach, ach_cen, ach_shell);
+                Cluster_Write_HCP(f, i, j, j2, k);
             }
         }
         }
     }
-    for(i=0; i<N; ++i) {
-        sHCP[i]=ach[i];
-        sHCP_cen[i]=ach_cen[i];
-        sHCP_shell[i]=ach_shell[i];
-    }
-    free(ach);
-    free(ach_cen);
-    free(ach_shell);
 }
 
-void Cluster_Write_HCP(int f, int i, int j, int j2, int k, char *ach, char *ach_cen, char *ach_shell) {
-    if(ach[sp3c[i][0]] == 'C') ach[sp3c[i][0]] = 'B';
-    if(ach[sp3c[i][1]] == 'C') ach[sp3c[i][1]] = 'B';
-    if(ach[sp3c[i][2]] == 'C') ach[sp3c[i][2]] = 'B';
-    if(ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][0]] == 'C') ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][0]] = 'B';
-    if(ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][1]] == 'C') ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][1]] = 'B';
-    if(ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][2]] == 'C') ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][2]] = 'B';
-    if(ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][0]] == 'C') ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][0]] = 'B';
-    if(ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][1]] == 'C') ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][1]] = 'B';
-    if(ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][2]] == 'C') ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][2]] = 'B';
-    ach[sp3c[i][3]] = 'O';
-    ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][3]] = 'F';
-    ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][3]] = 'H';
-    ach[sp3c[i][4]] = 'O';
-    ach[sp3c[mem_sp3c[sp3c[i][j2]][j]][4]] = 'F';
-    ach[sp3c[mem_sp3c[sp3c[i][j2]][k]][4]] = 'H';
-    ach_cen[hcHCP[nHCP[f]][0]] = 'F';
-    ach_shell[hcHCP[nHCP[f]][1]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][2]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][3]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][4]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][5]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][6]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][7]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][8]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][9]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][10]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][11]] = 'B';
-    ach_shell[hcHCP[nHCP[f]][12]] = 'B';
+void Cluster_Write_HCP(int f, int i, int j, int j2, int k) {
+    int counter;
+
+    sHCP_cen[hcHCP[nHCP[f]][0]] = 'F';
+
+    for (counter=0; counter<3; counter++){
+        if (sHCP[sp3c[i][counter]] == 'C') sHCP[sp3c[i][counter]] = 'B';
+        if (sHCP[sp3c[mem_sp3c[sp3c[i][j2]][j]][counter]] == 'C') sHCP[sp3c[mem_sp3c[sp3c[i][j2]][j]][counter]] = 'B';
+        if (sHCP[sp3c[mem_sp3c[sp3c[i][j2]][k]][counter]] == 'C') sHCP[sp3c[mem_sp3c[sp3c[i][j2]][k]][counter]] = 'B';
+    }
+    for (counter=3; counter<5; counter++) {
+        sHCP[sp3c[i][counter]] = 'O';
+        sHCP[sp3c[mem_sp3c[sp3c[i][j2]][j]][counter]] = 'F';
+        sHCP[sp3c[mem_sp3c[sp3c[i][j2]][k]][counter]] = 'H';
+    }
+    for(counter=1; counter<13; counter++) {
+        sHCP_shell[hcHCP[nHCP[f]][counter]] = 'B';
+    }
 
     ++nHCP[f];
 }
@@ -4169,14 +3938,8 @@ void Clusters_GetBCC_9(int f) {
     int flg;
     int s_com=-1;
     int trial[9];
-    char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int clusSize=9;
-
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach[] malloc out of memory\n");   Error(errMsg); }
-    ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach_cen[] malloc out of memory\n");   Error(errMsg); }
-    ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_GetBCC_9(): ach_shell[] malloc out of memory\n");   Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = ach_cen[i] = ach_shell[i] = 'C';
 
     for (i=0; i<nsp4b[f]-1; i++) {
         for (j2=4; j2<5; j2++) {
@@ -4252,7 +4015,7 @@ void Clusters_GetBCC_9(int f) {
 
                 for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
 
-                Cluster_Write_BCC9(f, ach, ach_cen, ach_shell);
+                Cluster_Write_BCC9(f);
             }
         }
     }
@@ -4340,7 +4103,7 @@ void Clusters_GetBCC_9(int f) {
                 }
                 for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
 
-                Cluster_Write_BCC9(f, ach, ach_cen, ach_shell);
+                Cluster_Write_BCC9(f);
             }
         }
     }
@@ -4424,32 +4187,19 @@ void Clusters_GetBCC_9(int f) {
                 }
                 for (k=0; k<9; ++k) hcBCC_9[nBCC_9[f]][k]=trial[k];
 
-                Cluster_Write_BCC9(f, ach, ach_cen, ach_shell);
+                Cluster_Write_BCC9(f);
 
             }
         }
     }
-
-    for(i=0; i<N; ++i) {
-        sBCC_9[i]=ach[i];
-        sBCC_9_cen[i]=ach_cen[i];
-        sBCC_9_shell[i]=ach_shell[i];
-    }
-    free(ach);
-    free(ach_cen);
-    free(ach_shell);
 }
 
-void Cluster_Write_BCC9(int f, char *ach, char *ach_cen, char *ach_shell) {
-    if(ach[hcBCC_9[nBCC_9[f]][1]] == 'C') ach[hcBCC_9[nBCC_9[f]][1]] = ach_shell[hcBCC_9[nBCC_9[f]][1]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][2]] == 'C') ach[hcBCC_9[nBCC_9[f]][2]] = ach_shell[hcBCC_9[nBCC_9[f]][2]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][3]] == 'C') ach[hcBCC_9[nBCC_9[f]][3]] = ach_shell[hcBCC_9[nBCC_9[f]][3]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][4]] == 'C') ach[hcBCC_9[nBCC_9[f]][4]] = ach_shell[hcBCC_9[nBCC_9[f]][4]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][5]] == 'C') ach[hcBCC_9[nBCC_9[f]][5]] = ach_shell[hcBCC_9[nBCC_9[f]][5]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][6]] == 'C') ach[hcBCC_9[nBCC_9[f]][6]] = ach_shell[hcBCC_9[nBCC_9[f]][6]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][7]] == 'C') ach[hcBCC_9[nBCC_9[f]][7]] = ach_shell[hcBCC_9[nBCC_9[f]][7]] = 'B';
-    if(ach[hcBCC_9[nBCC_9[f]][8]] == 'C') ach[hcBCC_9[nBCC_9[f]][8]] = ach_shell[hcBCC_9[nBCC_9[f]][8]] = 'B';
-    ach[hcBCC_9[nBCC_9[f]][0]] = ach_cen[hcBCC_9[nBCC_9[f]][0]] = 'F';
+void Cluster_Write_BCC9(int f) {
+    int i;
+    for (i = 1; i< 9; i++){
+        if (sBCC_9[hcBCC_9[nBCC_9[f]][i]] == 'C') sBCC_9[hcBCC_9[nBCC_9[f]][i]] = sBCC_9_shell[hcBCC_9[nBCC_9[f]][i]] = 'B';
+    }
+    sBCC_9[hcBCC_9[nBCC_9[f]][0]] = sBCC_9_cen[hcBCC_9[nBCC_9[f]][0]] = 'F';
 
     ++nBCC_9[f];
 }
@@ -4458,14 +4208,8 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
     int i,j,k,l,m;
     int no_sp4cs,noSP4s;
     int sj[5];
-    char *ach, *ach_cen, *ach_shell;
     char errMsg[1000];
     int clusSize=15;
-
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach[] malloc out of memory\n");  Error(errMsg); }
-    ach_cen=malloc(N*sizeof(char)); if (ach_cen==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach_cen[] malloc out of memory\n");  Error(errMsg); }
-    ach_shell=malloc(N*sizeof(char));   if (ach_shell==NULL) { sprintf(errMsg,"Clusters_GetBCC_15(): ach_shell[] malloc out of memory\n");  Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = ach_cen[i] = ach_shell[i] = 'C';
 
     for (i=0; i<nsp4c[f]; i++) {
         // we may have an BCC_15 cluster, build it into hcBCC_15 then overwrite it later if it aint
@@ -4524,7 +4268,7 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
             }
             if (no_sp4cs==5 && noSP4s==8) {
                 // We've now found an BCC_15 cluster
-                Cluster_Write_BCC_15(f, ach, ach_cen, ach_shell, clusSize);
+                Cluster_Write_BCC_15(f, clusSize);
             }
         }
         // we may have an BCC_15 cluster, build it into hcBCC_15 then overwrite it later if it aint
@@ -4585,44 +4329,32 @@ void Clusters_GetBCC_15(int f) {    // Detect 15 particle BCC clusters
 
         if (no_sp4cs==5 && noSP4s==8) {
             // We've now found an BCC_15 cluster
-            Cluster_Write_BCC_15(f, ach, ach_cen, ach_shell, clusSize);
+            Cluster_Write_BCC_15(f, clusSize);
         }
 
     }
-    for(i=0; i<N; ++i) {
-        sBCC_15[i]=ach[i];
-        sBCC_15_cen[i]=ach_cen[i];
-        sBCC_15_shell[i]=ach_shell[i];
-    }
-    free(ach);
-    free(ach_cen);
-    free(ach_shell);
 }
 
-void Cluster_Write_BCC_15(int f, char *ach, char *ach_cen, char *ach_shell, int clusSize) {
+void Cluster_Write_BCC_15(int f, int clusSize) {
+    int i;
     if (nBCC_15[f] == mBCC_15) {
-                hcBCC_15=resize_2D_int(hcBCC_15,mBCC_15,mBCC_15+incrStatic,clusSize,-1);
-                mBCC_15=mBCC_15+incrStatic;
-            }
+        hcBCC_15 = resize_2D_int(hcBCC_15, mBCC_15, mBCC_15 + incrStatic, clusSize, -1);
+        mBCC_15 = mBCC_15 + incrStatic;
+    }
 
-    quickSort(&hcBCC_15[nBCC_15[f]][1],6);
-    quickSort(&hcBCC_15[nBCC_15[f]][7],8);
+    quickSort(&hcBCC_15[nBCC_15[f]][1], 6);
+    quickSort(&hcBCC_15[nBCC_15[f]][7], 8);
 
-    if(ach[hcBCC_15[nBCC_15[f]][7]] == 'C') ach[hcBCC_15[nBCC_15[f]][7]] = ach_shell[hcBCC_15[nBCC_15[f]][7]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][8]] == 'C') ach[hcBCC_15[nBCC_15[f]][8]] = ach_shell[hcBCC_15[nBCC_15[f]][8]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][9]] == 'C') ach[hcBCC_15[nBCC_15[f]][9]] = ach_shell[hcBCC_15[nBCC_15[f]][9]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][10]] == 'C') ach[hcBCC_15[nBCC_15[f]][10]] = ach_shell[hcBCC_15[nBCC_15[f]][10]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][11]] == 'C') ach[hcBCC_15[nBCC_15[f]][11]] = ach_shell[hcBCC_15[nBCC_15[f]][11]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][12]] == 'C') ach[hcBCC_15[nBCC_15[f]][12]] = ach_shell[hcBCC_15[nBCC_15[f]][12]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][13]] == 'C') ach[hcBCC_15[nBCC_15[f]][13]] = ach_shell[hcBCC_15[nBCC_15[f]][13]] = 'B';
-    if(ach[hcBCC_15[nBCC_15[f]][14]] == 'C') ach[hcBCC_15[nBCC_15[f]][14]] = ach_shell[hcBCC_15[nBCC_15[f]][14]] = 'B';
-    ach[hcBCC_15[nBCC_15[f]][1]] = ach_shell[hcBCC_15[nBCC_15[f]][1]] = 'O';
-    ach[hcBCC_15[nBCC_15[f]][2]] = ach_shell[hcBCC_15[nBCC_15[f]][2]] = 'O';
-    ach[hcBCC_15[nBCC_15[f]][3]] = ach_shell[hcBCC_15[nBCC_15[f]][3]] = 'O';
-    ach[hcBCC_15[nBCC_15[f]][4]] = ach_shell[hcBCC_15[nBCC_15[f]][4]] = 'O';
-    ach[hcBCC_15[nBCC_15[f]][5]] = ach_shell[hcBCC_15[nBCC_15[f]][5]] = 'O';
-    ach[hcBCC_15[nBCC_15[f]][6]] = ach_shell[hcBCC_15[nBCC_15[f]][6]] = 'O';
-    ach[hcBCC_15[nBCC_15[f]][0]] = ach_cen[hcBCC_15[nBCC_15[f]][0]] = 'F';
+    sBCC_15[hcBCC_15[nBCC_15[f]][0]] = sBCC_15_cen[hcBCC_15[nBCC_15[f]][0]] = 'F';
 
+    for (i = 1; i < 7; i++) {
+        sBCC_15[hcBCC_15[nBCC_15[f]][i]] = sBCC_15_shell[hcBCC_15[nBCC_15[f]][i]] = 'O';
+    }
+
+    for (i = 7; i < 15; i++) {
+        if (sBCC_15[hcBCC_15[nBCC_15[f]][i]] == 'C') {
+            sBCC_15[hcBCC_15[nBCC_15[f]][i]] = sBCC_15_shell[hcBCC_15[nBCC_15[f]][i]] = 'B';
+        }
+    }
     ++nBCC_15[f];
 }
