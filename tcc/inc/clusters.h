@@ -29,8 +29,13 @@ void Cluster_Write_10B(int f);
 int Clusters_Get11B_C2v(int f);
 void Cluster_Write_11B(int f);
 
-int Clusters_Get11W_Cs(int f);
-void Write_Cluster_11W(int f);
+void Clusters_Get11W(int f);
+int get_11W_extra_particle(int id_10B, int spindle_10B);
+int is_particle_in_10B(int particle_id, int id_10B);
+int is_particle_bonded_to_7As(int id_10B, int extra_particle);
+void resize_hc11W(int f);
+void populate_hc11W(int f, int id_10B, int extra_particle);
+void populate_s11W(int f);
 
 void Clusters_Get11E_12D(int f, int i, int j, int sp1, int sp2i, int sp2j);
 void Clust_Write_11E(int f);
