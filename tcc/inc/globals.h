@@ -63,9 +63,14 @@ double cellSide, invcellSide;
 int dosp3, dosp3a, dosp3b, dosp3c;
 int dosp4, dosp4a, dosp4b, dosp4c;
 int dosp5, dosp5a, dosp5b, dosp5c;
-int do6Z, do7K, do8A, do8B, do8K, do9A, do9B, do9K, do10A, do10B, do10K, do10W;
-int do11A, do11B, do11C, do11E, do11F, do11W, do12A, do12B, do12D, do12E, do12K;
-int do13A, do13B, do13K, doFCC, doHCP, doBCC9, doBCC15;
+int do6Z, do7K;
+int do8A, do8B, do8K;
+int do9A, do9B, do9K;
+int do10A, do10B, do10K, do10W;
+int do11A, do11B, do11C, do11E, do11F, do11W;
+int do12A, do12B, do12D, do12E, do12K;
+int do13A, do13B, do13K;
+int doFCC, doHCP, doBCC9, doBCC15;
 
 // number of clusters of particlar type, index i is frame number
 int *nsp3, *nsp3a, *nsp3b, *nsp3c;
