@@ -2,19 +2,15 @@
 #include "clusters.h"
 #include "bonds.h"
 
-void Cluster_Write_9k(int f);
-
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
     int cnt;
     int s1a, s2a, s1b, s2b;
-    char *ach, errMsg[1000];
     int clusSize=6;
 
     s1a=s2a=s1b=s2b=-1;
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get6Z_C2v(): ach[] malloc out of memory\n");  Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = 'C';
+
 
     for (i=0; i<nsp3c[f]-1; ++i) {  // loop over all 5A_i
         for (j2=0; j2<1; ++j2) {
@@ -98,21 +94,20 @@ void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
                     hc6Z[n6Z[f]][5]=hc6Z[n6Z[f]][4];
                     hc6Z[n6Z[f]][4]=k;
                 }
-                Cluster_Write_6Z(f, ach);
+                Cluster_Write_6Z(f);
             }
         }
     }
-    for (i=0; i<N; ++i) s6Z[i]=ach[i];
-    free(ach);
 }
 
-void Cluster_Write_6Z(int f, char *ach) {// hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
-    ach[hc6Z[n6Z[f]][0]] = 'O';
-    ach[hc6Z[n6Z[f]][1]] = 'O';
-    ach[hc6Z[n6Z[f]][2]] = 'O';
-    ach[hc6Z[n6Z[f]][3]] = 'O';
-    if (ach[hc6Z[n6Z[f]][4]] == 'C') ach[hc6Z[n6Z[f]][4]] = 'B';
-    if (ach[hc6Z[n6Z[f]][5]] == 'C') ach[hc6Z[n6Z[f]][5]] = 'B';
+void Cluster_Write_6Z(int f) {
+    // hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
+    s6Z[hc6Z[n6Z[f]][0]] = 'O';
+    s6Z[hc6Z[n6Z[f]][1]] = 'O';
+    s6Z[hc6Z[n6Z[f]][2]] = 'O';
+    s6Z[hc6Z[n6Z[f]][3]] = 'O';
+    if (s6Z[hc6Z[n6Z[f]][4]] == 'C') s6Z[hc6Z[n6Z[f]][4]] = 'B';
+    if (s6Z[hc6Z[n6Z[f]][5]] == 'C') s6Z[hc6Z[n6Z[f]][5]] = 'B';
 
     ++n6Z[f];
 }
@@ -120,13 +115,9 @@ void Cluster_Write_6Z(int f, char *ach) {// hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_i
 void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
     int i, j, j2, k, l, m;
     int scom, sother[2], sp3_com[2], sp3c_i_other, sp3c_j_other;
-    char *ach, errMsg[1000];
     int clusSize=7;
 
     scom=sother[0]=sother[1]=sp3_com[0]=sp3_com[1]=sp3c_i_other=sp3c_j_other=-1;
-
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get7K(): ach[] malloc out of memory\n");  Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = 'C';
 
     for (i=0; i<nsp3c[f]-1; ++i) {  // loop over all 5A_i
         for (j2=3; j2<5; ++j2) {    // loop over both spindles of 5A_i
@@ -256,22 +247,21 @@ void Clusters_Get7K(int f) {    // Detect 7K clusters from 2 5A clusters
                 quickSort(&hc7K[n7K[f]][3],2);
                 quickSort(&hc7K[n7K[f]][5],2);
 
-                Cluster_Write_7K(f, ach);
+                Cluster_Write_7K(f);
             }
         }
     }
-    for (i=0; i<N; ++i) s7K[i]=ach[i];
-    free(ach);
 }
 
-void Cluster_Write_7K(int f, char *ach) {// hc7K key: (scom, sother, ring_com, ring_other)
-    ach[hc7K[n7K[f]][0]] = 'O';
-    ach[hc7K[n7K[f]][1]] = 'O';
-    ach[hc7K[n7K[f]][2]] = 'O';
-    if (ach[hc7K[n7K[f]][3]] == 'C') ach[hc7K[n7K[f]][3]] = 'B';
-    if (ach[hc7K[n7K[f]][4]] == 'C') ach[hc7K[n7K[f]][4]] = 'B';
-    if (ach[hc7K[n7K[f]][5]] == 'C') ach[hc7K[n7K[f]][5]] = 'B';
-    if (ach[hc7K[n7K[f]][6]] == 'C') ach[hc7K[n7K[f]][6]] = 'B';
+void Cluster_Write_7K(int f) {
+    // hc7K key: (scom, sother, ring_com, ring_other)
+    s7K[hc7K[n7K[f]][0]] = 'O';
+    s7K[hc7K[n7K[f]][1]] = 'O';
+    s7K[hc7K[n7K[f]][2]] = 'O';
+    if (s7K[hc7K[n7K[f]][3]] == 'C') s7K[hc7K[n7K[f]][3]] = 'B';
+    if (s7K[hc7K[n7K[f]][4]] == 'C') s7K[hc7K[n7K[f]][4]] = 'B';
+    if (s7K[hc7K[n7K[f]][5]] == 'C') s7K[hc7K[n7K[f]][5]] = 'B';
+    if (s7K[hc7K[n7K[f]][6]] == 'C') s7K[hc7K[n7K[f]][6]] = 'B';
 
     ++n7K[f];
 }
@@ -284,13 +274,10 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
     int flg;
     int break_out;
     int trial[8];
-    char *ach, errMsg[1000];
+    char errMsg[1000];
     int clusSize=8;
     int *used_sp5b;
 
-    unc[0]=unc[1]=com[0]=com[1]=com[2]=com[3]=-1;
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8A_D2d(): ach[] malloc out of memory\n");  Error(errMsg); }
-    for (i=0; i<N; ++i) ach[i] = 'C';
 
     used_sp5b=malloc(nsp5b[f]*sizeof(int)); if (used_sp5b==NULL) { sprintf(errMsg,"Clusters_Get8A_D2d(): used_sp5b[] malloc out of memory\n");  Error(errMsg); }
 
@@ -375,7 +362,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                 if (flg==0) {
                     for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
 
-                    Cluster_Write_8A(f, ach);
+                    Cluster_Write_8A(f);
                 }
             }
         }
@@ -459,7 +446,7 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                 if (flg==0) {
                     for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
 
-                    Cluster_Write_8A(f, ach);
+                    Cluster_Write_8A(f);
                 }
             }
         }
@@ -540,47 +527,39 @@ void Clusters_Get8A_D2d(int f)  { // Detect 8A D2d clusters
                 }
                 if (flg==0) {
                     for (k=0; k<8; ++k) hc8A[n8A[f]][k]=trial[k];
-                    Cluster_Write_8A(f, ach);
+                    Cluster_Write_8A(f);
                 }
             }
         }
     }
 
-    for(i=0; i<N; ++i) s8A[i]=ach[i];
-    free(ach);
     free(used_sp5b);
 }
 
-void Cluster_Write_8A(int f, char *ach) {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
-    if (ach[hc8A[n8A[f]][0]] == 'C') ach[hc8A[n8A[f]][0]] = 'B';
-    if (ach[hc8A[n8A[f]][1]] == 'C') ach[hc8A[n8A[f]][1]] = 'B';
-    if (ach[hc8A[n8A[f]][2]] == 'C') ach[hc8A[n8A[f]][2]] = 'B';
-    if (ach[hc8A[n8A[f]][3]] == 'C') ach[hc8A[n8A[f]][3]] = 'B';
-    if (ach[hc8A[n8A[f]][4]] == 'C') ach[hc8A[n8A[f]][4]] = 'B';
-    if (ach[hc8A[n8A[f]][5]] == 'C') ach[hc8A[n8A[f]][5]] = 'B';
-    ach[hc8A[n8A[f]][6]] = 'O';
-    ach[hc8A[n8A[f]][7]] = 'O';
+void Cluster_Write_8A(int f) {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+    if (s8A[hc8A[n8A[f]][0]] == 'C') s8A[hc8A[n8A[f]][0]] = 'B';
+    if (s8A[hc8A[n8A[f]][1]] == 'C') s8A[hc8A[n8A[f]][1]] = 'B';
+    if (s8A[hc8A[n8A[f]][2]] == 'C') s8A[hc8A[n8A[f]][2]] = 'B';
+    if (s8A[hc8A[n8A[f]][3]] == 'C') s8A[hc8A[n8A[f]][3]] = 'B';
+    if (s8A[hc8A[n8A[f]][4]] == 'C') s8A[hc8A[n8A[f]][4]] = 'B';
+    if (s8A[hc8A[n8A[f]][5]] == 'C') s8A[hc8A[n8A[f]][5]] = 'B';
+    s8A[hc8A[n8A[f]][6]] = 'O';
+    s8A[hc8A[n8A[f]][7]] = 'O';
 
     ++n8A[f];
 }
 
 void Clusters_Get8B_Cs(int f) { // Detect 8B Cs clusters
     int i;
-    char *ach, errMsg[1000];
     int clusSize=8;
 
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8B_Cs(): ach[] malloc out of memory\n");   Error(errMsg); }
-    for(i=0; i<N; ++i) ach[i] = 'C';
-
     for (i=0; i<nsp5c[f]; ++i) {    // loop over all 7A_i
-        Clusters_8B_loop(f, i, ach, clusSize, sp5c[i][5], sp5c[i][6]);
-        Clusters_8B_loop(f, i, ach, clusSize, sp5c[i][6], sp5c[i][5]);
+        Clusters_8B_loop(f, i, clusSize, sp5c[i][5], sp5c[i][6]);
+        Clusters_8B_loop(f, i, clusSize, sp5c[i][6], sp5c[i][5]);
     }
-    for(i=0; i<N; ++i) s8B[i]=ach[i];
-    free(ach);
 }
 
-void Clusters_8B_loop(int f, int i, char *ach, int clusSize, int primary_spindle, int secondary_spindle) {
+void Clusters_8B_loop(int f, int i, int clusSize, int primary_spindle, int secondary_spindle) {
 
     int j, k, l, m;
     int n1, nbs, unc[3];
@@ -632,35 +611,29 @@ void Clusters_8B_loop(int f, int i, char *ach, int clusSize, int primary_spindle
         hc8B[n8B[f]][7]=n1;
 
 
-        Cluster_Write_8B(f, ach);
+        Cluster_Write_8B(f);
     }
 }
 
-void Cluster_Write_8B(int f, char *ach) {
+void Cluster_Write_8B(int f) {
     // hc8B key: (SP5_to_4, SP5_to_0/2, SP5_to_3, SP5_to_n1(lower), SP5_to_n1(greater), s, s_to_n1, n1)
-    if (ach[hc8B[n8B[f]][7]] == 'C') ach[hc8B[n8B[f]][7]] = 'B';
-    if (ach[hc8B[n8B[f]][0]] == 'C') ach[hc8B[n8B[f]][0]] = 'B';
-    if (ach[hc8B[n8B[f]][1]] == 'C') ach[hc8B[n8B[f]][1]] = 'B';
-    if (ach[hc8B[n8B[f]][2]] == 'C') ach[hc8B[n8B[f]][2]] = 'B';
-    if (ach[hc8B[n8B[f]][3]] == 'C') ach[hc8B[n8B[f]][3]] = 'B';
-    if (ach[hc8B[n8B[f]][4]] == 'C') ach[hc8B[n8B[f]][4]] = 'B';
-    ach[hc8B[n8B[f]][5]] = 'O';
-    ach[hc8B[n8B[f]][6]] = 'O';
+    if (s8B[hc8B[n8B[f]][7]] == 'C') s8B[hc8B[n8B[f]][7]] = 'B';
+    if (s8B[hc8B[n8B[f]][0]] == 'C') s8B[hc8B[n8B[f]][0]] = 'B';
+    if (s8B[hc8B[n8B[f]][1]] == 'C') s8B[hc8B[n8B[f]][1]] = 'B';
+    if (s8B[hc8B[n8B[f]][2]] == 'C') s8B[hc8B[n8B[f]][2]] = 'B';
+    if (s8B[hc8B[n8B[f]][3]] == 'C') s8B[hc8B[n8B[f]][3]] = 'B';
+    if (s8B[hc8B[n8B[f]][4]] == 'C') s8B[hc8B[n8B[f]][4]] = 'B';
+    s8B[hc8B[n8B[f]][5]] = 'O';
+    s8B[hc8B[n8B[f]][6]] = 'O';
     ++n8B[f];
 }
-
 
 void Clusters_Get8K(int f) {    // Detect 8K clusters
     int i, j, j2, k, l, m, n;
     int cp[2], unc[3], scom, sother[2];
-    int trial[8];
-    char *ach, errMsg[1000];
     int clusSize=8;
 
     cp[0]=cp[1]=unc[0]=unc[1]=unc[2]=scom=sother[0]=sother[1]=-1;
-
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Clusters_Get8K(): ach[] malloc out of memory\n");  Error(errMsg); }
-    for (i=0; i<N; ++i) ach[i] = 'C';
 
     for (i=0; i<nsp3c[f]-2; ++i) {  // loop over all sp3c_i
         for (j2=0; j2<3; j2++) {    // loop over all particles in SP3 ring of sp3c_i
@@ -786,39 +759,35 @@ void Clusters_Get8K(int f) {    // Detect 8K clusters
                         m8K=m8K+incrStatic;
                     }
                     // hc8K key: (SP3_common_1, SP3_common_2, spindle_1, spindle_2, spindle_3, other_SP3_1, other_SP3_2, other_SP3_3)
-                    trial[0]=cp[0];
-                    trial[1]=cp[1];
-                    trial[2]=scom;
-                    trial[3]=sother[0];
-                    trial[4]=sother[1];
-                    trial[5]=unc[0];
-                    trial[6]=unc[1];
-                    trial[7]=unc[2];
+                    hc8K[n8K[f]][0]=cp[0];
+                    hc8K[n8K[f]][1]=cp[1];
+                    hc8K[n8K[f]][2]=scom;
+                    hc8K[n8K[f]][3]=sother[0];
+                    hc8K[n8K[f]][4]=sother[1];
+                    hc8K[n8K[f]][5]=unc[0];
+                    hc8K[n8K[f]][6]=unc[1];
+                    hc8K[n8K[f]][7]=unc[2];
 
-                    quickSort(&trial[0],2);
-                    quickSort(&trial[2],3);
-                    quickSort(&trial[5],3);
-                    for (l=0; l<clusSize; l++) hc8K[n8K[f]][l]=trial[l];
+                    quickSort(&hc8K[n8K[f]][0],2);
+                    quickSort(&hc8K[n8K[f]][2],3);
+                    quickSort(&hc8K[n8K[f]][5],3);
 
-                    Cluster_Write_8K(f, ach);
+                    Cluster_Write_8K(f);
                 }
             }
         }
     }
-
-    for(i=0; i<N; ++i) s8K[i]=ach[i];
-    free(ach);
 }
 
-void Cluster_Write_8K(int f, char *ach) {
-    if(ach[hc8K[n8K[f]][2]] == 'C') ach[hc8K[n8K[f]][2]] = 'B';
-    if(ach[hc8K[n8K[f]][3]] == 'C') ach[hc8K[n8K[f]][3]] = 'B';
-    if(ach[hc8K[n8K[f]][4]] == 'C') ach[hc8K[n8K[f]][4]] = 'B';
-    if(ach[hc8K[n8K[f]][5]] == 'C') ach[hc8K[n8K[f]][5]] = 'B';
-    if(ach[hc8K[n8K[f]][6]] == 'C') ach[hc8K[n8K[f]][6]] = 'B';
-    if(ach[hc8K[n8K[f]][7]] == 'C') ach[hc8K[n8K[f]][7]] = 'B';
-    ach[hc8K[n8K[f]][0]] = 'O';
-    ach[hc8K[n8K[f]][1]] = 'O';
+void Cluster_Write_8K(int f) {
+    if(s8K[hc8K[n8K[f]][2]] == 'C') s8K[hc8K[n8K[f]][2]] = 'B';
+    if(s8K[hc8K[n8K[f]][3]] == 'C') s8K[hc8K[n8K[f]][3]] = 'B';
+    if(s8K[hc8K[n8K[f]][4]] == 'C') s8K[hc8K[n8K[f]][4]] = 'B';
+    if(s8K[hc8K[n8K[f]][5]] == 'C') s8K[hc8K[n8K[f]][5]] = 'B';
+    if(s8K[hc8K[n8K[f]][6]] == 'C') s8K[hc8K[n8K[f]][6]] = 'B';
+    if(s8K[hc8K[n8K[f]][7]] == 'C') s8K[hc8K[n8K[f]][7]] = 'B';
+    s8K[hc8K[n8K[f]][0]] = 'O';
+    s8K[hc8K[n8K[f]][1]] = 'O';
     ++n8K[f];
 }
 
@@ -2012,10 +1981,6 @@ void Clusters_Get9K(int f)  {
                 }
                 if(m!=2) continue;
 
-                if(n9K[f] == m9K) {
-                    hc9K=resize_2D_int(hc9K,m9K,m9K+incrStatic,clusSize,-1);
-                    m9K=m9K+incrStatic;
-                }
                 // hc9K key: (common_SP4_1, common_SP4_2, other_SP4*4, other_spindle_1, other_spindle_2, scom)
 
                 trial[0]=cp[0];
@@ -2058,16 +2023,22 @@ void Clusters_Get9K(int f)  {
                 if(m!=6) continue;
 
                 quickSort(&trial[2],4);
-                for (k=0; k<9; k++) hc9K[n9K[f]][k]=trial[k];
 
-                Cluster_Write_9k(f);
+                Cluster_Write_9k(f, trial);
             }
         }
     }
 }
 
-void Cluster_Write_9k(int f) {
+void Cluster_Write_9k(int f, const int trial[]) {
     int i;
+    int clusSize = 9;
+
+    if(n9K[f] == m9K) {
+        hc9K=resize_2D_int(hc9K,m9K,m9K+incrStatic,clusSize,-1);
+        m9K=m9K+incrStatic;
+    }
+    for (i=0; i<9; i++) hc9K[n9K[f]][i]=trial[i];
 
     for(i=0; i<6; i++) {
         if (s9K[hc9K[n9K[f]][i]] == 'C') s9K[hc9K[n9K[f]][i]] = s9K_shell[hc9K[n9K[f]][i]] = 'B';

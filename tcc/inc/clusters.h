@@ -2,20 +2,20 @@
 #define CLUSTERS_H
 
 void Clusters_Get6Z_C2v(int f);   // Detect 6Z clusters from 2 5A clusters
-void Cluster_Write_6Z(int f, char *ach);
+void Cluster_Write_6Z(int f);
 
 void Clusters_Get7K(int f);   // Detect 7K clusters from 2 5A clusters
-void Cluster_Write_7K(int f, char *ach);
+void Cluster_Write_7K(int f);
 
 void Clusters_Get8A_D2d(int f);// Detect 8A D2d clusters
-void Cluster_Write_8A(int f, char *ach);
+void Cluster_Write_8A(int f);
 
 void Clusters_Get8B_Cs(int f);// Detect 8B Cs clusters
-void Clusters_8B_loop(int f, int i, char *ach, int clusSize, int s1, int s2);
-void Cluster_Write_8B(int f, char *ach);
+void Clusters_8B_loop(int f, int i, int clusSize, int s1, int s2);
+void Cluster_Write_8B(int f);
 
 void Clusters_Get8K(int f);   // Detect 8K clusters
-void Cluster_Write_8K(int f, char *ach);
+void Cluster_Write_8K(int f);
 
 void Clusters_Get9A_D3h(int f);   // Detect 9A D3h clusters
 void Cluster_Write_9A(int f, char *ach);
@@ -34,7 +34,7 @@ void Clust_Write_11E(int f, char *ach1);
 int Clusters_Get12D_D2d(int f, int i, int j, int k, int sp1, int sp2, char *ach); // Return 1 if 12B is also 11E
 
 void Clusters_Get9K(int f);// Detect 9K & 10K clusters
-
+void Cluster_Write_9k(int f, const int trial[]);
 
 void Clusters_Get10K(int f);// Detect 10K clusters
 int is_particle_in_9K(int id_9k, int id_particle);
