@@ -2460,6 +2460,7 @@ void Clusters_Get11C(int f) {
                     ++ncom;
                 }
                 if (ncom != 1) continue; // One common spindle particle
+
                 ncom = 0;
                 // need two common particles from SP5 rings
                 break_out = 0;
@@ -2477,21 +2478,24 @@ void Clusters_Get11C(int f) {
                     }
                     if (break_out == 1) break;
                 }
-                flg = ncom == 2 && Bonds_BondCheck(ar[0], ar[1]) &&
-                      break_out == 0; // two common SP5 ring particles are bonded
-                if (flg == 1) {
-                    ncom = 0;
-                    for (k = 0; k < 5; ++k) {
-                        if (sp5c[id_first_7A][k] == ar[0] || sp5c[id_first_7A][k] == ar[1]) continue;
-                        for (l = 0; l < 5; ++l) {
-                            if (sp5c[id_second7A][l] == ar[0] || sp5c[id_second7A][l] == ar[1]) continue;
-                            if (Bonds_BondCheck(sp5c[id_first_7A][k], sp5c[id_second7A][l])) ++ncom;
-                        }
-                    }
-                    if (ncom != 2) flg = 0;
-                }
-                if (flg != 1) continue; // two bonds between non-common SP5 ring particles
+                
+                if (ncom != 2) continue;
+                if (Bonds_BondCheck(ar[0], ar[1]) != 1) continue;
+                if (break_out != 0) continue;
 
+                // two common SP5 ring particles are bonded
+
+                ncom = 0;
+                for (k = 0; k < 5; ++k) {
+                    if (sp5c[id_first_7A][k] == ar[0] || sp5c[id_first_7A][k] == ar[1]) continue;
+                    for (l = 0; l < 5; ++l) {
+                        if (sp5c[id_second7A][l] == ar[0] || sp5c[id_second7A][l] == ar[1]) continue;
+                        if (Bonds_BondCheck(sp5c[id_first_7A][k], sp5c[id_second7A][l])) ++ncom;
+                    }
+                }
+                if (ncom != 2) continue;
+
+                // two bonds between non-common SP5 ring particles
                 resize_hc11C(f);
 
                 // hc11C key: (s_com, s_i, s_j, r_ca, r_cb, d_i, d_i, d_j, d_j, unc_i, unc_j)
