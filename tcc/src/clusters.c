@@ -2417,7 +2417,7 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
     n12K[f]++;
 }
 
-void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
+void Clusters_Get11C(int f) {
     int ar[2],sd[2];
     int i, j, k, l, m, ncom, spc;
     int flg;
@@ -2552,12 +2552,6 @@ void Clusters_Get11C_12A(int f) { // Detect 11C Cs & 12A C2v clusters
 
                     Cluster_Write_11C(f);
 
-                    if (do12A==1) {
-                        if(Clusters_Get12A_C2v(f)) {
-                            s12A[hc11C[n11C[f]][0]] = 'O';
-                            ++n12A[f];
-                        }
-                    }
                     ++n11C[f];
                 }
             }
@@ -2576,48 +2570,86 @@ void Cluster_Write_11C(int f) {
     }
 }
 
-int Clusters_Get12A_C2v(int f) { // Return 1 if 11C C2v is also 12A C2v
-    //  the central particle must have 11 particles bonded to it. The 11th
-    // particle is only bonded to 2 other outer shell particles.
-    int k, l;
+int Clusters_Get12A(int f) {
+    // A 12A is an 11C with an extra particle bonded to only 2 other specific outer shell particles in the 11C.
+
+    int id_11C;
     int ep;
-    int clusSize=12;
 
-    ep=-1;
+    for(id_11C=0; id_11C<n11C[f]; id_11C++) {
+        if (cnb[hc11C[id_11C][0]] == 11) {
 
-    if(cnb[hc11C[n11C[f]][0]] != 11) return 0;
+            ep = get_12A_extra_particle(id_11C);
 
-    for(k=0; k<11; ++k){
-        for(l=1; l<11; ++l) if(bNums[hc11C[n11C[f]][0]][k] == hc11C[n11C[f]][l]) break;
-        if(l == 11){
-            ep = bNums[hc11C[n11C[f]][0]][k]; // The extra particle
-            break;
+            // Extra particle must be bonded to a specific two particles in the 11C
+            if (Bonds_BondCheck(ep, hc11C[id_11C][9]) == 0 || Bonds_BondCheck(ep, hc11C[id_11C][10]) == 0) continue;
+
+            // The extra particle should not be bonded to particles 2-8 of the 11C
+            if (bond_check_12A_extra_particle(id_11C, ep) == 1) continue;
+
+            resize_hc12A(f);
+            populate_hc12A(f, id_11C, ep);
+            populate_s12A(f);
+            ++n12A[f];
         }
     }
-
-    if (Bonds_BondCheck(ep,hc11C[n11C[f]][9])==0 || Bonds_BondCheck(ep,hc11C[n11C[f]][10])==0) return 0;
-
-    for(k=2; k<9; ++k){
-        if(Bonds_BondCheck(ep,hc11C[n11C[f]][k])) return 0;
-    }
-
-    if(n12A[f] == m12A) {
-        hc12A=resize_2D_int(hc12A,m12A,m12A+incrStatic,clusSize,-1);
-        m12A=m12A+incrStatic;
-    }
-
-    // hc12A key: (as 11C, extra_s)
-
-    for(k=0;k<11;k++) hc12A[n12A[f]][k]=hc11C[n11C[f]][k];
-    hc12A[n12A[f]][11]=ep;
-
-    Cluster_Write_12A(f);
-
-    return 1;
 }
 
-void Cluster_Write_12A(int f) {
+int get_12A_extra_particle(int id_11C) {
     int i;
+    // Returns id of extra particle
+    // The extra particle is the one bonded to the 11C center that is not in the 11C,
+    for (i = 0; i < 11; ++i) {
+        if (is_particle_in_11C(bNums[hc11C[id_11C][0]][i], id_11C) == 0) {
+            return bNums[hc11C[id_11C][0]][i]; // The extra particle
+        }
+    }
+}
+
+int bond_check_12A_extra_particle(int id_11C, int extra_particle) {
+    // Return 1 if particle is bonded to particles 1-8 of the 11C, else return 0
+    int i;
+
+    for (i = 1; i < 9; ++i) {
+        if (Bonds_BondCheck(extra_particle, hc11C[id_11C][i])){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int is_particle_in_11C(int particle_id, int id_11C) {
+    // Return 1 if particle is in 11C, else returns 0
+    int i;
+
+    for (i=1; i<11; i++) {
+        if (particle_id == hc11C[id_11C][i]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void populate_hc12A(int f, int id_11C, int ep) {// hc12A key: (as 11C, extra_s)
+    int i;
+
+    for (i = 0; i<11; i++) {
+        hc12A[n12A[f]][i] = hc11C[id_11C][i];
+    }
+    hc12A[n12A[f]][11] = ep;
+}
+
+void resize_hc12A(int f) {
+    int clusSize=12;
+    if (n12A[f] == m12A) {
+        hc12A = resize_2D_int(hc12A, m12A, m12A + incrStatic, clusSize, -1);
+        m12A = m12A + incrStatic;
+    }
+}
+
+void populate_s12A(int f) {
+    int i;
+
     s12A[hc12A[n12A[f]][0]] = s12A_cen[hc12A[n12A[f]][0]] = 'O';
     s12A[hc12A[n12A[f]][1]] = s12A_shell[hc12A[n12A[f]][1]] = 'O';
     s12A[hc12A[n12A[f]][2]] = s12A_shell[hc12A[n12A[f]][2]] = 'O';
@@ -2626,7 +2658,6 @@ void Cluster_Write_12A(int f) {
     }
     if(s12A[hc12A[n12A[f]][10]] == 'C') s12A[hc12A[n12A[f]][10]] = 'B';
     s12A[hc12A[n12A[f]][11]] = s12A_shell[hc12A[n12A[f]][11]] = 'O';
-
 }
 
 void Clusters_Get11F_12E_13K(int f) {   // Detect 11F C2v & 12E 3h

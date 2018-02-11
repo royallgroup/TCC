@@ -67,11 +67,16 @@ void find_12K_cluster(int f, int ptr_11A, const int *sp3_ring);
 int is_particle_in_11A(int ptr_11A, int particle_id);
 void Cluster_Write_12K(int f, int ep, int id_11A);
 
-void Clusters_Get11C_12A(int f);
+void Clusters_Get11C(int f);
 void Cluster_Write_11C(int f);
 
-int Clusters_Get12A_C2v(int f);
-void Cluster_Write_12A(int f);
+int Clusters_Get12A(int f);
+int get_12A_extra_particle(int id_11C);
+int is_particle_in_11C(int particle_id, int id_11C);
+int bond_check_12A_extra_particle(int id_11C, int ep);
+void resize_hc12A(int f);
+void populate_hc12A(int f, int id_11C, int ep);
+void populate_s12A(int f);
 
 void Clusters_Get11F_12E_13K(int f);
 void Cluster_Write_11F(int f);
