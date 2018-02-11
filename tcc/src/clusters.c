@@ -2418,144 +2418,162 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
 }
 
 void Clusters_Get11C(int f) {
-    int ar[2],sd[2];
-    int i, j, k, l, m, ncom, spc;
+    int ar[2],uncommon_spindle[2];
+    int id_first_7A, id_second7A, k, l, m, ncom, common_spindle;
     int flg;
     int break_out;
-    int clusSize=11;
 
-    ar[0]=ar[1]=sd[0]=sd[1]=spc=-1;
+    int first_spindle_id, first_spindle_pointer, second_7A_pointer;
 
-    for (i=0; i<nsp5c[f]-1; ++i) {
-        // POSSIBLE IMPROVEMENT: loop over all spindles of 7A_i
-        for (j=i+1; j<nsp5c[f]; ++j) {
-            ncom = 0;
-            if (sp5c[i][5] == sp5c[j][5]) {
-                spc = sp5c[i][5];
-                sd[0] = sp5c[i][6];
-                sd[1] = sp5c[j][6];
-                ++ncom;
-            }
-            if (sp5c[i][6] == sp5c[j][6]) {
-                spc = sp5c[i][6];
-                sd[0] = sp5c[i][5];
-                sd[1] = sp5c[j][5];
-                ++ncom;
-            }
-            if (sp5c[i][5] == sp5c[j][6]) {
-                spc = sp5c[i][5];
-                sd[0] = sp5c[i][6];
-                sd[1] = sp5c[j][5];
-                ++ncom;
-            }
-            if (sp5c[i][6] == sp5c[j][5]) {
-                spc = sp5c[i][6];
-                sd[0] = sp5c[i][5];
-                sd[1] = sp5c[j][6];
-                ++ncom;
-            }
-            if (ncom == 1) { // One common spindle particle
+    ar[0]=ar[1]=uncommon_spindle[0]=uncommon_spindle[1]=common_spindle=-1;
+
+    for (id_first_7A=0; id_first_7A<nsp5c[f]-1; ++id_first_7A) {
+        for(first_spindle_pointer=5; first_spindle_pointer<7; first_spindle_pointer++) {
+            first_spindle_id = sp5c[id_first_7A][first_spindle_pointer];
+            for (second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[first_spindle_id]; second_7A_pointer++) {
+                id_second7A = mem_sp5c[first_spindle_id][second_7A_pointer];
+
+                ncom = 0;
+
+                if (sp5c[id_first_7A][5] == sp5c[id_second7A][5]) {
+                    common_spindle = sp5c[id_first_7A][5];
+                    uncommon_spindle[0] = sp5c[id_first_7A][6];
+                    uncommon_spindle[1] = sp5c[id_second7A][6];
+                    ++ncom;
+                }
+                if (sp5c[id_first_7A][6] == sp5c[id_second7A][6]) {
+                    common_spindle = sp5c[id_first_7A][6];
+                    uncommon_spindle[0] = sp5c[id_first_7A][5];
+                    uncommon_spindle[1] = sp5c[id_second7A][5];
+                    ++ncom;
+                }
+                if (sp5c[id_first_7A][5] == sp5c[id_second7A][6]) {
+                    common_spindle = sp5c[id_first_7A][5];
+                    uncommon_spindle[0] = sp5c[id_first_7A][6];
+                    uncommon_spindle[1] = sp5c[id_second7A][5];
+                    ++ncom;
+                }
+                if (sp5c[id_first_7A][6] == sp5c[id_second7A][5]) {
+                    common_spindle = sp5c[id_first_7A][6];
+                    uncommon_spindle[0] = sp5c[id_first_7A][5];
+                    uncommon_spindle[1] = sp5c[id_second7A][6];
+                    ++ncom;
+                }
+                if (ncom != 1) continue; // One common spindle particle
                 ncom = 0;
                 // need two common particles from SP5 rings
-                break_out=0;
-                for (k=0; k<5; ++k) {
-                    for (l=0; l<5; ++l) {
-                        if (sp5c[i][k] == sp5c[j][l]) {
+                break_out = 0;
+                for (k = 0; k < 5; ++k) {
+                    for (l = 0; l < 5; ++l) {
+                        if (sp5c[id_first_7A][k] == sp5c[id_second7A][l]) {
                             if (ncom >= 2) {
                                 ++ncom;
-                                break_out=1;
+                                break_out = 1;
                                 break;
                             }
-                            ar[ncom++] = sp5c[i][k];
+                            ar[ncom++] = sp5c[id_first_7A][k];
                             break;
                         }
                     }
-                    if (break_out==1) break;
+                    if (break_out == 1) break;
                 }
-                flg = ncom == 2 && Bonds_BondCheck(ar[0],ar[1]) && break_out==0; // two common SP5 ring particles are bonded
-                if(flg==1) {
+                flg = ncom == 2 && Bonds_BondCheck(ar[0], ar[1]) &&
+                      break_out == 0; // two common SP5 ring particles are bonded
+                if (flg == 1) {
                     ncom = 0;
-                    for(k=0; k<5; ++k) {
-                        if(sp5c[i][k] == ar[0] || sp5c[i][k] == ar[1]) continue;
-                        for(l=0; l<5; ++l) {
-                            if(sp5c[j][l] == ar[0] || sp5c[j][l] == ar[1]) continue;
-                            if(Bonds_BondCheck(sp5c[i][k], sp5c[j][l])) ++ncom;
+                    for (k = 0; k < 5; ++k) {
+                        if (sp5c[id_first_7A][k] == ar[0] || sp5c[id_first_7A][k] == ar[1]) continue;
+                        for (l = 0; l < 5; ++l) {
+                            if (sp5c[id_second7A][l] == ar[0] || sp5c[id_second7A][l] == ar[1]) continue;
+                            if (Bonds_BondCheck(sp5c[id_first_7A][k], sp5c[id_second7A][l])) ++ncom;
                         }
                     }
-                    if(ncom != 2) flg = 0;
+                    if (ncom != 2) flg = 0;
                 }
-                if(flg==1) { // two bonds between non-common SP5 ring particles
-                    if(n11C[f] == m11C) {
-                        hc11C=resize_2D_int(hc11C,m11C,m11C+incrStatic,clusSize,-1);
-                        m11C=m11C+incrStatic;
+                if (flg != 1) continue; // two bonds between non-common SP5 ring particles
+
+                resize_hc11C(f);
+
+                // hc11C key: (s_com, s_i, s_j, r_ca, r_cb, d_i, d_i, d_j, d_j, unc_i, unc_j)
+
+                hc11C[n11C[f]][0] = common_spindle;
+                hc11C[n11C[f]][1] = uncommon_spindle[0];
+                hc11C[n11C[f]][2] = uncommon_spindle[1];
+                hc11C[n11C[f]][3] = ar[0];
+                hc11C[n11C[f]][4] = ar[1];
+
+                l = 5;
+                m = 7;
+                break_out = 0;
+                for (k = 0; k < 5; ++k) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[0]) && sp5c[id_first_7A][k] != ar[0] &&
+                        sp5c[id_first_7A][k] != ar[1]) {
+                        if (l == 7) {
+                            break_out = 1;
+                            break;
+                        }
+                        hc11C[n11C[f]][l] = sp5c[id_first_7A][k];
+                        l++;
                     }
-
-                    // hc11C key: (s_com, s_i, s_j, r_ca, r_cb, d_i, d_i, d_j, d_j, unc_i, unc_j)
-
-                    hc11C[n11C[f]][0]=spc;
-                    hc11C[n11C[f]][1]=sd[0];
-                    hc11C[n11C[f]][2]=sd[1];
-                    hc11C[n11C[f]][3]=ar[0];
-                    hc11C[n11C[f]][4]=ar[1];
-
-                    l=5;
-                    m=7;
-                    break_out=0;
-                    for(k=0; k<5; ++k) {
-                        if(Bonds_BondCheck(sp5c[i][k], ar[0]) && sp5c[i][k]!=ar[0] && sp5c[i][k]!=ar[1]) {
-                            if (l==7) {
-                                break_out=1;
-                                break;
-                            }
-                            hc11C[n11C[f]][l] = sp5c[i][k];
-                            l++;
+                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[1]) && sp5c[id_first_7A][k] != ar[0] &&
+                        sp5c[id_first_7A][k] != ar[1]) {
+                        if (l == 7) {
+                            break_out = 1;
+                            break;
                         }
-                        if(Bonds_BondCheck(sp5c[i][k], ar[1]) && sp5c[i][k]!=ar[0] && sp5c[i][k]!=ar[1]) {
-                            if (l==7) {
-                                break_out=1;
-                                break;
-                            }
-                            hc11C[n11C[f]][l] = sp5c[i][k];
-                            l++;
-                        }
-                        if(Bonds_BondCheck(sp5c[j][k], ar[0]) && sp5c[j][k]!=ar[0] && sp5c[j][k]!=ar[1]) {
-                            if (m==9) {
-                                break_out=1;
-                                break;
-                            }
-                            hc11C[n11C[f]][m] = sp5c[j][k];
-                            m++;
-                        }
-                        if(Bonds_BondCheck(sp5c[j][k], ar[1]) && sp5c[j][k]!=ar[0] && sp5c[j][k]!=ar[1]) {
-                            if (m==9) {
-                                break_out=1;
-                                break;
-                            }
-                            hc11C[n11C[f]][m] = sp5c[j][k];
-                            m++;
-                        }
+                        hc11C[n11C[f]][l] = sp5c[id_first_7A][k];
+                        l++;
                     }
-                    if (break_out==1 || l<7 || m<9) continue;
-
-                    for(k=0; k<5; ++k) {
-                        if(Bonds_BondCheck(sp5c[i][k], hc11C[n11C[f]][5]) && Bonds_BondCheck(sp5c[i][k], hc11C[n11C[f]][6])) {
-                            hc11C[n11C[f]][9]=sp5c[i][k];
+                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[0]) && sp5c[id_second7A][k] != ar[0] &&
+                        sp5c[id_second7A][k] != ar[1]) {
+                        if (m == 9) {
+                            break_out = 1;
+                            break;
                         }
-                        if(Bonds_BondCheck(sp5c[j][k], hc11C[n11C[f]][7]) && Bonds_BondCheck(sp5c[j][k], hc11C[n11C[f]][8])) {
-                            hc11C[n11C[f]][10]=sp5c[j][k];
-                        }
+                        hc11C[n11C[f]][m] = sp5c[id_second7A][k];
+                        m++;
                     }
-                    quickSort(&hc11C[n11C[f]][1],2);
-                    quickSort(&hc11C[n11C[f]][3],2);
-                    quickSort(&hc11C[n11C[f]][5],4);
-                    quickSort(&hc11C[n11C[f]][9],2);
-
-                    Cluster_Write_11C(f);
-
-                    ++n11C[f];
+                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[1]) && sp5c[id_second7A][k] != ar[0] &&
+                        sp5c[id_second7A][k] != ar[1]) {
+                        if (m == 9) {
+                            break_out = 1;
+                            break;
+                        }
+                        hc11C[n11C[f]][m] = sp5c[id_second7A][k];
+                        m++;
+                    }
                 }
+                if (break_out == 1 || l < 7 || m < 9) continue;
+
+                for (k = 0; k < 5; ++k) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][k], hc11C[n11C[f]][5]) &&
+                        Bonds_BondCheck(sp5c[id_first_7A][k], hc11C[n11C[f]][6])) {
+                        hc11C[n11C[f]][9] = sp5c[id_first_7A][k];
+                    }
+                    if (Bonds_BondCheck(sp5c[id_second7A][k], hc11C[n11C[f]][7]) &&
+                        Bonds_BondCheck(sp5c[id_second7A][k], hc11C[n11C[f]][8])) {
+                        hc11C[n11C[f]][10] = sp5c[id_second7A][k];
+                    }
+                }
+                quickSort(&hc11C[n11C[f]][1], 2);
+                quickSort(&hc11C[n11C[f]][3], 2);
+                quickSort(&hc11C[n11C[f]][5], 4);
+                quickSort(&hc11C[n11C[f]][9], 2);
+
+                Cluster_Write_11C(f);
+
+                ++n11C[f];
             }
         }
+    }
+}
+
+void resize_hc11C(int f) {
+    int clusSize=11;
+
+    if(n11C[f] == m11C) {
+        hc11C=resize_2D_int(hc11C,m11C,m11C+incrStatic,clusSize,-1);
+        m11C=m11C+incrStatic;
     }
 }
 

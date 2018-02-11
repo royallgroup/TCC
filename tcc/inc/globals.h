@@ -120,7 +120,7 @@ int **hc12A, **hc12B, **hc12D, **hc12E, **hc12K;
 int **hc13A, **hc13B, **hc13K;
 int **hcFCC, **hcHCP, **hcBCC_9, **hcBCC_15;
 
-// mem lists the clusters of that type each particle is in, index i is the number of particles, j is the cluster id
+// mem lists the clusters of that type each particle is in, index i is the particle index, j is the cluster id
 // nmem lists the number of clusters of that type each particle is in, index i is the number of particles
 // mmem lists the width of mem, the maximum number of clusters of the specified type associated with a single particle
 int **mem_sp3b, *nmem_sp3b, mmem_sp3b;
