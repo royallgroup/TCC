@@ -2432,7 +2432,7 @@ void Clusters_Get11C(int f) {
             first_spindle_id = sp5c[id_first_7A][first_spindle_pointer];
             for (second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[first_spindle_id]; second_7A_pointer++) {
                 id_second7A = mem_sp5c[first_spindle_id][second_7A_pointer];
-
+                if(id_second7A<=id_first_7A) continue; // Dont detect the same cluster twice!
                 ncom = 0;
 
                 if (sp5c[id_first_7A][5] == sp5c[id_second7A][5]) {
