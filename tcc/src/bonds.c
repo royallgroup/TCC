@@ -189,14 +189,19 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
     int i, j, k, l, m;
     const int nBs = 4 * nB;
     int cnbs, cnbs2;
-    int S[nBs], S2[nBs];
-    double Sr[nBs], Sr2[nBs];
+    int *S, *S2;
+    double *Sr, *Sr2;
     double x1, x2, dr2;
     double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
     double *store_dr2;
-    int Sb[nBs];
+    int *Sb;
     char errMsg[1000];
-    
+
+    S = malloc(nBs*sizeof(int));
+    S2 = malloc(nBs*sizeof(int));
+    Sb = malloc(nBs*sizeof(int));
+    Sr = malloc(nBs*sizeof(double));
+    Sr2 = malloc(nBs*sizeof(double));
     store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV(): store_dr2[] malloc out of memory\n"); Error(errMsg); }
 
     printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
@@ -404,6 +409,11 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
     }
     
     free(store_dr2);
+    free(S);
+    free(S2);
+    free(Sb);
+    free(Sr);
+    free(Sr2);
 }
 
 void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
@@ -411,16 +421,20 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
     int ic, jcell0, jcell,nabor;    // various counters
     const int nBs = 4 * nB;
     int cnbs, cnbs2;
-    int S[nBs], S2[nBs];
-    double Sr[nBs], Sr2[nBs];
+    int *S, *S2, *Sb;
+    double *Sr, *Sr2;
     double x1, x2, dr2;
     double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
     double *store_dr2;
     int *temp_cnb, **temp_bNums;
-    int Sb[nBs];
     char errMsg[1000];
     
 
+    S = malloc(nBs*sizeof(int));
+    S2 = malloc(nBs*sizeof(int));
+    Sb = malloc(nBs*sizeof(int));
+    Sr = malloc(nBs*sizeof(double));
+    Sr2 = malloc(nBs*sizeof(double));
 
     store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
     temp_cnb = malloc(N*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
@@ -677,6 +691,11 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
     free(temp_bNums);
     free(temp_cnb);
     free(store_dr2);
+    free(S);
+    free(S2);
+    free(Sb);
+    free(Sr);
+    free(Sr2);
 }
 
 int Bonds_BondCheck(int i, int j) { // Returns 1 if i & j are bonded; 0 otherwise

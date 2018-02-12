@@ -2478,7 +2478,7 @@ void Clusters_Get11C(int f) {
                     }
                     if (break_out == 1) break;
                 }
-                
+
                 if (ncom != 2) continue;
                 if (Bonds_BondCheck(ar[0], ar[1]) != 1) continue;
                 if (break_out != 0) continue;
