@@ -2420,7 +2420,6 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
 void Clusters_Get11C(int f) {
     int ar[2],uncommon_spindle[2];
     int id_first_7A, id_second7A, k, l, m, ncom, common_spindle;
-    int flg;
     int break_out;
 
     int first_spindle_id, first_spindle_pointer, second_7A_pointer;
@@ -2463,25 +2462,23 @@ void Clusters_Get11C(int f) {
 
                 ncom = 0;
                 // need two common particles from SP5 rings
-                break_out = 0;
+
                 for (k = 0; k < 5; ++k) {
                     for (l = 0; l < 5; ++l) {
                         if (sp5c[id_first_7A][k] == sp5c[id_second7A][l]) {
-                            if (ncom >= 2) {
+                            if (ncom == 2) {
                                 ++ncom;
-                                break_out = 1;
                                 break;
                             }
                             ar[ncom++] = sp5c[id_first_7A][k];
                             break;
                         }
                     }
-                    if (break_out == 1) break;
+                    if (ncom > 2) break;
                 }
 
                 if (ncom != 2) continue;
                 if (Bonds_BondCheck(ar[0], ar[1]) != 1) continue;
-                if (break_out != 0) continue;
 
                 // two common SP5 ring particles are bonded
 
