@@ -2425,7 +2425,7 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
 
 void Clusters_Get11C(int f) {
     int ar[2],uncommon_spindle[2];
-    int id_first_7A, id_second7A, k, l, m, ncom, common_spindle;
+    int id_first_7A, id_second7A, ring_pointer, l, m, common_spindle;
     int break_out;
 
     int first_spindle_id, first_spindle_pointer, second_7A_pointer;
@@ -2446,8 +2446,7 @@ void Clusters_Get11C(int f) {
                 if (get_common_bonded_7A_ring_particles(ar, id_first_7A, id_second7A) == 0) continue;
 
                 // Check for two bonds between non-common 7A ring particles
-                ncom = find_non_common_7A_ring_particles(ar, id_first_7A, id_second7A);
-                if (ncom != 2) continue;
+                if (find_non_common_7A_ring_particles(ar, id_first_7A, id_second7A) == 0) continue;
 
                 resize_hc11C(f);
 
@@ -2462,54 +2461,50 @@ void Clusters_Get11C(int f) {
                 l = 5;
                 m = 7;
                 break_out = 0;
-                for (k = 0; k < 5; ++k) {
-                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[0]) && sp5c[id_first_7A][k] != ar[0] &&
-                        sp5c[id_first_7A][k] != ar[1]) {
+                for (ring_pointer = 0; ring_pointer < 5; ++ring_pointer) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][ring_pointer], ar[0]) && sp5c[id_first_7A][ring_pointer] != ar[0] && sp5c[id_first_7A][ring_pointer] != ar[1]) {
                         if (l == 7) {
                             break_out = 1;
                             break;
                         }
-                        hc11C[n11C[f]][l] = sp5c[id_first_7A][k];
+                        hc11C[n11C[f]][l] = sp5c[id_first_7A][ring_pointer];
                         l++;
                     }
-                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[1]) && sp5c[id_first_7A][k] != ar[0] &&
-                        sp5c[id_first_7A][k] != ar[1]) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][ring_pointer], ar[1]) && sp5c[id_first_7A][ring_pointer] != ar[0] && sp5c[id_first_7A][ring_pointer] != ar[1]) {
                         if (l == 7) {
                             break_out = 1;
                             break;
                         }
-                        hc11C[n11C[f]][l] = sp5c[id_first_7A][k];
+                        hc11C[n11C[f]][l] = sp5c[id_first_7A][ring_pointer];
                         l++;
                     }
-                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[0]) && sp5c[id_second7A][k] != ar[0] &&
-                        sp5c[id_second7A][k] != ar[1]) {
+                    if (Bonds_BondCheck(sp5c[id_second7A][ring_pointer], ar[0]) && sp5c[id_second7A][ring_pointer] != ar[0] && sp5c[id_second7A][ring_pointer] != ar[1]) {
                         if (m == 9) {
                             break_out = 1;
                             break;
                         }
-                        hc11C[n11C[f]][m] = sp5c[id_second7A][k];
+                        hc11C[n11C[f]][m] = sp5c[id_second7A][ring_pointer];
                         m++;
                     }
-                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[1]) && sp5c[id_second7A][k] != ar[0] &&
-                        sp5c[id_second7A][k] != ar[1]) {
+                    if (Bonds_BondCheck(sp5c[id_second7A][ring_pointer], ar[1]) && sp5c[id_second7A][ring_pointer] != ar[0] && sp5c[id_second7A][ring_pointer] != ar[1]) {
                         if (m == 9) {
                             break_out = 1;
                             break;
                         }
-                        hc11C[n11C[f]][m] = sp5c[id_second7A][k];
+                        hc11C[n11C[f]][m] = sp5c[id_second7A][ring_pointer];
                         m++;
                     }
                 }
                 if (break_out == 1 || l < 7 || m < 9) continue;
 
-                for (k = 0; k < 5; ++k) {
-                    if (Bonds_BondCheck(sp5c[id_first_7A][k], hc11C[n11C[f]][5]) &&
-                        Bonds_BondCheck(sp5c[id_first_7A][k], hc11C[n11C[f]][6])) {
-                        hc11C[n11C[f]][9] = sp5c[id_first_7A][k];
+                for (ring_pointer = 0; ring_pointer < 5; ++ring_pointer) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][ring_pointer], hc11C[n11C[f]][5]) &&
+                        Bonds_BondCheck(sp5c[id_first_7A][ring_pointer], hc11C[n11C[f]][6])) {
+                        hc11C[n11C[f]][9] = sp5c[id_first_7A][ring_pointer];
                     }
-                    if (Bonds_BondCheck(sp5c[id_second7A][k], hc11C[n11C[f]][7]) &&
-                        Bonds_BondCheck(sp5c[id_second7A][k], hc11C[n11C[f]][8])) {
-                        hc11C[n11C[f]][10] = sp5c[id_second7A][k];
+                    if (Bonds_BondCheck(sp5c[id_second7A][ring_pointer], hc11C[n11C[f]][7]) &&
+                        Bonds_BondCheck(sp5c[id_second7A][ring_pointer], hc11C[n11C[f]][8])) {
+                        hc11C[n11C[f]][10] = sp5c[id_second7A][ring_pointer];
                     }
                 }
                 quickSort(&hc11C[n11C[f]][1], 2);
@@ -2526,16 +2521,27 @@ void Clusters_Get11C(int f) {
 }
 
 int find_non_common_7A_ring_particles(const int *ar, int id_first_7A, int id_second7A) {
-    int ncom = 0;
+    // Returns 1 if two non common 7A ring particles are found else returns 0.
+
+    int num_common_particles = 0;
     int ring_1_pointer, ring_2_pointer;
+
     for (ring_1_pointer = 0; ring_1_pointer < 5; ++ring_1_pointer) {
-        if (sp5c[id_first_7A][ring_1_pointer] == ar[0] || sp5c[id_first_7A][ring_1_pointer] == ar[1]) continue;
+        // Don't look at the already identified common particles
+        if (sp5c[id_first_7A][ring_1_pointer] == ar[0]) continue;
+        if (sp5c[id_first_7A][ring_1_pointer] == ar[1]) continue;
+
         for (ring_2_pointer = 0; ring_2_pointer < 5; ++ring_2_pointer) {
-            if (sp5c[id_second7A][ring_2_pointer] == ar[0] || sp5c[id_second7A][ring_2_pointer] == ar[1]) continue;
-            if (Bonds_BondCheck(sp5c[id_first_7A][ring_1_pointer], sp5c[id_second7A][ring_2_pointer])) ++ncom;
+            // Don't look at the already identified common particles
+            if (sp5c[id_second7A][ring_2_pointer] == ar[0]) continue;
+            if (sp5c[id_second7A][ring_2_pointer] == ar[1]) continue;
+            if (Bonds_BondCheck(sp5c[id_first_7A][ring_1_pointer], sp5c[id_second7A][ring_2_pointer])) {
+                num_common_particles++;
+            }
         }
     }
-    return ncom;
+    if (num_common_particles == 2) return 1;
+    else return 0;
 }
 
 int get_11C_spindles(int id_first_7A, int id_second7A, int *uncommon_spindle, int *common_spindle) {
