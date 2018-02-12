@@ -2,6 +2,8 @@
 #include "clusters.h"
 #include "bonds.h"
 
+int get_bonded_7A_ring_particles(int *ar, int id_first_7A, int id_second7A, int ncom);
+
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -2463,19 +2465,7 @@ void Clusters_Get11C(int f) {
                 ncom = 0;
                 // need two common particles from SP5 rings
 
-                for (k = 0; k < 5; ++k) {
-                    for (l = 0; l < 5; ++l) {
-                        if (sp5c[id_first_7A][k] == sp5c[id_second7A][l]) {
-                            if (ncom == 2) {
-                                ++ncom;
-                                break;
-                            }
-                            ar[ncom++] = sp5c[id_first_7A][k];
-                            break;
-                        }
-                    }
-                    if (ncom > 2) break;
-                }
+                ncom = get_bonded_7A_ring_particles(ar, id_first_7A, id_second7A, ncom);
 
                 if (ncom != 2) continue;
                 if (Bonds_BondCheck(ar[0], ar[1]) != 1) continue;
@@ -2567,6 +2557,25 @@ void Clusters_Get11C(int f) {
             }
         }
     }
+}
+
+int get_bonded_7A_ring_particles(int *ar, int id_first_7A, int id_second7A, int ncom) {
+    int first_ring_pointer, second_ring_pointer;
+
+    for (first_ring_pointer = 0; first_ring_pointer < 5; ++first_ring_pointer) {
+        for (second_ring_pointer = 0; second_ring_pointer < 5; ++second_ring_pointer) {
+            if (sp5c[id_first_7A][first_ring_pointer] == sp5c[id_second7A][second_ring_pointer]) {
+                if (ncom == 2) {
+                    ++ncom;
+                    break;
+                }
+                ar[ncom++] = sp5c[id_first_7A][first_ring_pointer];
+                break;
+            }
+        }
+        if (ncom > 2) break;
+    }
+    return ncom;
 }
 
 void resize_hc11C(int f) {
