@@ -2,7 +2,6 @@
 #include "clusters.h"
 #include "bonds.h"
 
-int get_bonded_7A_ring_particles(int *ar, int id_first_7A, int id_second7A, int ncom);
 
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;
@@ -2434,33 +2433,8 @@ void Clusters_Get11C(int f) {
             for (second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[first_spindle_id]; second_7A_pointer++) {
                 id_second7A = mem_sp5c[first_spindle_id][second_7A_pointer];
                 if(id_second7A<=id_first_7A) continue; // Dont detect the same cluster twice!
-                ncom = 0;
 
-                if (sp5c[id_first_7A][5] == sp5c[id_second7A][5]) {
-                    common_spindle = sp5c[id_first_7A][5];
-                    uncommon_spindle[0] = sp5c[id_first_7A][6];
-                    uncommon_spindle[1] = sp5c[id_second7A][6];
-                    ++ncom;
-                }
-                if (sp5c[id_first_7A][6] == sp5c[id_second7A][6]) {
-                    common_spindle = sp5c[id_first_7A][6];
-                    uncommon_spindle[0] = sp5c[id_first_7A][5];
-                    uncommon_spindle[1] = sp5c[id_second7A][5];
-                    ++ncom;
-                }
-                if (sp5c[id_first_7A][5] == sp5c[id_second7A][6]) {
-                    common_spindle = sp5c[id_first_7A][5];
-                    uncommon_spindle[0] = sp5c[id_first_7A][6];
-                    uncommon_spindle[1] = sp5c[id_second7A][5];
-                    ++ncom;
-                }
-                if (sp5c[id_first_7A][6] == sp5c[id_second7A][5]) {
-                    common_spindle = sp5c[id_first_7A][6];
-                    uncommon_spindle[0] = sp5c[id_first_7A][5];
-                    uncommon_spindle[1] = sp5c[id_second7A][6];
-                    ++ncom;
-                }
-                if (ncom != 1) continue; // One common spindle particle
+                if (get_11C_spindle_particles(uncommon_spindle, id_first_7A, id_second7A, &common_spindle) == 0) continue;
 
                 ncom = 0;
                 // need two common particles from SP5 rings
@@ -2486,7 +2460,6 @@ void Clusters_Get11C(int f) {
                 resize_hc11C(f);
 
                 // hc11C key: (s_com, s_i, s_j, r_ca, r_cb, d_i, d_i, d_j, d_j, unc_i, unc_j)
-
                 hc11C[n11C[f]][0] = common_spindle;
                 hc11C[n11C[f]][1] = uncommon_spindle[0];
                 hc11C[n11C[f]][2] = uncommon_spindle[1];
@@ -2564,6 +2537,38 @@ void Clusters_Get11C(int f) {
             }
         }
     }
+}
+
+int get_11C_spindle_particles(int *uncommon_spindle, int id_first_7A, int id_second7A, int *common_spindle) {
+    int num_common_spindles = 0;
+
+    if (sp5c[id_first_7A][5] == sp5c[id_second7A][5]) {
+        (*common_spindle) = sp5c[id_first_7A][5];
+        uncommon_spindle[0] = sp5c[id_first_7A][6];
+        uncommon_spindle[1] = sp5c[id_second7A][6];
+        ++num_common_spindles;
+    }
+    if (sp5c[id_first_7A][6] == sp5c[id_second7A][6]) {
+        (*common_spindle) = sp5c[id_first_7A][6];
+        uncommon_spindle[0] = sp5c[id_first_7A][5];
+        uncommon_spindle[1] = sp5c[id_second7A][5];
+        ++num_common_spindles;
+    }
+    if (sp5c[id_first_7A][5] == sp5c[id_second7A][6]) {
+        (*common_spindle) = sp5c[id_first_7A][5];
+        uncommon_spindle[0] = sp5c[id_first_7A][6];
+        uncommon_spindle[1] = sp5c[id_second7A][5];
+        ++num_common_spindles;
+    }
+    if (sp5c[id_first_7A][6] == sp5c[id_second7A][5]) {
+        (*common_spindle) = sp5c[id_first_7A][6];
+        uncommon_spindle[0] = sp5c[id_first_7A][5];
+        uncommon_spindle[1] = sp5c[id_second7A][6];
+        ++num_common_spindles;
+    }
+
+    if (num_common_spindles == 1) return 1;
+    else return 0;
 }
 
 int get_bonded_7A_ring_particles(int *ar, int id_first_7A, int id_second7A, int ncom) {
