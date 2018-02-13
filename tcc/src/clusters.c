@@ -2497,8 +2497,7 @@ void Clusters_Get11C(int f) {
                 m = 7;
                 break_out = 0;
                 for (k = 0; k < 5; ++k) {
-                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[0]) && sp5c[id_first_7A][k] != ar[0] &&
-                        sp5c[id_first_7A][k] != ar[1]) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[0]) && sp5c[id_first_7A][k] != ar[1]) {
                         if (l == 7) {
                             break_out = 1;
                             break;
@@ -2506,8 +2505,9 @@ void Clusters_Get11C(int f) {
                         hc11C[n11C[f]][l] = sp5c[id_first_7A][k];
                         l++;
                     }
-                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[1]) && sp5c[id_first_7A][k] != ar[0] &&
-                        sp5c[id_first_7A][k] != ar[1]) {
+                }
+                for (k = 0; k < 5; ++k) {
+                    if (Bonds_BondCheck(sp5c[id_first_7A][k], ar[1]) && sp5c[id_first_7A][k] != ar[0]) {
                         if (l == 7) {
                             break_out = 1;
                             break;
@@ -2515,8 +2515,9 @@ void Clusters_Get11C(int f) {
                         hc11C[n11C[f]][l] = sp5c[id_first_7A][k];
                         l++;
                     }
-                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[0]) && sp5c[id_second7A][k] != ar[0] &&
-                        sp5c[id_second7A][k] != ar[1]) {
+                }
+                for (k = 0; k < 5; ++k) {
+                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[0]) && sp5c[id_second7A][k] != ar[1]) {
                         if (m == 9) {
                             break_out = 1;
                             break;
@@ -2524,8 +2525,9 @@ void Clusters_Get11C(int f) {
                         hc11C[n11C[f]][m] = sp5c[id_second7A][k];
                         m++;
                     }
-                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[1]) && sp5c[id_second7A][k] != ar[0] &&
-                        sp5c[id_second7A][k] != ar[1]) {
+                }
+                for (k = 0; k < 5; ++k) {
+                    if (Bonds_BondCheck(sp5c[id_second7A][k], ar[1]) && sp5c[id_second7A][k] != ar[0]) {
                         if (m == 9) {
                             break_out = 1;
                             break;
@@ -2536,6 +2538,11 @@ void Clusters_Get11C(int f) {
                 }
                 if (break_out == 1 || l < 7 || m < 9) continue;
 
+                // Check that the bonded non-common particles are bonded
+                if (Bonds_BondCheck(hc11C[n11C[f]][5], hc11C[n11C[f]][7]) == 0) continue;
+                if (Bonds_BondCheck(hc11C[n11C[f]][6], hc11C[n11C[f]][8]) == 0) continue;
+
+                // Get the ID's of the non-common particles
                 for (k = 0; k < 5; ++k) {
                     if (Bonds_BondCheck(sp5c[id_first_7A][k], hc11C[n11C[f]][5]) &&
                         Bonds_BondCheck(sp5c[id_first_7A][k], hc11C[n11C[f]][6])) {
