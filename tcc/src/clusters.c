@@ -2420,7 +2420,7 @@ void Cluster_Write_12K(int f, int ep, int id_11A) {
 
 void Clusters_Get11C(int f) {
     int common_bonded[2], uncommon_spindle[2], uncommon_bonded[4];
-    int id_first_7A, id_second7A, ring_pointer, common_spindle, ring_particle;
+    int id_first_7A, id_second7A, ring_pointer, common_spindle, new_11C_pointer;
 
     int first_spindle_id, first_spindle_pointer, second_7A_pointer;
 
@@ -2455,20 +2455,15 @@ void Clusters_Get11C(int f) {
                 hc11C[n11C[f]][8] = uncommon_bonded[3];
 
                 for (ring_pointer = 0; ring_pointer < 5; ++ring_pointer) {
-                    ring_particle = sp5c[id_first_7A][ring_pointer];
-                    if (is_particle_in_11C_rings(f, ring_particle) == 0) {
-                        hc11C[n11C[f]][9] = ring_particle;
-                        break;
+                    if (Bonds_BondCheck(sp5c[id_first_7A][ring_pointer], hc11C[n11C[f]][5]) &&
+                        Bonds_BondCheck(sp5c[id_first_7A][ring_pointer], hc11C[n11C[f]][6])) {
+                        hc11C[n11C[f]][9] = sp5c[id_first_7A][ring_pointer];
+                    }
+                    if (Bonds_BondCheck(sp5c[id_second7A][ring_pointer], hc11C[n11C[f]][7]) &&
+                        Bonds_BondCheck(sp5c[id_second7A][ring_pointer], hc11C[n11C[f]][8])) {
+                        hc11C[n11C[f]][10] = sp5c[id_second7A][ring_pointer];
                     }
                 }
-                for (ring_pointer = 0; ring_pointer < 5; ++ring_pointer) {
-                    ring_particle = sp5c[id_second7A][ring_pointer];
-                    if (is_particle_in_11C_rings(f, ring_particle) == 0) {
-                        hc11C[n11C[f]][10] = ring_particle;
-                        break;
-                    }
-                }
-                
                 quickSort(&hc11C[n11C[f]][1], 2);
                 quickSort(&hc11C[n11C[f]][3], 2);
                 quickSort(&hc11C[n11C[f]][5], 4);
@@ -2481,19 +2476,6 @@ void Clusters_Get11C(int f) {
         }
     }
 }
-
-int is_particle_in_11C_rings(int f, int particle_id) {
-    // returns 0 if particle is in 11C ring particles, else returns 0.
-
-    int pointer_11C;
-    for(pointer_11C = 3; pointer_11C < 9; pointer_11C++) {
-        if (hc11C[n11C[f]][pointer_11C] ==  particle_id) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 
 int get_non_common_7A_ring_particles(const int *common_bonded, int *uncommon_bonded, int id_first_7A, int id_second7A) {
     // Returns 1 if two non common 7A ring particles are found else returns 0.
