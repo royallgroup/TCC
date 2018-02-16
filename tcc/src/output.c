@@ -1,221 +1,36 @@
-#include "../inc/output.h"
-#include "globals.h"
+#include "output.h"
 #include "tools.h"
+#include "globals.h"
 
+void Write_Initialise_Raw_Files(int cluster_number);
 
 void Write_Raw_Init() {
+    int i;
+
+
+    raw_file_pointers = malloc(sizeof(FILE*) * num_cluster_types);
+
+    for(i=0; i<num_cluster_types; i++) {
+        Write_Initialise_Raw_Files(i);
+    }
+}
+
+void Write_Initialise_Raw_Files(int cluster_number) {
     char errMsg[1000];
     char output[1000];
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp3",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp3=fopen(output,"w");
-    if (file_raw_sp3==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp3,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp3a",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp3a=fopen(output,"w");
-    if (file_raw_sp3a==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp3a,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp3b",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp3b=fopen(output,"w");
-    if (file_raw_sp3b==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp3b,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_5A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_5A=fopen(output,"w");
-    if (file_raw_5A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_5A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp4",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp4=fopen(output,"w");
-    if (file_raw_sp4==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp4,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp4a",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp4a=fopen(output,"w");
-    if (file_raw_sp4a==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp4a,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp4b",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp4b=fopen(output,"w");
-    if (file_raw_sp4b==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp4b,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_6A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_6A=fopen(output,"w");
-    if (file_raw_6A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_6A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_6Z",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_6Z=fopen(output,"w");
-    if (file_raw_6Z==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_6Z,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp5",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp5=fopen(output,"w");
-    if (file_raw_sp5==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp5,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp5a",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp5a=fopen(output,"w");
-    if (file_raw_sp5a==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp5a,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_sp5b",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_sp5b=fopen(output,"w");
-    if (file_raw_sp5b==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_sp5b,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_7A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_7A=fopen(output,"w");
-    if (file_raw_7A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_7A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_7K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_7K=fopen(output,"w");
-    if (file_raw_7K==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_7K,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_8A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_8A=fopen(output,"w");
-    if (file_raw_8A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_8A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_8B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_8B=fopen(output,"w");
-    if (file_raw_8B==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_8B,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_8K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_8K=fopen(output,"w");
-    if (file_raw_8K==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_8K,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_9A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_9A=fopen(output,"w");
-    if (file_raw_9A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_9A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_9B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_9B=fopen(output,"w");
-    if (file_raw_9B==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_9B,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_9K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_9K=fopen(output,"w");
-    if (file_raw_9K==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_9K,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_10A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_10A=fopen(output,"w");
-    if (file_raw_10A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_10A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_10B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_10B=fopen(output,"w");
-    if (file_raw_10B==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_10B,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_10K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_10K=fopen(output,"w");
-    if (file_raw_10K==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_10K,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_10W",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_10W=fopen(output,"w");
-    if (file_raw_10W==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_10W,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_11A=fopen(output,"w");
-    if (file_raw_11A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_11A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_11B=fopen(output,"w");
-    if (file_raw_11B==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_11B,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11C",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_11C=fopen(output,"w");
-    if (file_raw_11C==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_11C,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11E",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_11E=fopen(output,"w");
-    if (file_raw_11E==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_11E,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11F",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_11F=fopen(output,"w");
-    if (file_raw_11F==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_11F,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11W",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_11W=fopen(output,"w");
-    if (file_raw_11W==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_11W,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_12A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_12A=fopen(output,"w");
-    if (file_raw_12A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_12A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_12B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_12B=fopen(output,"w");
-    if (file_raw_12B==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_12B,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_12D",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_12D=fopen(output,"w");
-    if (file_raw_12D==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_12D,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_12E",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_12E=fopen(output,"w");
-    if (file_raw_12E==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_12E,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_12K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_12K=fopen(output,"w");
-    if (file_raw_12K==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_12K,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_13A=fopen(output,"w");
-    if (file_raw_13A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_13A,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13B",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_13B=fopen(output,"w");
-    if (file_raw_13B==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_13B,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_13K=fopen(output,"w");
-    if (file_raw_13K==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_13K,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_FCC",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_FCC=fopen(output,"w");
-    if (file_raw_FCC==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_FCC,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_HCP",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_HCP=fopen(output,"w");
-    if (file_raw_HCP==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_HCP,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_BCC_9",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_BCC_9=fopen(output,"w");
-    if (file_raw_BCC_9==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_BCC_9,"%s\n",output);
-
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_BCC_15",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_raw_BCC_15=fopen(output,"w");
-    if (file_raw_BCC_15==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(file_raw_BCC_15,"%s\n",output);
+    if(*do_cluster_list[cluster_number] == 1){
+        sprintf(output, "%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s",
+                fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+        raw_file_pointers[cluster_number] = fopen(output, "w");
+        if (raw_file_pointers[cluster_number] == NULL) {
+            sprintf(errMsg, "Write_Cluster_Init(): Error opening file %s", output);
+            Error(errMsg);
+        }
+        fprintf(raw_file_pointers[cluster_number], "%s\n", output);
+    }
+    else {
+        raw_file_pointers[cluster_number] = NULL;
+    }
 }
 
 void Write_Raw_Xmol(int f, FILE *thefile, char *sarr) {
@@ -261,93 +76,56 @@ void Write_13A_cen_xmol(int f) {
 }
 
 void Write_Raw(int f) {
-    Write_Raw_Xmol(f,file_raw_sp3,&ssp3[0]);
-    Write_Raw_Xmol(f,file_raw_sp3a,&ssp3a[0]);
-    Write_Raw_Xmol(f,file_raw_sp3b,&ssp3b[0]);
-    Write_Raw_Xmol(f,file_raw_5A,&s5A[0]);
-    Write_Raw_Xmol(f,file_raw_sp4,&ssp4[0]);
-    Write_Raw_Xmol(f,file_raw_sp4a,&ssp4a[0]);
-    Write_Raw_Xmol(f,file_raw_sp4b,&ssp4b[0]);
-    Write_Raw_Xmol(f,file_raw_6A,&s6A[0]);
-    Write_Raw_Xmol(f,file_raw_6Z,&s6Z[0]);
-    Write_Raw_Xmol(f,file_raw_7K,&s7K[0]);
-    Write_Raw_Xmol(f,file_raw_sp5,&ssp5[0]);
-    Write_Raw_Xmol(f,file_raw_sp5a,&ssp5a[0]);
-    Write_Raw_Xmol(f,file_raw_sp5b,&ssp5b[0]);
-    Write_Raw_Xmol(f,file_raw_7A,&s7A[0]);
-    Write_Raw_Xmol(f,file_raw_8A,&s8A[0]);
-    Write_Raw_Xmol(f,file_raw_8B,&s8B[0]);
-    Write_Raw_Xmol(f,file_raw_8K,&s8K[0]);
-    Write_Raw_Xmol(f,file_raw_9A,&s9A[0]);
-    Write_Raw_Xmol(f,file_raw_9B,&s9B[0]);
-    Write_Raw_Xmol(f,file_raw_9K,&s9K[0]);
-    Write_Raw_Xmol(f,file_raw_10A,&s10A[0]);
-    Write_Raw_Xmol(f,file_raw_10B,&s10B[0]);
-    Write_Raw_Xmol(f,file_raw_10K,&s10K[0]);
-    Write_Raw_Xmol(f,file_raw_10W,&s10W[0]);
-    Write_Raw_Xmol(f,file_raw_11A,&s11A[0]);
-    Write_Raw_Xmol(f,file_raw_11B,&s11B[0]);
-    Write_Raw_Xmol(f,file_raw_11C,&s11C[0]);
-    Write_Raw_Xmol(f,file_raw_11E,&s11E[0]);
-    Write_Raw_Xmol(f,file_raw_11F,&s11F[0]);
-    Write_Raw_Xmol(f,file_raw_11W,&s11W[0]);
-    Write_Raw_Xmol(f,file_raw_12A,&s12A[0]);
-    Write_Raw_Xmol(f,file_raw_12B,&s12B[0]);
-    Write_Raw_Xmol(f,file_raw_12D,&s12D[0]);
-    Write_Raw_Xmol(f,file_raw_12E,&s12E[0]);
-    Write_Raw_Xmol(f,file_raw_12K,&s12K[0]);
-    Write_Raw_Xmol(f,file_raw_13A,&s13A[0]);
-    Write_Raw_Xmol(f,file_raw_13B,&s13B[0]);
-    Write_Raw_Xmol(f,file_raw_13K,&s13K[0]);
-    Write_Raw_Xmol(f,file_raw_FCC,&sFCC[0]);
-    Write_Raw_Xmol(f,file_raw_HCP,&sHCP[0]);
-    Write_Raw_Xmol(f,file_raw_BCC_9,&sBCC_9[0]);
-    Write_Raw_Xmol(f,file_raw_BCC_15,&sBCC_15[0]);
+    if(*do_cluster_list[0] == 1) Write_Raw_Xmol(f,raw_file_pointers[0],&ssp3[0]);
+    if(*do_cluster_list[1] == 1) Write_Raw_Xmol(f,raw_file_pointers[1],&ssp3a[0]);
+    if(*do_cluster_list[2] == 1) Write_Raw_Xmol(f,raw_file_pointers[2],&ssp3b[0]);
+    if(*do_cluster_list[3] == 1) Write_Raw_Xmol(f,raw_file_pointers[3],&s5A[0]);
+    if(*do_cluster_list[4] == 1) Write_Raw_Xmol(f,raw_file_pointers[4],&ssp4[0]);
+    if(*do_cluster_list[5] == 1) Write_Raw_Xmol(f,raw_file_pointers[5],&ssp4a[0]);
+    if(*do_cluster_list[6] == 1) Write_Raw_Xmol(f,raw_file_pointers[6],&ssp4b[0]);
+    if(*do_cluster_list[7] == 1) Write_Raw_Xmol(f,raw_file_pointers[7],&s6A[0]);
+    if(*do_cluster_list[8] == 1) Write_Raw_Xmol(f,raw_file_pointers[8],&s6Z[0]);
+    if(*do_cluster_list[9] == 1) Write_Raw_Xmol(f,raw_file_pointers[9],&s7K[0]);
+    if(*do_cluster_list[10] == 1) Write_Raw_Xmol(f,raw_file_pointers[10],&ssp5[0]);
+    if(*do_cluster_list[11] == 1) Write_Raw_Xmol(f,raw_file_pointers[11],&ssp5a[0]);
+    if(*do_cluster_list[12] == 1) Write_Raw_Xmol(f,raw_file_pointers[12],&ssp5b[0]);
+    if(*do_cluster_list[13] == 1) Write_Raw_Xmol(f,raw_file_pointers[13],&s7A[0]);
+    if(*do_cluster_list[14] == 1) Write_Raw_Xmol(f,raw_file_pointers[14],&s8A[0]);
+    if(*do_cluster_list[15] == 1) Write_Raw_Xmol(f,raw_file_pointers[15],&s8B[0]);
+    if(*do_cluster_list[16] == 1) Write_Raw_Xmol(f,raw_file_pointers[16],&s8K[0]);
+    if(*do_cluster_list[17] == 1) Write_Raw_Xmol(f,raw_file_pointers[17],&s9A[0]);
+    if(*do_cluster_list[18] == 1) Write_Raw_Xmol(f,raw_file_pointers[18],&s9B[0]);
+    if(*do_cluster_list[19] == 1) Write_Raw_Xmol(f,raw_file_pointers[19],&s9K[0]);
+    if(*do_cluster_list[20] == 1) Write_Raw_Xmol(f,raw_file_pointers[20],&s10A[0]);
+    if(*do_cluster_list[21] == 1) Write_Raw_Xmol(f,raw_file_pointers[21],&s10B[0]);
+    if(*do_cluster_list[22] == 1) Write_Raw_Xmol(f,raw_file_pointers[22],&s10K[0]);
+    if(*do_cluster_list[23] == 1) Write_Raw_Xmol(f,raw_file_pointers[23],&s10W[0]);
+    if(*do_cluster_list[24] == 1) Write_Raw_Xmol(f,raw_file_pointers[24],&s11A[0]);
+    if(*do_cluster_list[25] == 1) Write_Raw_Xmol(f,raw_file_pointers[25],&s11B[0]);
+    if(*do_cluster_list[26] == 1) Write_Raw_Xmol(f,raw_file_pointers[26],&s11C[0]);
+    if(*do_cluster_list[27] == 1) Write_Raw_Xmol(f,raw_file_pointers[27],&s11E[0]);
+    if(*do_cluster_list[28] == 1) Write_Raw_Xmol(f,raw_file_pointers[28],&s11F[0]);
+    if(*do_cluster_list[29] == 1) Write_Raw_Xmol(f,raw_file_pointers[29],&s11W[0]);
+    if(*do_cluster_list[30] == 1) Write_Raw_Xmol(f,raw_file_pointers[30],&s12A[0]);
+    if(*do_cluster_list[31] == 1) Write_Raw_Xmol(f,raw_file_pointers[31],&s12B[0]);
+    if(*do_cluster_list[32] == 1) Write_Raw_Xmol(f,raw_file_pointers[32],&s12D[0]);
+    if(*do_cluster_list[33] == 1) Write_Raw_Xmol(f,raw_file_pointers[33],&s12E[0]);
+    if(*do_cluster_list[34] == 1) Write_Raw_Xmol(f,raw_file_pointers[34],&s12K[0]);
+    if(*do_cluster_list[35] == 1) Write_Raw_Xmol(f,raw_file_pointers[35],&s13A[0]);
+    if(*do_cluster_list[36] == 1) Write_Raw_Xmol(f,raw_file_pointers[36],&s13B[0]);
+    if(*do_cluster_list[37] == 1) Write_Raw_Xmol(f,raw_file_pointers[37],&s13K[0]);
+    if(*do_cluster_list[38] == 1) Write_Raw_Xmol(f,raw_file_pointers[38],&sFCC[0]);
+    if(*do_cluster_list[39] == 1) Write_Raw_Xmol(f,raw_file_pointers[39],&sHCP[0]);
+    if(*do_cluster_list[40] == 1) Write_Raw_Xmol(f,raw_file_pointers[40],&sBCC_9[0]);
+    if(*do_cluster_list[41] == 1) Write_Raw_Xmol(f,raw_file_pointers[41],&sBCC_15[0]);
 }
 
 void Write_Raw_Close() {
-    fclose(file_raw_sp3);
-    fclose(file_raw_sp3a);
-    fclose(file_raw_sp3b);
-    fclose(file_raw_5A);
-    fclose(file_raw_sp4);
-    fclose(file_raw_sp4a);
-    fclose(file_raw_sp4b);
-    fclose(file_raw_6A);
-    fclose(file_raw_6Z);
-    fclose(file_raw_7K);
-    fclose(file_raw_sp5);
-    fclose(file_raw_sp5a);
-    fclose(file_raw_sp5b);
-    fclose(file_raw_7A);
-    fclose(file_raw_8A);
-    fclose(file_raw_8B);
-    fclose(file_raw_8K);
-    fclose(file_raw_9A);
-    fclose(file_raw_9B);
-    fclose(file_raw_9K);
-    fclose(file_raw_10A);
-    fclose(file_raw_10B);
-    fclose(file_raw_10K);
-    fclose(file_raw_10W);
-    fclose(file_raw_11A);
-    fclose(file_raw_11B);
-    fclose(file_raw_11C);
-    fclose(file_raw_11E);
-    fclose(file_raw_11F);
-    fclose(file_raw_11W);
-    fclose(file_raw_12A);
-    fclose(file_raw_12B);
-    fclose(file_raw_12D);
-    fclose(file_raw_12E);
-    fclose(file_raw_12K);
-    fclose(file_raw_13A);
-    fclose(file_raw_13B);
-    fclose(file_raw_13K);
-    fclose(file_raw_FCC);
-    fclose(file_raw_HCP);
-    fclose(file_raw_BCC_9);
-    fclose(file_raw_BCC_15);
+    int i;
+
+    for(i=0; i< num_cluster_types; i++) {
+        fclose(raw_file_pointers[i]);
+    }
 }
 
 void Write_Cluster_Init() {

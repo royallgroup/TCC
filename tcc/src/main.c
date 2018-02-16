@@ -8,6 +8,17 @@
 #include "clusters.h"
 #include "output.h"
 #include "stats.h"
+#include "tools.h"
+
+char* cluster_names[] = {"sp3", "sp3a", "sp3b", "sp3c", "sp4", "sp4a", "sp4b", "sp4c", "sp5", "sp5a",
+                         "sp5b", "sp5c", "6Z", "7K", "8A", "8B", "8K", "9A", "9B", "9K", "10A", "10B",
+                         "10K", "10W", "11A", "11B", "11C", "11E", "11F", "11W", "12A", "12B", "12D",
+                         "12E", "12K", "13A", "13B", "13K", "FCC", "HCP", "BCC_9", "BCC_15"};
+int num_cluster_types = 42;
+int* do_cluster_list[] = {&dosp3, &dosp3a, &dosp3b, &dosp3c, &dosp4, &dosp4a, &dosp4b, &dosp4c, &dosp5, &dosp5a,
+                        &dosp5b, &dosp5c, &do6Z, &do7K, &do8A, &do8B, &do8K, &do9A, &do9B, &do9K, &do10A, &do10B,
+                        &do10K, &do10W, &do11A, &do11B, &do11C, &do11E, &do11F, &do11W, &do12A, &do12B, &do12D,
+                        &do12E, &do12K, &do13A, &do13B, &do13K, &doFCC, &doHCP, &doBCC9, &doBCC15};
 
 int main(int argc, char **argv) {
 	int e, f, i;

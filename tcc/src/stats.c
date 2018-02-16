@@ -1,4 +1,6 @@
 #include "stats.h"
+#include "globals.h"
+#include "tools.h"
 
 void Stats_Init() {
     int i;

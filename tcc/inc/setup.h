@@ -1,8 +1,7 @@
 #ifndef SETUP_H
 #define SETUP_H
-#include <math.h>
-#include "globals.h"
-#include <string.h>
+
+#include <stdio.h>
 
 void Setup_ReadIniFile(char *);
 void Setup_ReadBox(FILE *);

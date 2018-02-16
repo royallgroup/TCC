@@ -1,8 +1,11 @@
+#include "math.h"
 #include "bonds.h"
+#include "globals.h"
+#include "tools.h"
 
 double Bonds_GetR2(int i, int j) {  // get separation between particles i and j
     double dx, dy, dz;
-    
+
     dx = x[i] - x[j];
     dy = y[i] - y[j];
     dz = z[i] - z[j];

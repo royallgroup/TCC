@@ -1,6 +1,8 @@
 #include "setup.h"
 #include "tools.h"
 #include "iniparser.h"
+#include "globals.h"
+#include "math.h"
 
 void Setup_ReadIniFile(char *filename) {
     

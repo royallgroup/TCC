@@ -1,9 +1,6 @@
 #ifndef TCC_STATS_H
 #define TCC_STATS_H
 
-#include "globals.h"
-#include "tools.h"
-
 void Stats_Init();	// initialize Stats routine
 void Stats_Reset();	// reset Cluster routine variables
 void Stats_FreeMem();	// free memory from stats variables

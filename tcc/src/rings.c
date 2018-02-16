@@ -1,6 +1,8 @@
+#include "string.h"
 #include "rings.h"
 #include "globals.h"
 #include "bonds.h"
+#include "tools.h"
 
 void Rings_gSP3(int f, int n0) {	// get SP3/4/5 rings including particle n0
     int i,j;

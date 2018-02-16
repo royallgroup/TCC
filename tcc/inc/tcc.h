@@ -3,9 +3,6 @@
 #include <string.h>
 #include <math.h>
 
-#include "tools.h"
-#include "setup.h"
-
 int icell(int tix, int tiy, int tiz);
 
 void Bonds_GetBonds(int f);	// Get bonds using simple lengths

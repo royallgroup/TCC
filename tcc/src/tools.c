@@ -1,9 +1,5 @@
 #include "tools.h"
-// ======================================================================================================
-// Here we collect all the functions that have some computational utility but do not play a mojor role in 
-// the geometric contruction of the Topological Cluster Classification
-// ======================================================================================================
-
+#include "globals.h"
 
 void Error_no_free(char *msg) { // Exit program printing error message but don't try to free any memory
     printf("\n%s\n",msg);

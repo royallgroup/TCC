@@ -1,7 +1,8 @@
 #include "globals.h"
 #include "clusters.h"
 #include "bonds.h"
-
+#include "tools.h"
+#include "string.h"
 
 void Clusters_Get6Z_C2v(int f) {    // Detect 6Z clusters from 2 5A clusters
     int flg;

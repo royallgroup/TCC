@@ -1,6 +1,6 @@
 #ifndef TCC_OUTPUT_H
 #define TCC_OUTPUT_H
-#include "globals.h"
+#include <stdio.h>
 
 void Write_Raw_Init();
 void Write_Raw_Xmol(int f, FILE *thefile, char *sarr);

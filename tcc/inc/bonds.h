@@ -1,9 +1,6 @@
 #ifndef BONDS_H
 #define BONDS_H 
 
-#include "globals.h"
-#include "tools.h"
-
 double Bonds_GetR2(int i, int j) ;  // get separation between particles i and j
 
 double Bonds_GetR2_PBCs(int i, int j) ; // get PBC wrapped separation between particles i and j

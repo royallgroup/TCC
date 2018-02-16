@@ -16,6 +16,12 @@ double TSTART;
 double FRAMETSTEP;
 double TFINAL;
 
+extern char* cluster_names[];
+extern int num_cluster_types;  // The number of items in the cluster names array
+extern int* do_cluster_list[];
+
+FILE** raw_file_pointers;
+
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 double *x, *y, *z;  // positions in x y and z directions of N particles
@@ -242,19 +248,6 @@ FILE *wFCC, *wHCP, *wBCC_9, *wBCC_15;
 // File handles for the bonds and pop_per_frame files
 FILE *bondsout;
 FILE *fPopPerFrame;
-
-/// File handles for the raw_output files
-FILE *file_raw_sp3, *file_raw_sp3a, *file_raw_sp3b, *file_raw_5A;
-FILE *file_raw_sp4, *file_raw_sp4a, *file_raw_sp4b, *file_raw_6A;
-FILE *file_raw_sp5, *file_raw_sp5a, *file_raw_sp5b, *file_raw_7A;
-FILE *file_raw_6Z, *file_raw_7K;
-FILE *file_raw_8A, *file_raw_8B, *file_raw_8K;  
-FILE *file_raw_9A, *file_raw_9B, *file_raw_9K;
-FILE *file_raw_10A, *file_raw_10B, *file_raw_10K, *file_raw_10W;
-FILE *file_raw_11A, *file_raw_11B, *file_raw_11C, *file_raw_11E, *file_raw_11F, *file_raw_11W;
-FILE *file_raw_12A, *file_raw_12B, *file_raw_12D, *file_raw_12E, *file_raw_12K;
-FILE *file_raw_13A, *file_raw_13B, *file_raw_13K;
-FILE *file_raw_FCC, *file_raw_HCP, *file_raw_BCC_9, *file_raw_BCC_15;
 
 // File handles for center xyz files
 FILE *file_11A_cen_xmol;
