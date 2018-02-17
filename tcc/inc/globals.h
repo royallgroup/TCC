@@ -12,9 +12,6 @@ int FRAMES; // frames to read from input xmol file
 int STARTFROM;  // start reading from this frame in the xmol file
 int SAMPLEFREQ; // frequency at which to take frames from the xmol file
 int TOTALFRAMES;
-double TSTART;
-double FRAMETSTEP;
-double TFINAL;
 
 extern char* cluster_names[];
 extern int num_cluster_types;  // The number of items in the cluster names array
@@ -171,17 +168,7 @@ double *pop_per_frame_13A, *pop_per_frame_13B, *pop_per_frame_13K;
 double *pop_per_frame_FCC, *pop_per_frame_HCP, *pop_per_frame_BCC_9, *pop_per_frame_BCC_15;
 
 // The average population of each cluster type over all frames
-double mean_pop_per_frame_sp3, mean_pop_per_frame_sp3a, mean_pop_per_frame_sp3b, mean_pop_per_frame_sp3c;
-double mean_pop_per_frame_sp4, mean_pop_per_frame_sp4a, mean_pop_per_frame_sp4b, mean_pop_per_frame_sp4c;
-double mean_pop_per_frame_sp5, mean_pop_per_frame_sp5a, mean_pop_per_frame_sp5b, mean_pop_per_frame_sp5c;
-double mean_pop_per_frame_6Z, mean_pop_per_frame_7K;
-double mean_pop_per_frame_8A, mean_pop_per_frame_8B, mean_pop_per_frame_8K;
-double mean_pop_per_frame_9A, mean_pop_per_frame_9B, mean_pop_per_frame_9K;
-double mean_pop_per_frame_10A, mean_pop_per_frame_10B, mean_pop_per_frame_10K, mean_pop_per_frame_10W;
-double mean_pop_per_frame_11A, mean_pop_per_frame_11B, mean_pop_per_frame_11C, mean_pop_per_frame_11E, mean_pop_per_frame_11F, mean_pop_per_frame_11W;
-double mean_pop_per_frame_12A, mean_pop_per_frame_12B, mean_pop_per_frame_12D, mean_pop_per_frame_12E, mean_pop_per_frame_12K;
-double mean_pop_per_frame_13A, mean_pop_per_frame_13B, mean_pop_per_frame_13K;
-double mean_pop_per_frame_FCC, mean_pop_per_frame_HCP, mean_pop_per_frame_BCC_9, mean_pop_per_frame_BCC_15;
+double *mean_pop_per_frame;
 
 // Gross number of clusters of the specified type accumulated over all frames
 int ngsp3, ngsp3a, ngsp3b, ngsp3c;

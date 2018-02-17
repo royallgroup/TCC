@@ -30,9 +30,6 @@ void Setup_ReadIniFile(char *filename) {
     N = iniparser_getint(ini, "run:num_particles", -1);
     NA = iniparser_getint(ini, "run:numA_particles", -1);
     RHO = iniparser_getdouble(ini, "run:number_density", -1);
-    TSTART = iniparser_getdouble(ini, "run:simulationstarttime", -1);
-    FRAMETSTEP = iniparser_getdouble(ini, "run:simulationtimestep", -1);
-    TFINAL = iniparser_getdouble(ini, "run:simulationendtime", -1);
     STARTFROM = iniparser_getint(ini, "run:start_from", -1);
     SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
 
@@ -80,8 +77,8 @@ void Setup_ReadIniFile(char *filename) {
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
     printf("ISNOTCUBIC %d\n",ISNOTCUBIC);
-    printf("FRAMES %d N %d NA %d RHO %lg TSTART %lg\n",FRAMES,N,NA,RHO,TSTART);
-    printf("FRAMETSTEP %lg TFINAL %lg STARTFROM %d SAMPLEFREQ %d\n",FRAMETSTEP,TFINAL, STARTFROM,SAMPLEFREQ);
+    printf("FRAMES %d N %d NA %d RHO %lg\n",FRAMES,N,NA,RHO);
+    printf("STARTFROM %d SAMPLEFREQ %d\n",STARTFROM,SAMPLEFREQ);
     printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
@@ -169,7 +166,7 @@ void Setup_Readxyz(int e, int write, int f, FILE *readin) {     // read configur
 }
 
 void Setup_InitStaticVars() { // Initialize lots of important variables for static TCC algorithm
-    int f, j, k;
+    int i, f, j, k;
     char errMsg[1000];
 
     dosp3=dosp3a=dosp3b=dosp3c=1;
@@ -203,18 +200,11 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         for (j=0; j<13*ncells+1; j++) map[j]=0;
         for (j=0; j<N+1; j++) llist[j]=0;
     }
-    
-    mean_pop_per_frame_sp3=mean_pop_per_frame_sp3a=mean_pop_per_frame_sp3b=mean_pop_per_frame_sp3c=0.0; // mean particle fractions of clusters
-    mean_pop_per_frame_sp4=mean_pop_per_frame_sp4a=mean_pop_per_frame_sp4b=mean_pop_per_frame_sp4c=0.0;
-    mean_pop_per_frame_sp5=mean_pop_per_frame_sp5a=mean_pop_per_frame_sp5b=mean_pop_per_frame_sp5c=0.0;
-    mean_pop_per_frame_6Z=mean_pop_per_frame_7K=0.0;
-    mean_pop_per_frame_8A=mean_pop_per_frame_8B=mean_pop_per_frame_8K=0.0;
-    mean_pop_per_frame_9A=mean_pop_per_frame_9B=mean_pop_per_frame_9K=0.0;
-    mean_pop_per_frame_10A=mean_pop_per_frame_10B=mean_pop_per_frame_10K=mean_pop_per_frame_10W=0.0;
-    mean_pop_per_frame_11A=mean_pop_per_frame_11B=mean_pop_per_frame_11C=mean_pop_per_frame_11E=mean_pop_per_frame_11F=mean_pop_per_frame_11W=0.0;
-    mean_pop_per_frame_12A=mean_pop_per_frame_12B=mean_pop_per_frame_12D=mean_pop_per_frame_12E=mean_pop_per_frame_12K=0.0;
-    mean_pop_per_frame_13A=mean_pop_per_frame_13B=mean_pop_per_frame_13K=0.0;
-    mean_pop_per_frame_FCC=mean_pop_per_frame_HCP=mean_pop_per_frame_BCC_9=mean_pop_per_frame_BCC_15=0.0;
+
+    mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
+    for(i=0; i<num_cluster_types; i++) {
+        mean_pop_per_frame[i] = 0.0;
+    }
 
     x = malloc(N*sizeof(double));   if (x==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): x[] malloc out of memory\n");    Error_no_free(errMsg); }    // positions of particles in a configuration
     y = malloc(N*sizeof(double));   if (y==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): y[] malloc out of memory\n");    Error_no_free(errMsg); }
@@ -1042,7 +1032,9 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
 
 void Setup_FreeStaticVars()  {  // Free bond detection variables
     int i;
-    
+
+    free(mean_pop_per_frame);
+
     free(rtype);
     free(fXmolName);
     free(fBoxSizeName);
