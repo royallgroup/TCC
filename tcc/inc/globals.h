@@ -154,20 +154,11 @@ char *s12A_shell, *s12B_shell, *s12K_shell;
 char *s13A_shell, *s13B_shell, *s13K_shell;
 char *sFCC_shell, *sHCP_shell, *sBCC_9_shell, *sBCC_15_shell;
 
-// Lists of particle population of each cluster type in each frame, index i is the frame number
-double *pop_per_frame_sp3, *pop_per_frame_sp3a, *pop_per_frame_sp3b, *pop_per_frame_sp3c;
-double *pop_per_frame_sp4, *pop_per_frame_sp4a, *pop_per_frame_sp4b, *pop_per_frame_sp4c;
-double *pop_per_frame_sp5, *pop_per_frame_sp5a, *pop_per_frame_sp5b, *pop_per_frame_sp5c;
-double *pop_per_frame_6Z, *pop_per_frame_7K;
-double *pop_per_frame_8A, *pop_per_frame_8B, *pop_per_frame_8K;
-double *pop_per_frame_9A, *pop_per_frame_9B, *pop_per_frame_9K;
-double *pop_per_frame_10A, *pop_per_frame_10B, *pop_per_frame_10K, *pop_per_frame_10W;
-double *pop_per_frame_11A, *pop_per_frame_11B, *pop_per_frame_11C, *pop_per_frame_11E, *pop_per_frame_11F, *pop_per_frame_11W;
-double *pop_per_frame_12A, *pop_per_frame_12B, *pop_per_frame_12D, *pop_per_frame_12E, *pop_per_frame_12K;
-double *pop_per_frame_13A, *pop_per_frame_13B, *pop_per_frame_13K;
-double *pop_per_frame_FCC, *pop_per_frame_HCP, *pop_per_frame_BCC_9, *pop_per_frame_BCC_15;
+// Lists of particle population of each cluster type in each frame, index i is the frame number,
+// index j is the cluster type
+double **pop_per_frame;
 
-// The average population of each cluster type over all frames
+// The average population of each cluster type over all frames, index i is cluster type
 double *mean_pop_per_frame;
 
 // Gross number of clusters of the specified type accumulated over all frames

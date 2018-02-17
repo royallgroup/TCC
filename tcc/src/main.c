@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 			write=1;
 		}
 		else write=0;
-		if (write==1) Setup_ResetStaticVars(f);
+		if (write==1) Setup_ResetStaticVars();
 
 		if (ISNOTCUBIC>=2) {
 			Setup_ReadBox(rSizes);
