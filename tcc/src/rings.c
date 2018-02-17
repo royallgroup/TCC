@@ -1,4 +1,3 @@
-#include "string.h"
 #include "rings.h"
 #include "globals.h"
 #include "bonds.h"
@@ -370,183 +369,143 @@ void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,
 
 void Rings_setSP3c(int f) { // store cluster 5A D3h from Bonds_aSP3
     int i;
-    char *ach, errMsg[1000];
 
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP3c(): ach[] malloc out of memory\n");   Error(errMsg); }
-
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp3a[f]; i++) {
-        ach[sp3a[i][0]] = 'B';
-        ach[sp3a[i][1]] = 'B';
-        ach[sp3a[i][2]] = 'B';
+        ssp3a[sp3a[i][0]] = 'B';
+        ssp3a[sp3a[i][1]] = 'B';
+        ssp3a[sp3a[i][2]] = 'B';
     }
-    for (i=0; i<N; ++i) ssp3a[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp3b[f]; i++) {
-        if (ach[sp3b[i][0]] == 'C') ach[sp3b[i][0]] = 'B';
-        if (ach[sp3b[i][1]] == 'C') ach[sp3b[i][1]] = 'B';
-        if (ach[sp3b[i][2]] == 'C') ach[sp3b[i][2]] = 'B';
-        ach[sp3b[i][3]] = 'O';
+        if (ssp3b[sp3b[i][0]] == 'C') ssp3b[sp3b[i][0]] = 'B';
+        if (ssp3b[sp3b[i][1]] == 'C') ssp3b[sp3b[i][1]] = 'B';
+        if (ssp3b[sp3b[i][2]] == 'C') ssp3b[sp3b[i][2]] = 'B';
+        ssp3b[sp3b[i][3]] = 'O';
     }
-    for (i=0; i<N; ++i) ssp3b[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp3c[f]; i++) {
-        if (ach[sp3c[i][0]] == 'C') ach[sp3c[i][0]] = 'B';
-        if (ach[sp3c[i][1]] == 'C') ach[sp3c[i][1]] = 'B';
-        if (ach[sp3c[i][2]] == 'C') ach[sp3c[i][2]] = 'B';
-        ach[sp3c[i][3]] = 'O';
-        ach[sp3c[i][4]] = 'O';
+        if (ssp3c[sp3c[i][0]] == 'C') ssp3c[sp3c[i][0]] = 'B';
+        if (ssp3c[sp3c[i][1]] == 'C') ssp3c[sp3c[i][1]] = 'B';
+        if (ssp3c[sp3c[i][2]] == 'C') ssp3c[sp3c[i][2]] = 'B';
+        ssp3c[sp3c[i][3]] = 'O';
+        ssp3c[sp3c[i][4]] = 'O';
     }
-    for (i=0; i<N; ++i) ssp3c[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp3a[f]; i++) {
-        ach[sp3a[i][0]] = 'B';
-        ach[sp3a[i][1]] = 'B';
-        ach[sp3a[i][2]] = 'B';
+        ssp3[sp3a[i][0]] = 'B';
+        ssp3[sp3a[i][1]] = 'B';
+        ssp3[sp3a[i][2]] = 'B';
     }
     for (i=0; i<nsp3b[f]; i++) {
-        ach[sp3b[i][0]] = 'B';
-        ach[sp3b[i][1]] = 'B';
-        ach[sp3b[i][2]] = 'B';
+        ssp3[sp3b[i][0]] = 'B';
+        ssp3[sp3b[i][1]] = 'B';
+        ssp3[sp3b[i][2]] = 'B';
     }
     for (i=0; i<nsp3c[f]; i++) {
-        ach[sp3c[i][0]] = 'B';
-        ach[sp3c[i][1]] = 'B';
-        ach[sp3c[i][2]] = 'B';
+        ssp3[sp3c[i][0]] = 'B';
+        ssp3[sp3c[i][1]] = 'B';
+        ssp3[sp3c[i][2]] = 'B';
     }
-    for (i=0; i<N; ++i) ssp3[i]=ach[i];
-
-    free(ach);
 }
 
 void Rings_setSP4c(int f) { // store cluster 6A Oh from Bonds_aSP4()
     int i;
-    char *ach, errMsg[1000];
 
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP4c(): ach[] malloc out of memory\n");   Error(errMsg); }
-
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp4a[f]; i++) {
-        ach[sp4a[i][0]] = 'B';
-        ach[sp4a[i][1]] = 'B';
-        ach[sp4a[i][2]] = 'B';
-        ach[sp4a[i][3]] = 'B';
+        ssp4a[sp4a[i][0]] = 'B';
+        ssp4a[sp4a[i][1]] = 'B';
+        ssp4a[sp4a[i][2]] = 'B';
+        ssp4a[sp4a[i][3]] = 'B';
     }
-    for (i=0; i<N; ++i) ssp4a[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp4b[f]; i++) {
-        if (ach[sp4b[i][0]] == 'C') ach[sp4b[i][0]] = 'B';
-        if (ach[sp4b[i][1]] == 'C') ach[sp4b[i][1]] = 'B';
-        if (ach[sp4b[i][2]] == 'C') ach[sp4b[i][2]] = 'B';
-        if (ach[sp4b[i][3]] == 'C') ach[sp4b[i][3]] = 'B';
-        ach[sp4b[i][4]] = 'O';
+        if (ssp4b[sp4b[i][0]] == 'C') ssp4b[sp4b[i][0]] = 'B';
+        if (ssp4b[sp4b[i][1]] == 'C') ssp4b[sp4b[i][1]] = 'B';
+        if (ssp4b[sp4b[i][2]] == 'C') ssp4b[sp4b[i][2]] = 'B';
+        if (ssp4b[sp4b[i][3]] == 'C') ssp4b[sp4b[i][3]] = 'B';
+        ssp4b[sp4b[i][4]] = 'O';
     }
-    for (i=0; i<N; ++i) ssp4b[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp4c[f]; ++i) {
-        if (ach[sp4c[i][0]] == 'C') ach[sp4c[i][0]] = 'B';
-        if (ach[sp4c[i][1]] == 'C') ach[sp4c[i][1]] = 'B';
-        if (ach[sp4c[i][2]] == 'C') ach[sp4c[i][2]] = 'B';
-        if (ach[sp4c[i][3]] == 'C') ach[sp4c[i][3]] = 'B';
-        ach[sp4c[i][4]] = 'O';
-        ach[sp4c[i][5]] = 'O';
+        if (ssp4c[sp4c[i][0]] == 'C') ssp4c[sp4c[i][0]] = 'B';
+        if (ssp4c[sp4c[i][1]] == 'C') ssp4c[sp4c[i][1]] = 'B';
+        if (ssp4c[sp4c[i][2]] == 'C') ssp4c[sp4c[i][2]] = 'B';
+        if (ssp4c[sp4c[i][3]] == 'C') ssp4c[sp4c[i][3]] = 'B';
+        ssp4c[sp4c[i][4]] = 'O';
+        ssp4c[sp4c[i][5]] = 'O';
     }
-    for (i=0; i<N; ++i) ssp4c[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp4a[f]; i++) {
-        ach[sp4a[i][0]] = 'B';
-        ach[sp4a[i][1]] = 'B';
-        ach[sp4a[i][2]] = 'B';
-        ach[sp4a[i][3]] = 'B';
+        ssp4[sp4a[i][0]] = 'B';
+        ssp4[sp4a[i][1]] = 'B';
+        ssp4[sp4a[i][2]] = 'B';
+        ssp4[sp4a[i][3]] = 'B';
     }
     for (i=0; i<nsp4b[f]; i++) {
-        ach[sp4b[i][0]] = 'B';
-        ach[sp4b[i][1]] = 'B';
-        ach[sp4b[i][2]] = 'B';
-        ach[sp4b[i][3]] = 'B';
+        ssp4[sp4b[i][0]] = 'B';
+        ssp4[sp4b[i][1]] = 'B';
+        ssp4[sp4b[i][2]] = 'B';
+        ssp4[sp4b[i][3]] = 'B';
     }
     for (i=0; i<nsp4c[f]; ++i) {
-        ach[sp4c[i][0]] = 'B';
-        ach[sp4c[i][1]] = 'B';
-        ach[sp4c[i][2]] = 'B';
-        ach[sp4c[i][3]] = 'B';
+        ssp4[sp4c[i][0]] = 'B';
+        ssp4[sp4c[i][1]] = 'B';
+        ssp4[sp4c[i][2]] = 'B';
+        ssp4[sp4c[i][3]] = 'B';
     }
-    for (i=0; i<N; ++i) ssp4[i]=ach[i];
-
-    
-    free(ach);
 }
 
 void Rings_setSP5c(int f) { // store cluster 7A D5h from Bonds_aSP5()
     int i;
-    char *ach, errMsg[1000];
 
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP5c(): ach[] malloc out of memory\n");   Error(errMsg); }
-
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp5a[f]; i++) {
-        ach[sp5a[i][0]] = 'B';
-        ach[sp5a[i][1]] = 'B';
-        ach[sp5a[i][2]] = 'B';
-        ach[sp5a[i][3]] = 'B';
-        ach[sp5a[i][4]] = 'B';
+        ssp5a[sp5a[i][0]] = 'B';
+        ssp5a[sp5a[i][1]] = 'B';
+        ssp5a[sp5a[i][2]] = 'B';
+        ssp5a[sp5a[i][3]] = 'B';
+        ssp5a[sp5a[i][4]] = 'B';
     }
-    for (i=0; i<N; ++i) ssp5a[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp5b[f]; i++) {
-        if (ach[sp5b[i][0]] == 'C') ach[sp5b[i][0]] = 'B';
-        if (ach[sp5b[i][1]] == 'C') ach[sp5b[i][1]] = 'B';
-        if (ach[sp5b[i][2]] == 'C') ach[sp5b[i][2]] = 'B';
-        if (ach[sp5b[i][3]] == 'C') ach[sp5b[i][3]] = 'B';
-        if (ach[sp5b[i][4]] == 'C') ach[sp5b[i][4]] = 'B';
-        ach[sp5b[i][5]] = 'O';
+        if (ssp5b[sp5b[i][0]] == 'C') ssp5b[sp5b[i][0]] = 'B';
+        if (ssp5b[sp5b[i][1]] == 'C') ssp5b[sp5b[i][1]] = 'B';
+        if (ssp5b[sp5b[i][2]] == 'C') ssp5b[sp5b[i][2]] = 'B';
+        if (ssp5b[sp5b[i][3]] == 'C') ssp5b[sp5b[i][3]] = 'B';
+        if (ssp5b[sp5b[i][4]] == 'C') ssp5b[sp5b[i][4]] = 'B';
+        ssp5b[sp5b[i][5]] = 'O';
     }
-    for (i=0; i<N; ++i) ssp5b[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp5c[f]; ++i) {
-        if (ach[sp5c[i][0]] == 'C') ach[sp5c[i][0]] = 'B';
-        if (ach[sp5c[i][1]] == 'C') ach[sp5c[i][1]] = 'B';
-        if (ach[sp5c[i][2]] == 'C') ach[sp5c[i][2]] = 'B';
-        if (ach[sp5c[i][3]] == 'C') ach[sp5c[i][3]] = 'B';
-        if (ach[sp5c[i][4]] == 'C') ach[sp5c[i][4]] = 'B';
-        ach[sp5c[i][5]] = 'O';
-        ach[sp5c[i][6]] = 'O';
+        if (ssp5c[sp5c[i][0]] == 'C') ssp5c[sp5c[i][0]] = 'B';
+        if (ssp5c[sp5c[i][1]] == 'C') ssp5c[sp5c[i][1]] = 'B';
+        if (ssp5c[sp5c[i][2]] == 'C') ssp5c[sp5c[i][2]] = 'B';
+        if (ssp5c[sp5c[i][3]] == 'C') ssp5c[sp5c[i][3]] = 'B';
+        if (ssp5c[sp5c[i][4]] == 'C') ssp5c[sp5c[i][4]] = 'B';
+        ssp5c[sp5c[i][5]] = 'O';
+        ssp5c[sp5c[i][6]] = 'O';
     }
-    for (i=0; i<N; ++i) ssp5c[i]=ach[i];
 
-    memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp5a[f]; i++) {
-        ach[sp5a[i][0]] = 'B';
-        ach[sp5a[i][1]] = 'B';
-        ach[sp5a[i][2]] = 'B';
-        ach[sp5a[i][3]] = 'B';
-        ach[sp5a[i][4]] = 'B';
+        ssp5[sp5a[i][0]] = 'B';
+        ssp5[sp5a[i][1]] = 'B';
+        ssp5[sp5a[i][2]] = 'B';
+        ssp5[sp5a[i][3]] = 'B';
+        ssp5[sp5a[i][4]] = 'B';
     }
     for (i=0; i<nsp5b[f]; i++) {
-        ach[sp5b[i][0]] = 'B';
-        ach[sp5b[i][1]] = 'B';
-        ach[sp5b[i][2]] = 'B';
-        ach[sp5b[i][3]] = 'B';
-        ach[sp5b[i][4]] = 'B';
+        ssp5[sp5b[i][0]] = 'B';
+        ssp5[sp5b[i][1]] = 'B';
+        ssp5[sp5b[i][2]] = 'B';
+        ssp5[sp5b[i][3]] = 'B';
+        ssp5[sp5b[i][4]] = 'B';
     }
     for (i=0; i<nsp5c[f]; ++i) {
-        ach[sp5c[i][0]] = 'B';
-        ach[sp5c[i][1]] = 'B';
-        ach[sp5c[i][2]] = 'B';
-        ach[sp5c[i][3]] = 'B';
-        ach[sp5c[i][4]] = 'B';
+        ssp5[sp5c[i][0]] = 'B';
+        ssp5[sp5c[i][1]] = 'B';
+        ssp5[sp5c[i][2]] = 'B';
+        ssp5[sp5c[i][3]] = 'B';
+        ssp5[sp5c[i][4]] = 'B';
     }
-    for (i=0; i<N; ++i) ssp5[i]=ach[i];
-    
-    free(ach);
 }
 
 void add_mem_sp3b(int particle_ID, int frame) {
