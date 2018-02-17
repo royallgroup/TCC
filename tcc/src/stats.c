@@ -56,9 +56,6 @@ void Stats_Init() {
     nc12A=nc12B=nc12D=nc12E=nc12K=0;
     nc13A=nc13B=nc13K=0;
     ncFCC=ncHCP=ncBCC_9=ncBCC_15=0;
-
-    ncsp3_excess_spindles=ncsp4_excess_spindles=ncsp5_excess_spindles=0;	// total number of _excess_spindlesed basic clusters
-    ncsp3c_spindlebonds=ncsp4c_spindlebonds=ncsp5c_spindlebonds=0;
 }
 
 void Stats_Reset() {
@@ -212,62 +209,55 @@ void Stats_Analyse() {
     }
 }
 
+void Accuumlate_Stats() {
+
+    ncsp3+=nsp3;
+    ncsp3a+=nsp3a;
+    ncsp3b+=nsp3b;
+    ncsp3c+=nsp3c;
+    ncsp4+=nsp4;
+    ncsp4a+=nsp4a;
+    ncsp4b+=nsp4b;
+    ncsp4c+=nsp4c;
+    nc6Z+=n6Z;
+    nc7K+=n7K;
+    ncsp5+=nsp5;
+    ncsp5a+=nsp5a;
+    ncsp5b+=nsp5b;
+    ncsp5c+=nsp5c;
+    nc8A+=n8A;
+    nc8B+=n8B;
+    nc8K+=n8K;
+    nc9A+=n9A;
+    nc9B+=n9B;
+    nc9K+=n9K;
+    nc10A+=n10A;
+    nc10B+=n10B;
+    nc10K+=n10K;
+    nc10W+=n10W;
+    nc11A+=n11A;
+    nc11B+=n11B;
+    nc11C+=n11C;
+    nc11E+=n11E;
+    nc11F+=n11F;
+    nc11W+=n11W;
+    nc12A+=n12A;
+    nc12B+=n12B;
+    nc12D+=n12D;
+    nc12E+=n12E;
+    nc12K+=n12K;
+    nc13A+=n13A;
+    nc13B+=n13B;
+    nc13K+=n13K;
+    ncFCC+=nFCC;
+    ncHCP+=nHCP;
+    ncBCC_9+=nBCC_9;
+    ncBCC_15+=nBCC_15;
+}
+
 void Stats_Report(char *filename) {
-    int f;
-    double temp;
     char errMsg[1000];
     FILE *writeout;
-
-    for (f=0; f<FRAMES; f++) {
-        ncsp3+=nsp3[f];
-        ncsp3a+=nsp3a[f];
-        ncsp3b+=nsp3b[f];
-        ncsp3c+=nsp3c[f];
-        ncsp3_excess_spindles+=nsp3_excess_spindles[f];
-        ncsp3c_spindlebonds+=nsp3c_spindlebonds[f];
-        ncsp4+=nsp4[f];
-        ncsp4a+=nsp4a[f];
-        ncsp4b+=nsp4b[f];
-        ncsp4c+=nsp4c[f];
-        ncsp4_excess_spindles+=nsp4_excess_spindles[f];
-        ncsp4c_spindlebonds+=nsp4c_spindlebonds[f];
-        nc6Z+=n6Z[f];
-        nc7K+=n7K[f];
-        ncsp5+=nsp5[f];
-        ncsp5a+=nsp5a[f];
-        ncsp5b+=nsp5b[f];
-        ncsp5c+=nsp5c[f];
-        ncsp5_excess_spindles+=nsp5_excess_spindles[f];
-        ncsp5c_spindlebonds+=nsp5c_spindlebonds[f];
-        nc8A+=n8A[f];
-        nc8B+=n8B[f];
-        nc8K+=n8K[f];
-        nc9A+=n9A[f];
-        nc9B+=n9B[f];
-        nc9K+=n9K[f];
-        nc10A+=n10A[f];
-        nc10B+=n10B[f];
-        nc10K+=n10K[f];
-        nc10W+=n10W[f];
-        nc11A+=n11A[f];
-        nc11B+=n11B[f];
-        nc11C+=n11C[f];
-        nc11E+=n11E[f];
-        nc11F+=n11F[f];
-        nc11W+=n11W[f];
-        nc12A+=n12A[f];
-        nc12B+=n12B[f];
-        nc12D+=n12D[f];
-        nc12E+=n12E[f];
-        nc12K+=n12K[f];
-        nc13A+=n13A[f];
-        nc13B+=n13B[f];
-        nc13K+=n13K[f];
-        ncFCC+=nFCC[f];
-        ncHCP+=nHCP[f];
-        ncBCC_9+=nBCC_9[f];
-        ncBCC_15+=nBCC_15[f];
-    }
 
     printf("Clust	Number	Gross	Net	Mean Pop Per Frame\n");
     printf("sp3	%d	%d	%d	%.5lg\n",ncsp3,ngsp3,0,mean_pop_per_frame[0]);
@@ -313,19 +303,7 @@ void Stats_Report(char *filename) {
     printf("BCC_m9	%d	%d	%d	%.5lg\n",ncBCC_9,ngBCC_9,nnBCC_9,mean_pop_per_frame[40]);
     printf("BCC_m15	%d	%d	%d	%.5lg\n",ncBCC_15,ngBCC_15,nnBCC_15,mean_pop_per_frame[41]);
     printf("maxnB	%d\n",maxnb);
-    printf("max to sp3	%d\n",maxto3);
-    printf("max to sp4	%d\n",maxto4);
-    printf("max to sp5	%d\n",maxto5);
-    printf("excess spindles sp3	%d\n",ncsp3_excess_spindles);
-    printf("excess spindles sp4	%d\n",ncsp4_excess_spindles);
-    printf("excess spindles sp5	%d\n",ncsp5_excess_spindles);
 
-    temp=(double)ncsp3c_spindlebonds/(double)ncsp3c;
-    printf("sp3c spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
-    temp=(double)ncsp4c_spindlebonds/(double)ncsp4c;
-    printf("sp4c spindle bonds	%d	%.15lg\n",ncsp4c_spindlebonds,temp);
-    temp=(double)ncsp5c_spindlebonds/(double)ncsp5c;
-    printf("sp5c spindle bonds	%d	%.15lg\n",ncsp5c_spindlebonds,temp);
     printf("correctedBonds %d per frame %.5lg per part per frame %.5lg\n",correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
 
 
@@ -379,19 +357,7 @@ void Stats_Report(char *filename) {
     fprintf(writeout,"BCC_m9	%d	%d	%d	%.5lg\n",ncBCC_9,ngBCC_9,nnBCC_9,mean_pop_per_frame[40]);
     fprintf(writeout,"BCC_m15	%d	%d	%d	%.5lg\n",ncBCC_15,ngBCC_15,nnBCC_15,mean_pop_per_frame[41]);
     fprintf(writeout,"maxnB	%d\n",maxnb);
-    fprintf(writeout,"max to sp3	%d\n",maxto3);
-    fprintf(writeout,"max to sp4	%d\n",maxto4);
-    fprintf(writeout,"max to sp5	%d\n",maxto5);
-    fprintf(writeout,"excess spindles sp3	%d\n",ncsp3_excess_spindles);
-    fprintf(writeout,"excess spindles sp4	%d\n",ncsp4_excess_spindles);
-    fprintf(writeout,"excess spindles sp5	%d\n",ncsp5_excess_spindles);
 
-    temp=(double)ncsp3c_spindlebonds/(double)ncsp3c;
-    fprintf(writeout,"sp3c spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
-    temp=(double)ncsp4c_spindlebonds/(double)ncsp4c;
-    fprintf(writeout,"sp4c spindle bonds	%d	%.15lg\n",ncsp4c_spindlebonds,temp);
-    temp=(double)ncsp5c_spindlebonds/(double)ncsp5c;
-    fprintf(writeout,"sp5c spindle bonds	%d	%.15lg\n",ncsp5c_spindlebonds,temp);
     fprintf(writeout,"correctedBonds	%d	per frame	%.15lg	per part per frame	%.15lg\n",correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
 
     fclose(writeout);

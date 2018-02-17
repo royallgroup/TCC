@@ -21,7 +21,7 @@ int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new
     the_array=realloc(the_array,new_row_size*sizeof(int *));
     if (the_array == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[] out of memory old_row_size %d new_row_size %d new_col_size %d\n",old_row_size,new_row_size,new_col_size); Error_no_free(errMsg); }
     for (i=old_row_size; i<new_row_size; i++) {
-        the_array[i]=malloc(new_col_size*sizeof(int));
+        the_array[i] = malloc(new_col_size*sizeof(int));
         if (the_array == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[][] out of memory\n"); Error_no_free(errMsg); }
     }
     for (i=old_row_size; i<new_row_size; i++) {

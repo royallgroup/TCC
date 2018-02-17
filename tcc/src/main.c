@@ -113,36 +113,37 @@ int main(int argc, char **argv) {
 
 			for(i=0; i<N; i++) {
 				if (cnb[i]>maxnb) maxnb=cnb[i];
-				if (dosp3==1) Rings_gSP3(f,i);
+				if (dosp3==1) Rings_gSP3(i);
 			}
-			if (dosp3==1) Rings_setSP3c(f);			
-			if (dosp4==1) Rings_setSP4c(f);
-			if (dosp5==1) Rings_setSP5c(f);
-			if (do6Z==1) Clusters_Get6Z_C2v(f);
-			if (do7K==1) Clusters_Get7K(f);
-			if (do8A==1) Clusters_Get8A_D2d(f);
-			if (do8B==1) Clusters_Get8B_Cs(f);
-			if (do8K==1) Clusters_Get8K(f);
-			if (do9A==1) Clusters_Get9A_D3h(f);
-			if (do9B==1) Clusters_Get9B_10B_11B_11E_12D(f);
-			if (do9K==1) Clusters_Get9K(f);
-			if (do10A==1) Clusters_Get10A_C3v(f);
-            if (do10K==1) Clusters_Get10K(f);
-			if (do10W==1) Clusters_Get10W(f);
-			if (do11A==1) Clusters_Get11A(f);
-			if (do11C==1) Clusters_Get11C(f);
-			if (do11F==1) Clusters_Get11F_12E_13K(f);
-			if (do11W==1) Clusters_Get11W(f);
-            if (do12A==1) Clusters_Get12A(f);
-			if (do12B==1) Clusters_Get12B_13A(f);
-			if (do12K==1) Clusters_Get12K(f);
-			if (do13B==1) Clusters_Get13B_D5h(f);
-			if (doFCC==1) Clusters_GetFCC(f);
-			if (doHCP==1) Clusters_GetHCP(f);
-			if (doBCC9==1) Clusters_GetBCC_9(f);
-			if (doBCC15==1) Clusters_GetBCC_15(f);
+			if (dosp3==1) Rings_setSP3c();
+			if (dosp4==1) Rings_setSP4c();
+			if (dosp5==1) Rings_setSP5c();
+			if (do6Z==1) Clusters_Get6Z_C2v();
+			if (do7K==1) Clusters_Get7K();
+			if (do8A==1) Clusters_Get8A_D2d();
+			if (do8B==1) Clusters_Get8B_Cs();
+			if (do8K==1) Clusters_Get8K();
+			if (do9A==1) Clusters_Get9A_D3h();
+			if (do9B==1) Clusters_Get9B_10B_11B_11E_12D();
+			if (do9K==1) Clusters_Get9K();
+			if (do10A==1) Clusters_Get10A_C3v();
+            if (do10K==1) Clusters_Get10K();
+			if (do10W==1) Clusters_Get10W();
+			if (do11A==1) Clusters_Get11A();
+			if (do11C==1) Clusters_Get11C();
+			if (do11F==1) Clusters_Get11F_12E_13K();
+			if (do11W==1) Clusters_Get11W();
+            if (do12A==1) Clusters_Get12A();
+			if (do12B==1) Clusters_Get12B_13A();
+			if (do12K==1) Clusters_Get12K();
+			if (do13B==1) Clusters_Get13B_D5h();
+			if (doFCC==1) Clusters_GetFCC();
+			if (doHCP==1) Clusters_GetHCP();
+			if (doBCC9==1) Clusters_GetBCC_9();
+			if (doBCC15==1) Clusters_GetBCC_15();
 
             // Write output files
+            Accuumlate_Stats();
 			if (doWriteClus==1) Write_Cluster(f);
             if (doWriteRaw==1) Write_Raw(f);
 			if (do11AcenXmol==1) Write_11A_cen_xmol(f);

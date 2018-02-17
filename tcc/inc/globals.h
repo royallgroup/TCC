@@ -73,25 +73,18 @@ int do12A, do12B, do12D, do12E, do12K;
 int do13A, do13B, do13K;
 int doFCC, doHCP, doBCC9, doBCC15;
 
-// number of clusters of particlar type, index i is frame number
-int *nsp3, *nsp3a, *nsp3b, *nsp3c;
-int *nsp4, *nsp4a, *nsp4b, *nsp4c;
-int *nsp5, *nsp5a, *nsp5b, *nsp5c;
-int *n6Z, *n7K;
-int *n8A, *n8B, *n8K;   
-int *n9A, *n9B, *n9K;
-int *n10A, *n10B, *n10K, *n10W;
-int *n11A, *n11B, *n11C, *n11E, *n11F, *n11W;
-int *n12A, *n12B, *n12D, *n12E, *n12K;
-int *n13A, *n13B, *n13K;
-int *nFCC, *nHCP, *nBCC_9, *nBCC_15;
-
-int maxto3, maxto4, maxto5; // max number of bonds to one particle
-
-
-// number of excess spindled clusters of the specified type
-int *nsp3c_spindlebonds, *nsp4c_spindlebonds, *nsp5c_spindlebonds;
-int *nsp3_excess_spindles, *nsp4_excess_spindles, *nsp5_excess_spindles;
+// number of clusters of particlar type in current frame
+int nsp3, nsp3a, nsp3b, nsp3c;
+int nsp4, nsp4a, nsp4b, nsp4c;
+int nsp5, nsp5a, nsp5b, nsp5c;
+int n6Z, n7K;
+int n8A, n8B, n8K;
+int n9A, n9B, n9K;
+int n10A, n10B, n10K, n10W;
+int n11A, n11B, n11C, n11E, n11F, n11W;
+int n12A, n12B, n12D, n12E, n12K;
+int n13A, n13B, n13K;
+int nFCC, nHCP, nBCC_9, nBCC_15;
 
 // max size of cluster storage arrays in dimension i
 int msp3a, msp3b, msp3c;
@@ -199,10 +192,6 @@ int nc11A, nc11B, nc11C, nc11E, nc11F, nc11W;
 int nc12A, nc12B, nc12D, nc12E, nc12K;
 int nc13A, nc13B, nc13K;
 int ncFCC, ncHCP, ncBCC_9, ncBCC_15;
-
-// total number of excess spindled clusters and spindle bonds accumulated over all frames
-int ncsp3_excess_spindles, ncsp4_excess_spindles, ncsp5_excess_spindles;
-int ncsp3c_spindlebonds, ncsp4c_spindlebonds, ncsp5c_spindlebonds;
 
 // Variable used in the counting of net clusters, index i is particle number
 int *a5, *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13, *a15;

@@ -168,11 +168,11 @@ void Write_Cluster_Close() {
     }
 }
 
-void Write_Cluster_Xmol(int f, FILE *writeout, int *n, int **hc, int clusSize) {
+void Write_Cluster_Xmol(int f, FILE *writeout, int n, int **hc, int clusSize) {
     int i,j;
 
-    fprintf(writeout,"%d\n",n[f]);
-    for (i=0;i<n[f];i++) {
+    fprintf(writeout,"Frame Number%d\n",f);
+    for (i=0;i<n;i++) {
         fprintf(writeout,"%d",hc[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",hc[i][j]);
         fprintf(writeout,"	%d\n",hc[i][clusSize-1]);
@@ -183,18 +183,18 @@ void Write_Cluster_sp3(int f, FILE *writeout) {
     int i,j;
     int clusSize=3;
 
-    fprintf(writeout,"%d\n",nsp3[f]);
-    for (i=0;i<nsp3a[f];i++) {
+    fprintf(writeout,"Frame Number%d\n",f);
+    for (i=0;i<nsp3a;i++) {
         fprintf(writeout,"%d",sp3a[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",sp3a[i][j]);
         fprintf(writeout,"	%d\n",sp3a[i][clusSize-1]);
     }
-    for (i=0;i<nsp3b[f];i++) {
+    for (i=0;i<nsp3b;i++) {
         fprintf(writeout,"%d",sp3b[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",sp3b[i][j]);
         fprintf(writeout,"	%d\n",sp3b[i][clusSize-1]);
     }
-    for (i=0;i<nsp3c[f];i++) {
+    for (i=0;i<nsp3c;i++) {
         fprintf(writeout,"%d",sp3c[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",sp3c[i][j]);
         fprintf(writeout,"	%d\n",sp3c[i][clusSize-1]);
@@ -205,18 +205,18 @@ void Write_Cluster_sp4(int f, FILE *writeout) {
     int i,j;
     int clusSize=4;
 
-    fprintf(writeout,"%d\n",nsp4[f]);
-    for (i=0;i<nsp4a[f];i++) {
+    fprintf(writeout,"Frame Number%d\n",f);
+    for (i=0;i<nsp4a;i++) {
         fprintf(writeout,"%d",sp4a[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",sp4a[i][j]);
         fprintf(writeout,"	%d\n",sp4a[i][clusSize-1]);
     }
-    for (i=0;i<nsp4b[f];i++) {
+    for (i=0;i<nsp4b;i++) {
         fprintf(writeout,"%d",sp4b[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",sp4b[i][j]);
         fprintf(writeout,"	%d\n",sp4b[i][clusSize-1]);
     }
-    for (i=0;i<nsp4c[f];i++) {
+    for (i=0;i<nsp4c;i++) {
         fprintf(writeout,"%d",sp4c[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(writeout,"	%d",sp4c[i][j]);
         fprintf(writeout,"	%d\n",sp4c[i][clusSize-1]);
@@ -227,18 +227,18 @@ void Write_Cluster_sp5(int f, FILE *writeout) {
     int i, j;
     int clusSize = 5;
 
-    fprintf(writeout, "%d\n", nsp5[f]);
-    for (i = 0; i < nsp5a[f]; i++) {
+    fprintf(writeout,"Frame Number%d\n",f);
+    for (i = 0; i < nsp5a; i++) {
         fprintf(writeout, "%d", sp5a[i][0]);
         for (j = 1; j < clusSize - 1; j++) fprintf(writeout, "	%d", sp5a[i][j]);
         fprintf(writeout, "	%d\n", sp5a[i][clusSize - 1]);
     }
-    for (i = 0; i < nsp5b[f]; i++) {
+    for (i = 0; i < nsp5b; i++) {
         fprintf(writeout, "%d", sp5b[i][0]);
         for (j = 1; j < clusSize - 1; j++) fprintf(writeout, "	%d", sp5b[i][j]);
         fprintf(writeout, "	%d\n", sp5b[i][clusSize - 1]);
     }
-    for (i = 0; i < nsp5c[f]; i++) {
+    for (i = 0; i < nsp5c; i++) {
         fprintf(writeout, "%d", sp5c[i][0]);
         for (j = 1; j < clusSize - 1; j++) fprintf(writeout, "	%d", sp5c[i][j]);
         fprintf(writeout, "	%d\n", sp5c[i][clusSize - 1]);
