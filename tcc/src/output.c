@@ -9,8 +9,6 @@ void Write_initialise_Cluster_Files(int cluster_number);
 void Write_Raw_Init() {
     int i;
 
-    raw_file_pointers = malloc(sizeof(FILE*) * num_cluster_types);
-
     for(i=0; i<num_cluster_types; i++) {
         Write_Initialise_Raw_Files(i);
     }
@@ -133,8 +131,6 @@ void Write_Raw_Close() {
 
 void Write_Cluster_Init() {
     int i;
-
-    cluster_file_pointers = malloc(sizeof(FILE*) * num_cluster_types);
 
     for(i=0; i<num_cluster_types; i++) {
         Write_initialise_Cluster_Files(i);
