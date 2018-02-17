@@ -20,8 +20,6 @@ extern char* cluster_names[];
 extern int num_cluster_types;  // The number of items in the cluster names array
 extern int* do_cluster_list[];
 
-FILE** raw_file_pointers;
-
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 double *x, *y, *z;  // positions in x y and z directions of N particles
@@ -231,18 +229,12 @@ int ncsp3c_spindlebonds, ncsp4c_spindlebonds, ncsp5c_spindlebonds;
 // Variable used in the counting of net clusters, index i is particle number
 int *a5, *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13, *a15;
 
+FILE** raw_file_pointers;
+
 // File handles for cluster files - an output type type where the particle ID's of the members
 // of each cluster are listed
-FILE *wsp3, *wsp3a, *wsp3b, *wsp3c;
-FILE *wsp4, *wsp4a, *wsp4b, *wsp4c, *w6A, *w6Z, *w7K;
-FILE *wsp5, *wsp5a, *wsp5b, *wsp5c;
-FILE *w8A, *w8B, *w8K;
-FILE *w9A, *w9B, *w9K;
-FILE *w10A, *w10B, *w10K, *w10W;
-FILE *w11A, *w11B, *w11C, *w11E, *w11F, *w11W;
-FILE *w12A, *w12B, *w12D, *w12E, *w12K;
-FILE *w13A, *w13B, *w13K;
-FILE *wFCC, *wHCP, *wBCC_9, *wBCC_15;
+FILE** cluster_file_pointers;
+
 
 // File handles for the bonds and pop_per_frame files
 FILE *bondsout;
