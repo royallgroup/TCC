@@ -181,7 +181,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     doBCC15=0;
     
     msp3a=msp3b=msp3c=initNoStatic; // max size of **sp** arrays in dimension i
-    msp4a=msp4b=msp4c=m6A=initNoStatic; // max size of **sp** arrays in dimension i
+    msp4a=msp4b=msp4c=initNoStatic; // max size of **sp** arrays in dimension i
     msp5a=msp5b=msp5c=initNoStatic; // max size of **sp** arrays in dimension i
     m6Z=m7K=initNoStatic;   // max size of m** arrays in dimension i
     m8A=m8B=m8K=initNoStatic;   // max size of m** arrays in dimension i
@@ -205,7 +205,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     }
     
     mean_pop_per_frame_sp3=mean_pop_per_frame_sp3a=mean_pop_per_frame_sp3b=mean_pop_per_frame_sp3c=0.0; // mean particle fractions of clusters
-    mean_pop_per_frame_sp4=mean_pop_per_frame_sp4a=mean_pop_per_frame_sp4b=mean_pop_per_frame_6A=0.0;
+    mean_pop_per_frame_sp4=mean_pop_per_frame_sp4a=mean_pop_per_frame_sp4b=mean_pop_per_frame_sp4c=0.0;
     mean_pop_per_frame_sp5=mean_pop_per_frame_sp5a=mean_pop_per_frame_sp5b=mean_pop_per_frame_sp5c=0.0;
     mean_pop_per_frame_6Z=mean_pop_per_frame_7K=0.0;
     mean_pop_per_frame_8A=mean_pop_per_frame_8B=mean_pop_per_frame_8K=0.0;
@@ -242,13 +242,12 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         }
     }
 
-    maxnb=totNclus=0;
+    maxnb=0;
     maxto3=maxto4=maxto5=0;
     
     // count number of bonds between spindle particles
     nsp3c_spindlebonds = malloc(FRAMES*sizeof(int));    if (nsp3c_spindlebonds==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp3c_spindlebonds[] malloc out of memory\n");  Error_no_free(errMsg); }
     nsp4c_spindlebonds = malloc(FRAMES*sizeof(int));    if (nsp4c_spindlebonds==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp4c_spindlebonds[] malloc out of memory\n");  Error_no_free(errMsg); }
-    n6A_spindlebonds = malloc(FRAMES*sizeof(int));  if (n6A_spindlebonds==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n6A_spindlebonds[] malloc out of memory\n");  Error_no_free(errMsg); }
     nsp5c_spindlebonds = malloc(FRAMES*sizeof(int));    if (nsp5c_spindlebonds==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp5c_spindlebonds[] malloc out of memory\n");  Error_no_free(errMsg); }
     
     // count number of times more than two spindles found to SP3/4/5 ring
@@ -266,8 +265,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     nsp4a = malloc(FRAMES*sizeof(int)); if (nsp4a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp4a[] malloc out of memory\n");    Error_no_free(errMsg); }
     nsp4b = malloc(FRAMES*sizeof(int)); if (nsp4b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp4b[] malloc out of memory\n");    Error_no_free(errMsg); }
     nsp4c = malloc(FRAMES*sizeof(int)); if (nsp4c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp4c[] malloc out of memory\n");    Error_no_free(errMsg); }
-    n6A = malloc(FRAMES*sizeof(int));   if (n6A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): n6A[] malloc out of memory\n");    Error_no_free(errMsg); }
-    
+
     nsp5 = malloc(FRAMES*sizeof(int));  if (nsp5==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp5[] malloc out of memory\n");  Error_no_free(errMsg); }
     nsp5a = malloc(FRAMES*sizeof(int)); if (nsp5a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp5a[] malloc out of memory\n");    Error_no_free(errMsg); }
     nsp5b = malloc(FRAMES*sizeof(int)); if (nsp5b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): nsp5b[] malloc out of memory\n");    Error_no_free(errMsg); }
@@ -315,7 +313,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     for (f=0; f<FRAMES; f++) { // reset the variables
         nsp3c_spindlebonds[f]=0;
         nsp4c_spindlebonds[f]=0;
-        n6A_spindlebonds[f]=0;
         nsp5c_spindlebonds[f]=0;
         
         nsp3_excess_spindles[f]=0;
@@ -331,8 +328,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         nsp4a[f]=0;
         nsp4b[f]=0;
         nsp4c[f]=0;
-        n6A[f]=0;
-        
+
         nsp5[f]=0;
         nsp5a[f]=0;
         nsp5b[f]=0;
@@ -391,8 +387,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     for (j=0; j<msp4b; ++j) { sp4b[j] = malloc(5*sizeof(int));  if (sp4b[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp4b[][] malloc out of memory\n"); Error_no_free(errMsg); } }
     sp4c = malloc(msp4c*sizeof(int *)); if (sp4c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp4c[] malloc out of memory\n");  Error_no_free(errMsg); }
     for (j=0; j<msp4c; ++j) { sp4c[j] = malloc(6*sizeof(int));  if (sp4c[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp4c[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    hc6A = malloc(m6A*sizeof(int *));   if (hc6A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): hc6A[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j=0; j<msp4c; ++j) { hc6A[j] = malloc(6*sizeof(int));  if (hc6A[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): hc6A[][] malloc out of memory\n"); Error_no_free(errMsg); } }
     sp5a = malloc(msp5a*sizeof(int *)); if (sp5a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp5a[] malloc out of memory\n");  Error_no_free(errMsg); }
     for (j=0; j<msp5a; ++j) { sp5a[j] = malloc(5*sizeof(int));  if (sp5a[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp5a[][] malloc out of memory\n"); Error_no_free(errMsg); } }
     sp5b = malloc(msp5b*sizeof(int *)); if (sp5b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp5b[] malloc out of memory\n");  Error_no_free(errMsg); }
@@ -512,7 +506,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     
     for (j=0; j<msp4a; ++j) { for (k=0; k<4; k++) { sp4a[j][k]=-1; }}
     for (j=0; j<msp4b; ++j) { for (k=0; k<5; k++) { sp4b[j][k]=-1; }}
-    for (j=0; j<msp4c; ++j) { for (k=0; k<6; k++) { sp4c[j][k]=-1; hc6A[j][k]=-1; }}
+    for (j=0; j<msp4c; ++j) { for (k=0; k<6; k++) { sp4c[j][k]=-1; }}
         
     for (j=0; j<msp5a; ++j) { for (k=0; k<5; k++) { sp5a[j][k]=-1; }}
     for (j=0; j<msp5b; ++j) { for (k=0; k<6; k++) { sp5b[j][k]=-1; }}
@@ -562,12 +556,12 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     ssp3=malloc(N*sizeof(char)); if (ssp3==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp3[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp3a=malloc(N*sizeof(char)); if (ssp3a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp3a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp3b=malloc(N*sizeof(char)); if (ssp3b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp3b[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s5A=malloc(N*sizeof(char)); if (s5A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s5A[] malloc out of memory\n"); Error_no_free(errMsg); }
+    ssp3c=malloc(N*sizeof(char)); if (ssp3c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp3c[] malloc out of memory\n"); Error_no_free(errMsg); }
     
     ssp4=malloc(N*sizeof(char)); if (ssp4==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp4[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp4a=malloc(N*sizeof(char)); if (ssp4a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp4a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp4b=malloc(N*sizeof(char)); if (ssp4b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp4b[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s6A=malloc(N*sizeof(char)); if (s6A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s6A[] malloc out of memory\n"); Error_no_free(errMsg); }
+    ssp4c=malloc(N*sizeof(char)); if (ssp4c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp4c[] malloc out of memory\n"); Error_no_free(errMsg); }
     
     s6Z=malloc(N*sizeof(char)); if (s6Z==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s6Z[] malloc out of memory\n"); Error_no_free(errMsg); }
     
@@ -576,7 +570,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     ssp5=malloc(N*sizeof(char)); if (ssp5==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp5[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp5a=malloc(N*sizeof(char)); if (ssp5a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp5a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp5b=malloc(N*sizeof(char)); if (ssp5b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp5b[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s7A=malloc(N*sizeof(char)); if (s7A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s7A[] malloc out of memory\n"); Error_no_free(errMsg); }
+    ssp5c=malloc(N*sizeof(char)); if (ssp5c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp5c[] malloc out of memory\n"); Error_no_free(errMsg); }
     
     s8A=malloc(N*sizeof(char)); if (s8A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s8A[] malloc out of memory\n"); Error_no_free(errMsg); }
     s8B=malloc(N*sizeof(char)); if (s8B==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s8B[] malloc out of memory\n"); Error_no_free(errMsg); }
@@ -651,17 +645,17 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         ssp3[j]='C';
         ssp3a[j]='C';
         ssp3b[j]='C';
-        s5A[j]='C';
+        ssp3c[j]='C';
         
         ssp4[j]='C';
         ssp4a[j]='C';
         ssp4b[j]='C';
-        s6A[j]='C';
+        ssp4c[j]='C';
         
         ssp5[j]='C';
         ssp5a[j]='C';
         ssp5b[j]='C';
-        s7A[j]='C';
+        ssp5c[j]='C';
         
         s6Z[j]='C';
         s7K[j]='C';
@@ -744,7 +738,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     pop_per_frame_sp4 = malloc(FRAMES*sizeof(double));  if (pop_per_frame_sp4==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_sp4[] malloc out of memory\n");    Error_no_free(errMsg); }
     pop_per_frame_sp4a = malloc(FRAMES*sizeof(double)); if (pop_per_frame_sp4a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_sp4a[] malloc out of memory\n");  Error_no_free(errMsg); }
     pop_per_frame_sp4b = malloc(FRAMES*sizeof(double)); if (pop_per_frame_sp4b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_sp4b[] malloc out of memory\n");  Error_no_free(errMsg); }
-    pop_per_frame_6A = malloc(FRAMES*sizeof(double));   if (pop_per_frame_6A==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_6A[] malloc out of memory\n");  Error_no_free(errMsg); }
+    pop_per_frame_sp4c = malloc(FRAMES*sizeof(double));   if (pop_per_frame_sp4c==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_sp4c[] malloc out of memory\n");  Error_no_free(errMsg); }
     
     pop_per_frame_sp5 = malloc(FRAMES*sizeof(double));  if (pop_per_frame_sp5==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_sp5[] malloc out of memory\n");    Error_no_free(errMsg); }
     pop_per_frame_sp5a = malloc(FRAMES*sizeof(double)); if (pop_per_frame_sp5a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): pop_per_frame_sp5a[] malloc out of memory\n");  Error_no_free(errMsg); }
@@ -791,7 +785,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         pop_per_frame_sp4[f]=0;
         pop_per_frame_sp4a[f]=0;
         pop_per_frame_sp4b[f]=0;
-        pop_per_frame_6A[f]=0;
+        pop_per_frame_sp4c[f]=0;
         
         pop_per_frame_sp5[f]=0;
         pop_per_frame_sp5a[f]=0;
@@ -843,14 +837,14 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
         cnb[i]=0;
     }
     
-    nsp3c_spindlebonds[f]=nsp4c_spindlebonds[f]=n6A_spindlebonds[f]=nsp5c_spindlebonds[f]=0;
+    nsp3c_spindlebonds[f]=nsp4c_spindlebonds[f]=nsp5c_spindlebonds[f]=0;
     nsp3_excess_spindles[f]=nsp4_excess_spindles[f]=nsp5_excess_spindles[f]=0;
     
     nsp3[f]=nsp3a[f]=nsp3b[f]=nsp3c[f]=0;
     nsp4[f]=nsp4a[f]=nsp4b[f]=nsp4c[f]=0;
     nsp5[f]=nsp5a[f]=nsp5b[f]=nsp5c[f]=0;
     
-    n6A[f]=n6Z[f]=n7K[f]=0;
+    n6Z[f]=n7K[f]=0;
     n8A[f]=n8B[f]=n8K[f]=0;
     n9A[f]=n9B[f]=n9K[f]=0;
     n10A[f]=n10B[f]=n10K[f]=n10W[f]=0;
@@ -862,7 +856,7 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
     pop_per_frame_sp3[f]=pop_per_frame_sp3a[f]=pop_per_frame_sp3b[f]=pop_per_frame_sp3c[f]=0.0;
     pop_per_frame_sp4[f]=pop_per_frame_sp4a[f]=pop_per_frame_sp4b[f]=0.0;
     pop_per_frame_sp5[f]=pop_per_frame_sp5a[f]=pop_per_frame_sp5b[f]=pop_per_frame_sp5c[f]=0.0;
-    pop_per_frame_6A[f]=pop_per_frame_6Z[f]=pop_per_frame_7K[f]=0.0;
+    pop_per_frame_sp4c[f]=pop_per_frame_6Z[f]=pop_per_frame_7K[f]=0.0;
     pop_per_frame_8A[f]=pop_per_frame_8B[f]=pop_per_frame_8K[f]=0.0;
     pop_per_frame_9A[f]=pop_per_frame_9B[f]=pop_per_frame_9K[f]=0.0;
     pop_per_frame_10A[f]=pop_per_frame_10B[f]=pop_per_frame_10K[f]=pop_per_frame_10W[f]=0.0;
@@ -905,10 +899,7 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
     for (i=0; i<msp4c; ++i) {
         for (j=0;j<6;++j) sp4c[i][j]=-1;
     }
-    for (i=0; i<m6A; ++i) {
-        for (j=0;j<6;++j) hc6A[i][j]=-1;
-    }
-    for (i=0; i<msp5a; ++i) { 
+    for (i=0; i<msp5a; ++i) {
         for (j=0;j<5;++j) {
             sp5a[i][j]=-1;
         }
@@ -1019,10 +1010,10 @@ void Setup_ResetStaticVars(int f) { // Reset static variables in each frame
     }
     
     for (i=0; i<N; ++i) {
-        ssp3[i]=ssp3a[i]=ssp3b[i]=s5A[i]='C';
-        ssp4[i]=ssp4a[i]=ssp4b[i]=s6A[i]='C';
+        ssp3[i]=ssp3a[i]=ssp3b[i]=ssp3c[i]='C';
+        ssp4[i]=ssp4a[i]=ssp4b[i]=ssp4c[i]='C';
         s6Z[i]=s7K[i]='C';
-        ssp5[i]=ssp5a[i]=ssp5b[i]=s7A[i]='C';
+        ssp5[i]=ssp5a[i]=ssp5b[i]=ssp5c[i]='C';
         s8A[i]=s8B[i]=s8K[i]='C';
         s9A[i]=s9B[i]=s9K[i]='C';
         s10A[i]=s10B[i]=s10K[i]=s10W[i]='C';
@@ -1067,13 +1058,13 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
         free(llist);
     }
 
-    free(nsp3c_spindlebonds); free(nsp4c_spindlebonds); free(n6A_spindlebonds); free(nsp5c_spindlebonds);
+    free(nsp3c_spindlebonds); free(nsp4c_spindlebonds); free(nsp5c_spindlebonds);
     free(nsp3_excess_spindles); free(nsp4_excess_spindles); free(nsp5_excess_spindles);
     
     free(nsp3); free(nsp3a); free(nsp3b); free(nsp3c);
     free(nsp4); free(nsp4a); free(nsp4b); free(nsp4c);
     free(nsp5); free(nsp5a); free(nsp5b); free(nsp5c);
-    free(n6A); free(n6Z); free(n7K);
+    free(n6Z); free(n7K);
     free(n8A); free(n8B); free(n8K);
     free(n9A); free(n9B); free(n9K);
     free(n10A); free(n10B); free(n10K); free(n10W);
@@ -1085,7 +1076,7 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     free(pop_per_frame_sp3); free(pop_per_frame_sp3a); free(pop_per_frame_sp3b); free(pop_per_frame_sp3c);
     free(pop_per_frame_sp4); free(pop_per_frame_sp4a); free(pop_per_frame_sp4b);
     free(pop_per_frame_sp5); free(pop_per_frame_sp5a); free(pop_per_frame_sp5b); free(pop_per_frame_sp5c);
-    free(pop_per_frame_6A); free(pop_per_frame_6Z); free(pop_per_frame_7K);
+    free(pop_per_frame_sp4c); free(pop_per_frame_6Z); free(pop_per_frame_7K);
     free(pop_per_frame_8A); free(pop_per_frame_8B); free(pop_per_frame_8K);
     free(pop_per_frame_9A); free(pop_per_frame_9B); free(pop_per_frame_9K);
     free(pop_per_frame_10A); free(pop_per_frame_10B); free(pop_per_frame_10K); free(pop_per_frame_10W);
@@ -1100,7 +1091,6 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     for (i=0; i<msp4a; ++i) free(sp4a[i]);
     for (i=0; i<msp4b; ++i) free(sp4b[i]);
     for (i=0; i<msp4c; ++i) free(sp4c[i]);
-    for (i=0; i<m6A; ++i) free(hc6A[i]);
     for (i=0; i<msp5a; ++i) free(sp5a[i]);
     for (i=0; i<msp5b; ++i) free(sp5b[i]);
     for (i=0; i<msp5c; ++i) free(sp5c[i]);
@@ -1159,7 +1149,7 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     free(sp3a); free(sp3b); free(sp3c);
     free(sp4a); free(sp4b); free(sp4c);
     free(sp5a); free(sp5b); free(sp5c);
-    free(hc6A); free(hc6Z); free(hc7K);
+    free(hc6Z); free(hc7K);
     free(hc8A); free(hc8B); free(hc8K);
     free(hc9A); free(hc9B); free(hc9K);
     free(hc10A); free(hc10B); free(hc10K); free(hc10W);
@@ -1168,10 +1158,10 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     free(hc13A); free(hc13B); free(hc13K);
     free(hcFCC); free(hcHCP); free(hcBCC_9); free(hcBCC_15);
 
-    free(ssp3); free(ssp3a); free(ssp3b); free(s5A);
-    free(ssp4); free(ssp4a); free(ssp4b); free(s6A); 
+    free(ssp3); free(ssp3a); free(ssp3b); free(ssp3c);
+    free(ssp4); free(ssp4a); free(ssp4b); free(ssp4c);
     free(s6Z); free(s7K);
-    free(ssp5); free(ssp5a); free(ssp5b); free(s7A);
+    free(ssp5); free(ssp5a); free(ssp5b); free(ssp5c);
     free(s8A); free(s8B); free(s8K);
     free(s9A); free(s9B); free(s9K);
     free(s10A); free(s10B); free(s10K); free(s10W);

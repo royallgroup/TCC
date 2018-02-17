@@ -11,8 +11,8 @@ def run_tcc():
         shutil.copy(glob("../bin/tcc*")[0], getcwd())
         subprocess.call(glob("tcc*")[0], shell=True)
         # Load the sample and measured data
-        sample_data = numpy.genfromtxt("sample.static_clust", skip_header=2, usecols=1, max_rows=43, dtype=int)
-        result = numpy.genfromtxt(glob("sample.xyz.rc*")[0], skip_header=2, usecols=1, max_rows=43, dtype=int)
+        sample_data = numpy.genfromtxt("sample.static_clust", skip_header=2, usecols=1, max_rows=42, dtype=int)
+        result = numpy.genfromtxt(glob("sample.xyz.rc*")[0], skip_header=2, usecols=1, max_rows=42, dtype=int)
         # Check for differences
         delta_check = numpy.absolute(sample_data - result).max()
         # Remove the files we have created

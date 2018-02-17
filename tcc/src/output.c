@@ -33,7 +33,7 @@ void Write_Initialise_Raw_Files(int cluster_number) {
     }
 }
 
-void Write_Raw_Xmol(int f, FILE *thefile, char *sarr) {
+void Write_Raw_Xmol(int f, FILE *thefile, const char *sarr) {
     int i;
 
     fprintf(thefile,"%d\nframe %d of %d\n",N,f,TOTALFRAMES);
@@ -79,17 +79,17 @@ void Write_Raw(int f) {
     if(*do_cluster_list[0] == 1) Write_Raw_Xmol(f,raw_file_pointers[0],&ssp3[0]);
     if(*do_cluster_list[1] == 1) Write_Raw_Xmol(f,raw_file_pointers[1],&ssp3a[0]);
     if(*do_cluster_list[2] == 1) Write_Raw_Xmol(f,raw_file_pointers[2],&ssp3b[0]);
-    if(*do_cluster_list[3] == 1) Write_Raw_Xmol(f,raw_file_pointers[3],&s5A[0]);
+    if(*do_cluster_list[3] == 1) Write_Raw_Xmol(f,raw_file_pointers[3],&ssp3c[0]);
     if(*do_cluster_list[4] == 1) Write_Raw_Xmol(f,raw_file_pointers[4],&ssp4[0]);
     if(*do_cluster_list[5] == 1) Write_Raw_Xmol(f,raw_file_pointers[5],&ssp4a[0]);
     if(*do_cluster_list[6] == 1) Write_Raw_Xmol(f,raw_file_pointers[6],&ssp4b[0]);
-    if(*do_cluster_list[7] == 1) Write_Raw_Xmol(f,raw_file_pointers[7],&s6A[0]);
+    if(*do_cluster_list[7] == 1) Write_Raw_Xmol(f,raw_file_pointers[7],&ssp4c[0]);
     if(*do_cluster_list[8] == 1) Write_Raw_Xmol(f,raw_file_pointers[8],&s6Z[0]);
     if(*do_cluster_list[9] == 1) Write_Raw_Xmol(f,raw_file_pointers[9],&s7K[0]);
     if(*do_cluster_list[10] == 1) Write_Raw_Xmol(f,raw_file_pointers[10],&ssp5[0]);
     if(*do_cluster_list[11] == 1) Write_Raw_Xmol(f,raw_file_pointers[11],&ssp5a[0]);
     if(*do_cluster_list[12] == 1) Write_Raw_Xmol(f,raw_file_pointers[12],&ssp5b[0]);
-    if(*do_cluster_list[13] == 1) Write_Raw_Xmol(f,raw_file_pointers[13],&s7A[0]);
+    if(*do_cluster_list[13] == 1) Write_Raw_Xmol(f,raw_file_pointers[13],&ssp5c[0]);
     if(*do_cluster_list[14] == 1) Write_Raw_Xmol(f,raw_file_pointers[14],&s8A[0]);
     if(*do_cluster_list[15] == 1) Write_Raw_Xmol(f,raw_file_pointers[15],&s8B[0]);
     if(*do_cluster_list[16] == 1) Write_Raw_Xmol(f,raw_file_pointers[16],&s8K[0]);
@@ -148,9 +148,9 @@ void Write_Cluster_Init() {
     fprintf(wsp3b,"%s\n",output);
 
     sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_5A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    w5A=fopen(output,"w");
-    if (w5A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(w5A,"%s\n",output);
+    wsp3c=fopen(output,"w");
+    if (wsp3c==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
+    fprintf(wsp3c,"%s\n",output);
 
     sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_sp4",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
     wsp4=fopen(output,"w");
@@ -198,9 +198,9 @@ void Write_Cluster_Init() {
     fprintf(wsp5b,"%s\n",output);
 
     sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_7A",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    w7A=fopen(output,"w");
-    if (w7A==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
-    fprintf(w7A,"%s\n",output);
+    wsp5c=fopen(output,"w");
+    if (wsp5c==NULL) { sprintf(errMsg,"Write_Cluster_Init(): Error opening file %s",output); Error(errMsg); }
+    fprintf(wsp5c,"%s\n",output);
 
     sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_7K",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
     w7K=fopen(output,"w");
@@ -352,7 +352,7 @@ void Write_Cluster_Close() {
     fclose(wsp3);
     fclose(wsp3a);
     fclose(wsp3b);
-    fclose(w5A);
+    fclose(wsp3c);
     fclose(wsp4);
     fclose(wsp4a);
     fclose(wsp4b);
@@ -363,7 +363,7 @@ void Write_Cluster_Close() {
     fclose(wsp5);
     fclose(wsp5a);
     fclose(wsp5b);
-    fclose(w7A);
+    fclose(wsp5c);
     fclose(w8A);
     fclose(w8B);
     fclose(w8K);
@@ -475,16 +475,15 @@ void Write_Cluster(int f) {
     Write_Cluster_sp3(f, wsp3);
     Write_Cluster_Xmol(f, wsp3a, nsp3a, sp3a, 3);
     Write_Cluster_Xmol(f, wsp3b, nsp3b, sp3b, 4);
-    Write_Cluster_Xmol(f, w5A, nsp3c, sp3c, 5);
+    Write_Cluster_Xmol(f, wsp3c, nsp3c, sp3c, 5);
     Write_Cluster_sp4(f, wsp4);
     Write_Cluster_Xmol(f, wsp4a, nsp4a, sp4a, 4);
     Write_Cluster_Xmol(f, wsp4b, nsp4b, sp4b, 5);
     Write_Cluster_Xmol(f, wsp4c, nsp4c, sp4c, 6);
-    Write_Cluster_Xmol(f, w6A, n6A, hc6A, 6);
     Write_Cluster_sp5(f, wsp5);
     Write_Cluster_Xmol(f, wsp5a, nsp5a, sp5a, 5);
     Write_Cluster_Xmol(f, wsp5b, nsp5b, sp5b, 6);
-    Write_Cluster_Xmol(f, w7A, nsp5c, sp5c, 7);
+    Write_Cluster_Xmol(f, wsp5c, nsp5c, sp5c, 7);
     Write_Cluster_Xmol(f, w6Z, n6Z, hc6Z, 6);
     Write_Cluster_Xmol(f, w7K, n7K, hc7K, 7);
     Write_Cluster_Xmol(f, w8A, n8A, hc8A, 8);
@@ -533,11 +532,11 @@ void Write_Pop_Per_Frame(int f) {
     fprintf(fPopPerFrame,"	11A	11B	11C	11E	11F	11W	12A	12B	12D	12E	12K	13A	13B	13K	FCC	HCP	BCC_9	BCC_15\n");
 
 
-    fprintf(fPopPerFrame,"mean	-	-	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg",mean_pop_per_frame_sp3,mean_pop_per_frame_sp3a,mean_pop_per_frame_sp3b,mean_pop_per_frame_sp3c,mean_pop_per_frame_sp4,mean_pop_per_frame_sp4a,mean_pop_per_frame_sp4b,mean_pop_per_frame_6A,mean_pop_per_frame_6Z,mean_pop_per_frame_sp5,mean_pop_per_frame_sp5a,mean_pop_per_frame_sp5b,mean_pop_per_frame_sp5c,mean_pop_per_frame_7K,mean_pop_per_frame_8A,mean_pop_per_frame_8B,mean_pop_per_frame_8K,mean_pop_per_frame_9A,mean_pop_per_frame_9B,mean_pop_per_frame_9K,mean_pop_per_frame_10A,mean_pop_per_frame_10B,mean_pop_per_frame_10K,mean_pop_per_frame_10W);
+    fprintf(fPopPerFrame,"mean	-	-	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg",mean_pop_per_frame_sp3,mean_pop_per_frame_sp3a,mean_pop_per_frame_sp3b,mean_pop_per_frame_sp3c,mean_pop_per_frame_sp4,mean_pop_per_frame_sp4a,mean_pop_per_frame_sp4b,mean_pop_per_frame_sp4c,mean_pop_per_frame_6Z,mean_pop_per_frame_sp5,mean_pop_per_frame_sp5a,mean_pop_per_frame_sp5b,mean_pop_per_frame_sp5c,mean_pop_per_frame_7K,mean_pop_per_frame_8A,mean_pop_per_frame_8B,mean_pop_per_frame_8K,mean_pop_per_frame_9A,mean_pop_per_frame_9B,mean_pop_per_frame_9K,mean_pop_per_frame_10A,mean_pop_per_frame_10B,mean_pop_per_frame_10K,mean_pop_per_frame_10W);
     fprintf(fPopPerFrame,"	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg\n",mean_pop_per_frame_11A,mean_pop_per_frame_11B,mean_pop_per_frame_11C,mean_pop_per_frame_11E,mean_pop_per_frame_11F,mean_pop_per_frame_11W,mean_pop_per_frame_12A,mean_pop_per_frame_12B,mean_pop_per_frame_12D,mean_pop_per_frame_12E,mean_pop_per_frame_12K,mean_pop_per_frame_13A,mean_pop_per_frame_13B,mean_pop_per_frame_13K,mean_pop_per_frame_FCC,mean_pop_per_frame_HCP,mean_pop_per_frame_BCC_9,mean_pop_per_frame_BCC_15);
     for (f=0;f<FRAMES;f++) {
         fprintf(fPopPerFrame,"%d	%.15lg",f,(double)f*FRAMETSTEP*SAMPLEFREQ);
-        fprintf(fPopPerFrame,"	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg",pop_per_frame_sp3[f],pop_per_frame_sp3a[f],pop_per_frame_sp3b[f],pop_per_frame_sp3c[f],pop_per_frame_sp4[f],pop_per_frame_sp4a[f],pop_per_frame_sp4b[f],pop_per_frame_6A[f],pop_per_frame_6Z[f],pop_per_frame_sp5[f],pop_per_frame_sp5a[f],pop_per_frame_sp5b[f],pop_per_frame_sp5c[f],pop_per_frame_7K[f],pop_per_frame_8A[f],pop_per_frame_8B[f],pop_per_frame_8K[f],pop_per_frame_9A[f],pop_per_frame_9B[f],pop_per_frame_9K[f],pop_per_frame_10A[f],pop_per_frame_10B[f],pop_per_frame_10K[f],pop_per_frame_10W[f]);
+        fprintf(fPopPerFrame,"	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg",pop_per_frame_sp3[f],pop_per_frame_sp3a[f],pop_per_frame_sp3b[f],pop_per_frame_sp3c[f],pop_per_frame_sp4[f],pop_per_frame_sp4a[f],pop_per_frame_sp4b[f],pop_per_frame_sp4c[f],pop_per_frame_6Z[f],pop_per_frame_sp5[f],pop_per_frame_sp5a[f],pop_per_frame_sp5b[f],pop_per_frame_sp5c[f],pop_per_frame_7K[f],pop_per_frame_8A[f],pop_per_frame_8B[f],pop_per_frame_8K[f],pop_per_frame_9A[f],pop_per_frame_9B[f],pop_per_frame_9K[f],pop_per_frame_10A[f],pop_per_frame_10B[f],pop_per_frame_10K[f],pop_per_frame_10W[f]);
         fprintf(fPopPerFrame,"	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg	%.15lg\n",pop_per_frame_11A[f],pop_per_frame_11B[f],pop_per_frame_11C[f],pop_per_frame_11E[f],pop_per_frame_11F[f],pop_per_frame_11W[f],pop_per_frame_12A[f],pop_per_frame_12B[f],pop_per_frame_12D[f],pop_per_frame_12E[f],pop_per_frame_12K[f],pop_per_frame_13A[f],pop_per_frame_13B[f],pop_per_frame_13K[f],pop_per_frame_FCC[f],pop_per_frame_HCP[f],pop_per_frame_BCC_9[f],pop_per_frame_BCC_15[f]);
     }
     fclose(fPopPerFrame);

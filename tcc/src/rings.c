@@ -165,8 +165,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
     int bcheck;
-    int flg;
-    int trial[6];
 
     cp[0]=cp[1]=-1;
     for (i=0; i<cnb[n0]; ++i) {
@@ -242,30 +240,6 @@ void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3
         add_mem_sp4c(cp[1], f);
 
         if (Bonds_BondCheck(sp4c[nsp4c[f]][4],sp4c[nsp4c[f]][5])==1) nsp4c_spindlebonds[f]++;
-        
-        for (i=0;i<6;i++) trial[i]=sp4c[nsp4c[f]][i];
-        quickSort(&trial[0],6);
-        flg=0;  // check trial cluster not already found
-        for (i=0; i<n6A[f]; ++i) {
-            for (j=0; j<6; ++j) {
-                if (trial[j]!=hc6A[i][j]) break;
-            }   
-            if (j==6) {
-                flg=1;
-                break;
-            }
-        }
-        if (flg==0) {
-            if (n6A[f] == m6A) { 
-                hc6A=resize_2D_int(hc6A,m6A,m6A+incrStatic,6,-1);
-                m6A=m6A+incrStatic;
-            }
-            for (i=0; i<6; ++i) hc6A[n6A[f]][i]=trial[i];
-            
-            if (Bonds_BondCheck(cp[0],cp[1])==1) n6A_spindlebonds[f]++;
-            
-            ++n6A[f];
-        }
             
         // hc6A key: (SP4_1, SP4_2, SP4_3, SP4_4, s1, s2)
         
@@ -425,7 +399,7 @@ void Rings_setSP3c(int f) { // store cluster 5A D3h from Bonds_aSP3
         ach[sp3c[i][3]] = 'O';
         ach[sp3c[i][4]] = 'O';
     }
-    for (i=0; i<N; ++i) s5A[i]=ach[i];
+    for (i=0; i<N; ++i) ssp3c[i]=ach[i];
 
     memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp3a[f]; i++) {
@@ -482,7 +456,7 @@ void Rings_setSP4c(int f) { // store cluster 6A Oh from Bonds_aSP4()
         ach[sp4c[i][4]] = 'O';
         ach[sp4c[i][5]] = 'O';
     }
-    for (i=0; i<N; ++i) s6A[i]=ach[i];
+    for (i=0; i<N; ++i) ssp4c[i]=ach[i];
 
     memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp4a[f]; i++) {
@@ -546,7 +520,7 @@ void Rings_setSP5c(int f) { // store cluster 7A D5h from Bonds_aSP5()
         ach[sp5c[i][5]] = 'O';
         ach[sp5c[i][6]] = 'O';
     }
-    for (i=0; i<N; ++i) s7A[i]=ach[i];
+    for (i=0; i<N; ++i) ssp5c[i]=ach[i];
 
     memset(ach, 'C', N*sizeof(*ach));
     for (i=0; i<nsp5a[f]; i++) {

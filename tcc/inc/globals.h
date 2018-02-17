@@ -81,7 +81,6 @@ int doFCC, doHCP, doBCC9, doBCC15;
 // number of clusters of particlar type, index i is frame number
 int *nsp3, *nsp3a, *nsp3b, *nsp3c;
 int *nsp4, *nsp4a, *nsp4b, *nsp4c;
-int *n6A;
 int *nsp5, *nsp5a, *nsp5b, *nsp5c;
 int *n6Z, *n7K;
 int *n8A, *n8B, *n8K;   
@@ -93,15 +92,15 @@ int *n13A, *n13B, *n13K;
 int *nFCC, *nHCP, *nBCC_9, *nBCC_15;
 
 int maxto3, maxto4, maxto5; // max number of bonds to one particle
-int totNclus; // total number of particles identified in clusters
+
 
 // number of excess spindled clusters of the specified type
-int *nsp3c_spindlebonds, *nsp4c_spindlebonds, *n6A_spindlebonds, *nsp5c_spindlebonds;
+int *nsp3c_spindlebonds, *nsp4c_spindlebonds, *nsp5c_spindlebonds;
 int *nsp3_excess_spindles, *nsp4_excess_spindles, *nsp5_excess_spindles;
 
 // max size of cluster storage arrays in dimension i
 int msp3a, msp3b, msp3c;
-int msp4a, msp4b, msp4c, m6A;
+int msp4a, msp4b, msp4c;
 int msp5a, msp5b, msp5c;
 int m6Z, m7K;
 int m8A, m8B, m8K;
@@ -115,7 +114,6 @@ int mFCC, mHCP, mBCC_9, mBCC_15;
 // cluster storage arrays (index i denotes number/identifier of cluster, j lists particles in cluster)
 int **sp3a, **sp3b, **sp3c;
 int **sp4a, **sp4b, **sp4c;
-int **hc6A;
 int **sp5a, **sp5b, **sp5c;
 int **hc6Z, **hc7K;
 int **hc8A, **hc8B, **hc8K;
@@ -137,9 +135,9 @@ int **mem_sp5b, *nmem_sp5b, mmem_sp5b;
 int **mem_sp5c, *nmem_sp5c, mmem_sp5c;
 
 // Raw lists of particle identity, output to RAW_clust files and reset each frame
-char *ssp3, *ssp3a, *ssp3b, *s5A;
-char *ssp4, *ssp4a, *ssp4b, *s6A;
-char *ssp5, *ssp5a, *ssp5b, *s7A;
+char *ssp3, *ssp3a, *ssp3b, *ssp3c;
+char *ssp4, *ssp4a, *ssp4b, *ssp4c;
+char *ssp5, *ssp5a, *ssp5b, *ssp5c;
 char *s6Z, *s7K;
 char *s8A, *s8B, *s8K;
 char *s9A, *s9B, *s9K;
@@ -163,7 +161,7 @@ char *sFCC_shell, *sHCP_shell, *sBCC_9_shell, *sBCC_15_shell;
 
 // Lists of particle population of each cluster type in each frame, index i is the frame number
 double *pop_per_frame_sp3, *pop_per_frame_sp3a, *pop_per_frame_sp3b, *pop_per_frame_sp3c;
-double *pop_per_frame_sp4, *pop_per_frame_sp4a, *pop_per_frame_sp4b, *pop_per_frame_6A;
+double *pop_per_frame_sp4, *pop_per_frame_sp4a, *pop_per_frame_sp4b, *pop_per_frame_sp4c;
 double *pop_per_frame_sp5, *pop_per_frame_sp5a, *pop_per_frame_sp5b, *pop_per_frame_sp5c;
 double *pop_per_frame_6Z, *pop_per_frame_7K;
 double *pop_per_frame_8A, *pop_per_frame_8B, *pop_per_frame_8K;
@@ -176,7 +174,7 @@ double *pop_per_frame_FCC, *pop_per_frame_HCP, *pop_per_frame_BCC_9, *pop_per_fr
 
 // The average population of each cluster type over all frames
 double mean_pop_per_frame_sp3, mean_pop_per_frame_sp3a, mean_pop_per_frame_sp3b, mean_pop_per_frame_sp3c;
-double mean_pop_per_frame_sp4, mean_pop_per_frame_sp4a, mean_pop_per_frame_sp4b, mean_pop_per_frame_6A;
+double mean_pop_per_frame_sp4, mean_pop_per_frame_sp4a, mean_pop_per_frame_sp4b, mean_pop_per_frame_sp4c;
 double mean_pop_per_frame_sp5, mean_pop_per_frame_sp5a, mean_pop_per_frame_sp5b, mean_pop_per_frame_sp5c;
 double mean_pop_per_frame_6Z, mean_pop_per_frame_7K;
 double mean_pop_per_frame_8A, mean_pop_per_frame_8B, mean_pop_per_frame_8K;
@@ -188,9 +186,9 @@ double mean_pop_per_frame_13A, mean_pop_per_frame_13B, mean_pop_per_frame_13K;
 double mean_pop_per_frame_FCC, mean_pop_per_frame_HCP, mean_pop_per_frame_BCC_9, mean_pop_per_frame_BCC_15;
 
 // Gross number of clusters of the specified type accumulated over all frames
-int ngsp3, ngsp3a, ngsp3b, ng5A;
-int ngsp4, ngsp4a, ngsp4b, ng6A;
-int ngsp5, ngsp5a, ngsp5b, ng7A;
+int ngsp3, ngsp3a, ngsp3b, ngsp3c;
+int ngsp4, ngsp4a, ngsp4b, ngsp4c;
+int ngsp5, ngsp5a, ngsp5b, ngsp5c;
 int ng6Z, ng7K;
 int ng8A, ng8B, ng8K;
 int ng9A, ng9B, ng9K;
@@ -201,9 +199,10 @@ int ng13A, ng13B, ng13K;
 int ngFCC, ngHCP, ngBCC_9, ngBCC_15;
 
 // Net number of clusters of the specified type accumulated over all frames
-int nn5A;
-int nn6A, nn6Z, nn7K;
-int nn7A;
+int nnsp3c;
+int nnsp4c;
+int nnsp5c;
+int nn6Z, nn7K;
 int nn8A, nn8B, nn8K;
 int nn9A, nn9B, nn9K;
 int nn10A, nn10B, nn10K, nn10W;
@@ -213,9 +212,9 @@ int nn13A, nn13B, nn13K;
 int nnFCC, nnHCP, nnBCC_9, nnBCC_15;
 
 // Total number of clusters of the specified type accumulated over all frames
-int ncsp3, ncsp3a, ncsp3b, nc5A;
-int ncsp4, ncsp4a, ncsp4b, ncsp4c, nc6A;
-int ncsp5, ncsp5a, ncsp5b, nc7A;
+int ncsp3, ncsp3a, ncsp3b, ncsp3c;
+int ncsp4, ncsp4a, ncsp4b, ncsp4c;
+int ncsp5, ncsp5a, ncsp5b, ncsp5c;
 int nc6Z, nc7K;
 int nc8A, nc8B, nc8K;
 int nc9A, nc9B, nc9K;
@@ -227,16 +226,16 @@ int ncFCC, ncHCP, ncBCC_9, ncBCC_15;
 
 // total number of excess spindled clusters and spindle bonds accumulated over all frames
 int ncsp3_excess_spindles, ncsp4_excess_spindles, ncsp5_excess_spindles;
-int ncsp3c_spindlebonds, ncsp4c_spindlebonds, nc6A_spindlebonds, ncsp5c_spindlebonds;
+int ncsp3c_spindlebonds, ncsp4c_spindlebonds, ncsp5c_spindlebonds;
 
 // Variable used in the counting of net clusters, index i is particle number
 int *a5, *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13, *a15;
 
 // File handles for cluster files - an output type type where the particle ID's of the members
 // of each cluster are listed
-FILE *wsp3, *wsp3a, *wsp3b, *w5A;
+FILE *wsp3, *wsp3a, *wsp3b, *wsp3c;
 FILE *wsp4, *wsp4a, *wsp4b, *wsp4c, *w6A, *w6Z, *w7K;
-FILE *wsp5, *wsp5a, *wsp5b, *w7A;
+FILE *wsp5, *wsp5a, *wsp5b, *wsp5c;
 FILE *w8A, *w8B, *w8K;
 FILE *w9A, *w9B, *w9K;
 FILE *w10A, *w10B, *w10K, *w10W;

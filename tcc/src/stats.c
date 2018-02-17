@@ -21,9 +21,9 @@ void Stats_Init() {
         a5[i]=a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=a15[i]=0;
     }
 
-    ngsp3=ngsp3a=ngsp3b=ng5A=0;
-    ngsp4=ngsp4a=ngsp4b=ng6A=0;
-    ngsp5=ngsp5a=ngsp5b=ng7A=0;
+    ngsp3=ngsp3a=ngsp3b=ngsp3c=0;
+    ngsp4=ngsp4a=ngsp4b=ngsp4c=0;
+    ngsp5=ngsp5a=ngsp5b=ngsp5c=0;
     ng6Z=ng7K=0;
     ng8A=ng8B=ng8K=0;
     ng9A=ng9B=ng9K=0;
@@ -33,9 +33,9 @@ void Stats_Init() {
     ng13A=ng13B=ng13K=0;
     ngFCC=ngHCP=ngBCC_9=ngBCC_15=0;
 
-    nn5A=0;
-    nn6A=0;
-    nn7A=0;
+    nnsp3c=0;
+    nnsp4c=0;
+    nnsp5c=0;
     nn6Z=nn7K=0;
     nn8A=nn8B=nn8K=0;
     nn9A=nn9B=nn9K=0;
@@ -45,9 +45,9 @@ void Stats_Init() {
     nn13A=nn13B=nn13K=0;
     nnFCC=nnHCP=nnBCC_9=nnBCC_15=0;
 
-    ncsp3=ncsp3a=ncsp3b=nc5A=0;
-    ncsp4=ncsp4a=ncsp4b=nc6A=0;
-    ncsp5=ncsp5a=ncsp5b=nc7A=0;
+    ncsp3=ncsp3a=ncsp3b=ncsp3c=0;
+    ncsp4=ncsp4a=ncsp4b=0;
+    ncsp5=ncsp5a=ncsp5b=ncsp5c=0;
     nc6Z=nc7K=0;
     nc8A=nc8B=nc8K=0;
     nc9A=nc9B=nc9K=0;
@@ -58,7 +58,7 @@ void Stats_Init() {
     ncFCC=ncHCP=ncBCC_9=ncBCC_15=0;
 
     ncsp3_excess_spindles=ncsp4_excess_spindles=ncsp5_excess_spindles=0;	// total number of _excess_spindlesed basic clusters
-    ncsp3c_spindlebonds=ncsp4c_spindlebonds=nc6A_spindlebonds=ncsp5c_spindlebonds=0;
+    ncsp3c_spindlebonds=ncsp4c_spindlebonds=ncsp5c_spindlebonds=0;
 }
 
 void Stats_Reset() {
@@ -116,12 +116,12 @@ void Stats_SetA() { // Set arrays to true if the ith particle is a member of any
         if(flg1==1 || flg2==1) a8[i] = 1;
     }
     for (i=0;i<N;i++) {
-        flg1 = s7A[i] != 'C' || s7K[i] != 'C';
+        flg1 = ssp5c[i] != 'C' || s7K[i] != 'C';
         flg2 = a8[i];
         if(flg1==1 || flg2==1) a7[i] = 1;
     }
     for (i=0;i<N;i++) {
-        flg1 = s6A[i] != 'C' || s6Z[i] != 'C';
+        flg1 = ssp4c[i] != 'C' || s6Z[i] != 'C';
         flg2 = a7[i];
         if(flg1==1 || flg2==1) a6[i] = 1;
     }
@@ -135,17 +135,17 @@ void Stats_Analyse() {
         if(ssp3[i] != 'C') ++ngsp3;
         if(ssp3a[i] != 'C') ++ngsp3a;
         if(ssp3b[i] != 'C') ++ngsp3b;
-        if(s5A[i] != 'C') ++ng5A;
+        if(ssp3c[i] != 'C') ++ngsp3c;
         if(ssp4[i] != 'C') ++ngsp4;
         if(ssp4a[i] != 'C') ++ngsp4a;
         if(ssp4b[i] != 'C') ++ngsp4b;
-        if(s6A[i] != 'C') ++ng6A;
+        if(ssp4c[i] != 'C') ++ngsp4c;
         if(s6Z[i] != 'C') ++ng6Z;
         if(s7K[i] != 'C') ++ng7K;
         if(ssp5[i] != 'C') ++ngsp5;
         if(ssp5a[i] != 'C') ++ngsp5a;
         if(ssp5b[i] != 'C') ++ngsp5b;
-        if(s7A[i] != 'C') ++ng7A;
+        if(ssp5c[i] != 'C') ++ngsp5c;
         if(s8A[i] != 'C') ++ng8A;
         if(s8B[i] != 'C') ++ng8B;
         if(s8K[i] != 'C') ++ng8K;
@@ -177,11 +177,11 @@ void Stats_Analyse() {
     }
     Stats_SetA();
     for(i=0; i<N; ++i){
-        if(s5A[i] != 'C' && !a6[i]) ++nn5A;
-        if(s6A[i] != 'C' && !a7[i]) ++nn6A;
+        if(ssp3c[i] != 'C' && !a6[i]) ++nnsp3c;
+        if(ssp4c[i] != 'C' && !a7[i]) ++nnsp4c;
         if(s6Z[i] != 'C' && !a7[i]) ++nn6Z;
         if(s7K[i] != 'C' && !a7[i]) ++nn7K;
-        if(s7A[i] != 'C' && !a8[i]) ++nn7A;
+        if(ssp5c[i] != 'C' && !a8[i]) ++nnsp5c;
         if(s8A[i] != 'C' && !a9[i]) ++nn8A;
         if(s8B[i] != 'C' && !a9[i]) ++nn8B;
         if(s8K[i] != 'C' && !a9[i]) ++nn8K;
@@ -211,51 +211,10 @@ void Stats_Analyse() {
         if(sBCC_9[i] != 'C') ++nnBCC_9;
         if(sBCC_15[i] != 'C') ++nnBCC_15;
     }
-    Nclus = 0;
-    for(i=0; i<N; ++i){
-        flg = 0;
-        if(s5A[i] != 'C') flg=1;
-        if(s6A[i] != 'C') flg=1;
-        if(s6Z[i] != 'C') flg=1;
-        if(s7K[i] != 'C') flg=1;
-        if(s7A[i] != 'C') flg=1;
-        if(s8A[i] != 'C') flg=1;
-        if(s8B[i] != 'C') flg=1;
-        if(s8K[i] != 'C') flg=1;
-        if(s9A[i] != 'C') flg=1;
-        if(s9B[i] != 'C') flg=1;
-        if(s9K[i] != 'C') flg=1;
-        if(s10A[i] != 'C') flg=1;
-        if(s10B[i] != 'C') flg=1;
-        if(s10K[i] != 'C') flg=1;
-        if(s10W[i] != 'C') flg=1;
-        if(s11A[i] != 'C') flg=1;
-        if(s11B[i] != 'C') flg=1;
-        if(s11C[i] != 'C') flg=1;
-        if(s11E[i] != 'C') flg=1;
-        if(s11F[i] != 'C') flg=1;
-        if(s11W[i] != 'C') flg=1;
-        if(s12A[i] != 'C') flg=1;
-        if(s12B[i] != 'C') flg=1;
-        if(s12D[i] != 'C') flg=1;
-        if(s12E[i] != 'C') flg=1;
-        if(s12K[i] != 'C') flg=1;
-        if(s13A[i] != 'C') flg=1;
-        if(s13B[i] != 'C') flg=1;
-        if(s13K[i] != 'C') flg=1;
-        if(sFCC[i] != 'C') flg=1;
-        if(sHCP[i] != 'C') flg=1;
-        if(sBCC_9[i] != 'C') flg=1;
-        if(sBCC_15[i] != 'C') flg=1;
-        if(flg) ++Nclus;
-    }
-    totNclus+=Nclus;
-    if (PRINTINFO==1) printf("Nclus = %d\n",Nclus);
 }
 
 void Stats_Report(char *filename) {
     int f;
-    int clusTot=0;
     double temp;
     char errMsg[1000];
     FILE *writeout;
@@ -264,7 +223,7 @@ void Stats_Report(char *filename) {
         ncsp3+=nsp3[f];
         ncsp3a+=nsp3a[f];
         ncsp3b+=nsp3b[f];
-        nc5A+=nsp3c[f];
+        ncsp3c+=nsp3c[f];
         ncsp3_excess_spindles+=nsp3_excess_spindles[f];
         ncsp3c_spindlebonds+=nsp3c_spindlebonds[f];
         ncsp4+=nsp4[f];
@@ -273,14 +232,12 @@ void Stats_Report(char *filename) {
         ncsp4c+=nsp4c[f];
         ncsp4_excess_spindles+=nsp4_excess_spindles[f];
         ncsp4c_spindlebonds+=nsp4c_spindlebonds[f];
-        nc6A+=n6A[f];
-        nc6A_spindlebonds+=n6A_spindlebonds[f];
         nc6Z+=n6Z[f];
         nc7K+=n7K[f];
         ncsp5+=nsp5[f];
         ncsp5a+=nsp5a[f];
         ncsp5b+=nsp5b[f];
-        nc7A+=nsp5c[f];
+        ncsp5c+=nsp5c[f];
         ncsp5_excess_spindles+=nsp5_excess_spindles[f];
         ncsp5c_spindlebonds+=nsp5c_spindlebonds[f];
         nc8A+=n8A[f];
@@ -311,28 +268,22 @@ void Stats_Report(char *filename) {
         ncHCP+=nHCP[f];
         ncBCC_9+=nBCC_9[f];
         ncBCC_15+=nBCC_15[f];
-        clusTot+=nsp3a[f]+nsp3b[f]+nsp3c[f]+nsp4a[f]+nsp4b[f]+n6A[f]+nsp5a[f]+nsp5b[f]+nsp5c[f];
-        clusTot+=n6Z[f]+n7K[f]+n8A[f]+n8B[f]+n8K[f]+n9A[f]+n9B[f]+n9K[f]+n10A[f]+n10B[f]+n10K[f]+n10W[f];
-        clusTot+=n11A[f]+n11B[f]+n11C[f]+n11E[f]+n11F[f]+n11W[f];
-        clusTot+=n12A[f]+n12B[f]+n12D[f]+n12E[f]+n12K[f];
-        clusTot+=n13A[f]+n13B[f]+n13K[f]+nFCC[f]+nHCP[f]+nBCC_9[f]+nBCC_15[f];
     }
 
     printf("Clust	Number	Gross	Net	Mean Pop Per Frame\n");
     printf("sp3	%d	%d	%d	%.5lg\n",ncsp3,ngsp3,0,mean_pop_per_frame_sp3);
     printf("sp3a	%d	%d	%d	%.5lg\n",ncsp3a,ngsp3a,0,mean_pop_per_frame_sp3a);
     printf("sp3b	%d	%d	%d	%.5lg\n",ncsp3b,ngsp3b,0,mean_pop_per_frame_sp3b);
-    printf("5A_D3h	%d	%d	%d	%.5lg\n",nc5A,ng5A,nn5A,mean_pop_per_frame_sp3c);
+    printf("sp3c	%d	%d	%d	%.5lg\n",ncsp3c,ngsp3c,nnsp3c,mean_pop_per_frame_sp3c);
     printf("sp4	%d	%d	%d	%.5lg\n",ncsp4,ngsp4,0,mean_pop_per_frame_sp4);
     printf("sp4a	%d	%d	%d	%.5lg\n",ncsp4a,ngsp4a,0,mean_pop_per_frame_sp4a);
     printf("sp4b	%d	%d	%d	%.5lg\n",ncsp4b,ngsp4b,0,mean_pop_per_frame_sp4b);
-    printf("sp4c	%d	%d	%d	%.5lg\n",ncsp4c,ng6A,0,mean_pop_per_frame_6A);
-    printf("6A_Oh	%d	%d	%d	%.5lg\n",nc6A,ng6A,nn6A,mean_pop_per_frame_6A);
-    printf("6Z_C2v	%d	%d	%d	%.5lg\n",nc6Z,ng6Z,nn6Z,mean_pop_per_frame_6Z);
+    printf("sp4c	%d	%d	%d	%.5lg\n",ncsp4c,ngsp4c,0,mean_pop_per_frame_sp4c);
     printf("sp5	%d	%d	%d	%.5lg\n",ncsp5,ngsp5,0,mean_pop_per_frame_sp5);
     printf("sp5a	%d	%d	%d	%.5lg\n",ncsp5a,ngsp5a,0,mean_pop_per_frame_sp5a);
     printf("sp5b	%d	%d	%d	%.5lg\n",ncsp5b,ngsp5b,0,mean_pop_per_frame_sp5b);
-    printf("7A_D5h	%d	%d	%d	%.5lg\n",nc7A,ng7A,nn7A,mean_pop_per_frame_sp5c);
+    printf("sp5c	%d	%d	%d	%.5lg\n",ncsp5c,ngsp5c,nnsp5c,mean_pop_per_frame_sp5c);
+    printf("6Z_C2v	%d	%d	%d	%.5lg\n",nc6Z,ng6Z,nn6Z,mean_pop_per_frame_6Z);
     printf("7K	%d	%d	%d	%.5lg\n",nc7K,ng7K,nn7K,mean_pop_per_frame_7K);
     printf("8A_D2d	%d	%d	%d	%.5lg\n",nc8A,ng8A,nn8A,mean_pop_per_frame_8A);
     printf("8B_Cs	%d	%d	%d	%.5lg\n",nc8B,ng8B,nn8B,mean_pop_per_frame_8B);
@@ -362,7 +313,6 @@ void Stats_Report(char *filename) {
     printf("HCP_m13	%d	%d	%d	%.5lg\n",ncHCP,ngHCP,nnHCP,mean_pop_per_frame_HCP);
     printf("BCC_m9	%d	%d	%d	%.5lg\n",ncBCC_9,ngBCC_9,nnBCC_9,mean_pop_per_frame_BCC_9);
     printf("BCC_m15	%d	%d	%d	%.5lg\n",ncBCC_15,ngBCC_15,nnBCC_15,mean_pop_per_frame_BCC_15);
-    printf("totals	%d	%d	%d\n",clusTot,totNclus,N*FRAMES);
     printf("maxnB	%d\n",maxnb);
     printf("max to sp3	%d\n",maxto3);
     printf("max to sp4	%d\n",maxto4);
@@ -371,14 +321,12 @@ void Stats_Report(char *filename) {
     printf("excess spindles sp4	%d\n",ncsp4_excess_spindles);
     printf("excess spindles sp5	%d\n",ncsp5_excess_spindles);
 
-    temp=(double)ncsp3c_spindlebonds/(double)nc5A;
-    printf("5A spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
+    temp=(double)ncsp3c_spindlebonds/(double)ncsp3c;
+    printf("sp3c spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
     temp=(double)ncsp4c_spindlebonds/(double)ncsp4c;
     printf("sp4c spindle bonds	%d	%.15lg\n",ncsp4c_spindlebonds,temp);
-    temp=(double)nc6A_spindlebonds/(double)nc6A;
-    printf("6A spindle bonds	%d	%.15lg\n",nc6A_spindlebonds,temp);
-    temp=(double)ncsp5c_spindlebonds/(double)nc7A;
-    printf("7A spindle bonds	%d	%.15lg\n",ncsp5c_spindlebonds,temp);
+    temp=(double)ncsp5c_spindlebonds/(double)ncsp5c;
+    printf("sp5c spindle bonds	%d	%.15lg\n",ncsp5c_spindlebonds,temp);
     printf("correctedBonds %d per frame %.5lg per part per frame %.5lg\n",correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
 
 
@@ -392,17 +340,16 @@ void Stats_Report(char *filename) {
     fprintf(writeout,"sp3	%d	%d	%d	%.5lg\n",ncsp3,ngsp3,0,mean_pop_per_frame_sp3);
     fprintf(writeout,"sp3a	%d	%d	%d	%.5lg\n",ncsp3a,ngsp3a,0,mean_pop_per_frame_sp3a);
     fprintf(writeout,"sp3b	%d	%d	%d	%.5lg\n",ncsp3b,ngsp3b,0,mean_pop_per_frame_sp3b);
-    fprintf(writeout,"5A_D3h	%d	%d	%d	%.5lg\n",nc5A,ng5A,nn5A,mean_pop_per_frame_sp3c);
+    fprintf(writeout,"sp3c	%d	%d	%d	%.5lg\n",ncsp3c,ngsp3c,nnsp3c,mean_pop_per_frame_sp3c);
     fprintf(writeout,"sp4	%d	%d	%d	%.5lg\n",ncsp4,ngsp4,0,mean_pop_per_frame_sp4);
     fprintf(writeout,"sp4a	%d	%d	%d	%.5lg\n",ncsp4a,ngsp4a,0,mean_pop_per_frame_sp4a);
     fprintf(writeout,"sp4b	%d	%d	%d	%.5lg\n",ncsp4b,ngsp4b,0,mean_pop_per_frame_sp4b);
-    fprintf(writeout,"sp4c	%d	%d	%d	%.5lg\n",ncsp4c,ng6A,0,mean_pop_per_frame_6A);
-    fprintf(writeout,"6A_Oh	%d	%d	%d	%.5lg\n",nc6A,ng6A,nn6A,mean_pop_per_frame_6A);
-    fprintf(writeout,"6Z_C2v	%d	%d	%d	%.5lg\n",nc6Z,ng6Z,nn6Z,mean_pop_per_frame_6Z);
+    fprintf(writeout,"sp4c	%d	%d	%d	%.5lg\n",ncsp4c,ngsp4c,0,mean_pop_per_frame_sp4c);
     fprintf(writeout,"sp5	%d	%d	%d	%.5lg\n",ncsp5,ngsp5,0,mean_pop_per_frame_sp5);
     fprintf(writeout,"sp5a	%d	%d	%d	%.5lg\n",ncsp5a,ngsp5a,0,mean_pop_per_frame_sp5a);
     fprintf(writeout,"sp5b	%d	%d	%d	%.5lg\n",ncsp5b,ngsp5b,0,mean_pop_per_frame_sp5b);
-    fprintf(writeout,"7A_D5h	%d	%d	%d	%.5lg\n",nc7A,ng7A,nn7A,mean_pop_per_frame_sp5c);
+    fprintf(writeout,"sp5c	%d	%d	%d	%.5lg\n",ncsp5c,ngsp5c,nnsp5c,mean_pop_per_frame_sp5c);
+    fprintf(writeout,"6Z_C2v	%d	%d	%d	%.5lg\n",nc6Z,ng6Z,nn6Z,mean_pop_per_frame_6Z);
     fprintf(writeout,"7K	%d	%d	%d	%.5lg\n",nc7K,ng7K,nn7K,mean_pop_per_frame_7K);
     fprintf(writeout,"8A_D2d	%d	%d	%d	%.5lg\n",nc8A,ng8A,nn8A,mean_pop_per_frame_8A);
     fprintf(writeout,"8B_Cs	%d	%d	%d	%.5lg\n",nc8B,ng8B,nn8B,mean_pop_per_frame_8B);
@@ -432,7 +379,6 @@ void Stats_Report(char *filename) {
     fprintf(writeout,"HCP_m13	%d	%d	%d	%.5lg\n",ncHCP,ngHCP,nnHCP,mean_pop_per_frame_HCP);
     fprintf(writeout,"BCC_m9	%d	%d	%d	%.5lg\n",ncBCC_9,ngBCC_9,nnBCC_9,mean_pop_per_frame_BCC_9);
     fprintf(writeout,"BCC_m15	%d	%d	%d	%.5lg\n",ncBCC_15,ngBCC_15,nnBCC_15,mean_pop_per_frame_BCC_15);
-    fprintf(writeout,"totals	%d	%d	%d\n",clusTot,totNclus,N*FRAMES);
     fprintf(writeout,"maxnB	%d\n",maxnb);
     fprintf(writeout,"max to sp3	%d\n",maxto3);
     fprintf(writeout,"max to sp4	%d\n",maxto4);
@@ -441,14 +387,12 @@ void Stats_Report(char *filename) {
     fprintf(writeout,"excess spindles sp4	%d\n",ncsp4_excess_spindles);
     fprintf(writeout,"excess spindles sp5	%d\n",ncsp5_excess_spindles);
 
-    temp=(double)ncsp3c_spindlebonds/(double)nc5A;
-    fprintf(writeout,"5A spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
+    temp=(double)ncsp3c_spindlebonds/(double)ncsp3c;
+    fprintf(writeout,"sp3c spindle bonds	%d	%.15lg\n",ncsp3c_spindlebonds,temp);
     temp=(double)ncsp4c_spindlebonds/(double)ncsp4c;
     fprintf(writeout,"sp4c spindle bonds	%d	%.15lg\n",ncsp4c_spindlebonds,temp);
-    temp=(double)nc6A_spindlebonds/(double)nc6A;
-    fprintf(writeout,"6A spindle bonds	%d	%.15lg\n",nc6A_spindlebonds,temp);
-    temp=(double)ncsp5c_spindlebonds/(double)nc7A;
-    fprintf(writeout,"7A spindle bonds	%d	%.15lg\n",ncsp5c_spindlebonds,temp);
+    temp=(double)ncsp5c_spindlebonds/(double)ncsp5c;
+    fprintf(writeout,"sp5c spindle bonds	%d	%.15lg\n",ncsp5c_spindlebonds,temp);
     fprintf(writeout,"correctedBonds	%d	per frame	%.15lg	per part per frame	%.15lg\n",correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
 
     fclose(writeout);
@@ -461,16 +405,16 @@ void Pop_Per_Frame(int f) {
         if(ssp3[i] != 'C') pop_per_frame_sp3[f]+=1.0;
         if(ssp3a[i] != 'C') pop_per_frame_sp3a[f]+=1.0;
         if(ssp3b[i] != 'C') pop_per_frame_sp3b[f]+=1.0;
-        if(s5A[i] != 'C') pop_per_frame_sp3c[f]+=1.0;
+        if(ssp3c[i] != 'C') pop_per_frame_sp3c[f]+=1.0;
         if(ssp4[i] != 'C') pop_per_frame_sp4[f]+=1.0;
         if(ssp4a[i] != 'C') pop_per_frame_sp4a[f]+=1.0;
         if(ssp4b[i] != 'C') pop_per_frame_sp4b[f]+=1.0;
-        if(s6A[i] != 'C') pop_per_frame_6A[f]+=1.0;
+        if(ssp4c[i] != 'C') pop_per_frame_sp4c[f]+=1.0;
         if(s6Z[i] != 'C') pop_per_frame_6Z[f]+=1.0;
         if(ssp5[i] != 'C') pop_per_frame_sp5[f]+=1.0;
         if(ssp5a[i] != 'C') pop_per_frame_sp5a[f]+=1.0;
         if(ssp5b[i] != 'C') pop_per_frame_sp5b[f]+=1.0;
-        if(s7A[i] != 'C') pop_per_frame_sp5c[f]+=1.0;
+        if(ssp5c[i] != 'C') pop_per_frame_sp5c[f]+=1.0;
         if(s7K[i] != 'C') pop_per_frame_7K[f]+=1.0;
         if(s8A[i] != 'C') pop_per_frame_8A[f]+=1.0;
         if(s8B[i] != 'C') pop_per_frame_8B[f]+=1.0;
@@ -509,7 +453,7 @@ void Pop_Per_Frame(int f) {
     pop_per_frame_sp4[f]/=N;
     pop_per_frame_sp4a[f]/=N;
     pop_per_frame_sp4b[f]/=N;
-    pop_per_frame_6A[f]/=N;
+    pop_per_frame_sp4c[f]/=N;
     pop_per_frame_6Z[f]/=N;
     pop_per_frame_sp5[f]/=N;
     pop_per_frame_sp5a[f]/=N;
@@ -552,7 +496,7 @@ void Pop_Per_Frame(int f) {
     mean_pop_per_frame_sp4+=pop_per_frame_sp4[f];
     mean_pop_per_frame_sp4a+=pop_per_frame_sp4a[f];
     mean_pop_per_frame_sp4b+=pop_per_frame_sp4b[f];
-    mean_pop_per_frame_6A+=pop_per_frame_6A[f];
+    mean_pop_per_frame_sp4c+=pop_per_frame_sp4c[f];
     mean_pop_per_frame_6Z+=pop_per_frame_6Z[f];
     mean_pop_per_frame_sp5+=pop_per_frame_sp5[f];
     mean_pop_per_frame_sp5a+=pop_per_frame_sp5a[f];
@@ -597,7 +541,7 @@ void Normalise_Populations() {
     mean_pop_per_frame_sp4/=FRAMES;
     mean_pop_per_frame_sp4a/=FRAMES;
     mean_pop_per_frame_sp4b/=FRAMES;
-    mean_pop_per_frame_6A/=FRAMES;
+    mean_pop_per_frame_sp4c/=FRAMES;
     mean_pop_per_frame_6Z/=FRAMES;
     mean_pop_per_frame_sp5/=FRAMES;
     mean_pop_per_frame_sp5a/=FRAMES;
