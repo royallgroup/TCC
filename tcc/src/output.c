@@ -125,7 +125,9 @@ void Write_Raw_Close() {
     int i;
 
     for(i=0; i< num_cluster_types; i++) {
-        fclose(raw_file_pointers[i]);
+        if (*do_cluster_list[i] == 1) {
+            fclose(raw_file_pointers[i]);
+        }
     }
 }
 
@@ -164,7 +166,9 @@ void Write_Cluster_Close() {
     int i;
 
     for(i=0; i<num_cluster_types; i++) {
-        fclose(cluster_file_pointers[i]);
+        if (*do_cluster_list[i] == 1) {
+            fclose(cluster_file_pointers[i]);
+        }
     }
 }
 
