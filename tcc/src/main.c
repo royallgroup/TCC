@@ -20,6 +20,11 @@ int* do_cluster_list[] = {&dosp3, &dosp3a, &dosp3b, &dosp3c, &dosp4, &dosp4a, &d
                         &do10K, &do10W, &do11A, &do11B, &do11C, &do11E, &do11F, &do11W, &do12A, &do12B, &do12D,
                         &do12E, &do12K, &do13A, &do13B, &do13K, &doFCC, &doHCP, &doBCC9, &doBCC15};
 
+int* num_cluster_list[] = {&nsp3, &nsp3a, &nsp3b, &nsp3c, &nsp4, &nsp4a, &nsp4b, &nsp4c, &nsp5, &nsp5a,
+                           &nsp5b, &nsp5c, &n6Z, &n7K, &n8A, &n8B, &n8K, &n9A, &n9B, &n9K, &n10A, &n10B,
+                           &n10K, &n10W, &n11A, &n11B, &n11C, &n11E, &n11F, &n11W, &n12A, &n12B, &n12D,
+                           &n12E, &n12K, &n13A, &n13B, &n13K, &nFCC, &nHCP, &nBCC_9, &nBCC_15};
+
 int main(int argc, char **argv) {
 	int e, f, i;
 	int write, remainder;

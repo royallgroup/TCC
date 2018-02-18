@@ -13,9 +13,10 @@ int STARTFROM;  // start reading from this frame in the xmol file
 int SAMPLEFREQ; // frequency at which to take frames from the xmol file
 int TOTALFRAMES;
 
-extern char* cluster_names[];
 extern int num_cluster_types;  // The number of items in the cluster names array
-extern int* do_cluster_list[];
+extern char* cluster_names[];  // A list of strings of cluster names
+extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
+extern int* num_cluster_list[];  // A list of pointers to the nclusts variables
 
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
@@ -100,9 +101,9 @@ int m13A, m13B, m13K;
 int mFCC, mHCP, mBCC_9, mBCC_15;
 
 // cluster storage arrays (index i denotes number/identifier of cluster, j lists particles in cluster)
-int **sp3a, **sp3b, **sp3c;
-int **sp4a, **sp4b, **sp4c;
-int **sp5a, **sp5b, **sp5c;
+int **hcsp3a, **hcsp3b, **hcsp3c;
+int **hcsp4a, **hcsp4b, **hcsp4c;
+int **hcsp5a, **hcsp5b, **hcsp5c;
 int **hc6Z, **hc7K;
 int **hc8A, **hc8B, **hc8K;
 int **hc9A, **hc9B, **hc9K;
@@ -134,12 +135,14 @@ char *s11A, *s11B, *s11C, *s11E, *s11F, *s11W;
 char *s12A, *s12B, *s12D, *s12E, *s12K;
 char *s13A, *s13B, *s13K;
 char *sFCC, *sHCP, *sBCC_9, *sBCC_15;
+
 char *s9B_cen, *s9K_cen;
 char *s10B_cen, *s10K_cen, *s10W_cen;
 char *s11A_cen, *s11B_cen, *s11C_cen, *s11W_cen;
 char *s12A_cen, *s12B_cen, *s12K_cen;
 char *s13A_cen, *s13B_cen, *s13K_cen;
 char *sFCC_cen, *sHCP_cen, *sBCC_9_cen, *sBCC_15_cen;
+
 char *s9B_shell, *s9K_shell;
 char *s10B_shell, *s10K_shell, *s10W_shell;
 char *s11A_shell, *s11B_shell, *s11C_shell, *s11W_shell;
@@ -155,43 +158,13 @@ double **pop_per_frame;
 double *mean_pop_per_frame;
 
 // Gross number of clusters of the specified type accumulated over all frames
-int ngsp3, ngsp3a, ngsp3b, ngsp3c;
-int ngsp4, ngsp4a, ngsp4b, ngsp4c;
-int ngsp5, ngsp5a, ngsp5b, ngsp5c;
-int ng6Z, ng7K;
-int ng8A, ng8B, ng8K;
-int ng9A, ng9B, ng9K;
-int ng10A, ng10B, ng10K, ng10W;
-int ng11A, ng11B, ng11C, ng11E, ng11F, ng11W;
-int ng12A, ng12B, ng12D, ng12E, ng12K;
-int ng13A, ng13B, ng13K;
-int ngFCC, ngHCP, ngBCC_9, ngBCC_15;
+int *gross_clusters;
 
 // Net number of clusters of the specified type accumulated over all frames
-int nnsp3c;
-int nnsp4c;
-int nnsp5c;
-int nn6Z, nn7K;
-int nn8A, nn8B, nn8K;
-int nn9A, nn9B, nn9K;
-int nn10A, nn10B, nn10K, nn10W;
-int nn11A, nn11B, nn11C, nn11E, nn11F, nn11W;
-int nn12A, nn12B, nn12D, nn12E, nn12K;
-int nn13A, nn13B, nn13K;
-int nnFCC, nnHCP, nnBCC_9, nnBCC_15;
+int *net_clusters;
 
 // Total number of clusters of the specified type accumulated over all frames
-int ncsp3, ncsp3a, ncsp3b, ncsp3c;
-int ncsp4, ncsp4a, ncsp4b, ncsp4c;
-int ncsp5, ncsp5a, ncsp5b, ncsp5c;
-int nc6Z, nc7K;
-int nc8A, nc8B, nc8K;
-int nc9A, nc9B, nc9K;
-int nc10A, nc10B, nc10K, nc10W;
-int nc11A, nc11B, nc11C, nc11E, nc11F, nc11W;
-int nc12A, nc12B, nc12D, nc12E, nc12K;
-int nc13A, nc13B, nc13K;
-int ncFCC, ncHCP, ncBCC_9, ncBCC_15;
+int *total_clusters;
 
 // Variable used in the counting of net clusters, index i is particle number
 int *a5, *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13, *a15;

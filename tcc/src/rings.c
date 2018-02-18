@@ -88,24 +88,24 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
     
     if (type==0 && dosp3a==1) {
         if (nsp3a == msp3a) {
-            sp3a=resize_2D_int(sp3a,msp3a,msp3a+incrStatic,3,-1);
+            hcsp3a=resize_2D_int(hcsp3a,msp3a,msp3a+incrStatic,3,-1);
             msp3a=msp3a+incrStatic;
         }
-        sp3a[nsp3a][0] = n0;
-        sp3a[nsp3a][1] = n1;
-        sp3a[nsp3a][2] = n2;
+        hcsp3a[nsp3a][0] = n0;
+        hcsp3a[nsp3a][1] = n1;
+        hcsp3a[nsp3a][2] = n2;
         
         ++nsp3a;
     }
     else if (type==1 && dosp3b==1) {
         if (nsp3b == msp3b) { 
-            sp3b=resize_2D_int(sp3b,msp3b,msp3b+incrStatic,4,-1);
+            hcsp3b=resize_2D_int(hcsp3b,msp3b,msp3b+incrStatic,4,-1);
             msp3b=msp3b+incrStatic;
         }
-        sp3b[nsp3b][0] = n0;
-        sp3b[nsp3b][1] = n1;
-        sp3b[nsp3b][2] = n2;
-        sp3b[nsp3b][3] = cp[0];
+        hcsp3b[nsp3b][0] = n0;
+        hcsp3b[nsp3b][1] = n1;
+        hcsp3b[nsp3b][2] = n2;
+        hcsp3b[nsp3b][3] = cp[0];
 
         add_mem_sp3b(n0);
         add_mem_sp3b(n1);
@@ -116,19 +116,19 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
     }
     else if (type==2 && dosp3c==1) {
         if (nsp3c == msp3c) { 
-            sp3c=resize_2D_int(sp3c,msp3c,msp3c+incrStatic,5,-1);
+            hcsp3c=resize_2D_int(hcsp3c,msp3c,msp3c+incrStatic,5,-1);
             msp3c=msp3c+incrStatic;
         }
-        sp3c[nsp3c][0] = n0;
-        sp3c[nsp3c][1] = n1;
-        sp3c[nsp3c][2] = n2; 
+        hcsp3c[nsp3c][0] = n0;
+        hcsp3c[nsp3c][1] = n1;
+        hcsp3c[nsp3c][2] = n2;
         if (cp[0]<cp[1]) {
-            sp3c[nsp3c][3] = cp[0];
-            sp3c[nsp3c][4] = cp[1];
+            hcsp3c[nsp3c][3] = cp[0];
+            hcsp3c[nsp3c][4] = cp[1];
         }
         else {
-            sp3c[nsp3c][3] = cp[1];
-            sp3c[nsp3c][4] = cp[0];
+            hcsp3c[nsp3c][3] = cp[1];
+            hcsp3c[nsp3c][4] = cp[0];
         }
 
         add_mem_sp3c(n0);
@@ -141,12 +141,12 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
     }
     else if (dosp3a==1) {
         if (nsp3a == msp3a) { 
-            sp3a=resize_2D_int(sp3a,msp3a,msp3a+incrStatic,3,-1);
+            hcsp3a=resize_2D_int(hcsp3a,msp3a,msp3a+incrStatic,3,-1);
             msp3a=msp3a+incrStatic;
         }
-        sp3a[nsp3a][0] = n0;
-        sp3a[nsp3a][1] = n1;
-        sp3a[nsp3a][2] = n2;
+        hcsp3a[nsp3a][0] = n0;
+        hcsp3a[nsp3a][1] = n1;
+        hcsp3a[nsp3a][2] = n2;
 
         ++nsp3a;
     }
@@ -177,26 +177,26 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
     
     if (type==0 && dosp4a==1) {
         if (nsp4a == msp4a) { 
-            sp4a=resize_2D_int(sp4a,msp4a,msp4a+incrStatic,4,-1);
+            hcsp4a=resize_2D_int(hcsp4a,msp4a,msp4a+incrStatic,4,-1);
             msp4a=msp4a+incrStatic;
         }
-        sp4a[nsp4a][0] = n0;
-        sp4a[nsp4a][1] = n1;
-        sp4a[nsp4a][2] = n2;
-        sp4a[nsp4a][3] = n3;
+        hcsp4a[nsp4a][0] = n0;
+        hcsp4a[nsp4a][1] = n1;
+        hcsp4a[nsp4a][2] = n2;
+        hcsp4a[nsp4a][3] = n3;
 
         ++nsp4a;
     }
     else if (type==1 && dosp4b==1) {
         if (nsp4b == msp4b) { 
-            sp4b=resize_2D_int(sp4b,msp4b,msp4b+incrStatic,5,-1);
+            hcsp4b=resize_2D_int(hcsp4b,msp4b,msp4b+incrStatic,5,-1);
             msp4b=msp4b+incrStatic;
         }
-        sp4b[nsp4b][0] = n0;
-        sp4b[nsp4b][1] = n1;
-        sp4b[nsp4b][2] = n2;
-        sp4b[nsp4b][3] = n3;
-        sp4b[nsp4b][4] = cp[0];
+        hcsp4b[nsp4b][0] = n0;
+        hcsp4b[nsp4b][1] = n1;
+        hcsp4b[nsp4b][2] = n2;
+        hcsp4b[nsp4b][3] = n3;
+        hcsp4b[nsp4b][4] = cp[0];
 
         add_mem_sp4b(n0);
         add_mem_sp4b(n1);
@@ -208,20 +208,20 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
     }
     else if (type==2 && dosp4c==1) {
         if (nsp4c == msp4c) { 
-            sp4c=resize_2D_int(sp4c,msp4c,msp4c+incrStatic,6,-1);
+            hcsp4c=resize_2D_int(hcsp4c,msp4c,msp4c+incrStatic,6,-1);
             msp4c=msp4c+incrStatic;
         }
-        sp4c[nsp4c][0] = n0;
-        sp4c[nsp4c][1] = n1;
-        sp4c[nsp4c][2] = n2;
-        sp4c[nsp4c][3] = n3; 
+        hcsp4c[nsp4c][0] = n0;
+        hcsp4c[nsp4c][1] = n1;
+        hcsp4c[nsp4c][2] = n2;
+        hcsp4c[nsp4c][3] = n3;
         if (cp[0]<cp[1]) {
-            sp4c[nsp4c][4] = cp[0];
-            sp4c[nsp4c][5] = cp[1];
+            hcsp4c[nsp4c][4] = cp[0];
+            hcsp4c[nsp4c][5] = cp[1];
         }
         else {
-            sp4c[nsp4c][4] = cp[1];
-            sp4c[nsp4c][5] = cp[0];
+            hcsp4c[nsp4c][4] = cp[1];
+            hcsp4c[nsp4c][5] = cp[0];
         }
 
         add_mem_sp4c(n0);
@@ -237,13 +237,13 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
     }
     else if (dosp4a==1) {
         if (nsp4a == msp4a) { 
-            sp4a=resize_2D_int(sp4a,msp4a,msp4a+incrStatic,4,-1);
+            hcsp4a=resize_2D_int(hcsp4a,msp4a,msp4a+incrStatic,4,-1);
             msp4a=msp4a+incrStatic;
         }
-        sp4a[nsp4a][0] = n0;
-        sp4a[nsp4a][1] = n1;
-        sp4a[nsp4a][2] = n2;
-        sp4a[nsp4a][3] = n3;
+        hcsp4a[nsp4a][0] = n0;
+        hcsp4a[nsp4a][1] = n1;
+        hcsp4a[nsp4a][2] = n2;
+        hcsp4a[nsp4a][3] = n3;
         
         ++nsp4a;
     }
@@ -274,28 +274,28 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
 
     if (type==0 && dosp5a==1) { // Now store ring
         if (nsp5a == msp5a) { 
-            sp5a=resize_2D_int(sp5a,msp5a,msp5a+incrStatic,5,-1);
+            hcsp5a=resize_2D_int(hcsp5a,msp5a,msp5a+incrStatic,5,-1);
             msp5a=msp5a+incrStatic;
         }
-        sp5a[nsp5a][0] = n0;
-        sp5a[nsp5a][1] = n1;
-        sp5a[nsp5a][2] = n2;
-        sp5a[nsp5a][3] = n3;
-        sp5a[nsp5a][4] = n4;
+        hcsp5a[nsp5a][0] = n0;
+        hcsp5a[nsp5a][1] = n1;
+        hcsp5a[nsp5a][2] = n2;
+        hcsp5a[nsp5a][3] = n3;
+        hcsp5a[nsp5a][4] = n4;
         
         ++nsp5a;
     }
     else if (type==1 && dosp5b==1) {
         if (nsp5b == msp5b) { 
-            sp5b=resize_2D_int(sp5b,msp5b,msp5b+incrStatic,6,-1);
+            hcsp5b=resize_2D_int(hcsp5b,msp5b,msp5b+incrStatic,6,-1);
             msp5b=msp5b+incrStatic;
         }
-        sp5b[nsp5b][0] = n0;
-        sp5b[nsp5b][1] = n1;
-        sp5b[nsp5b][2] = n2;
-        sp5b[nsp5b][3] = n3;
-        sp5b[nsp5b][4] = n4;
-        sp5b[nsp5b][5] = cp[0];
+        hcsp5b[nsp5b][0] = n0;
+        hcsp5b[nsp5b][1] = n1;
+        hcsp5b[nsp5b][2] = n2;
+        hcsp5b[nsp5b][3] = n3;
+        hcsp5b[nsp5b][4] = n4;
+        hcsp5b[nsp5b][5] = cp[0];
 
         add_mem_sp5b(n0);
         add_mem_sp5b(n1);
@@ -308,21 +308,21 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
     }
     else if (type==2 && dosp5c==1) {
         if (nsp5c == msp5c) { 
-            sp5c=resize_2D_int(sp5c,msp5c,msp5c+incrStatic,7,-1);
+            hcsp5c=resize_2D_int(hcsp5c,msp5c,msp5c+incrStatic,7,-1);
             msp5c=msp5c+incrStatic;
         }
-        sp5c[nsp5c][0] = n0;
-        sp5c[nsp5c][1] = n1;
-        sp5c[nsp5c][2] = n2;
-        sp5c[nsp5c][3] = n3; 
-        sp5c[nsp5c][4] = n4; 
+        hcsp5c[nsp5c][0] = n0;
+        hcsp5c[nsp5c][1] = n1;
+        hcsp5c[nsp5c][2] = n2;
+        hcsp5c[nsp5c][3] = n3;
+        hcsp5c[nsp5c][4] = n4;
         if (cp[0]<cp[1]) {
-            sp5c[nsp5c][5] = cp[0];
-            sp5c[nsp5c][6] = cp[1];
+            hcsp5c[nsp5c][5] = cp[0];
+            hcsp5c[nsp5c][6] = cp[1];
         }
         else {
-            sp5c[nsp5c][5] = cp[1];
-            sp5c[nsp5c][6] = cp[0];
+            hcsp5c[nsp5c][5] = cp[1];
+            hcsp5c[nsp5c][6] = cp[0];
         }
 
         add_mem_sp5c(n0);
@@ -337,14 +337,14 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
     }
     else if (dosp5a==1) {   // Now store ring
         if (nsp5a == msp5a) { 
-            sp5a=resize_2D_int(sp5a,msp5a,msp5a+incrStatic,5,-1);
+            hcsp5a=resize_2D_int(hcsp5a,msp5a,msp5a+incrStatic,5,-1);
             msp5a=msp5a+incrStatic;
         }
-        sp5a[nsp5a][0] = n0;
-        sp5a[nsp5a][1] = n1;
-        sp5a[nsp5a][2] = n2;
-        sp5a[nsp5a][3] = n3;
-        sp5a[nsp5a][4] = n4;
+        hcsp5a[nsp5a][0] = n0;
+        hcsp5a[nsp5a][1] = n1;
+        hcsp5a[nsp5a][2] = n2;
+        hcsp5a[nsp5a][3] = n3;
+        hcsp5a[nsp5a][4] = n4;
         
         ++nsp5a;
     }
@@ -356,40 +356,40 @@ void Rings_setSP3c() { // store cluster 5A D3h from Bonds_aSP3
     int i;
 
     for (i=0; i<nsp3a; i++) {
-        ssp3a[sp3a[i][0]] = 'B';
-        ssp3a[sp3a[i][1]] = 'B';
-        ssp3a[sp3a[i][2]] = 'B';
+        ssp3a[hcsp3a[i][0]] = 'B';
+        ssp3a[hcsp3a[i][1]] = 'B';
+        ssp3a[hcsp3a[i][2]] = 'B';
     }
 
     for (i=0; i<nsp3b; i++) {
-        if (ssp3b[sp3b[i][0]] == 'C') ssp3b[sp3b[i][0]] = 'B';
-        if (ssp3b[sp3b[i][1]] == 'C') ssp3b[sp3b[i][1]] = 'B';
-        if (ssp3b[sp3b[i][2]] == 'C') ssp3b[sp3b[i][2]] = 'B';
-        ssp3b[sp3b[i][3]] = 'O';
+        if (ssp3b[hcsp3b[i][0]] == 'C') ssp3b[hcsp3b[i][0]] = 'B';
+        if (ssp3b[hcsp3b[i][1]] == 'C') ssp3b[hcsp3b[i][1]] = 'B';
+        if (ssp3b[hcsp3b[i][2]] == 'C') ssp3b[hcsp3b[i][2]] = 'B';
+        ssp3b[hcsp3b[i][3]] = 'O';
     }
 
     for (i=0; i<nsp3c; i++) {
-        if (ssp3c[sp3c[i][0]] == 'C') ssp3c[sp3c[i][0]] = 'B';
-        if (ssp3c[sp3c[i][1]] == 'C') ssp3c[sp3c[i][1]] = 'B';
-        if (ssp3c[sp3c[i][2]] == 'C') ssp3c[sp3c[i][2]] = 'B';
-        ssp3c[sp3c[i][3]] = 'O';
-        ssp3c[sp3c[i][4]] = 'O';
+        if (ssp3c[hcsp3c[i][0]] == 'C') ssp3c[hcsp3c[i][0]] = 'B';
+        if (ssp3c[hcsp3c[i][1]] == 'C') ssp3c[hcsp3c[i][1]] = 'B';
+        if (ssp3c[hcsp3c[i][2]] == 'C') ssp3c[hcsp3c[i][2]] = 'B';
+        ssp3c[hcsp3c[i][3]] = 'O';
+        ssp3c[hcsp3c[i][4]] = 'O';
     }
 
     for (i=0; i<nsp3a; i++) {
-        ssp3[sp3a[i][0]] = 'B';
-        ssp3[sp3a[i][1]] = 'B';
-        ssp3[sp3a[i][2]] = 'B';
+        ssp3[hcsp3a[i][0]] = 'B';
+        ssp3[hcsp3a[i][1]] = 'B';
+        ssp3[hcsp3a[i][2]] = 'B';
     }
     for (i=0; i<nsp3b; i++) {
-        ssp3[sp3b[i][0]] = 'B';
-        ssp3[sp3b[i][1]] = 'B';
-        ssp3[sp3b[i][2]] = 'B';
+        ssp3[hcsp3b[i][0]] = 'B';
+        ssp3[hcsp3b[i][1]] = 'B';
+        ssp3[hcsp3b[i][2]] = 'B';
     }
     for (i=0; i<nsp3c; i++) {
-        ssp3[sp3c[i][0]] = 'B';
-        ssp3[sp3c[i][1]] = 'B';
-        ssp3[sp3c[i][2]] = 'B';
+        ssp3[hcsp3c[i][0]] = 'B';
+        ssp3[hcsp3c[i][1]] = 'B';
+        ssp3[hcsp3c[i][2]] = 'B';
     }
 }
 
@@ -397,46 +397,46 @@ void Rings_setSP4c() { // store cluster 6A Oh from Bonds_aSP4()
     int i;
 
     for (i=0; i<nsp4a; i++) {
-        ssp4a[sp4a[i][0]] = 'B';
-        ssp4a[sp4a[i][1]] = 'B';
-        ssp4a[sp4a[i][2]] = 'B';
-        ssp4a[sp4a[i][3]] = 'B';
+        ssp4a[hcsp4a[i][0]] = 'B';
+        ssp4a[hcsp4a[i][1]] = 'B';
+        ssp4a[hcsp4a[i][2]] = 'B';
+        ssp4a[hcsp4a[i][3]] = 'B';
     }
 
     for (i=0; i<nsp4b; i++) {
-        if (ssp4b[sp4b[i][0]] == 'C') ssp4b[sp4b[i][0]] = 'B';
-        if (ssp4b[sp4b[i][1]] == 'C') ssp4b[sp4b[i][1]] = 'B';
-        if (ssp4b[sp4b[i][2]] == 'C') ssp4b[sp4b[i][2]] = 'B';
-        if (ssp4b[sp4b[i][3]] == 'C') ssp4b[sp4b[i][3]] = 'B';
-        ssp4b[sp4b[i][4]] = 'O';
+        if (ssp4b[hcsp4b[i][0]] == 'C') ssp4b[hcsp4b[i][0]] = 'B';
+        if (ssp4b[hcsp4b[i][1]] == 'C') ssp4b[hcsp4b[i][1]] = 'B';
+        if (ssp4b[hcsp4b[i][2]] == 'C') ssp4b[hcsp4b[i][2]] = 'B';
+        if (ssp4b[hcsp4b[i][3]] == 'C') ssp4b[hcsp4b[i][3]] = 'B';
+        ssp4b[hcsp4b[i][4]] = 'O';
     }
 
     for (i=0; i<nsp4c; ++i) {
-        if (ssp4c[sp4c[i][0]] == 'C') ssp4c[sp4c[i][0]] = 'B';
-        if (ssp4c[sp4c[i][1]] == 'C') ssp4c[sp4c[i][1]] = 'B';
-        if (ssp4c[sp4c[i][2]] == 'C') ssp4c[sp4c[i][2]] = 'B';
-        if (ssp4c[sp4c[i][3]] == 'C') ssp4c[sp4c[i][3]] = 'B';
-        ssp4c[sp4c[i][4]] = 'O';
-        ssp4c[sp4c[i][5]] = 'O';
+        if (ssp4c[hcsp4c[i][0]] == 'C') ssp4c[hcsp4c[i][0]] = 'B';
+        if (ssp4c[hcsp4c[i][1]] == 'C') ssp4c[hcsp4c[i][1]] = 'B';
+        if (ssp4c[hcsp4c[i][2]] == 'C') ssp4c[hcsp4c[i][2]] = 'B';
+        if (ssp4c[hcsp4c[i][3]] == 'C') ssp4c[hcsp4c[i][3]] = 'B';
+        ssp4c[hcsp4c[i][4]] = 'O';
+        ssp4c[hcsp4c[i][5]] = 'O';
     }
 
     for (i=0; i<nsp4a; i++) {
-        ssp4[sp4a[i][0]] = 'B';
-        ssp4[sp4a[i][1]] = 'B';
-        ssp4[sp4a[i][2]] = 'B';
-        ssp4[sp4a[i][3]] = 'B';
+        ssp4[hcsp4a[i][0]] = 'B';
+        ssp4[hcsp4a[i][1]] = 'B';
+        ssp4[hcsp4a[i][2]] = 'B';
+        ssp4[hcsp4a[i][3]] = 'B';
     }
     for (i=0; i<nsp4b; i++) {
-        ssp4[sp4b[i][0]] = 'B';
-        ssp4[sp4b[i][1]] = 'B';
-        ssp4[sp4b[i][2]] = 'B';
-        ssp4[sp4b[i][3]] = 'B';
+        ssp4[hcsp4b[i][0]] = 'B';
+        ssp4[hcsp4b[i][1]] = 'B';
+        ssp4[hcsp4b[i][2]] = 'B';
+        ssp4[hcsp4b[i][3]] = 'B';
     }
     for (i=0; i<nsp4c; ++i) {
-        ssp4[sp4c[i][0]] = 'B';
-        ssp4[sp4c[i][1]] = 'B';
-        ssp4[sp4c[i][2]] = 'B';
-        ssp4[sp4c[i][3]] = 'B';
+        ssp4[hcsp4c[i][0]] = 'B';
+        ssp4[hcsp4c[i][1]] = 'B';
+        ssp4[hcsp4c[i][2]] = 'B';
+        ssp4[hcsp4c[i][3]] = 'B';
     }
 }
 
@@ -444,52 +444,52 @@ void Rings_setSP5c() { // store cluster 7A D5h from Bonds_aSP5()
     int i;
 
     for (i=0; i<nsp5a; i++) {
-        ssp5a[sp5a[i][0]] = 'B';
-        ssp5a[sp5a[i][1]] = 'B';
-        ssp5a[sp5a[i][2]] = 'B';
-        ssp5a[sp5a[i][3]] = 'B';
-        ssp5a[sp5a[i][4]] = 'B';
+        ssp5a[hcsp5a[i][0]] = 'B';
+        ssp5a[hcsp5a[i][1]] = 'B';
+        ssp5a[hcsp5a[i][2]] = 'B';
+        ssp5a[hcsp5a[i][3]] = 'B';
+        ssp5a[hcsp5a[i][4]] = 'B';
     }
 
     for (i=0; i<nsp5b; i++) {
-        if (ssp5b[sp5b[i][0]] == 'C') ssp5b[sp5b[i][0]] = 'B';
-        if (ssp5b[sp5b[i][1]] == 'C') ssp5b[sp5b[i][1]] = 'B';
-        if (ssp5b[sp5b[i][2]] == 'C') ssp5b[sp5b[i][2]] = 'B';
-        if (ssp5b[sp5b[i][3]] == 'C') ssp5b[sp5b[i][3]] = 'B';
-        if (ssp5b[sp5b[i][4]] == 'C') ssp5b[sp5b[i][4]] = 'B';
-        ssp5b[sp5b[i][5]] = 'O';
+        if (ssp5b[hcsp5b[i][0]] == 'C') ssp5b[hcsp5b[i][0]] = 'B';
+        if (ssp5b[hcsp5b[i][1]] == 'C') ssp5b[hcsp5b[i][1]] = 'B';
+        if (ssp5b[hcsp5b[i][2]] == 'C') ssp5b[hcsp5b[i][2]] = 'B';
+        if (ssp5b[hcsp5b[i][3]] == 'C') ssp5b[hcsp5b[i][3]] = 'B';
+        if (ssp5b[hcsp5b[i][4]] == 'C') ssp5b[hcsp5b[i][4]] = 'B';
+        ssp5b[hcsp5b[i][5]] = 'O';
     }
 
     for (i=0; i<nsp5c; ++i) {
-        if (ssp5c[sp5c[i][0]] == 'C') ssp5c[sp5c[i][0]] = 'B';
-        if (ssp5c[sp5c[i][1]] == 'C') ssp5c[sp5c[i][1]] = 'B';
-        if (ssp5c[sp5c[i][2]] == 'C') ssp5c[sp5c[i][2]] = 'B';
-        if (ssp5c[sp5c[i][3]] == 'C') ssp5c[sp5c[i][3]] = 'B';
-        if (ssp5c[sp5c[i][4]] == 'C') ssp5c[sp5c[i][4]] = 'B';
-        ssp5c[sp5c[i][5]] = 'O';
-        ssp5c[sp5c[i][6]] = 'O';
+        if (ssp5c[hcsp5c[i][0]] == 'C') ssp5c[hcsp5c[i][0]] = 'B';
+        if (ssp5c[hcsp5c[i][1]] == 'C') ssp5c[hcsp5c[i][1]] = 'B';
+        if (ssp5c[hcsp5c[i][2]] == 'C') ssp5c[hcsp5c[i][2]] = 'B';
+        if (ssp5c[hcsp5c[i][3]] == 'C') ssp5c[hcsp5c[i][3]] = 'B';
+        if (ssp5c[hcsp5c[i][4]] == 'C') ssp5c[hcsp5c[i][4]] = 'B';
+        ssp5c[hcsp5c[i][5]] = 'O';
+        ssp5c[hcsp5c[i][6]] = 'O';
     }
 
     for (i=0; i<nsp5a; i++) {
-        ssp5[sp5a[i][0]] = 'B';
-        ssp5[sp5a[i][1]] = 'B';
-        ssp5[sp5a[i][2]] = 'B';
-        ssp5[sp5a[i][3]] = 'B';
-        ssp5[sp5a[i][4]] = 'B';
+        ssp5[hcsp5a[i][0]] = 'B';
+        ssp5[hcsp5a[i][1]] = 'B';
+        ssp5[hcsp5a[i][2]] = 'B';
+        ssp5[hcsp5a[i][3]] = 'B';
+        ssp5[hcsp5a[i][4]] = 'B';
     }
     for (i=0; i<nsp5b; i++) {
-        ssp5[sp5b[i][0]] = 'B';
-        ssp5[sp5b[i][1]] = 'B';
-        ssp5[sp5b[i][2]] = 'B';
-        ssp5[sp5b[i][3]] = 'B';
-        ssp5[sp5b[i][4]] = 'B';
+        ssp5[hcsp5b[i][0]] = 'B';
+        ssp5[hcsp5b[i][1]] = 'B';
+        ssp5[hcsp5b[i][2]] = 'B';
+        ssp5[hcsp5b[i][3]] = 'B';
+        ssp5[hcsp5b[i][4]] = 'B';
     }
     for (i=0; i<nsp5c; ++i) {
-        ssp5[sp5c[i][0]] = 'B';
-        ssp5[sp5c[i][1]] = 'B';
-        ssp5[sp5c[i][2]] = 'B';
-        ssp5[sp5c[i][3]] = 'B';
-        ssp5[sp5c[i][4]] = 'B';
+        ssp5[hcsp5c[i][0]] = 'B';
+        ssp5[hcsp5c[i][1]] = 'B';
+        ssp5[hcsp5c[i][2]] = 'B';
+        ssp5[hcsp5c[i][3]] = 'B';
+        ssp5[hcsp5c[i][4]] = 'B';
     }
 }
 
