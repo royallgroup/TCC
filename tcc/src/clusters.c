@@ -1086,7 +1086,7 @@ void Clusters_Get9B_10B_11B_11E_12D() {    // Detect 9B, 10B, 11A, 11E & 12D
             if (do10B==1) Clusters_Get10B_C3v(i, j);
             if (do11B==1) {
                 if (Clusters_Get11B_C2v()) {
-                    s11B_cen[hc9B[n9B][8]] = 'O';
+                    s11B[hc9B[n9B][8]] = 'S';
                     ++n11B;
                 }
             }
@@ -1103,9 +1103,9 @@ void Cluster_Write_9B() {
     for(i=0; i<6; i++) {
         if (s9B[hc9B[n9B][i]] == 'C') s9B[hc9B[n9B][i]] = 'B';
     }
-    s9B[hc9B[n9B][6]] = 'O';
-    s9B[hc9B[n9B][7]] = 'O';
-    s9B[hc9B[n9B][8]] = s9B_cen[hc9B[n9B][8]] = 'O';
+    if (s9B[hc9B[n9B][6]] != 'S') s9B[hc9B[n9B][6]] = 'O';
+    if (s9B[hc9B[n9B][7]] != 'S') s9B[hc9B[n9B][7]] = 'O';
+    s9B[hc9B[n9B][8]] = 'S';
 }
 
 void Clusters_Get10B_C3v(int i, int j) {        // Return 1 if 9B is also 10B cluster
@@ -1263,9 +1263,9 @@ void Cluster_Write_10B() {
         if (s10B[hc10B[n10B][i]] == 'C') s10B[hc10B[n10B][i]] = 'B';
     }
     for(i=6; i<9; i++) {
-        s10B[hc10B[n10B][i]] = 'O';
+        if (s10B[hc10B[n10B][i]] != 'S') s10B[hc10B[n10B][i]] = 'O';
     }
-    s10B[hc10B[n10B][9]] = s10B_cen[hc10B[n10B][9]] = 'O';
+    s10B[hc10B[n10B][9]] = 'S';
     ++n10B;
 }
 
@@ -1362,9 +1362,9 @@ void Cluster_Write_11B() {
     for(i=0; i<6; i++) {
         if (s11B[hc11B[n11B][i]] == 'C') s11B[hc11B[n11B][i]] = 'B';
     }
-    s11B[hc11B[n11B][6]] = 'O';
-    s11B[hc11B[n11B][7]] = 'O';
-    s11B[hc11B[n11B][8]] = s11B_cen[hc11B[n11B][8]] = 'O';
+    if(s11B[hc11B[n11B][6]] != 'S') s11B[hc11B[n11B][6]] = 'O';
+    if(s11B[hc11B[n11B][7]] != 'S') s11B[hc11B[n11B][7]] = 'O';
+    s11B[hc11B[n11B][8]] = 'S';
     if(s11B[hc11B[n11B][9]] == 'C') s11B[hc11B[n11B][9]] = 'B';
     if(s11B[hc11B[n11B][10]] == 'C') s11B[hc11B[n11B][10]] = 'B';
 }
@@ -1445,10 +1445,9 @@ int is_particle_in_10B(int particle_id, int id_10B) {
 void populate_s11W() {
     int i;
 
-    for(i=0; i<9; i++) {
+    for(i=0; i<10; i++) {
         if (s11W[hc11W[n11W][i]] == 'C') s11W[hc11W[n11W][i]] = 'B';
     }
-    if (s11W[hc11W[n11W][9]] == 'C') s11W[hc11W[n11W][9]] = s11W_cen[hc11W[n11W][9]] = 'B';
     s11W[hc11W[n11W][10]] = 'O';
 }
 
@@ -2193,7 +2192,7 @@ void Cluster_Write_10W() {
     for(i=1; i<10; i++) {
         if (s10W[hc10W[n10W][i]] == 'C') s10W[hc10W[n10W][i]] = 'B';
     }
-    s10W[hc10W[n10W][0]] = s10W_cen[hc10W[n10W][0]] = 'O';
+    s10W[hc10W[n10W][0]] = 'S';
 
     ++n10W;
 }
@@ -2411,10 +2410,10 @@ void Cluster_Write_12K(int ep, int id_11A) {
     for (i=0; i<8; i++) {
         if (s12K[hc12K[n12K][i]] == 'C') s12K[hc12K[n12K][i]] = 'B';
     }
-    s12K[hc12K[n12K][8]] = 'O';
-    s12K[hc12K[n12K][9]] = 'O';
-    s12K[hc12K[n12K][10]] = s12K_cen[hc12K[n12K][10]] = 'O';
-    s12K[hc12K[n12K][11]] = 'O';
+    if(s12K[hc12K[n12K][8]] != 'S') s12K[hc12K[n12K][8]] = 'O';
+    if(s12K[hc12K[n12K][9]] != 'S') s12K[hc12K[n12K][9]] = 'O';
+    s12K[hc12K[n12K][10]] = 'S';
+    if(s12K[hc12K[n12K][11]] == 'C') s12K[hc12K[n12K][11]] = 'B';
     n12K++;
 }
 
@@ -2602,9 +2601,9 @@ void resize_hc11C() {
 void Cluster_Write_11C() {
     int i;
 
-    s11C[hc11C[n11C][0]] = s11C_cen[hc11C[n11C][0]] = 'O';
-    s11C[hc11C[n11C][1]] = 'O';
-    s11C[hc11C[n11C][2]] = 'O';
+    s11C[hc11C[n11C][0]] = 'S';
+    if(s11C[hc11C[n11C][1]] != 'S') s11C[hc11C[n11C][1]] = 'O';
+    if(s11C[hc11C[n11C][2]] != 'S') s11C[hc11C[n11C][2]] = 'O';
     for(i=3; i< 11; i++) {
         if (s11C[hc11C[n11C][i]] == 'C') s11C[hc11C[n11C][i]] = 'B';
     }
@@ -2670,7 +2669,7 @@ int is_particle_in_11C(int particle_id, int id_11C) {
     return 0;
 }
 
-void populate_hc12A(int id_11C, int ep) {// hc12A key: (as 11C, extra_s)
+void populate_hc12A(int id_11C, int ep) {
     int i;
 
     for (i = 0; i<11; i++) {
@@ -2689,15 +2688,13 @@ void resize_hc12A() {
 
 void populate_s12A() {
     int i;
-
-    s12A[hc12A[n12A][0]] = s12A_cen[hc12A[n12A][0]] = 'O';
-    s12A[hc12A[n12A][1]] = 'O';
-    s12A[hc12A[n12A][2]] = 'O';
-    for(i=3; i<10; i++) {
+    // hc12A key: (as 11C, extra_s)
+    s12A[hc12A[n12A][0]] = 'S';
+    if(s12A[hc12A[n12A][1]] != 'S') s12A[hc12A[n12A][1]] = 'O';
+    if(s12A[hc12A[n12A][2]] != 'S') s12A[hc12A[n12A][2]] = 'O';
+    for(i=3; i<12; i++) {
         if (s12A[hc12A[n12A][i]] == 'C') s12A[hc12A[n12A][i]] = 'B';
     }
-    if(s12A[hc12A[n12A][10]] == 'C') s12A[hc12A[n12A][10]] = 'B';
-    s12A[hc12A[n12A][11]] = 'O';
 }
 
 void Clusters_Get11F_12E_13K() {   // Detect 11F C2v & 12E 3h
@@ -3206,9 +3203,9 @@ void Cluster_Write_13K() {
     for(i=1; i<11; i++) {
         if (s13K[hc13K[n13K][i]] == 'C') s13K[hc13K[n13K][i]] = 'B';
     }
-    s13K[hc13K[n13K][0]] = s13K_cen[hc13K[n13K][0]] = 'O';
-    s13K[hc13K[n13K][11]] = 'O';
-    s13K[hc13K[n13K][12]] = 'O';
+    s13K[hc13K[n13K][0]] = 'S';
+    if(s13K[hc13K[n13K][11]] != 'S') s13K[hc13K[n13K][11]] = 'O';
+    if(s13K[hc13K[n13K][12]] != 'S') s13K[hc13K[n13K][12]] = 'O';
 }
 
 void Clusters_Get12B_13A() { // Detect 12B & 13A D5h clusters together
@@ -3455,13 +3452,13 @@ void Clusters_Get12B_13A() { // Detect 12B & 13A D5h clusters together
 
 void Clust_Write_12B() {
 
-    s12B[hc12B[n12B][0]] = s12B_cen[hc12B[n12B][0]] = 'O';
+    s12B[hc12B[n12B][0]] = 'S';
     if(s12B[hc12B[n12B][1]] == 'C') s12B[hc12B[n12B][1]] = 'B';
-    s12B[hc12B[n12B][2]] = 'O';
-    s12B[hc12B[n12B][3]] = 'O';
-    s12B[hc12B[n12B][4]] = 'O';
-    s12B[hc12B[n12B][5]] = 'O';
-    s12B[hc12B[n12B][6]] = 'O';
+    if(s12B[hc12B[n12B][2]] != 'S') s12B[hc12B[n12B][2]] = 'O';
+    if(s12B[hc12B[n12B][3]] != 'S') s12B[hc12B[n12B][3]] = 'O';
+    if(s12B[hc12B[n12B][4]] != 'S') s12B[hc12B[n12B][4]] = 'O';
+    if(s12B[hc12B[n12B][5]] != 'S') s12B[hc12B[n12B][5]] = 'O';
+    if(s12B[hc12B[n12B][6]] != 'S') s12B[hc12B[n12B][6]] = 'O';
     if(s12B[hc12B[n12B][7]] == 'C') s12B[hc12B[n12B][7]] = 'B';
     if(s12B[hc12B[n12B][8]] == 'C') s12B[hc12B[n12B][8]] = 'B';
     if(s12B[hc12B[n12B][9]] == 'C') s12B[hc12B[n12B][9]] = 'B';
@@ -3473,9 +3470,9 @@ void Clust_Write_12B() {
 
 void Clust_Write_13A() {
     int i;
-    s13A[hc13A[n13A][0]] = s13A_cen[hc13A[n13A][0]] = 'O';
-    s13A[hc13A[n13A][1]] = 'O';
-    s13A[hc13A[n13A][2]] = 'O';
+    s13A[hc13A[n13A][0]] = 'S';
+    if(s13A[hc13A[n13A][1]] != 'S') s13A[hc13A[n13A][1]] = 'O';
+    if(s13A[hc13A[n13A][2]] != 'S') s13A[hc13A[n13A][2]] = 'O';
     for(i=3; i<13; i++){
         if (s13A[hc13A[n13A][i]] == 'C') s13A[hc13A[n13A][i]] = 'B';
     }
@@ -3558,9 +3555,9 @@ void Clusters_Get13B_D5h() {   // Detect 13B D5h clusters, i.e. twisted icosahed
 
 void Cluster_Write_13B() {
     int i;
-    s13B[hc13B[n13B][0]] = s13B_cen[hc13B[n13B][0]] = 'O';
-    s13B[hc13B[n13B][1]] = 'O';
-    s13B[hc13B[n13B][2]] = 'O';
+    s13B[hc13B[n13B][0]] = 'S';
+    if(s13B[hc13B[n13B][1]] != 'S') s13B[hc13B[n13B][1]] = 'O';
+    if(s13B[hc13B[n13B][2]] != 'S') s13B[hc13B[n13B][2]] = 'O';
     for(i=3; i<13; i++) {
         if (s13B[hc13B[n13B][i]] == 'C') s13B[hc13B[n13B][i]] = 'B';
     }
@@ -3771,13 +3768,13 @@ void Cluster_Write_FCC() {
     if(sFCC[hcFCC[nFCC][6]] == 'C') sFCC[hcFCC[nFCC][6]] = 'B';
     if(sFCC[hcFCC[nFCC][8]] == 'C') sFCC[hcFCC[nFCC][8]] = 'B';
     if(sFCC[hcFCC[nFCC][9]] == 'C') sFCC[hcFCC[nFCC][9]] = 'B';
-    sFCC[hcFCC[nFCC][3]] = 'O';
-    sFCC[hcFCC[nFCC][4]] = 'O';
-    sFCC[hcFCC[nFCC][7]] = 'O';
-    sFCC[hcFCC[nFCC][10]] = 'O';
-    sFCC[hcFCC[nFCC][11]] = 'O';
-    sFCC[hcFCC[nFCC][12]] = 'O';
-    sFCC[hcFCC[nFCC][0]] = sFCC_cen[hcFCC[nFCC][0]] = 'F';
+    if(sFCC[hcFCC[nFCC][3]]  != 'S') sFCC[hcFCC[nFCC][3]] = 'O';
+    if(sFCC[hcFCC[nFCC][4]]  != 'S') sFCC[hcFCC[nFCC][4]] = 'O';
+    if(sFCC[hcFCC[nFCC][7]]  != 'S') sFCC[hcFCC[nFCC][7]] = 'O';
+    if(sFCC[hcFCC[nFCC][10]] != 'S') sFCC[hcFCC[nFCC][10]] = 'O';
+    if(sFCC[hcFCC[nFCC][11]] != 'S') sFCC[hcFCC[nFCC][11]] = 'O';
+    if(sFCC[hcFCC[nFCC][12]] != 'S') sFCC[hcFCC[nFCC][12]] = 'O';
+    sFCC[hcFCC[nFCC][0]] = 'S';
 
     ++nFCC;
 }
@@ -3979,8 +3976,6 @@ void Clusters_GetHCP() {   // Detect 13 particle HCP clusters
 
 void Cluster_Write_HCP(int i, int j, int j2, int k) {
     int counter;
-
-    sHCP_cen[hcHCP[nHCP][0]] = 'F';
 
     for (counter=0; counter<3; counter++){
         if (sHCP[hcsp3c[i][counter]] == 'C') sHCP[hcsp3c[i][counter]] = 'B';
@@ -4261,7 +4256,7 @@ void Cluster_Write_BCC9() {
     for (i = 1; i< 9; i++){
         if (sBCC_9[hcBCC_9[nBCC_9][i]] == 'C') sBCC_9[hcBCC_9[nBCC_9][i]] = 'B';
     }
-    sBCC_9[hcBCC_9[nBCC_9][0]] = sBCC_9_cen[hcBCC_9[nBCC_9][0]] = 'F';
+    sBCC_9[hcBCC_9[nBCC_9][0]] = 'S';
 
     ++nBCC_9;
 }
@@ -4406,16 +4401,14 @@ void Cluster_Write_BCC_15(int clusSize) {
     quickSort(&hcBCC_15[nBCC_15][1], 6);
     quickSort(&hcBCC_15[nBCC_15][7], 8);
 
-    sBCC_15[hcBCC_15[nBCC_15][0]] = sBCC_15_cen[hcBCC_15[nBCC_15][0]] = 'F';
+    sBCC_15[hcBCC_15[nBCC_15][0]] = 'S';
 
     for (i = 1; i < 7; i++) {
-        sBCC_15[hcBCC_15[nBCC_15][i]] = 'O';
+        if(sBCC_15[hcBCC_15[nBCC_15][i]] != 'S') sBCC_15[hcBCC_15[nBCC_15][i]] = 'O';
     }
 
     for (i = 7; i < 15; i++) {
-        if (sBCC_15[hcBCC_15[nBCC_15][i]] == 'C') {
-            sBCC_15[hcBCC_15[nBCC_15][i]] = 'B';
-        }
+        if (sBCC_15[hcBCC_15[nBCC_15][i]] == 'C') sBCC_15[hcBCC_15[nBCC_15][i]] = 'B';
     }
     ++nBCC_15;
 }

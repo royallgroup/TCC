@@ -53,11 +53,11 @@ void Write_11A_cen_xmol(int f) {
 
     int n11A_cen=0;
 
-    for(i=0; i<N; i++) if(s11A_cen[i]=='O') ++n11A_cen;         // get total number of 13A centres
+    for(i=0; i<N; i++) if(s11A[i]=='S') ++n11A_cen;         // get total number of 13A centres
 
     fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,TOTALFRAMES);
     for(i=0; i<N; i++) {
-        if (s11A_cen[i]=='O') fprintf(file_11A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
+        if (s11A[i]=='S') fprintf(file_11A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
     }
 }
 
@@ -66,11 +66,11 @@ void Write_13A_cen_xmol(int f) {
 
     int n13A_cen=0;
 
-    for(i=0; i<N; i++) if(s13A_cen[i]=='O') ++n13A_cen;         // get total number of 13A centres
+    for(i=0; i<N; i++) if(s13A[i]=='S') ++n13A_cen;         // get total number of 13A centres
 
     fprintf(file_13A_cen_xmol,"%d\nframe %d of %d\n",n13A_cen,f,FRAMES);
     for(i=0; i<N; i++) {
-        if (s13A_cen[i]=='O') fprintf(file_13A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
+        if (s13A[i]=='S') fprintf(file_13A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
     }
 }
 
