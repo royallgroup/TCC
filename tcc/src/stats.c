@@ -172,8 +172,13 @@ void Stats_Report(char *filename) {
     fprintf(writeout,buffer);
 
     for(i=0; i<num_cluster_types; i++) {
-        sprintf(buffer, "%s	%d	%d	%d	%.5lg\n",
-               cluster_names[i], total_clusters[i], gross_clusters[i], net_clusters[i], mean_pop_per_frame[i]);
+        if(*do_cluster_list[i] == 1) {
+            sprintf(buffer, "%s	%d	%d	%d	%.5lg\n",
+                    cluster_names[i], total_clusters[i], gross_clusters[i], net_clusters[i], mean_pop_per_frame[i]);
+        }
+        else {
+            sprintf(buffer, "%s	NA	NA	NA	NA\n", cluster_names[i]);
+        }
         printf(buffer);
         fprintf(writeout,buffer);
     }

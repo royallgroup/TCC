@@ -275,7 +275,12 @@ void Write_Pop_Per_Frame(int f) {
 
     fprintf(fPopPerFrame,"mean	");
     for(i=0; i<num_cluster_types; i++) {
-        fprintf(fPopPerFrame, "%.15lg	", mean_pop_per_frame[i]);
+        if(*do_cluster_list[i] == 1) {
+            fprintf(fPopPerFrame, "%.15lg	", mean_pop_per_frame[i]);
+        }
+        else {
+            fprintf(fPopPerFrame, "NA	");
+        }
     }
     fprintf(fPopPerFrame,"\n");
 
