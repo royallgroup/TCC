@@ -25,6 +25,11 @@ int* num_cluster_list[] = {&nsp3, &nsp3a, &nsp3b, &nsp3c, &nsp4, &nsp4a, &nsp4b,
                            &n10K, &n10W, &n11A, &n11B, &n11C, &n11E, &n11F, &n11W, &n12A, &n12B, &n12D,
                            &n12E, &n12K, &n13A, &n13B, &n13K, &nFCC, &nHCP, &nBCC_9, &nBCC_15};
 
+char** raw_cluster_list[] = {&ssp3, &ssp3a, &ssp3b, &ssp3c, &ssp4, &ssp4a, &ssp4b, &ssp4c, &ssp5, &ssp5a,
+                             &ssp5b, &ssp5c, &s6Z, &s7K, &s8A, &s8B, &s8K, &s9A, &s9B, &s9K, &s10A, &s10B,
+                             &s10K, &s10W, &s11A, &s11B, &s11C, &s11E, &s11F, &s11W, &s12A, &s12B, &s12D,
+                             &s12E, &s12K, &s13A, &s13B, &s13K, &sFCC, &sHCP, &sBCC_9, &sBCC_15};
+
 int main(int argc, char **argv) {
 	int e, f, i;
 	int write, remainder;

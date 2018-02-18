@@ -102,51 +102,12 @@ void Stats_SetA() { // Set arrays to true if the ith particle is a member of any
 }
 
 void Stats_Analyse() {
-    int i;
+    int i, cluster_type;
 
     for(i=0; i<N; ++i){
-        if(ssp3[i] != 'C') ++gross_clusters[0];
-        if(ssp3a[i] != 'C') ++gross_clusters[1];
-        if(ssp3b[i] != 'C') ++gross_clusters[2];
-        if(ssp3c[i] != 'C') ++gross_clusters[3];
-        if(ssp4[i] != 'C') ++gross_clusters[4];
-        if(ssp4a[i] != 'C') ++gross_clusters[5];
-        if(ssp4b[i] != 'C') ++gross_clusters[6];
-        if(ssp4c[i] != 'C') ++gross_clusters[7];
-        if(s6Z[i] != 'C') ++gross_clusters[8];
-        if(s7K[i] != 'C') ++gross_clusters[9];
-        if(ssp5[i] != 'C') ++gross_clusters[10];
-        if(ssp5a[i] != 'C') ++gross_clusters[11];
-        if(ssp5b[i] != 'C') ++gross_clusters[12];
-        if(ssp5c[i] != 'C') ++gross_clusters[13];
-        if(s8A[i] != 'C') ++gross_clusters[14];
-        if(s8B[i] != 'C') ++gross_clusters[15];
-        if(s8K[i] != 'C') ++gross_clusters[16];
-        if(s9A[i] != 'C') ++gross_clusters[17];
-        if(s9B[i] != 'C') ++gross_clusters[18];
-        if(s9K[i] != 'C') ++gross_clusters[19];
-        if(s10A[i] != 'C') ++gross_clusters[20];
-        if(s10B[i] != 'C') ++gross_clusters[21];
-        if(s10K[i] != 'C') ++gross_clusters[22];
-        if(s10W[i] != 'C') ++gross_clusters[23];
-        if(s11A[i] != 'C') ++gross_clusters[24];
-        if(s11B[i] != 'C') ++gross_clusters[25];
-        if(s11C[i] != 'C') ++gross_clusters[26];
-        if(s11E[i] != 'C') ++gross_clusters[27];
-        if(s11F[i] != 'C') ++gross_clusters[28];
-        if(s11W[i] != 'C') ++gross_clusters[29];
-        if(s12A[i] != 'C') ++gross_clusters[30];
-        if(s12B[i] != 'C') ++gross_clusters[31];
-        if(s12D[i] != 'C') ++gross_clusters[32];
-        if(s12E[i] != 'C') ++gross_clusters[33];
-        if(s12K[i] != 'C') ++gross_clusters[34];
-        if(s13A[i] != 'C') ++gross_clusters[35];
-        if(s13B[i] != 'C') ++gross_clusters[36];
-        if(s13K[i] != 'C') ++gross_clusters[37];
-        if(sFCC[i] != 'C') ++gross_clusters[38];
-        if(sHCP[i] != 'C') ++gross_clusters[39];
-        if(sBCC_9[i] != 'C') ++gross_clusters[40];
-        if(sBCC_15[i] != 'C') ++gross_clusters[41];
+        for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+            if ((*raw_cluster_list[cluster_type])[i] != 'C') ++gross_clusters[cluster_type];
+        }
     }
     Stats_SetA();
     for(i=0; i<N; ++i){
@@ -195,82 +156,41 @@ void Accuumlate_Stats() {
 }
 
 void Stats_Report(char *filename) {
-    char errMsg[1000];
+    char errMsg[1000], buffer[1000];
     FILE *writeout;
     int i;
-
-    printf("Clust	Number	Gross	Net	Mean Pop Per Frame\n");
-    for(i=0; i<num_cluster_types; i++) {
-        printf("%s	%d	%d	%d	%.5lg\n",
-               cluster_names[i], total_clusters[i], gross_clusters[i], net_clusters[i], mean_pop_per_frame[i]);
-    }
-    printf("maxnB	%d\n",maxnb);
-    printf("correctedBonds %d per frame %.5lg per part per frame %.5lg\n",correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
-
 
     writeout=fopen(filename,"w");
     if (writeout==NULL)  {
         sprintf(errMsg,"Stats_Report(): Error opening file %s",filename);	// Always test file open
         Error(errMsg);
     }
-    fprintf(writeout,"%s\n",filename);
-    fprintf(writeout,"Clust	Number	Gross	Net	Mean Pop Per Frame\n");
-    for(i=0; i<num_cluster_types; i++) {
-        fprintf(writeout, "%s	%d	%d	%d	%.5lg\n", cluster_names[i],
-                total_clusters[i], gross_clusters[i], net_clusters[i], mean_pop_per_frame[i]);
-    }
-    fprintf(writeout,"maxnB	%d\n",maxnb);
-    fprintf(writeout,"correctedBonds	%d	per frame	%.15lg	per part per frame	%.15lg\n",correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
 
+    fprintf(writeout,"%s\n",filename);
+    sprintf(buffer, "Clust	Number	Gross	Net	Mean Pop Per Frame\n");
+    printf(buffer);
+    fprintf(writeout,buffer);
+
+    for(i=0; i<num_cluster_types; i++) {
+        sprintf(buffer, "%s	%d	%d	%d	%.5lg\n",
+               cluster_names[i], total_clusters[i], gross_clusters[i], net_clusters[i], mean_pop_per_frame[i]);
+        printf(buffer);
+        fprintf(writeout,buffer);
+    }
+    sprintf(buffer, "maxnB	%d\ncorrectedBonds %d per frame %.5lg per part per frame %.5lg\n"
+            ,maxnb, correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
+    printf(buffer);
+    fprintf(writeout,buffer);
     fclose(writeout);
 }
 
 void Pop_Per_Frame(int f) {
-    int i;
+    int i, cluster_type;
 
     for(i=0; i<N; ++i){
-        if(ssp3[i] != 'C') pop_per_frame[0][f]+=1.0;
-        if(ssp3a[i] != 'C') pop_per_frame[1][f]+=1.0;
-        if(ssp3b[i] != 'C') pop_per_frame[2][f]+=1.0;
-        if(ssp3c[i] != 'C') pop_per_frame[3][f]+=1.0;
-        if(ssp4[i] != 'C') pop_per_frame[4][f]+=1.0;
-        if(ssp4a[i] != 'C') pop_per_frame[5][f]+=1.0;
-        if(ssp4b[i] != 'C') pop_per_frame[6][f]+=1.0;
-        if(ssp4c[i] != 'C') pop_per_frame[7][f]+=1.0;
-        if(ssp5[i] != 'C') pop_per_frame[8][f]+=1.0;
-        if(ssp5a[i] != 'C') pop_per_frame[9][f]+=1.0;
-        if(ssp5b[i] != 'C') pop_per_frame[10][f]+=1.0;
-        if(ssp5c[i] != 'C') pop_per_frame[11][f]+=1.0;
-        if(s6Z[i] != 'C') pop_per_frame[12][f]+=1.0;
-        if(s7K[i] != 'C') pop_per_frame[13][f]+=1.0;
-        if(s8A[i] != 'C') pop_per_frame[14][f]+=1.0;
-        if(s8B[i] != 'C') pop_per_frame[15][f]+=1.0;
-        if(s8K[i] != 'C') pop_per_frame[16][f]+=1.0;
-        if(s9A[i] != 'C') pop_per_frame[17][f]+=1.0;
-        if(s9B[i] != 'C') pop_per_frame[18][f]+=1.0;
-        if(s9K[i] != 'C') pop_per_frame[19][f]+=1.0;
-        if(s10A[i] != 'C') pop_per_frame[20][f]+=1.0;
-        if(s10B[i] != 'C') pop_per_frame[21][f]+=1.0;
-        if(s10K[i] != 'C') pop_per_frame[22][f]+=1.0;
-        if(s10W[i] != 'C') pop_per_frame[23][f]+=1.0;
-        if(s11A[i] != 'C') pop_per_frame[24][f]+=1.0;
-        if(s11B[i] != 'C') pop_per_frame[25][f]+=1.0;
-        if(s11C[i] != 'C') pop_per_frame[26][f]+=1.0;
-        if(s11E[i] != 'C') pop_per_frame[27][f]+=1.0;
-        if(s11F[i] != 'C') pop_per_frame[28][f]+=1.0;
-        if(s11W[i] != 'C') pop_per_frame[29][f]+=1.0;
-        if(s12A[i] != 'C') pop_per_frame[30][f]+=1.0;
-        if(s12B[i] != 'C') pop_per_frame[31][f]+=1.0;
-        if(s12D[i] != 'C') pop_per_frame[32][f]+=1.0;
-        if(s12E[i] != 'C') pop_per_frame[33][f]+=1.0;
-        if(s12K[i] != 'C') pop_per_frame[34][f]+=1.0;
-        if(s13A[i] != 'C') pop_per_frame[35][f]+=1.0;
-        if(s13B[i] != 'C') pop_per_frame[36][f]+=1.0;
-        if(s13K[i] != 'C') pop_per_frame[37][f]+=1.0;
-        if(sFCC[i] != 'C') pop_per_frame[38][f]+=1.0;
-        if(sHCP[i] != 'C') pop_per_frame[39][f]+=1.0;
-        if(sBCC_9[i] != 'C') pop_per_frame[40][f]+=1.0;
-        if(sBCC_15[i] != 'C') pop_per_frame[41][f]+=1.0;
+        for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+            if ((*raw_cluster_list[cluster_type])[i] != 'C') pop_per_frame[cluster_type][f] += 1.0;
+        }
     }
 
     // Add pop per frame to running total over all frames

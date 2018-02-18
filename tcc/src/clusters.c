@@ -1820,7 +1820,6 @@ int Clusters_Get12D_D2d(int j, int k, int sp1, int sp2) {  // Return 1 if 12B is
                     flg2=1;
                     continue;
                 }
-                break_out=0;
                 for (o=4; o<11; o++) {
                     if (hcsp5c[l][n]==hc11E[n11E][o]) {
                         q++;
@@ -3060,7 +3059,7 @@ int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i) {
     int sp3c_i_unc, sp3c_j_unc, ep[2], eclus5A[2], tmp;
     int clusSize=13;
 
-    sp3c_i_unc=sp3c_j_unc=ep[0]=ep[1]=eclus5A[0]=eclus5A[1]=tmp=-1;
+    sp3c_i_unc=sp3c_j_unc=ep[0]=ep[1]=eclus5A[0]=eclus5A[1]=-1;
 
     // Clusters 5A_i and 5A_j are new to the 13K, they have:
     // two spindle particles in the 11F
@@ -3574,7 +3573,6 @@ void Clusters_GetFCC() {   // Detect 13 particle FCC clusters
     int i1, i2, i3;
     int cp, bpi, bpj, nbpi, nbpj;
     int flg1, flg2, flg3;
-    int l_clust_type; // 0 if l-clust is sp3b, 1 if is sp3c
     int clusSize=13;
 
     cp=bpi=bpj=nbpi=nbpj=i3=-1;
@@ -3711,7 +3709,6 @@ void Clusters_GetFCC() {   // Detect 13 particle FCC clusters
                         if(m<3) continue;  // SP3_l particles must be bonded correctly to six-membered ring
                         if(flg1==1 && flg2==1 && flg3==1) break;   // SP3_l particles must be bonded correctly to six-membered ring
                     } // end l loop
-                    l_clust_type=0;
                     if (l==nsp3b) { // required SP3b cluster not found
                         for (l=0; l<nsp3c; ++l) { // loop over all sp3c_l
                             if (hcsp3c[l][3]!=cp && hcsp3c[l][4]!=cp) continue;  // common particle must be a spindle
@@ -3748,7 +3745,6 @@ void Clusters_GetFCC() {   // Detect 13 particle FCC clusters
                             if (flg1==1 && flg2==1 && flg3==1) break;   // SP3_l particles must be bonded correctly to six-membered ring
                         }
                         if (l==nsp3c) continue;
-                        l_clust_type=1;
                     } // End if statement for SP3c search loop
 
                     // We've now found an FCC cluster

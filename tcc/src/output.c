@@ -75,65 +75,29 @@ void Write_13A_cen_xmol(int f) {
 }
 
 void Write_Raw(int f) {
-    if(*do_cluster_list[0] == 1) Write_Raw_Xmol(f,raw_file_pointers[0],&ssp3[0]);
-    if(*do_cluster_list[1] == 1) Write_Raw_Xmol(f,raw_file_pointers[1],&ssp3a[0]);
-    if(*do_cluster_list[2] == 1) Write_Raw_Xmol(f,raw_file_pointers[2],&ssp3b[0]);
-    if(*do_cluster_list[3] == 1) Write_Raw_Xmol(f,raw_file_pointers[3],&ssp3c[0]);
-    if(*do_cluster_list[4] == 1) Write_Raw_Xmol(f,raw_file_pointers[4],&ssp4[0]);
-    if(*do_cluster_list[5] == 1) Write_Raw_Xmol(f,raw_file_pointers[5],&ssp4a[0]);
-    if(*do_cluster_list[6] == 1) Write_Raw_Xmol(f,raw_file_pointers[6],&ssp4b[0]);
-    if(*do_cluster_list[7] == 1) Write_Raw_Xmol(f,raw_file_pointers[7],&ssp4c[0]);
-    if(*do_cluster_list[8] == 1) Write_Raw_Xmol(f,raw_file_pointers[8],&s6Z[0]);
-    if(*do_cluster_list[9] == 1) Write_Raw_Xmol(f,raw_file_pointers[9],&s7K[0]);
-    if(*do_cluster_list[10] == 1) Write_Raw_Xmol(f,raw_file_pointers[10],&ssp5[0]);
-    if(*do_cluster_list[11] == 1) Write_Raw_Xmol(f,raw_file_pointers[11],&ssp5a[0]);
-    if(*do_cluster_list[12] == 1) Write_Raw_Xmol(f,raw_file_pointers[12],&ssp5b[0]);
-    if(*do_cluster_list[13] == 1) Write_Raw_Xmol(f,raw_file_pointers[13],&ssp5c[0]);
-    if(*do_cluster_list[14] == 1) Write_Raw_Xmol(f,raw_file_pointers[14],&s8A[0]);
-    if(*do_cluster_list[15] == 1) Write_Raw_Xmol(f,raw_file_pointers[15],&s8B[0]);
-    if(*do_cluster_list[16] == 1) Write_Raw_Xmol(f,raw_file_pointers[16],&s8K[0]);
-    if(*do_cluster_list[17] == 1) Write_Raw_Xmol(f,raw_file_pointers[17],&s9A[0]);
-    if(*do_cluster_list[18] == 1) Write_Raw_Xmol(f,raw_file_pointers[18],&s9B[0]);
-    if(*do_cluster_list[19] == 1) Write_Raw_Xmol(f,raw_file_pointers[19],&s9K[0]);
-    if(*do_cluster_list[20] == 1) Write_Raw_Xmol(f,raw_file_pointers[20],&s10A[0]);
-    if(*do_cluster_list[21] == 1) Write_Raw_Xmol(f,raw_file_pointers[21],&s10B[0]);
-    if(*do_cluster_list[22] == 1) Write_Raw_Xmol(f,raw_file_pointers[22],&s10K[0]);
-    if(*do_cluster_list[23] == 1) Write_Raw_Xmol(f,raw_file_pointers[23],&s10W[0]);
-    if(*do_cluster_list[24] == 1) Write_Raw_Xmol(f,raw_file_pointers[24],&s11A[0]);
-    if(*do_cluster_list[25] == 1) Write_Raw_Xmol(f,raw_file_pointers[25],&s11B[0]);
-    if(*do_cluster_list[26] == 1) Write_Raw_Xmol(f,raw_file_pointers[26],&s11C[0]);
-    if(*do_cluster_list[27] == 1) Write_Raw_Xmol(f,raw_file_pointers[27],&s11E[0]);
-    if(*do_cluster_list[28] == 1) Write_Raw_Xmol(f,raw_file_pointers[28],&s11F[0]);
-    if(*do_cluster_list[29] == 1) Write_Raw_Xmol(f,raw_file_pointers[29],&s11W[0]);
-    if(*do_cluster_list[30] == 1) Write_Raw_Xmol(f,raw_file_pointers[30],&s12A[0]);
-    if(*do_cluster_list[31] == 1) Write_Raw_Xmol(f,raw_file_pointers[31],&s12B[0]);
-    if(*do_cluster_list[32] == 1) Write_Raw_Xmol(f,raw_file_pointers[32],&s12D[0]);
-    if(*do_cluster_list[33] == 1) Write_Raw_Xmol(f,raw_file_pointers[33],&s12E[0]);
-    if(*do_cluster_list[34] == 1) Write_Raw_Xmol(f,raw_file_pointers[34],&s12K[0]);
-    if(*do_cluster_list[35] == 1) Write_Raw_Xmol(f,raw_file_pointers[35],&s13A[0]);
-    if(*do_cluster_list[36] == 1) Write_Raw_Xmol(f,raw_file_pointers[36],&s13B[0]);
-    if(*do_cluster_list[37] == 1) Write_Raw_Xmol(f,raw_file_pointers[37],&s13K[0]);
-    if(*do_cluster_list[38] == 1) Write_Raw_Xmol(f,raw_file_pointers[38],&sFCC[0]);
-    if(*do_cluster_list[39] == 1) Write_Raw_Xmol(f,raw_file_pointers[39],&sHCP[0]);
-    if(*do_cluster_list[40] == 1) Write_Raw_Xmol(f,raw_file_pointers[40],&sBCC_9[0]);
-    if(*do_cluster_list[41] == 1) Write_Raw_Xmol(f,raw_file_pointers[41],&sBCC_15[0]);
+    int cluster_type;
+    for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+        if (*do_cluster_list[cluster_type] == 1) {
+            Write_Raw_Xmol(f, raw_file_pointers[cluster_type], raw_cluster_list[cluster_type][0]);
+        }
+    }
 }
 
 void Write_Raw_Close() {
-    int i;
+    int cluster_type;
 
-    for(i=0; i< num_cluster_types; i++) {
-        if (*do_cluster_list[i] == 1) {
-            fclose(raw_file_pointers[i]);
+    for(cluster_type=0; cluster_type< num_cluster_types; cluster_type++) {
+        if (*do_cluster_list[cluster_type] == 1) {
+            fclose(raw_file_pointers[cluster_type]);
         }
     }
 }
 
 void Write_Cluster_Init() {
-    int i;
+    int cluster_type;
 
-    for(i=0; i<num_cluster_types; i++) {
-        Write_initialise_Cluster_Files(i);
+    for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+        Write_initialise_Cluster_Files(cluster_type);
     }
 
 }
@@ -159,11 +123,11 @@ void Write_initialise_Cluster_Files(int cluster_number) {
 }
 
 void Write_Cluster_Close() {
-    int i;
+    int cluster_type;
 
-    for(i=0; i<num_cluster_types; i++) {
-        if (*do_cluster_list[i] == 1) {
-            fclose(cluster_file_pointers[i]);
+    for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+        if (*do_cluster_list[cluster_type] == 1) {
+            fclose(cluster_file_pointers[cluster_type]);
         }
     }
 }

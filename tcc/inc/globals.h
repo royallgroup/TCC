@@ -17,6 +17,7 @@ extern int num_cluster_types;  // The number of items in the cluster names array
 extern char* cluster_names[];  // A list of strings of cluster names
 extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
 extern int* num_cluster_list[];  // A list of pointers to the nclusts variables
+extern char** raw_cluster_list[];  // A list of pointers to the raw_clusts storage variables
 
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
