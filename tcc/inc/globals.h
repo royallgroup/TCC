@@ -143,13 +143,6 @@ char *s12A_cen, *s12B_cen, *s12K_cen;
 char *s13A_cen, *s13B_cen, *s13K_cen;
 char *sFCC_cen, *sHCP_cen, *sBCC_9_cen, *sBCC_15_cen;
 
-char *s9B_shell, *s9K_shell;
-char *s10B_shell, *s10K_shell, *s10W_shell;
-char *s11A_shell, *s11B_shell, *s11C_shell, *s11W_shell;
-char *s12A_shell, *s12B_shell, *s12K_shell;
-char *s13A_shell, *s13B_shell, *s13K_shell;
-char *sFCC_shell, *sHCP_shell, *sBCC_9_shell, *sBCC_15_shell;
-
 // Lists of particle population of each cluster type in each frame, index i is the frame number,
 // index j is the cluster type
 double **pop_per_frame;

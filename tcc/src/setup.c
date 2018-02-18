@@ -494,26 +494,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     sHCP_cen=malloc(N*sizeof(char)); if (sHCP_cen==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sHCP_cen[] malloc out of memory\n"); Error_no_free(errMsg); }
     sBCC_9_cen=malloc(N*sizeof(char)); if (sBCC_9_cen==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sBCC_9_cen[] malloc out of memory\n"); Error_no_free(errMsg); }
     sBCC_15_cen=malloc(N*sizeof(char)); if (sBCC_15_cen==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sBCC_15_cen[] malloc out of memory\n"); Error_no_free(errMsg); }
-    
-    s9B_shell=malloc(N*sizeof(char)); if (s9B_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s9B_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s9K_shell=malloc(N*sizeof(char)); if (s9K_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s9K_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s10B_shell=malloc(N*sizeof(char)); if (s10B_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s10B_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s10K_shell=malloc(N*sizeof(char)); if (s10K_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s10K_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s10W_shell=malloc(N*sizeof(char)); if (s10W_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s10W_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s11A_shell=malloc(N*sizeof(char)); if (s11A_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s11A_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s11B_shell=malloc(N*sizeof(char)); if (s11B_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s11B_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s11C_shell=malloc(N*sizeof(char)); if (s11C_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s11C_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s11W_shell=malloc(N*sizeof(char)); if (s11W_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s11W_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s12A_shell=malloc(N*sizeof(char)); if (s12A_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s12A_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s12B_shell=malloc(N*sizeof(char)); if (s12B_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s12B_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s12K_shell=malloc(N*sizeof(char)); if (s12K_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s12K_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s13A_shell=malloc(N*sizeof(char)); if (s13A_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s13A_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s13B_shell=malloc(N*sizeof(char)); if (s13B_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s13B_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    s13K_shell=malloc(N*sizeof(char)); if (s13K_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): s13K_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    sFCC_shell=malloc(N*sizeof(char)); if (sFCC_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sFCC_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    sHCP_shell=malloc(N*sizeof(char)); if (sHCP_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sHCP_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    sBCC_9_shell=malloc(N*sizeof(char)); if (sBCC_9_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sBCC_9_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
-    sBCC_15_shell=malloc(N*sizeof(char)); if (sBCC_15_shell==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sBCC_15_shell[] malloc out of memory\n"); Error_no_free(errMsg); }
+
 
     for (j=0; j<N; j++) { // reset these variables
         ssp3[j]='C';
@@ -581,26 +562,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
         sHCP_cen[j]='C';
         sBCC_9_cen[j]='C';
         sBCC_15_cen[j]='C';
-        
-        s9B_shell[j]='C';
-        s9K_shell[j]='C';
-        s10B_shell[j]='C';
-        s10K_shell[j]='C';
-        s10W_shell[j]='C';
-        s11A_shell[j]='C';
-        s11B_shell[j]='C';
-        s11C_shell[j]='C';
-        s11W_shell[j]='C';
-        s12A_shell[j]='C';
-        s12B_shell[j]='C';
-        s12K_shell[j]='C';
-        s13A_shell[j]='C';
-        s13B_shell[j]='C';
-        s13K_shell[j]='C';
-        sFCC_shell[j]='C';
-        sHCP_shell[j]='C';
-        sBCC_9_shell[j]='C';
-        sBCC_15_shell[j]='C';
     }
 
     // particle fraction of particles in each cluster in each frame
@@ -808,13 +769,6 @@ void Setup_ResetStaticVars() { // Reset static variables in each frame
         s12A_cen[i]=s12B_cen[i]=s12K_cen[i]='C';
         s13A_cen[i]=s13B_cen[i]=s13K_cen[i]='C';
         sFCC_cen[i]=sHCP_cen[i]=sBCC_9_cen[i]=sBCC_15_cen[i]='C';
-        
-        s9B_shell[i]=s9K_shell[i]='C';
-        s10B_shell[i]=s10K_shell[i]=s10W_shell[i]='C';
-        s11A_shell[i]=s11B_shell[i]=s11C_shell[i]=s11W_shell[i]='C';
-        s12A_shell[i]=s12B_shell[i]=s12K_shell[i]='C';
-        s13A_shell[i]=s13B_shell[i]=s13K_shell[i]='C';
-        sFCC_shell[i]=sHCP_shell[i]=sBCC_9_shell[i]=sBCC_15_shell[i]='C';
     }
 }
 
@@ -938,13 +892,6 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     free(s12A_cen); free(s12B_cen); free(s12K_cen);
     free(s13A_cen); free(s13B_cen); free(s13K_cen);
     free(sFCC_cen); free(sHCP_cen); free(sBCC_9_cen); free(sBCC_15_cen);
-    
-    free(s9B_shell); free(s9K_shell);
-    free(s10B_shell); free(s10K_shell); free(s10W_shell);
-    free(s11A_shell); free(s11B_shell); free(s11C_shell); free(s11W_shell); 
-    free(s12A_shell); free(s12B_shell); free(s12K_shell);
-    free(s13A_shell); free(s13B_shell); free(s13K_shell);
-    free(sFCC_shell); free(sHCP_shell); free(sBCC_9_shell); free(sBCC_15_shell);
 }
 
 void Setup_Centers_Files() {
