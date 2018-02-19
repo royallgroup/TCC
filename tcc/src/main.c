@@ -101,9 +101,6 @@ int main(int argc, char **argv) {
 		printf("completed\n");
 	}
 
-    // Open the files to print out cluster centers
-    Setup_Centers_Files();
-
 	f=0;
 	for (e=0;e<TOTALFRAMES;e++) {
 		remainder=e%SAMPLEFREQ;
@@ -156,8 +153,8 @@ int main(int argc, char **argv) {
             Accuumlate_Stats();
 			if (doWriteClus==1) Write_Cluster(f);
             if (doWriteRaw==1) Write_Raw(f);
-			if (do11AcenXmol==1) Write_11A_cen_xmol(f);
-			if (do13AcenXmol==1) Write_13A_cen_xmol(f);
+			if (do11AcenXmol==1) Write_Cluster_Centers_xyz(f, 24);
+			if (do13AcenXmol==1) Write_Cluster_Centers_xyz(f, 35);
 
 			Stats_Reset();
 			Stats_Analyse();
@@ -192,8 +189,6 @@ int main(int argc, char **argv) {
 		printf("closed!\n\n");
 	}
 	
-    Close_Centers_Files();
-
 	sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
 	printf("\n");
 	Stats_Report(output);

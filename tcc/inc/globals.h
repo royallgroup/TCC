@@ -167,8 +167,4 @@ FILE** cluster_file_pointers;
 FILE *bondsout;
 FILE *fPopPerFrame;
 
-// File handles for center xyz files
-FILE *file_11A_cen_xmol;
-FILE *file_13A_cen_xmol;
-
 #endif 

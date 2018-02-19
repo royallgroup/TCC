@@ -4,8 +4,7 @@
 
 void Write_Raw_Init();
 void Write_Raw_Xmol(int f, FILE *thefile, const char *sarr);
-void Write_11A_cen_xmol(int f);
-void Write_13A_cen_xmol(int f);
+void Write_Cluster_Centers_xyz(int f, int cluster_type);
 void Write_Raw(int f);
 void Write_Raw_Close();
 void Write_Cluster_Init();

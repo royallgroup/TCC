@@ -840,38 +840,6 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     
 }
 
-void Setup_Centers_Files() {
-    char output[1000];
-
-    if (do11AcenXmol==1) {
-        printf("\ninitializing 11A centre xmol files...");
-        sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_11A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-        file_11A_cen_xmol=fopen(output, "w");
-        printf("completed\n");
-    }
-
-    if (do13AcenXmol==1) {
-        printf("\ninitializing 13A centre xmol files...");
-        sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_13A_cen.xmol",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-        file_13A_cen_xmol=fopen(output, "w");
-        printf("completed\n");
-    }
-}
-
-void Close_Centers_Files() {
-    if (do11AcenXmol==1) {
-        printf("Closing 11A centre xmol files....");
-        fclose(file_11A_cen_xmol);
-        printf("closed!\n\n");
-    }
-
-    if (do13AcenXmol==1) {
-        printf("Closing 13A centre xmol files....");
-        fclose(file_13A_cen_xmol);
-        printf("closed!\n\n");
-    }
-}
-
 int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
     return 1 + (tix-1+M)%M + M*((tiy-1+M)%M) + M*M*((tiz-1+M)%M);
 }

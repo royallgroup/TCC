@@ -48,31 +48,31 @@ void Write_Raw_Xmol(int f, FILE *thefile, const char *sarr) {
     }
 }
 
-void Write_11A_cen_xmol(int f) {
-    int i;
+void Write_Cluster_Centers_xyz(int f, int cluster_type) {
 
-    int n11A_cen=0;
+    int i, num_centers=0;
+    FILE *output_file;
+    char file_name[200];
 
-    for(i=0; i<N; i++) if(s11A[i]=='S') ++n11A_cen;         // get total number of 13A centres
+    sprintf(file_name, "%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s_cen.xmol",
+            fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, cluster_names[cluster_type]);
 
-    fprintf(file_11A_cen_xmol,"%d\nframe %d of %d\n",n11A_cen,f,TOTALFRAMES);
+    output_file = fopen(file_name, "a");
+    for(i=0; i<N; i++) if(*raw_cluster_list[cluster_type][i]=='S') ++num_centers;
+
+    fprintf(output_file,"%d\nframe %d of %d\n",num_centers,f,FRAMES);
     for(i=0; i<N; i++) {
-        if (s11A[i]=='S') fprintf(file_11A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
+        if (*raw_cluster_list[cluster_type][i]=='S') {
+            fprintf(output_file ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
+        }
     }
+
+    fclose(output_file);
+
+
 }
 
-void Write_13A_cen_xmol(int f) {
-    int i;
 
-    int n13A_cen=0;
-
-    for(i=0; i<N; i++) if(s13A[i]=='S') ++n13A_cen;         // get total number of 13A centres
-
-    fprintf(file_13A_cen_xmol,"%d\nframe %d of %d\n",n13A_cen,f,FRAMES);
-    for(i=0; i<N; i++) {
-        if (s13A[i]=='S') fprintf(file_13A_cen_xmol ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
-    }
-}
 
 void Write_Raw(int f) {
     int cluster_type;
