@@ -74,7 +74,7 @@ void Write_Cluster_Xmol(int f, int num_clusters, int **hc, int clusSize, int clu
             fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
     file_pointer = open_file(output_file, "a");
 
-    fprintf(file_pointer,"Frame Number%d\n",f);
+    fprintf(file_pointer,"Frame Number %d\n",f);
     for (i=0;i<num_clusters;i++) {
         fprintf(file_pointer,"%d",hc[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(file_pointer,"	%d",hc[i][j]);
@@ -220,39 +220,39 @@ void Write_Cluster(int f) {
 void Write_Pop_Per_Frame(int f) {
     char errMsg[1000], output[1000];
     int i;
+    FILE *file_pointer;
 
     sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    printf("Writing pop_per_frame %s\n",output);
-    fPopPerFrame=fopen(output, "w");
-    if (fPopPerFrame==NULL)  {
+    file_pointer = open_file(output, "a");
+
+    if (file_pointer==NULL)  {
         sprintf(errMsg,"main() : Error opening file %s",output);	// Always test file open
         Error(errMsg);
     }
-    fprintf(fPopPerFrame,"%s\n",output);
+    fprintf(file_pointer,"%s\n",output);
 
-    fprintf(fPopPerFrame,"frame	");
+    fprintf(file_pointer,"frame	");
     for(i=0; i<num_cluster_types; i++) {
-        fprintf(fPopPerFrame, "%s	", cluster_names[i]);
+        fprintf(file_pointer, "%s	", cluster_names[i]);
     }
-    fprintf(fPopPerFrame,"\n");
+    fprintf(file_pointer,"\n");
 
-    fprintf(fPopPerFrame,"mean	");
+    fprintf(file_pointer,"mean	");
     for(i=0; i<num_cluster_types; i++) {
         if(*do_cluster_list[i] == 1) {
-            fprintf(fPopPerFrame, "%.15lg	", mean_pop_per_frame[i]);
+            fprintf(file_pointer, "%.15lg	", mean_pop_per_frame[i]);
         }
         else {
-            fprintf(fPopPerFrame, "NA	");
+            fprintf(file_pointer, "NA	");
         }
     }
-    fprintf(fPopPerFrame,"\n");
+    fprintf(file_pointer,"\n");
 
     for (f=0;f<FRAMES;f++) {
-        fprintf(fPopPerFrame,"%d",f);
+        fprintf(file_pointer,"%d",f);
         for(i=0; i<num_cluster_types; i++) {
-            fprintf(fPopPerFrame, "%.15lg	", pop_per_frame[i][f]);
+            fprintf(file_pointer, "%.15lg	", pop_per_frame[i][f]);
         }
     }
-    fclose(fPopPerFrame);
-    printf("Closed file %s\n\n",output);
+    fclose(file_pointer);
 }

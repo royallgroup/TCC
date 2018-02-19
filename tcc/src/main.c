@@ -72,15 +72,6 @@ int main(int argc, char **argv) {
 		Error_no_free(errMsg);
 	}
 	
-	if (doWriteBonds==1) {
-		sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-		bondsout=fopen(output, "w");
-		if (bondsout==NULL)  {
-			sprintf(errMsg,"main() : Error opening file %s",output);	// Always test file open
-			Error_no_free(errMsg);
-		}
-	}
-	
 	Setup_InitStaticVars();
 	
     Setup_Cell_List();
@@ -156,8 +147,7 @@ int main(int argc, char **argv) {
 
 
 	fclose(rXmol);
-	if (doWriteBonds==1) fclose(bondsout);
-	
+
 	if (f!=FRAMES) {
 		printf("\n\n\n!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!\n\n\n");
 		printf("Analysed frames %d less than expected number of FRAMES %d from %s\n\n",f,FRAMES,fInputParamsName);

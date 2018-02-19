@@ -156,8 +156,4 @@ int *total_clusters;
 // Variable used in the counting of net clusters, index i is particle number
 int *a5, *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13, *a15;
 
-// File handles for the bonds and pop_per_frame files
-FILE *bondsout;
-FILE *fPopPerFrame;
-
 #endif
