@@ -156,15 +156,8 @@ int *total_clusters;
 // Variable used in the counting of net clusters, index i is particle number
 int *a5, *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13, *a15;
 
-FILE** raw_file_pointers;
-
-// File handles for cluster files - an output type type where the particle ID's of the members
-// of each cluster are listed
-FILE** cluster_file_pointers;
-
-
 // File handles for the bonds and pop_per_frame files
 FILE *bondsout;
 FILE *fPopPerFrame;
 
-#endif 
+#endif

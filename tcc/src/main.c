@@ -89,18 +89,6 @@ int main(int argc, char **argv) {
 	Stats_Init();
 	printf("completed\n");
 	
-	if (doWriteClus==1) {
-		printf("\ninitializing cluster files...");
-		Write_Cluster_Init();
-		printf("completed\n");
-	}
-	
-	if (doWriteRaw==1) {
-		printf("\ninitializing raw cluster xmol files...");
-		Write_Raw_Init();
-		printf("completed\n");
-	}
-
 	f=0;
 	for (e=0;e<TOTALFRAMES;e++) {
 		remainder=e%SAMPLEFREQ;
@@ -175,20 +163,12 @@ int main(int argc, char **argv) {
 		printf("Analysed frames %d less than expected number of FRAMES %d from %s\n\n",f,FRAMES,fInputParamsName);
 	}
 	
-	if (doWriteClus==1) Write_Cluster_Close();
-	
     Normalise_Populations();
 	
 	if (doWritePopPerFrame==1) {
         Write_Pop_Per_Frame(f);
 	}	
-	
-	if (doWriteRaw==1) {
-		printf("Closing raw cluster xmol files....");
-		Write_Raw_Close();
-		printf("closed!\n\n");
-	}
-	
+
 	sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
 	printf("\n");
 	Stats_Report(output);

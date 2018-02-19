@@ -10,8 +10,6 @@ void Setup_Readxyz(int e, int write, int f, FILE *);  // output single float val
 void Setup_InitStaticVars();    // Initialize bond detection
 void Setup_ResetStaticVars();   // reset one frame of the variables (memory for which allocated in Bonds_Init())
 void Setup_FreeStaticVars();    // Reset bond detection variables
-void Setup_Centers_Files();
-void Close_Centers_Files();
 void Setup_Cell_List();
 int icell(int tix, int tiy, int tiz);
 

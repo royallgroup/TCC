@@ -212,9 +212,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     
     rtype=malloc(N*sizeof(int)); if (rtype==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): rtype[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
 
-    raw_file_pointers = malloc(sizeof(FILE*) * num_cluster_types);
-    cluster_file_pointers = malloc(sizeof(FILE*) * num_cluster_types);
-
     cnb = malloc(N*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
     correctedBonds=0;   // count number of times have make j bonded to i given i bonded to j due to round off error in Voronoi code
     bNums = malloc(N*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle
@@ -745,9 +742,6 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
         free(head);
         free(llist);
     }
-
-    free(cluster_file_pointers);
-    free(raw_file_pointers);
 
     for (i=0; i<num_cluster_types; ++i) {
         free(pop_per_frame[i]);

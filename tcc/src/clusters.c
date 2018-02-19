@@ -2269,9 +2269,10 @@ void Cluster_Write_11A(int first_6A_id, int second_6A_id, const int sother[], in
     for(i=0; i<8; i++) {
         if (s11A[hc11A[n11A][i]] == 'C') s11A[hc11A[n11A][i]] = 'B';
     }
-    for(i=8; i<11; i++) {
+    for(i=8; i<10; i++) {
         s11A[hc11A[n11A][i]] = 'O';
     }
+    s11A[hc11A[n11A][10]] = 'S';
     ++n11A;
 }
 
