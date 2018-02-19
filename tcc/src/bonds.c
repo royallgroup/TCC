@@ -94,7 +94,6 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (USELIST==0) Bonds_GetBondsV();
         else Bonds_GetBondsV_CellList();
         Bonds_CheckSymmetric();
-        if (doWriteBonds==1) Bonds_WriteBonds(f);
         printf("Got Bonds\n");
         return;
     }

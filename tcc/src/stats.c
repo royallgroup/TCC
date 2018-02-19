@@ -2,8 +2,6 @@
 #include "globals.h"
 #include "tools.h"
 
-void count_gross_clusters();
-
 void Stats_Init() {
     int i;
     char errMsg[1000];

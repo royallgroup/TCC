@@ -18,7 +18,7 @@ int make_directory(const char* name) {
     char errMsg[100];
 
     #ifdef __linux__
-        if(mkdir(name, 777) != 0) {
+        if(mkdir(name, 0744) != 0) {
             error_number = errno;
         }
         else return 0;

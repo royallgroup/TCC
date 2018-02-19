@@ -226,7 +226,7 @@ void Setup_Readxyz(int e, int write, int f, FILE *readin) {     // read configur
 }
 
 void Setup_InitStaticVars() { // Initialize lots of important variables for static TCC algorithm
-    int i, f, j, k;
+    int i, f, j;
     char errMsg[1000];
 
     dosp3=dosp3a=dosp3b=dosp3c=1;
@@ -273,38 +273,14 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     rtype=malloc(N*sizeof(int)); if (rtype==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): rtype[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
 
     cnb = malloc(N*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
-    correctedBonds=0;   // count number of times have make j bonded to i given i bonded to j due to round off error in Voronoi code
+
     bNums = malloc(N*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle
     for (j=0; j<N; ++j) { bNums[j] = malloc(nB*sizeof(int));    if (bNums[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): bNums[][] malloc out of memory\n");   Error_no_free(errMsg); } }
 
     bondlengths = malloc(N*sizeof(double *));   if (bondlengths==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
     for (j=0; j<N; ++j) { bondlengths[j] = malloc(nB*sizeof(double));   if (bondlengths[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): bondlengths[][] malloc out of memory\n");   Error_no_free(errMsg); } }  
     
-    for (j=0; j<N; j++) {   // reset the variables
-        x[j]=y[j]=z[j]=0.0;
-        rtype[j]=0;
-        cnb[j]=0;
-        
-        for (k=0; k<nB; ++k) {
-            bNums[j][k]=0;
-            bondlengths[j][k]=0.0;
-        }
-    }
 
-    maxnb=0;
-    
-    nsp3a=nsp3b=nsp3c=0;
-    nsp4a=nsp4b=nsp4c=0;
-    nsp5a=nsp5b=nsp5c=0;
-    n6Z=n7K=0;
-    n8A=n8B=n8K=0;
-    n9A=n9B=n9K=0;
-    n10A=n10B=n10K=n10W=0;
-    n11A=n11B=n11C=n11E=n11F=n11W=0;
-    n12A=n12B=n12D=n12E=n12K=0;
-    n13A=n13B=n13K=0;
-    nFCC=nHCP=nBCC_9=nBCC_15=0;
-    
     // arrays for the clusters found in each frame
     hcsp3a = malloc(msp3a*sizeof(int *)); if (hcsp3a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp3a[] malloc out of memory\n");  Error_no_free(errMsg); }
     for (j=0; j<msp3a; ++j) { hcsp3a[j] = malloc(3*sizeof(int));  if (hcsp3a[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sp3a[][] malloc out of memory\n"); Error_no_free(errMsg); } }
@@ -415,74 +391,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     hcBCC_15 = malloc(mBCC_15*sizeof(int *));   if (hcBCC_15==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): hcBCC_15[] malloc out of memory\n");  Error_no_free(errMsg); }
     for (j=0; j<mBCC_15; ++j) { hcBCC_15[j] = malloc(15*sizeof(int));   if (hcBCC_15[j]==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): hcBCC_15[][] malloc out of memory\n"); Error_no_free(errMsg); } }
     
-    // reset the variables
-    for (j=0; j<msp3a; ++j) { for (k=0; k<3; k++) { hcsp3a[j][k]=-1; }}
-    for (j=0; j<msp3b; ++j) { for (k=0; k<4; k++) { hcsp3b[j][k]=-1; }}
-    for (j=0; j<msp3c; ++j) { for (k=0; k<5; k++) { hcsp3c[j][k]=-1; }}
-    
-    for (j=0; j<N; ++j) { 
-        for (k=0; k<mmem_sp3b; k++) mem_sp3b[j][k]=-1; 
-        for (k=0; k<mmem_sp3c; k++) mem_sp3c[j][k]=-1; 
-        for (k=0; k<mmem_sp4b; k++) mem_sp4b[j][k]=-1; 
-        for (k=0; k<mmem_sp4c; k++) mem_sp4c[j][k]=-1;
-        for (k=0; k<mmem_sp5b; k++) mem_sp5b[j][k]=-1; 
-        for (k=0; k<mmem_sp5c; k++) mem_sp5c[j][k]=-1;
-        nmem_sp3b[j]=0;
-        nmem_sp3c[j]=0;
-        nmem_sp4b[j]=0;
-        nmem_sp4c[j]=0;
-        nmem_sp5b[j]=0;
-        nmem_sp5c[j]=0;
-    }
-    
-    for (j=0; j<msp4a; ++j) { for (k=0; k<4; k++) { hcsp4a[j][k]=-1; }}
-    for (j=0; j<msp4b; ++j) { for (k=0; k<5; k++) { hcsp4b[j][k]=-1; }}
-    for (j=0; j<msp4c; ++j) { for (k=0; k<6; k++) { hcsp4c[j][k]=-1; }}
-        
-    for (j=0; j<msp5a; ++j) { for (k=0; k<5; k++) { hcsp5a[j][k]=-1; }}
-    for (j=0; j<msp5b; ++j) { for (k=0; k<6; k++) { hcsp5b[j][k]=-1; }}
-    for (j=0; j<msp5c; ++j) { for (k=0; k<7; k++) { hcsp5c[j][k]=-1; }}
-    
-    for (j=0; j<m6Z; ++j) { for (k=0; k<6; k++) { hc6Z[j][k]=-1; }}
-    
-    for (j=0; j<m7K; ++j) { for (k=0; k<7; k++) { hc7K[j][k]=-1; }}
-    
-    for (j=0; j<m8A; ++j) { for (k=0; k<8; k++) { hc8A[j][k]=-1; }}
-    for (j=0; j<m8B; ++j) { for (k=0; k<8; k++) { hc8B[j][k]=-1; }}
-    for (j=0; j<m8K; ++j) { for (k=0; k<8; k++) { hc8K[j][k]=-1; }}
-    
-    for (j=0; j<m9A; ++j) { for (k=0; k<9; k++) { hc9A[j][k]=-1; }}
-    for (j=0; j<m9B; ++j) { for (k=0; k<9; k++) { hc9B[j][k]=-1; }}
-    for (j=0; j<m9K; ++j) { for (k=0; k<9; k++) { hc9K[j][k]=-1; }}
-    
-    for (j=0; j<m10A; ++j) { for (k=0; k<10; k++) { hc10A[j][k]=-1; }}
-    for (j=0; j<m10B; ++j) { for (k=0; k<10; k++) { hc10B[j][k]=-1; }}
-    for (j=0; j<m10K; ++j) { for (k=0; k<10; k++) { hc10K[j][k]=-1; }}
-    for (j=0; j<m10W; ++j) { for (k=0; k<10; k++) { hc10W[j][k]=-1; }}
-    
-    for (j=0; j<m11A; ++j) { for (k=0; k<11; k++) { hc11A[j][k]=-1; }}
-    for (j=0; j<m11B; ++j) { for (k=0; k<11; k++) { hc11B[j][k]=-1; }}
-    for (j=0; j<m11C; ++j) { for (k=0; k<11; k++) { hc11C[j][k]=-1; }}
-    for (j=0; j<m11E; ++j) { for (k=0; k<11; k++) { hc11E[j][k]=-1; }}
-    for (j=0; j<m11F; ++j) { for (k=0; k<11; k++) { hc11F[j][k]=-1; }}
-    for (j=0; j<m11W; ++j) { for (k=0; k<11; k++) { hc11W[j][k]=-1; }}
-    
-    for (j=0; j<m12A; ++j) { for (k=0; k<12; k++) { hc12A[j][k]=-1; }}
-    for (j=0; j<m12B; ++j) { for (k=0; k<12; k++) { hc12B[j][k]=-1; }}
-    for (j=0; j<m12D; ++j) { for (k=0; k<12; k++) { hc12D[j][k]=-1; }}
-    for (j=0; j<m12E; ++j) { for (k=0; k<12; k++) { hc12E[j][k]=-1; }}
-    for (j=0; j<m12K; ++j) { for (k=0; k<12; k++) { hc12K[j][k]=-1; }}
-    
-    for (j=0; j<m13A; ++j) { for (k=0; k<13; k++) { hc13A[j][k]=-1; }}
-    for (j=0; j<m13B; ++j) { for (k=0; k<13; k++) { hc13B[j][k]=-1; }}
-    for (j=0; j<m13K; ++j) { for (k=0; k<13; k++) { hc13K[j][k]=-1; }}
-    
-    for (j=0; j<mFCC; ++j) { for (k=0; k<13; k++) { hcFCC[j][k]=-1; }}
-    for (j=0; j<mHCP; ++j) { for (k=0; k<13; k++) { hcHCP[j][k]=-1; }}
-    for (j=0; j<mBCC_9; ++j) { for (k=0; k<9; k++) { hcBCC_9[j][k]=-1; }}
-    for (j=0; j<mBCC_15; ++j) { for (k=0; k<15; k++) { hcBCC_15[j][k]=-1; }}
-    
-    
     // character arrays listing what type each particle is when found in a cluster
     ssp3a=malloc(N*sizeof(char)); if (ssp3a==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp3a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp3b=malloc(N*sizeof(char)); if (ssp3b==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): ssp3b[] malloc out of memory\n"); Error_no_free(errMsg); }
@@ -526,51 +434,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     sHCP=malloc(N*sizeof(char)); if (sHCP==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sHCP[] malloc out of memory\n"); Error_no_free(errMsg); }
     sBCC_9=malloc(N*sizeof(char)); if (sBCC_9==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sBCC_9[] malloc out of memory\n"); Error_no_free(errMsg); }
     sBCC_15=malloc(N*sizeof(char)); if (sBCC_15==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): sBCC_15[] malloc out of memory\n"); Error_no_free(errMsg); }
-
-    for (j=0; j<N; j++) { // reset these variables
-        ssp3a[j]='C';
-        ssp3b[j]='C';
-        ssp3c[j]='C';
-        
-        ssp4a[j]='C';
-        ssp4b[j]='C';
-        ssp4c[j]='C';
-        
-        ssp5a[j]='C';
-        ssp5b[j]='C';
-        ssp5c[j]='C';
-        
-        s6Z[j]='C';
-        s7K[j]='C';
-        s8A[j]='C';
-        s8B[j]='C';
-        s8K[j]='C';
-        s9A[j]='C';
-        s9B[j]='C';
-        s9K[j]='C';
-        s10A[j]='C';
-        s10B[j]='C';
-        s10K[j]='C';
-        s10W[j]='C';
-        s11A[j]='C';
-        s11B[j]='C';
-        s11C[j]='C';
-        s11E[j]='C';
-        s11F[j]='C';
-        s11W[j]='C';
-        s12A[j]='C';
-        s12B[j]='C';
-        s12D[j]='C';
-        s12E[j]='C';
-        s12K[j]='C';
-        s13A[j]='C';
-        s13B[j]='C';
-        s13K[j]='C';
-        sFCC[j]='C';
-        sHCP[j]='C';
-        sBCC_9[j]='C';
-        sBCC_15[j]='C';
-    }
 
     // particle fraction of particles in each cluster in each frame
     pop_per_frame = malloc(num_cluster_types*sizeof(double *));
@@ -798,6 +661,7 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
     for (i=0; i<num_cluster_types; ++i) {
         free(pop_per_frame[i]);
     }
+    free(pop_per_frame);
 
     for (i=0; i<msp3a; ++i) free(hcsp3a[i]);
     for (i=0; i<msp3b; ++i) free(hcsp3b[i]);

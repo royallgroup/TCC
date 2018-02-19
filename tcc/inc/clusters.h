@@ -1,32 +1,32 @@
 #ifndef CLUSTERS_H
 #define CLUSTERS_H
 
-void Clusters_Get6Z_C2v();
+void Clusters_Get6Z();
 void Cluster_Write_6Z();
 
 void Clusters_Get7K();
 void Cluster_Write_7K();
 
-void Clusters_Get8A_D2d();
+void Clusters_Get8A();
 void Cluster_Write_8A();
 
-void Clusters_Get8B_Cs();
+void Clusters_Get8B();
 void Clusters_8B_loop(int i, int clusSize, int s1, int s2);
 void Cluster_Write_8B();
 
 void Clusters_Get8K();
 void Cluster_Write_8K();
 
-void Clusters_Get9A_D3h();
+void Clusters_Get9A();
 void Cluster_Write_9A();
 
 void Clusters_Get9B_10B_11B_11E_12D();
 void Cluster_Write_9B();
 
-void Clusters_Get10B_C3v(int i, int j);
+void Clusters_Get10B(int i, int j);
 void Cluster_Write_10B();
 
-int Clusters_Get11B_C2v();
+int Clusters_Get11B();
 void Cluster_Write_11B();
 
 void Clusters_Get11W();
@@ -40,7 +40,7 @@ void populate_s11W();
 void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j);
 void Clust_Write_11E();
 
-int Clusters_Get12D_D2d(int j, int k, int sp1, int sp2);
+int Clusters_Get12D(int j, int k, int sp1, int sp2);
 void Cluster_Write_12D();
 
 void Clusters_Get9K();
@@ -50,7 +50,7 @@ void Clusters_Get10K();
 int is_particle_in_9K(int id_9k, int id_particle);
 void Cluster_Write_10K(int id_9K, int ep);
 
-void Clusters_Get10A_C3v();
+void Clusters_Get10A();
 void Cluster_Write_10A();
 
 void Clusters_Get10W();
@@ -94,7 +94,7 @@ void Clusters_Get12B_13A();
 void Clust_Write_12B();
 void Clust_Write_13A();
 
-void Clusters_Get13B_D5h();
+void Clusters_Get13B();
 void Cluster_Write_13B();
 
 void Clusters_GetFCC();

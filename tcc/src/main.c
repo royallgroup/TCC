@@ -43,7 +43,7 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
                          &hc12E, &hc12K, &hc13A, &hc13B, &hc13K, &hcFCC, &hcHCP, &hcBCC_9, &hcBCC_15};
 
 int main(int argc, char **argv) {
-    int e, f, i;
+    int current_frame_number, f, i;
     int write, remainder;
     char errMsg[1000], output[1000], other[1000];
     FILE *rXmol;
@@ -93,9 +93,9 @@ int main(int argc, char **argv) {
     printf("completed\n");
     
     f=0;
-    for (e=0;e<TOTALFRAMES;e++) {
-        remainder=e%SAMPLEFREQ;
-        if (remainder==0 && f<FRAMES && e>=STARTFROM) {
+    for (current_frame_number=0;current_frame_number<TOTALFRAMES;current_frame_number++) {
+        remainder=current_frame_number%SAMPLEFREQ;
+        if (remainder==0 && f<FRAMES && current_frame_number>=STARTFROM) {
             write=1;
         }
         else write=0;
@@ -104,11 +104,12 @@ int main(int argc, char **argv) {
         if (ISNOTCUBIC>=2) {
             Setup_ReadBox(rSizes);
         }
-        Setup_Readxyz(e,write,f,rXmol);
+        Setup_Readxyz(current_frame_number,write,f,rXmol);
         Setup_Output_Files();
 
         if (write==1) {
             Bonds_GetBonds(f);
+            if (doWriteBonds==1) Write_Bonds_File(f);
 
             for(i=0; i<N; i++) {
                 if (cnb[i]>maxnb) maxnb=cnb[i];
@@ -117,15 +118,15 @@ int main(int argc, char **argv) {
             if (dosp3==1) Rings_setSP3c();
             if (dosp4==1) Rings_setSP4c();
             if (dosp5==1) Rings_setSP5c();
-            if (do6Z==1) Clusters_Get6Z_C2v();
+            if (do6Z==1) Clusters_Get6Z();
             if (do7K==1) Clusters_Get7K();
-            if (do8A==1) Clusters_Get8A_D2d();
-            if (do8B==1) Clusters_Get8B_Cs();
+            if (do8A==1) Clusters_Get8A();
+            if (do8B==1) Clusters_Get8B();
             if (do8K==1) Clusters_Get8K();
-            if (do9A==1) Clusters_Get9A_D3h();
+            if (do9A==1) Clusters_Get9A();
             if (do9B==1) Clusters_Get9B_10B_11B_11E_12D();
             if (do9K==1) Clusters_Get9K();
-            if (do10A==1) Clusters_Get10A_C3v();
+            if (do10A==1) Clusters_Get10A();
             if (do10K==1) Clusters_Get10K();
             if (do10W==1) Clusters_Get10W();
             if (do11A==1) Clusters_Get11A();
@@ -135,7 +136,7 @@ int main(int argc, char **argv) {
             if (do12A==1) Clusters_Get12A();
             if (do12B==1) Clusters_Get12B_13A();
             if (do12K==1) Clusters_Get12K();
-            if (do13B==1) Clusters_Get13B_D5h();
+            if (do13B==1) Clusters_Get13B();
             if (doFCC==1) Clusters_GetFCC();
             if (doHCP==1) Clusters_GetHCP();
             if (doBCC9==1) Clusters_GetBCC_9();

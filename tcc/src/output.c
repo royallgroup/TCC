@@ -38,7 +38,7 @@ void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
 
 ////////// Bonds Writing //////////
 
-void Bonds_WriteBonds(int f) {
+void Write_Bonds_File(int f) {
     int i, j, sum;
     char errMsg[100];
     char output_file[200];
@@ -49,7 +49,7 @@ void Bonds_WriteBonds(int f) {
         sum+=cnb[i];
     }
     if (sum%2!=0) {
-        sprintf(errMsg,"Bonds_WriteBonds(): total number of bonds is not even %d\n",sum);
+        sprintf(errMsg,"Write_Bonds_File(): total number of bonds is not even %d\n",sum);
         exit(1);
     }
 

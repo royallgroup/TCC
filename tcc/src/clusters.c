@@ -4,7 +4,7 @@
 #include "tools.h"
 #include "string.h"
 
-void Clusters_Get6Z_C2v() {    // Detect 6Z clusters from 2 5A clusters
+void Clusters_Get6Z() {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
     int cnt;
@@ -268,7 +268,7 @@ void Cluster_Write_7K() {
     ++n7K;
 }
 
-void Clusters_Get8A_D2d() { // Detect 8A D2d clusters
+void Clusters_Get8A() { // Detect 8A D2d clusters
     int unc[2];
     int com[4];
     int i, j, j2, k, l, m;
@@ -281,7 +281,7 @@ void Clusters_Get8A_D2d() { // Detect 8A D2d clusters
     int *used_sp5b;
 
 
-    used_sp5b=malloc(nsp5b*sizeof(int)); if (used_sp5b==NULL) { sprintf(errMsg,"Clusters_Get8A_D2d(): used_sp5b[] malloc out of memory\n");  Error(errMsg); }
+    used_sp5b=malloc(nsp5b*sizeof(int)); if (used_sp5b==NULL) { sprintf(errMsg,"Clusters_Get8A(): used_sp5b[] malloc out of memory\n");  Error(errMsg); }
 
     for (i=0; i<nsp5b-1; ++i) {  // loop over all sp5b_i
         memset(used_sp5b, 0, nsp5b*sizeof(*used_sp5b));
@@ -551,7 +551,7 @@ void Cluster_Write_8A() {// hc8A key: (4 of 8A_possible_spindles increasing, 4 o
     ++n8A;
 }
 
-void Clusters_Get8B_Cs() { // Detect 8B Cs clusters
+void Clusters_Get8B() { // Detect 8B Cs clusters
     int i;
     int clusSize=8;
 
@@ -793,7 +793,7 @@ void Cluster_Write_8K() {
     ++n8K;
 }
 
-void Clusters_Get9A_D3h() {    // Detect 9A D3h clusters
+void Clusters_Get9A() {    // Detect 9A D3h clusters
     int i, j, j2, k, l, m, n;
     int db[2], ob[4];
     int flg;
@@ -1083,9 +1083,9 @@ void Clusters_Get9B_10B_11B_11E_12D() {    // Detect 9B, 10B, 11A, 11E & 12D
             hc9B[n9B][8]=sp1;
             Cluster_Write_9B();
 
-            if (do10B==1) Clusters_Get10B_C3v(i, j);
+            if (do10B==1) Clusters_Get10B(i, j);
             if (do11B==1) {
-                if (Clusters_Get11B_C2v()) {
+                if (Clusters_Get11B()) {
                     s11B[hc9B[n9B][8]] = 'S';
                     ++n11B;
                 }
@@ -1108,7 +1108,7 @@ void Cluster_Write_9B() {
     s9B[hc9B[n9B][8]] = 'S';
 }
 
-void Clusters_Get10B_C3v(int i, int j) {        // Return 1 if 9B is also 10B cluster
+void Clusters_Get10B(int i, int j) {        // Return 1 if 9B is also 10B cluster
     int k,l,m;
     int flg1, flg2;
     int trial[10];
@@ -1269,7 +1269,7 @@ void Cluster_Write_10B() {
     ++n10B;
 }
 
-int Clusters_Get11B_C2v() { // Detect 11B C2v clusters
+int Clusters_Get11B() { // Detect 11B C2v clusters
     //  11B is very similar to 11C & 11D
     // Call from 9B, the central particle must have 11 particles bonded to it.
     // The 10th & 11th particles are bonded to each other. They are both bonded
@@ -1540,7 +1540,7 @@ void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j) {    // Retu
                 Clust_Write_11E();
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D += Clusters_Get12D_D2d(j, k, sp2i, hcsp5c[k][6]);
+                if (do12D==1) n12D += Clusters_Get12D(j, k, sp2i, hcsp5c[k][6]);
 
                 ++n11E;
             }
@@ -1619,7 +1619,7 @@ void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j) {    // Retu
                 Clust_Write_11E();
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D += Clusters_Get12D_D2d(j, k, sp2i, hcsp5c[k][5]);
+                if (do12D==1) n12D += Clusters_Get12D(j, k, sp2i, hcsp5c[k][5]);
                 ++n11E;
             }
         }
@@ -1699,7 +1699,7 @@ void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j) {    // Retu
                 Clust_Write_11E();
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D += Clusters_Get12D_D2d(j, k, sp2j, hcsp5c[k][6]);
+                if (do12D==1) n12D += Clusters_Get12D(j, k, sp2j, hcsp5c[k][6]);
                 ++n11E;
             }
         }
@@ -1777,7 +1777,7 @@ void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j) {    // Retu
                 Clust_Write_11E();
 
                 // 12D - is there an SP5 spindle, > k & j, with sp5c[k][6] & sp2i
-                if (do12D==1) n12D += Clusters_Get12D_D2d(j, k, sp2j, hcsp5c[k][5]);
+                if (do12D==1) n12D += Clusters_Get12D(j, k, sp2j, hcsp5c[k][5]);
                 ++n11E;
             }
         }
@@ -1795,7 +1795,7 @@ void Clust_Write_11E() {
     }
 }
 
-int Clusters_Get12D_D2d(int j, int k, int sp1, int sp2) {  // Return 1 if 12B is also 11E
+int Clusters_Get12D(int j, int k, int sp1, int sp2) {  // Return 1 if 12B is also 11E
     int l, m, n, o, p, q;
     int flg1, flg2;
     int break_out;
@@ -2053,13 +2053,13 @@ void Cluster_Write_10K(int id_9k, int extra_particle) {
     n10K++;
 }
 
-void Clusters_Get10A_C3v() { // Detect 10A D4d clusters
+void Clusters_Get10A() { // Detect 10A D4d clusters
     int i, j, j2, k, l, m;
     char errMsg[1000];
     int clusSize=10;
     int *used_sp4b;
 
-    used_sp4b=malloc(nsp4b*sizeof(int)); if (used_sp4b==NULL) { sprintf(errMsg,"Clusters_Get10A_C3v(): used_sp4b[] malloc out of memory\n"); Error(errMsg); }
+    used_sp4b=malloc(nsp4b*sizeof(int)); if (used_sp4b==NULL) { sprintf(errMsg,"Clusters_Get10A(): used_sp4b[] malloc out of memory\n"); Error(errMsg); }
     for (i=0; i<nsp4b; ++i) used_sp4b[i] = 0;
 
     for (i=0; i<nsp4b-1; ++i) {  // loop over all sp4b_i
@@ -3481,7 +3481,7 @@ void Clust_Write_13A() {
     ++n13A;
 }
 
-void Clusters_Get13B_D5h() {   // Detect 13B D5h clusters, i.e. twisted icosahedra
+void Clusters_Get13B() {   // Detect 13B D5h clusters, i.e. twisted icosahedra
     int cp;
     int i, j, k, l, m;
     int flg;
