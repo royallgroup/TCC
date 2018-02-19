@@ -14,13 +14,13 @@ void Write_Raw(int f) {
             sprintf(file_name, "raw_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s",
                     fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_type]);
             file_pointer = fopen(file_name, "a");
-            Write_Raw_Xmol(f, file_pointer, raw_list[cluster_type][0]);
+            Write_Raw_Particle_Types(f, file_pointer, raw_list[cluster_type][0]);
             fclose(file_pointer);
         }
     }
 }
 
-void Write_Raw_Xmol(int f, FILE *thefile, const char *sarr) {
+void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
     int i;
 
     fprintf(thefile,"%d\nframe %d of %d\n",N,f+1,TOTALFRAMES);
@@ -99,13 +99,13 @@ void Write_Cluster(int f) {
 
     for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
         if (*do_cluster_list[cluster_type] == 1) {
-            Write_Cluster_Xmol(f, *num_cluster_list[cluster_type], *cluster_list[cluster_type],
-                               cluster_size[cluster_type], cluster_type);
+            Write_Cluster_Compostions(f, *num_cluster_list[cluster_type], *cluster_list[cluster_type],
+                                      cluster_size[cluster_type], cluster_type);
         }
     }
 }
 
-void Write_Cluster_Xmol(int f, int num_clusters, int **hc, int clusSize, int cluster_number) {
+void Write_Cluster_Compostions(int f, int num_clusters, int **hc, int clusSize, int cluster_number) {
     int i,j;
     char output_file[200];
     FILE *file_pointer;

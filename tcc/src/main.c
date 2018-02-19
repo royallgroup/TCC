@@ -43,145 +43,144 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
                          &hc12E, &hc12K, &hc13A, &hc13B, &hc13K, &hcFCC, &hcHCP, &hcBCC_9, &hcBCC_15};
 
 int main(int argc, char **argv) {
-	int e, f, i;
-	int write, remainder;
-	char errMsg[1000], output[1000], other[1000];
-	FILE *rXmol;
-	FILE *rSizes;
+    int e, f, i;
+    int write, remainder;
+    char errMsg[1000], output[1000], other[1000];
+    FILE *rXmol;
+    FILE *rSizes;
 
-	sprintf(fInputParamsName,"inputparameters.ini");
-	Setup_ReadIniFile(fInputParamsName);	// read input params
-	printf("box size file: %s\n",fBoxSizeName);
+    sprintf(fInputParamsName,"inputparameters.ini");
+    Setup_ReadIniFile(fInputParamsName);    // read input params
+    printf("box size file: %s\n",fBoxSizeName);
 
-	if (ISNOTCUBIC!=0){
-		if (USELIST==1) {
-		sprintf(errMsg,"main() : Error! Need switch cell list off for non-cubic/NPT system");	// Always test file open
-		Error(errMsg);
-		}
-	}
-	//read in box data if noncubic/NPT
-	if  (ISNOTCUBIC!=0){
-		printf("reading box size data from %s\n",fBoxSizeName);
-		rSizes=fopen(fBoxSizeName,"r");
-		if(rSizes==NULL)  {
-			sprintf(errMsg,"main() : Error opening boxfile %s",fBoxSizeName);
-			Error_no_free(errMsg);
-		}
-		fgets(other,1000,rSizes); //reads first line
-		if  (ISNOTCUBIC==1) {
-			Setup_ReadBox(rSizes);
-			printf("sidex: %f, sidey: %f, sidez: %f\n", sidex,sidey,sidez);
-		}
-		if  (ISNOTCUBIC==3) {
+    if (ISNOTCUBIC!=0){
+        if (USELIST==1) {
+        sprintf(errMsg,"main() : Error! Need switch cell list off for non-cubic/NPT system");    // Always test file open
+        Error(errMsg);
+        }
+    }
+    //read in box data if noncubic/NPT
+    if  (ISNOTCUBIC!=0){
+        printf("reading box size data from %s\n",fBoxSizeName);
+        rSizes=fopen(fBoxSizeName,"r");
+        if(rSizes==NULL)  {
+            sprintf(errMsg,"main() : Error opening boxfile %s",fBoxSizeName);
+            Error_no_free(errMsg);
+        }
+        fgets(other,1000,rSizes); //reads first line
+        if  (ISNOTCUBIC==1) {
+            Setup_ReadBox(rSizes);
+            printf("sidex: %f, sidey: %f, sidez: %f\n", sidex,sidey,sidez);
+        }
+        if  (ISNOTCUBIC==3) {
             printf("======> Triclinic Box \n");
         }
     }
 
-	printf("reading coordinate frames from %s\n\n",fXmolName);
-	rXmol=fopen(fXmolName,"r");	// open xmol trajecotry
-	if (rXmol==NULL)  {
-		sprintf(errMsg,"main() : Error opening file %s",fXmolName);	// Always test file open
-		Error_no_free(errMsg);
-	}
-	
-	Setup_InitStaticVars();
-	
+    printf("reading coordinate frames from %s\n\n",fXmolName);
+    rXmol=fopen(fXmolName,"r");    // open xmol trajecotry
+    if (rXmol==NULL)  {
+        sprintf(errMsg,"main() : Error opening file %s",fXmolName);    // Always test file open
+        Error_no_free(errMsg);
+    }
+    
+    Setup_InitStaticVars();
+    
     Setup_Cell_List();
-	
-	printf("initializing static variables...");
-	Stats_Init();
-	printf("completed\n");
-	
-	f=0;
-	for (e=0;e<TOTALFRAMES;e++) {
-		remainder=e%SAMPLEFREQ;
-		if (remainder==0 && f<FRAMES && e>=STARTFROM) {
-			write=1;
-		}
-		else write=0;
-		if (write==1) Setup_ResetStaticVars();
+    
+    printf("initializing static variables...");
+    Stats_Init();
+    printf("completed\n");
+    
+    f=0;
+    for (e=0;e<TOTALFRAMES;e++) {
+        remainder=e%SAMPLEFREQ;
+        if (remainder==0 && f<FRAMES && e>=STARTFROM) {
+            write=1;
+        }
+        else write=0;
+        if (write==1) Setup_ResetStaticVars();
 
-		if (ISNOTCUBIC>=2) {
-			Setup_ReadBox(rSizes);
-		}
-		Setup_Readxyz(e,write,f,rXmol);
-		Setup_Output_Files();
+        if (ISNOTCUBIC>=2) {
+            Setup_ReadBox(rSizes);
+        }
+        Setup_Readxyz(e,write,f,rXmol);
+        Setup_Output_Files();
 
-		if (write==1) {
-			Bonds_GetBonds(f);
+        if (write==1) {
+            Bonds_GetBonds(f);
 
-			for(i=0; i<N; i++) {
-				if (cnb[i]>maxnb) maxnb=cnb[i];
-				if (dosp3==1) Rings_gSP3(i);
-			}
-			if (dosp3==1) Rings_setSP3c();
-			if (dosp4==1) Rings_setSP4c();
-			if (dosp5==1) Rings_setSP5c();
-			if (do6Z==1) Clusters_Get6Z_C2v();
-			if (do7K==1) Clusters_Get7K();
-			if (do8A==1) Clusters_Get8A_D2d();
-			if (do8B==1) Clusters_Get8B_Cs();
-			if (do8K==1) Clusters_Get8K();
-			if (do9A==1) Clusters_Get9A_D3h();
-			if (do9B==1) Clusters_Get9B_10B_11B_11E_12D();
-			if (do9K==1) Clusters_Get9K();
-			if (do10A==1) Clusters_Get10A_C3v();
+            for(i=0; i<N; i++) {
+                if (cnb[i]>maxnb) maxnb=cnb[i];
+                if (dosp3==1) Rings_gSP3(i);
+            }
+            if (dosp3==1) Rings_setSP3c();
+            if (dosp4==1) Rings_setSP4c();
+            if (dosp5==1) Rings_setSP5c();
+            if (do6Z==1) Clusters_Get6Z_C2v();
+            if (do7K==1) Clusters_Get7K();
+            if (do8A==1) Clusters_Get8A_D2d();
+            if (do8B==1) Clusters_Get8B_Cs();
+            if (do8K==1) Clusters_Get8K();
+            if (do9A==1) Clusters_Get9A_D3h();
+            if (do9B==1) Clusters_Get9B_10B_11B_11E_12D();
+            if (do9K==1) Clusters_Get9K();
+            if (do10A==1) Clusters_Get10A_C3v();
             if (do10K==1) Clusters_Get10K();
-			if (do10W==1) Clusters_Get10W();
-			if (do11A==1) Clusters_Get11A();
-			if (do11C==1) Clusters_Get11C();
-			if (do11F==1) Clusters_Get11F_12E_13K();
-			if (do11W==1) Clusters_Get11W();
+            if (do10W==1) Clusters_Get10W();
+            if (do11A==1) Clusters_Get11A();
+            if (do11C==1) Clusters_Get11C();
+            if (do11F==1) Clusters_Get11F_12E_13K();
+            if (do11W==1) Clusters_Get11W();
             if (do12A==1) Clusters_Get12A();
-			if (do12B==1) Clusters_Get12B_13A();
-			if (do12K==1) Clusters_Get12K();
-			if (do13B==1) Clusters_Get13B_D5h();
-			if (doFCC==1) Clusters_GetFCC();
-			if (doHCP==1) Clusters_GetHCP();
-			if (doBCC9==1) Clusters_GetBCC_9();
-			if (doBCC15==1) Clusters_GetBCC_15();
+            if (do12B==1) Clusters_Get12B_13A();
+            if (do12K==1) Clusters_Get12K();
+            if (do13B==1) Clusters_Get13B_D5h();
+            if (doFCC==1) Clusters_GetFCC();
+            if (doHCP==1) Clusters_GetHCP();
+            if (doBCC9==1) Clusters_GetBCC_9();
+            if (doBCC15==1) Clusters_GetBCC_15();
 
             // Write output files
-            Accuumlate_Stats();
-			if (doWriteClus==1) Write_Cluster(f);
+            Accumulate_Stats();
+            Stats_Analyse();
+            Pop_Per_Frame(f);
+
+            if (doWriteClus==1) Write_Cluster(f);
             if (doWriteRaw==1) Write_Raw(f);
-			if (do11AcenXyz==1) Write_Cluster_Centers_xyz(f, 24);
-			if (do13AcenXyz==1) Write_Cluster_Centers_xyz(f, 35);
+            if (do11AcenXyz==1) Write_Cluster_Centers_xyz(f, 24);
+            if (do13AcenXyz==1) Write_Cluster_Centers_xyz(f, 35);
 
-			Stats_Reset();
-			Stats_Analyse();
-			Pop_Per_Frame(f);
-
-			printf("f%d complete\n",f);
-			f++;
-		}
-		if (f==FRAMES) break;
-	}
+            printf("f%d complete\n",f);
+            f++;
+        }
+        if (f==FRAMES) break;
+    }
 
 
-	fclose(rXmol);
+    fclose(rXmol);
 
-	if (f!=FRAMES) {
-		printf("\n\n\n!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!\n\n\n");
-		printf("Analysed frames %d less than expected number of FRAMES %d from %s\n\n",f,FRAMES,fInputParamsName);
-	}
-	
+    if (f!=FRAMES) {
+        printf("\n\n\n!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!\n\n\n");
+        printf("Analysed frames %d less than expected number of FRAMES %d from %s\n\n",f,FRAMES,fInputParamsName);
+    }
+    
     Normalise_Populations();
-	
-	if (doWritePopPerFrame==1) {
+    
+    if (doWritePopPerFrame==1) {
         Write_Pop_Per_Frame(f);
-	}	
+    }    
 
-	sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-	printf("\n");
-	Stats_Report(output);
-	printf("\nWritten %s\n\n",output);
+    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+    printf("\n");
+    Stats_Report(output);
+    printf("\nWritten %s\n\n",output);
 
-	Setup_FreeStaticVars();
-	Stats_FreeMem();
-	if (ISNOTCUBIC > 0) {
+    Setup_FreeStaticVars();
+    Stats_FreeMem();
+    if (ISNOTCUBIC > 0) {
         fclose(rSizes);
     }
-	printf("\n\nFIN \n\n");
-	return 0;
+    printf("\n\nFIN \n\n");
+    return 0;
 }

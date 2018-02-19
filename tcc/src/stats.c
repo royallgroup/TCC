@@ -2,11 +2,12 @@
 #include "globals.h"
 #include "tools.h"
 
+void count_gross_clusters();
+
 void Stats_Init() {
     int i;
     char errMsg[1000];
 
-    a5=malloc(N*sizeof(int));	if (a5==NULL) { sprintf(errMsg,"Stats_Init(): a5[] malloc out of memory\n");	Error(errMsg); }
     a6=malloc(N*sizeof(int));	if (a6==NULL) { sprintf(errMsg,"Stats_Init(): a6[] malloc out of memory\n");	Error(errMsg); }
     a7=malloc(N*sizeof(int));	if (a7==NULL) { sprintf(errMsg,"Stats_Init(): a7[] malloc out of memory\n");	Error(errMsg); }
     a8=malloc(N*sizeof(int));	if (a8==NULL) { sprintf(errMsg,"Stats_Init(): a8[] malloc out of memory\n");	Error(errMsg); }
@@ -15,10 +16,9 @@ void Stats_Init() {
     a11=malloc(N*sizeof(int));	if (a11==NULL) { sprintf(errMsg,"Stats_Init(): a11[] malloc out of memory\n");	Error(errMsg); }
     a12=malloc(N*sizeof(int));	if (a12==NULL) { sprintf(errMsg,"Stats_Init(): a12[] malloc out of memory\n");	Error(errMsg); }
     a13=malloc(N*sizeof(int));	if (a13==NULL) { sprintf(errMsg,"Stats_Init(): a13[] malloc out of memory\n");	Error(errMsg); }
-    a15=malloc(N*sizeof(int));	if (a15==NULL) { sprintf(errMsg,"Stats_Init(): a15[] malloc out of memory\n");	Error(errMsg); }
 
     for(i=0;i<N;i++) {
-        a5[i]=a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=a15[i]=0;
+        a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=0;
     }
 
     net_clusters = malloc(num_cluster_types*sizeof(int));
@@ -32,16 +32,7 @@ void Stats_Init() {
     }
 }
 
-void Stats_Reset() {
-    int i;
-
-    for(i=0;i<N;i++) {
-        a5[i]=a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=a15[i]=0;
-    }
-}
-
 void Stats_FreeMem() {
-    free(a5);
     free(a6);
     free(a7);
     free(a8);
@@ -50,7 +41,6 @@ void Stats_FreeMem() {
     free(a11);
     free(a12);
     free(a13);
-    free(a15);
     free(net_clusters);
     free(gross_clusters);
     free(total_clusters);
@@ -102,52 +92,63 @@ void Stats_SetA() { // Set arrays to true if the ith particle is a member of any
 }
 
 void Stats_Analyse() {
+    int i;
+
+    for(i=0;i<N;i++) {
+        a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=0;
+    }
+
+    count_gross_clusters();
+
+    Stats_SetA();
+    for(i=0; i<N; ++i){
+        if(ssp3c[i] != 'C' && !a6[i]) ++net_clusters[2];
+        if(ssp4c[i] != 'C' && !a7[i]) ++net_clusters[5];
+        if(ssp5c[i] != 'C' && !a8[i]) ++net_clusters[8];
+        if(s6Z[i] != 'C' && !a7[i]) ++net_clusters[9];
+        if(s7K[i] != 'C' && !a7[i]) ++net_clusters[10];
+        if(s8A[i] != 'C' && !a9[i]) ++net_clusters[11];
+        if(s8B[i] != 'C' && !a9[i]) ++net_clusters[12];
+        if(s8K[i] != 'C' && !a9[i]) ++net_clusters[13];
+        if(s9A[i] != 'C' && !a10[i]) ++net_clusters[14];
+        if(s9B[i] != 'C' && !a10[i]) ++net_clusters[15];
+        if(s9K[i] != 'C' && !a10[i]) ++net_clusters[16];
+        if(s10A[i] != 'C' && !a11[i]) ++net_clusters[17];
+        if(s10B[i] != 'C' && !a11[i]) ++net_clusters[18];
+        if(s10K[i] != 'C' && !a11[i]) ++net_clusters[19];
+        if(s10W[i] != 'C' && !a11[i]) ++net_clusters[20];
+        if(s11A[i] != 'C' && !a12[i]) ++net_clusters[21];
+        if(s11B[i] != 'C' && !a12[i]) ++net_clusters[22];
+        if(s11C[i] != 'C' && !a12[i]) ++net_clusters[23];
+        if(s11E[i] != 'C' && !a12[i]) ++net_clusters[24];
+        if(s11F[i] != 'C' && !a12[i]) ++net_clusters[25];
+        if(s11W[i] != 'C' && !a12[i]) ++net_clusters[26];
+        if(s12A[i] != 'C' && !a13[i]) ++net_clusters[27];
+        if(s12B[i] != 'C' && !a13[i]) ++net_clusters[28];
+        if(s12D[i] != 'C' && !a13[i]) ++net_clusters[29];
+        if(s12E[i] != 'C' && !a13[i]) ++net_clusters[30];
+        if(s12K[i] != 'C' && !a13[i]) ++net_clusters[31];
+        if(s13A[i] != 'C') ++net_clusters[32];
+        if(s13B[i] != 'C') ++net_clusters[33];
+        if(s13K[i] != 'C') ++net_clusters[34];
+        if(sFCC[i] != 'C') ++net_clusters[35];
+        if(sHCP[i] != 'C') ++net_clusters[36];
+        if(sBCC_9[i] != 'C') ++net_clusters[37];
+        if(sBCC_15[i] != 'C') ++net_clusters[38];
+    }
+}
+
+void count_gross_clusters() {
     int i, cluster_type;
 
-    for(i=0; i<N; ++i){
+    for(i=0; i < N; ++i){
         for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
             if ((*raw_list[cluster_type])[i] != 'C') ++gross_clusters[cluster_type];
         }
     }
-    Stats_SetA();
-    for(i=0; i<N; ++i){
-        if(ssp3c[i] != 'C' && !a6[i]) ++net_clusters[3];
-        if(ssp4c[i] != 'C' && !a7[i]) ++net_clusters[7];
-        if(s6Z[i] != 'C' && !a7[i]) ++net_clusters[8];
-        if(s7K[i] != 'C' && !a7[i]) ++net_clusters[9];
-        if(ssp5c[i] != 'C' && !a8[i]) ++net_clusters[13];
-        if(s8A[i] != 'C' && !a9[i]) ++net_clusters[14];
-        if(s8B[i] != 'C' && !a9[i]) ++net_clusters[15];
-        if(s8K[i] != 'C' && !a9[i]) ++net_clusters[16];
-        if(s9A[i] != 'C' && !a10[i]) ++net_clusters[17];
-        if(s9B[i] != 'C' && !a10[i]) ++net_clusters[18];
-        if(s9K[i] != 'C' && !a10[i]) ++net_clusters[19];
-        if(s10A[i] != 'C' && !a11[i]) ++net_clusters[20];
-        if(s10B[i] != 'C' && !a11[i]) ++net_clusters[21];
-        if(s10K[i] != 'C' && !a11[i]) ++net_clusters[22];
-        if(s10W[i] != 'C' && !a11[i]) ++net_clusters[23];
-        if(s11A[i] != 'C' && !a12[i]) ++net_clusters[24];
-        if(s11B[i] != 'C' && !a12[i]) ++net_clusters[25];
-        if(s11C[i] != 'C' && !a12[i]) ++net_clusters[26];
-        if(s11E[i] != 'C' && !a12[i]) ++net_clusters[27];
-        if(s11F[i] != 'C' && !a12[i]) ++net_clusters[28];
-        if(s11W[i] != 'C' && !a12[i]) ++net_clusters[29];
-        if(s12A[i] != 'C' && !a13[i]) ++net_clusters[30];
-        if(s12B[i] != 'C' && !a13[i]) ++net_clusters[31];
-        if(s12D[i] != 'C' && !a13[i]) ++net_clusters[32];
-        if(s12E[i] != 'C' && !a13[i]) ++net_clusters[33];
-        if(s12K[i] != 'C' && !a13[i]) ++net_clusters[34];
-        if(s13A[i] != 'C') ++net_clusters[35];
-        if(s13B[i] != 'C') ++net_clusters[36];
-        if(s13K[i] != 'C') ++net_clusters[37];
-        if(sFCC[i] != 'C') ++net_clusters[38];
-        if(sHCP[i] != 'C') ++net_clusters[39];
-        if(sBCC_9[i] != 'C') ++net_clusters[40];
-        if(sBCC_15[i] != 'C') ++net_clusters[41];
-    }
 }
 
-void Accuumlate_Stats() {
+void Accumulate_Stats() {
     int i;
 
     for(i=0; i<num_cluster_types; i++) {
