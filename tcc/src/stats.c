@@ -106,7 +106,7 @@ void Stats_Analyse() {
 
     for(i=0; i<N; ++i){
         for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
-            if ((*raw_cluster_list[cluster_type])[i] != 'C') ++gross_clusters[cluster_type];
+            if ((*raw_list[cluster_type])[i] != 'C') ++gross_clusters[cluster_type];
         }
     }
     Stats_SetA();
@@ -194,7 +194,7 @@ void Pop_Per_Frame(int f) {
 
     for(i=0; i<N; ++i){
         for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
-            if ((*raw_cluster_list[cluster_type])[i] != 'C') pop_per_frame[cluster_type][f] += 1.0;
+            if ((*raw_list[cluster_type])[i] != 'C') pop_per_frame[cluster_type][f] += 1.0;
         }
     }
 

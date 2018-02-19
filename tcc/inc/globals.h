@@ -14,10 +14,13 @@ int SAMPLEFREQ; // frequency at which to take frames from the xmol file
 int TOTALFRAMES;
 
 extern int num_cluster_types;  // The number of items in the cluster names array
+extern int cluster_size[]; // A list of the number of particles in each cluster type
 extern char* cluster_names[];  // A list of strings of cluster names
 extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
 extern int* num_cluster_list[];  // A list of pointers to the nclusts variables
-extern char** raw_cluster_list[];  // A list of pointers to the raw_clusts storage variables
+extern char** raw_list[];  // A list of pointers to the "s" raw storage variables
+extern int*** cluster_list[];  // A list of pointers to the "hc" cluster storage variables
+
 
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
@@ -76,9 +79,9 @@ int do13A, do13B, do13K;
 int doFCC, doHCP, doBCC9, doBCC15;
 
 // number of clusters of particlar type in current frame
-int nsp3, nsp3a, nsp3b, nsp3c;
-int nsp4, nsp4a, nsp4b, nsp4c;
-int nsp5, nsp5a, nsp5b, nsp5c;
+int nsp3a, nsp3b, nsp3c;
+int nsp4a, nsp4b, nsp4c;
+int nsp5a, nsp5b, nsp5c;
 int n6Z, n7K;
 int n8A, n8B, n8K;
 int n9A, n9B, n9K;
@@ -125,9 +128,9 @@ int **mem_sp5b, *nmem_sp5b, mmem_sp5b;
 int **mem_sp5c, *nmem_sp5c, mmem_sp5c;
 
 // Raw lists of particle identity, output to RAW_clust files and reset each frame
-char *ssp3, *ssp3a, *ssp3b, *ssp3c;
-char *ssp4, *ssp4a, *ssp4b, *ssp4c;
-char *ssp5, *ssp5a, *ssp5b, *ssp5c;
+char *ssp3a, *ssp3b, *ssp3c;
+char *ssp4a, *ssp4b, *ssp4c;
+char *ssp5a, *ssp5b, *ssp5c;
 char *s6Z, *s7K;
 char *s8A, *s8B, *s8K;
 char *s9A, *s9B, *s9K;

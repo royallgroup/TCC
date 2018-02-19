@@ -150,8 +150,6 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
 
         ++nsp3a;
     }
-    
-    ++nsp3;
 }
 
 void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, check SP4 ring and if so detect SP4a/b/c cluster
@@ -247,8 +245,6 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
         
         ++nsp4a;
     }
-    
-    ++nsp4;
 }
 
 void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n3,n4}, check SP5 ring and if so detect SP5a/b/c cluster
@@ -348,8 +344,6 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
         
         ++nsp5a;
     }
-    
-    ++nsp5;
 }
 
 void Rings_setSP3c() { // store cluster 5A D3h from Bonds_aSP3
@@ -374,22 +368,6 @@ void Rings_setSP3c() { // store cluster 5A D3h from Bonds_aSP3
         if (ssp3c[hcsp3c[i][2]] == 'C') ssp3c[hcsp3c[i][2]] = 'B';
         ssp3c[hcsp3c[i][3]] = 'O';
         ssp3c[hcsp3c[i][4]] = 'O';
-    }
-
-    for (i=0; i<nsp3a; i++) {
-        ssp3[hcsp3a[i][0]] = 'B';
-        ssp3[hcsp3a[i][1]] = 'B';
-        ssp3[hcsp3a[i][2]] = 'B';
-    }
-    for (i=0; i<nsp3b; i++) {
-        ssp3[hcsp3b[i][0]] = 'B';
-        ssp3[hcsp3b[i][1]] = 'B';
-        ssp3[hcsp3b[i][2]] = 'B';
-    }
-    for (i=0; i<nsp3c; i++) {
-        ssp3[hcsp3c[i][0]] = 'B';
-        ssp3[hcsp3c[i][1]] = 'B';
-        ssp3[hcsp3c[i][2]] = 'B';
     }
 }
 
@@ -418,25 +396,6 @@ void Rings_setSP4c() { // store cluster 6A Oh from Bonds_aSP4()
         if (ssp4c[hcsp4c[i][3]] == 'C') ssp4c[hcsp4c[i][3]] = 'B';
         ssp4c[hcsp4c[i][4]] = 'O';
         ssp4c[hcsp4c[i][5]] = 'O';
-    }
-
-    for (i=0; i<nsp4a; i++) {
-        ssp4[hcsp4a[i][0]] = 'B';
-        ssp4[hcsp4a[i][1]] = 'B';
-        ssp4[hcsp4a[i][2]] = 'B';
-        ssp4[hcsp4a[i][3]] = 'B';
-    }
-    for (i=0; i<nsp4b; i++) {
-        ssp4[hcsp4b[i][0]] = 'B';
-        ssp4[hcsp4b[i][1]] = 'B';
-        ssp4[hcsp4b[i][2]] = 'B';
-        ssp4[hcsp4b[i][3]] = 'B';
-    }
-    for (i=0; i<nsp4c; ++i) {
-        ssp4[hcsp4c[i][0]] = 'B';
-        ssp4[hcsp4c[i][1]] = 'B';
-        ssp4[hcsp4c[i][2]] = 'B';
-        ssp4[hcsp4c[i][3]] = 'B';
     }
 }
 
@@ -468,28 +427,6 @@ void Rings_setSP5c() { // store cluster 7A D5h from Bonds_aSP5()
         if (ssp5c[hcsp5c[i][4]] == 'C') ssp5c[hcsp5c[i][4]] = 'B';
         ssp5c[hcsp5c[i][5]] = 'O';
         ssp5c[hcsp5c[i][6]] = 'O';
-    }
-
-    for (i=0; i<nsp5a; i++) {
-        ssp5[hcsp5a[i][0]] = 'B';
-        ssp5[hcsp5a[i][1]] = 'B';
-        ssp5[hcsp5a[i][2]] = 'B';
-        ssp5[hcsp5a[i][3]] = 'B';
-        ssp5[hcsp5a[i][4]] = 'B';
-    }
-    for (i=0; i<nsp5b; i++) {
-        ssp5[hcsp5b[i][0]] = 'B';
-        ssp5[hcsp5b[i][1]] = 'B';
-        ssp5[hcsp5b[i][2]] = 'B';
-        ssp5[hcsp5b[i][3]] = 'B';
-        ssp5[hcsp5b[i][4]] = 'B';
-    }
-    for (i=0; i<nsp5c; ++i) {
-        ssp5[hcsp5c[i][0]] = 'B';
-        ssp5[hcsp5c[i][1]] = 'B';
-        ssp5[hcsp5c[i][2]] = 'B';
-        ssp5[hcsp5c[i][3]] = 'B';
-        ssp5[hcsp5c[i][4]] = 'B';
     }
 }
 
