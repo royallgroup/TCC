@@ -68,35 +68,6 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
 
 }
 
-void Bonds_WriteBonds(int f) {
-    int i, j, sum;
-    char errMsg[100];
-    char output_file[200];
-    FILE *bondsout;
-
-    sum=0;
-    for (i=0; i<N; ++i) {
-        sum+=cnb[i];
-    }
-    if (sum%2!=0) {
-        sprintf(errMsg,"Bonds_WriteBonds(): total number of bonds is not even %d\n",sum);
-        exit(1);
-    }
-
-    sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    bondsout=fopen(output_file, "w");
-
-    fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
-    for (i=0; i<N; ++i) {
-        fprintf(bondsout,"%d    %d",i,cnb[i]);
-        for (j=0; j<cnb[i]; ++j) {
-            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],bondlengths[i][j]);
-        }
-        fprintf(bondsout,"\n");
-    }
-    fclose(bondsout);
-}
-
 void Bonds_CheckSymmetric() {
     int i, j, k;
 

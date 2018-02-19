@@ -93,7 +93,8 @@ int main(int argc, char **argv) {
 			Setup_ReadBox(rSizes);
 		}
 		Setup_Readxyz(e,write,f,rXmol);
-		
+		Setup_Output_Files();
+
 		if (write==1) {
 			Bonds_GetBonds(f);
 
@@ -132,8 +133,8 @@ int main(int argc, char **argv) {
             Accuumlate_Stats();
 			if (doWriteClus==1) Write_Cluster(f);
             if (doWriteRaw==1) Write_Raw(f);
-			if (do11AcenXmol==1) Write_Cluster_Centers_xyz(f, 24);
-			if (do13AcenXmol==1) Write_Cluster_Centers_xyz(f, 35);
+			if (do11AcenXyz==1) Write_Cluster_Centers_xyz(f, 24);
+			if (do13AcenXyz==1) Write_Cluster_Centers_xyz(f, 35);
 
 			Stats_Reset();
 			Stats_Analyse();

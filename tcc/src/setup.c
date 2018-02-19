@@ -47,8 +47,8 @@ void Setup_ReadIniFile(char *filename) {
     doWriteBonds = iniparser_getboolean(ini, "output:bonds", -1);
     doWriteClus = iniparser_getboolean(ini, "output:clusts", -1);
     doWriteRaw = iniparser_getboolean(ini, "output:raw", -1);
-    do11AcenXmol = iniparser_getboolean(ini, "output:11a", -1);
-    do13AcenXmol = iniparser_getboolean(ini, "output:13a", -1);
+    do11AcenXyz = iniparser_getboolean(ini, "output:11a", -1);
+    do13AcenXyz = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
     doSubClusts = iniparser_getboolean(ini, "output:subclusters", -1);
     PRINTINFO = iniparser_getboolean(ini, "extra:debug", -1);
@@ -91,6 +91,66 @@ void Setup_ReadIniFile(char *filename) {
     }
 
     iniparser_freedict(ini);
+}
+
+void Setup_Output_Files() {
+    char output_file[200];
+    FILE *file_pointer;
+    int cluster_number;
+
+    if(do11AcenXyz == 1) {
+        make_directory("centers_output");
+        for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
+            if (*do_cluster_list[cluster_number] == 1) {
+                sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
+                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[24]);
+                file_pointer = open_file(output_file, "w");
+                fclose(file_pointer);
+            }
+        }
+    }
+
+    if(do13AcenXyz == 1) {
+        make_directory("centers_output");
+        for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
+            if (*do_cluster_list[cluster_number] == 1) {
+                sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
+                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[35]);
+                file_pointer = open_file(output_file, "w");
+                fclose(file_pointer);
+            }
+        }
+    }
+
+    if(doWriteBonds == 1) {
+        sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+        file_pointer=fopen(output_file, "w");
+        fclose(file_pointer);
+    }
+
+    if(doWriteRaw == 1) {
+        make_directory("raw_output");
+        for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
+            if (*do_cluster_list[cluster_number] == 1) {
+                sprintf(output_file, "raw_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s",
+                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+                file_pointer = open_file(output_file, "w");
+                fclose(file_pointer);
+            }
+        }
+    }
+
+    if(doWriteClus == 1) {
+        make_directory("cluster_output");
+        for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
+            if (*do_cluster_list[cluster_number] == 1) {
+                sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
+                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+                file_pointer = open_file(output_file, "w");
+                fclose(file_pointer);
+            }
+        }
+    }
 }
 
 void Setup_ReadBox(FILE *readIn)  {

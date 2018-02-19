@@ -36,6 +36,37 @@ void Write_Raw_Xmol(int f, FILE *thefile, const char *sarr) {
     }
 }
 
+////////// Bonds Writing //////////
+
+void Bonds_WriteBonds(int f) {
+    int i, j, sum;
+    char errMsg[100];
+    char output_file[200];
+    FILE *bondsout;
+
+    sum=0;
+    for (i=0; i<N; ++i) {
+        sum+=cnb[i];
+    }
+    if (sum%2!=0) {
+        sprintf(errMsg,"Bonds_WriteBonds(): total number of bonds is not even %d\n",sum);
+        exit(1);
+    }
+
+    sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+    bondsout=fopen(output_file, "a");
+
+    fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
+    for (i=0; i<N; ++i) {
+        fprintf(bondsout,"%d    %d",i,cnb[i]);
+        for (j=0; j<cnb[i]; ++j) {
+            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],bondlengths[i][j]);
+        }
+        fprintf(bondsout,"\n");
+    }
+    fclose(bondsout);
+}
+
 ////////// Centers Writing //////////
 
 void Write_Cluster_Centers_xyz(int f, int cluster_type) {
@@ -44,8 +75,7 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
     FILE *output_file;
     char file_name[200];
 
-    make_directory("centers_output");
-    sprintf(file_name, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s_cen.xmol",
+    sprintf(file_name, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
             fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, cluster_names[cluster_type]);
 
     output_file = fopen(file_name, "a");
@@ -69,7 +99,6 @@ void Write_Cluster_Xmol(int f, int num_clusters, int **hc, int clusSize, int clu
     char output_file[200];
     FILE *file_pointer;
 
-    make_directory("cluster_output");
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
             fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
     file_pointer = open_file(output_file, "a");
@@ -89,7 +118,6 @@ void Write_Cluster_sp3(int f, int cluster_number) {
     char output_file[200];
     FILE* file_pointer;
 
-    make_directory("cluster_output");
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
             fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
     file_pointer = open_file(output_file, "a");
@@ -119,7 +147,6 @@ void Write_Cluster_sp4(int f, int cluster_number) {
     char output_file[200];
     FILE* file_pointer;
 
-    make_directory("cluster_output");
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
             fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
     file_pointer = open_file(output_file, "a");
@@ -149,7 +176,6 @@ void Write_Cluster_sp5(int f, int cluster_number) {
     char output_file[200];
     FILE* file_pointer;
 
-    make_directory("cluster_output");
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
             fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
     file_pointer = open_file(output_file, "a");

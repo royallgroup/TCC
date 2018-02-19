@@ -38,8 +38,8 @@ int doWriteBonds;   // write bonds files out
 
 int doWriteClus;    // write out indices of each detected cluster
 int doWriteRaw; // write raw_*** cluster xmol files out
-int do11AcenXmol; // write centres of 11A   
-int do13AcenXmol; // write centres of 13A   
+int do11AcenXyz; // write centres of 11A
+int do13AcenXyz; // write centres of 13A
 int doWritePopPerFrame; // write pop_per_frame file
 
 int initNoStatic;   // initial size of static cluster arrays
