@@ -159,7 +159,6 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBonds(): particle %d of %d done\n",i+1,N);
     }
     printf("\n");
-    if (doWriteBonds==1) Bonds_WriteBonds(f);
     printf("Got Bonds\n");
 }
 
