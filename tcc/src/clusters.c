@@ -1809,7 +1809,6 @@ int Clusters_Get12D(int j, int k, int sp1, int sp2) {  // Return 1 if 12B is als
             flg1=flg2=0;
             p=11;
             q=0;
-            break_out=0;
             for (n=0; n<5; n++) {
                 if (hcsp5c[l][n]==hc11E[n11E][0]) {
                     flg1=1;
@@ -1819,6 +1818,7 @@ int Clusters_Get12D(int j, int k, int sp1, int sp2) {  // Return 1 if 12B is als
                     flg2=1;
                     continue;
                 }
+                break_out=0;
                 for (o=4; o<11; o++) {
                     if (hcsp5c[l][n]==hc11E[n11E][o]) {
                         q++;
