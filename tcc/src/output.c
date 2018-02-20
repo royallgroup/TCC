@@ -157,10 +157,16 @@ void Write_Pop_Per_Frame(int f) {
     fprintf(file_pointer,"\n");
 
     for (f=0;f<FRAMES;f++) {
-        fprintf(file_pointer,"%d",f);
+        fprintf(file_pointer,"%d	",f);
         for(i=0; i<num_cluster_types; i++) {
-            fprintf(file_pointer, "%.15lg	", pop_per_frame[i][f]);
+            if(*do_cluster_list[i] == 1) {
+                fprintf(file_pointer, "%.15lg	", pop_per_frame[i][f]);
+            }
+            else {
+                fprintf(file_pointer, "NA	");
+            }
         }
+        fprintf(file_pointer,"\n");
     }
     fclose(file_pointer);
 }
