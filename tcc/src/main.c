@@ -85,13 +85,10 @@ int main(int argc, char **argv) {
     }
     
     Setup_InitStaticVars();
-    
     Setup_Cell_List();
-    
-    printf("initializing static variables...");
     Stats_Init();
-    printf("completed\n");
-    
+    Setup_Output_Files();
+
     f=0;
     for (current_frame_number=0;current_frame_number<TOTALFRAMES;current_frame_number++) {
         remainder=current_frame_number%SAMPLEFREQ;
@@ -105,7 +102,6 @@ int main(int argc, char **argv) {
             Setup_ReadBox(rSizes);
         }
         Setup_Readxyz(current_frame_number,write,f,rXmol);
-        Setup_Output_Files();
 
         if (write==1) {
             Bonds_GetBonds(f);
