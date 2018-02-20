@@ -128,6 +128,12 @@ void Setup_Output_Files() {
         fclose(file_pointer);
     }
 
+    if(doWritePopPerFrame == 1) {
+        sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+        file_pointer=fopen(output_file, "w");
+        fclose(file_pointer);
+    }
+
     if(doWriteRaw == 1) {
         make_directory("raw_output");
         for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
