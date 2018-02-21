@@ -82,7 +82,7 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
 
     for(i=0; i<N; i++) if((*raw_list[cluster_type])[i]=='S') ++num_centers;
 
-    fprintf(output_file,"%d\nframe %d of %d\n",num_centers,f,FRAMES);
+    fprintf(output_file,"%d\nframe %d of %d\n",num_centers,f+1,FRAMES);
     for(i=0; i<N; i++) {
         if ((*raw_list[cluster_type])[i]=='S') {
             fprintf(output_file ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
