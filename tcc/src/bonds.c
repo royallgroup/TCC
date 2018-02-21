@@ -1,8 +1,11 @@
+#include "math.h"
 #include "bonds.h"
+#include "globals.h"
+#include "tools.h"
 
 double Bonds_GetR2(int i, int j) {  // get separation between particles i and j
     double dx, dy, dz;
-    
+
     dx = x[i] - x[j];
     dy = y[i] - y[j];
     dz = z[i] - z[j];
@@ -65,33 +68,9 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
 
 }
 
-void Bonds_WriteBonds(int f) {
-    int i, j, sum;
-    char errMsg[1000];
-    
-    sum=0;
-    for (i=0; i<N; ++i) {
-        sum+=cnb[i];
-    }
-    if (sum%2!=0) {
-        sprintf(errMsg,"Bonds_WriteBonds(): total number of bonds is not even %d\n",sum);
-        exit(1);
-    }
-    
-    fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
-    for (i=0; i<N; ++i) {
-        fprintf(bondsout,"%d    %d",i,cnb[i]);
-        for (j=0; j<cnb[i]; ++j) {
-            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],bondlengths[i][j]);
-        }
-        fprintf(bondsout,"\n");
-    }
-}
-
 void Bonds_CheckSymmetric() {
     int i, j, k;
-    //char errMsg[1000];
-    
+
     for (i=0; i<N; ++i) {
         for (j=0; j<cnb[i]; ++j) {
             for (k=0; k<cnb[bNums[i][j]]; k++) {
@@ -115,7 +94,6 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (USELIST==0) Bonds_GetBondsV();
         else Bonds_GetBondsV_CellList();
         Bonds_CheckSymmetric();
-        if (doWriteBonds==1) Bonds_WriteBonds(f);
         printf("Got Bonds\n");
         return;
     }
@@ -181,7 +159,6 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBonds(): particle %d of %d done\n",i+1,N);
     }
     printf("\n");
-    if (doWriteBonds==1) Bonds_WriteBonds(f);
     printf("Got Bonds\n");
 }
 

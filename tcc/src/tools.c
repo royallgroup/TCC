@@ -1,23 +1,54 @@
 #include "tools.h"
-// ======================================================================================================
-// Here we collect all the functions that have some computational utility but do not play a mojor role in 
-// the geometric contruction of the Topological Cluster Classification
-// ======================================================================================================
+#include "globals.h"
+#include "errno.h"
+#ifdef _WIN32
+    #include "direct.h"
+#endif
 
+FILE* open_file(char* file_name, char* mode) {
+    FILE *file_pointer;
+
+    file_pointer = fopen(file_name, mode);
+
+    return file_pointer;
+}
+
+int make_directory(const char* name) {
+    int error_number;
+    char errMsg[100];
+
+    #ifdef __linux__
+        if(mkdir(name, 0744) != 0) {
+            error_number = errno;
+        }
+        else return 0;
+    #else
+        if(_mkdir(name) != 0) {
+            error_number = errno;
+        }
+        else return 0;
+    #endif
+    if(error_number == 17) {
+        return 0;
+    }
+    else {
+        sprintf(errMsg,"Error creating directory %s.\n",name);
+        Error(errMsg);
+    }
+}
 
 void Error_no_free(char *msg) { // Exit program printing error message but don't try to free any memory
-    printf("\n%s\n",msg);
-    exit(1); 
-} // Quit
+    printf("\n%s\n", msg);
+    exit(1);
+}
 
 void Error(char *msg) { // Exit program printing error message and trying to free any allocated memory
     printf("\n%s\n",msg);
     
     Setup_FreeStaticVars();
     exit(1);
-} // Quit
+}
 
-// resize 2D arrays
 int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new_col_size, int value) {
     int i, j;
     char errMsg[1000];
@@ -25,8 +56,8 @@ int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new
     the_array=realloc(the_array,new_row_size*sizeof(int *));
     if (the_array == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[] out of memory old_row_size %d new_row_size %d new_col_size %d\n",old_row_size,new_row_size,new_col_size); Error_no_free(errMsg); }
     for (i=old_row_size; i<new_row_size; i++) {
-        the_array[i]=malloc(new_col_size*sizeof(int));
-        if (the_array == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[][] out of memory\n"); Error_no_free(errMsg); }
+        the_array[i] = malloc(new_col_size*sizeof(int));
+        if (the_array[i] == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[][] out of memory\n"); Error_no_free(errMsg); }
     }
     for (i=old_row_size; i<new_row_size; i++) {
         for (j=0; j<new_col_size; j++) {

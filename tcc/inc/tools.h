@@ -2,6 +2,10 @@
 #define TOOLS_H_INCLUDED
 #include "setup.h"
 
+FILE* open_file(char* file_name, char* mode);
+
+int make_directory(const char* name);
+
 void Error_no_free(char *);// Exit program printing error message but don't try to free any memory
 
 void Error(char *); // Exit program printing error message and trying to free any allocated memory
