@@ -7,7 +7,7 @@ double Bonds_GetR2_PBCs(int i, int j) ; // get PBC wrapped separation between pa
 
 void Bonds_CheckSymmetric();
 
-void Bonds_GetBonds(int ) ;    // Get bonds using simple lengths
+void Bonds_GetBonds();    // Get bonds using simple lengths
 
 void Bonds_GetBondsV()  ;  // Get bonds using Voronoi
 

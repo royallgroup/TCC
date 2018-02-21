@@ -86,7 +86,7 @@ void Bonds_CheckSymmetric() {
     }
 }
 
-void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
+void Bonds_GetBonds() {    // Get bonds using simple lengths
     int i, j, k;
     double dr2;
 

@@ -3,7 +3,6 @@
 #include "iniparser.h"
 #include "globals.h"
 #include "math.h"
-#include "stdlib.h"
 
 void Setup_ReadIniFile(char *filename) {
     
@@ -187,6 +186,8 @@ void xyz_parser(FILE *xyzfile) {
     int num_particles;
     char line[1000];
     int i;
+    int particle_type;
+    double temp_x, temp_y, temp_z;
 
     if (feof(xyzfile)) Error("Setup_Readxyz(): Unexpected end of input file reached\n");
     // Read in num particles
@@ -195,9 +196,16 @@ void xyz_parser(FILE *xyzfile) {
     // Get the comment line and ignore it
     fgets(line, 1000, xyzfile);
     for(i=0; i<num_particles; i++) {
-        fgets(line, 10, xyzfile);
-    }
+        fgets(line, 100, xyzfile);
+        if (line[0] == 'A' || line[0] == 'B') particle_type = 1;
+        else particle_type = 2;
 
+        temp_x = strtod(&line[1], &ptr);
+        temp_y = strtod(ptr, &ptr);
+        temp_z = strtod(ptr, &ptr);
+
+        printf("%d %lg %lg %lg\n", particle_type, temp_x, temp_y, temp_z);
+    }
 }
 
 void Setup_Readxyz(int e, int write, int f, FILE *readin) {     // read configuration from xmol trajectory

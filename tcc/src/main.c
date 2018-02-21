@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
         Setup_Readxyz(current_frame_number,write,f,rXmol);
 
         if (write==1) {
-            Bonds_GetBonds(f);
+            Bonds_GetBonds();
             if (doWriteBonds==1) Write_Bonds_File(f);
 
             for(i=0; i<N; i++) {

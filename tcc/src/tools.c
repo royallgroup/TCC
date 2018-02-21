@@ -1,6 +1,5 @@
 #include "tools.h"
 #include "globals.h"
-#include "errno.h"
 #ifdef _WIN32
     #include "direct.h"
 #endif
