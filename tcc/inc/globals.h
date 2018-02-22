@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int N, NA;  // number of particles
+int N;  // number of particles
 int ISNOTCUBIC; //if the system in non-cubic or NPT, get box size info from a datafile
 int FRAMES; // frames to read from input xmol file
 int STARTFROM;  // start reading from this frame in the xmol file
@@ -25,7 +25,7 @@ extern int*** cluster_list[];  // A list of pointers to the "hc" cluster storage
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 double *x, *y, *z;  // positions in x y and z directions of N particles
-int *rtype; // particle type
+int *particle_type; // particle type
 double side, halfSide;  // box side length
 double sidex, sidey, sidez, halfSidex, halfSidey, halfSidez; //NPT_FIX
 double tiltxy,tiltxz,tiltyz;

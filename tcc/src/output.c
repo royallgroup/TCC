@@ -26,11 +26,11 @@ void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
     fprintf(thefile,"%d\nframe %d of %d\n",N,f+1,TOTALFRAMES);
     for(i=0; i<N; i++) {
         if (sarr[i]!='C') {
-            if (rtype[i]==1) fprintf(thefile,"C\n");
+            if (particle_type[i]==1) fprintf(thefile,"C\n");
             else fprintf(thefile,"D\n");
         }
         else if (sarr[i]=='C') {
-            if (rtype[i]==1) fprintf(thefile,"A\n");
+            if (particle_type[i]==1) fprintf(thefile,"A\n");
             else fprintf(thefile,"B\n");
         }
     }

@@ -4,6 +4,8 @@
 #include "globals.h"
 #include "math.h"
 
+void wrap_particle_into_pbc(double *tx, double *ty, double *tz);
+
 void Setup_ReadIniFile(char *filename) {
     
     char errMsg[1000];
@@ -28,7 +30,6 @@ void Setup_ReadIniFile(char *filename) {
     FRAMES = iniparser_getint(ini, "run:frames", -1);
     TOTALFRAMES=iniparser_getint(ini, "run:totalframes", -1);
     N = iniparser_getint(ini, "run:num_particles", -1);
-    NA = iniparser_getint(ini, "run:numA_particles", -1);
     RHO = iniparser_getdouble(ini, "run:number_density", -1);
     STARTFROM = iniparser_getint(ini, "run:start_from", -1);
     SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
@@ -67,17 +68,13 @@ void Setup_ReadIniFile(char *filename) {
     }
     initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
 
-    if (NA>N) {
-        Error_no_free("Setup_ReadIniFile(): NA > N - something wrong in xmol trajectory params file\n");
-    }
-
     sidex=sidey=sidez=pow((double)N/RHO, 1.0/3.0);
     halfSidex=halfSidey=halfSidez=sidex/2.0;
     
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
     printf("ISNOTCUBIC %d\n",ISNOTCUBIC);
-    printf("FRAMES %d N %d NA %d RHO %lg\n",FRAMES,N,NA,RHO);
+    printf("FRAMES %d N %d RHO %lg\n",FRAMES,N,RHO);
     printf("STARTFROM %d SAMPLEFREQ %d\n",STARTFROM,SAMPLEFREQ);
     printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
@@ -186,7 +183,6 @@ void xyz_parser(FILE *xyzfile) {
     int num_particles;
     char line[1000];
     int i;
-    int particle_type;
     double temp_x, temp_y, temp_z;
 
     if (feof(xyzfile)) Error("Setup_Readxyz(): Unexpected end of input file reached\n");
@@ -197,14 +193,17 @@ void xyz_parser(FILE *xyzfile) {
     fgets(line, 1000, xyzfile);
     for(i=0; i<num_particles; i++) {
         fgets(line, 100, xyzfile);
-        if (line[0] == 'A' || line[0] == 'B') particle_type = 1;
-        else particle_type = 2;
+        if (line[0] == 'A' || line[0] == 'B') particle_type[i] = 1;
+        else particle_type[i] = 2;
 
         temp_x = strtod(&line[1], &ptr);
         temp_y = strtod(ptr, &ptr);
         temp_z = strtod(ptr, &ptr);
 
-        printf("%d %lg %lg %lg\n", particle_type, temp_x, temp_y, temp_z);
+        wrap_particle_into_pbc(&temp_x, &temp_y, &temp_z);
+        x[i]=temp_x;
+        y[i]=temp_y;
+        z[i]=temp_z;
     }
 }
 
@@ -234,29 +233,30 @@ void Setup_Readxyz(int e, int write, int f, FILE *readin) {     // read configur
         if (c=='A') cntA++;     // check number of A-species is as expected
         else if (c=='C') cntA++;    // check number of A-species is as expected
         if (write==1) { // keeping configuration
-            if (c=='A') rtype[i]=1; // set rtype array denoting cluster species
-            else if (c=='B') rtype[i]=2;
-            else if (c=='C') rtype[i]=1;
+            if (c=='A') particle_type[i]=1; // set particle_type array denoting cluster species
+            else if (c=='B') particle_type[i]=2;
+            else if (c=='C') particle_type[i]=1;
             else {
                 sprintf(errMsg,"Setup_Readxyz(): unrecognized character of particle i %d from input frame %d\n",i,e);
                 Error(errMsg);
             }
-            if (PBCs==1 && ISNOTCUBIC!=3) {  // wrap particles back into the box
-                if (tx<-halfSidex) { tx+=sidex; }
-                else if (tx>halfSidex)   { tx-=sidex; }
-                if (ty<-halfSidey) { ty+=sidey; }
-                else if (ty>halfSidey)   { ty-=sidey; }
-                if (tz<-halfSidez) { tz+=sidez; }
-                else if (tz>halfSidez)   { tz-=sidez; }
+            if (PBCs == 1 && ISNOTCUBIC != 3) {
+                wrap_particle_into_pbc(&tx, &ty, &tz);
             }
             x[i]=tx;    y[i]=ty;    z[i]=tz;    // set positions
             if (PRINTINFO==1) if (i==N-1) printf("f%d part%d %c %.5lg %.5lg %.5lg\n\n",f,i,c,x[i],y[i],z[i]);
         }
     }
-    if (cntA!=NA) { // check number of A-species is as expected
-        sprintf(errMsg,"Setup_Readxyz(): NA %d from input frame %d does not match NA %d from params file\n",cntA,e,NA);
-        Error(errMsg);
-    }
+}
+
+void wrap_particle_into_pbc(double *tx, double *ty, double *tz) {
+    // wrap particles back into the box
+    if ((*tx) < -halfSidex) { (*tx) +=sidex; }
+    else if ((*tx) > halfSidex)   { (*tx) -=sidex; }
+    if ((*ty) < -halfSidey) { (*ty) +=sidey; }
+    else if ((*ty) > halfSidey)   { (*ty) -=sidey; }
+    if ((*tz) < -halfSidez) { (*tz) +=sidez; }
+    else if ((*tz) > halfSidez)   { (*tz) -=sidez; }
 }
 
 void Setup_InitStaticVars() { // Initialize lots of important variables for static TCC algorithm
@@ -304,7 +304,7 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
     y = malloc(N*sizeof(double));   if (y==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): y[] malloc out of memory\n");    Error_no_free(errMsg); }
     z = malloc(N*sizeof(double));   if (z==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): z[] malloc out of memory\n");    Error_no_free(errMsg); }
     
-    rtype=malloc(N*sizeof(int)); if (rtype==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): rtype[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
+    particle_type=malloc(N*sizeof(int)); if (particle_type==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): particle_type[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
 
     cnb = malloc(N*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
 
@@ -675,7 +675,7 @@ void Setup_FreeStaticVars()  {  // Free bond detection variables
 
     free(mean_pop_per_frame);
 
-    free(rtype);
+    free(particle_type);
     free(fXmolName);
     free(fBoxSizeName);
     free(x); free(y); free(z);

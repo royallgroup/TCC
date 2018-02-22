@@ -98,7 +98,7 @@ void Bonds_GetBonds() {    // Get bonds using simple lengths
         return;
     }
     
-    printf("Simple: N%d NA%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",N,NA,rcutAA2,rcutAB2,rcutBB2);
+    printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",N,rcutAA2,rcutAB2,rcutBB2);
     
     if (PRINTINFO==1) { 
         printf("Simple Bond Length rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
@@ -111,7 +111,7 @@ void Bonds_GetBonds() {    // Get bonds using simple lengths
         for(j=i+1; j<N; ++j) {
             if (PBCs == 1) dr2 = Bonds_GetR2_PBCs(i,j);
             else dr2 = Bonds_GetR2(i,j);
-            if (rtype[i]==1 && rtype[j]==1 && dr2 < rcutAA2){
+            if (particle_type[i]==1 && particle_type[j]==1 && dr2 < rcutAA2){
                 if (cnb[i] < nB && cnb[j] < nB){  // max number of bonds, do ith particle
                     k = cnb[i]++;
                     bNums[i][k] = j;
@@ -125,7 +125,7 @@ void Bonds_GetBonds() {    // Get bonds using simple lengths
                     exit(1); 
                 }
             }
-            else if (rtype[i]==2 && rtype[j]==2 && dr2 < rcutBB2){
+            else if (particle_type[i]==2 && particle_type[j]==2 && dr2 < rcutBB2){
                 if (cnb[i] < nB && cnb[j] < nB){  // max number of bonds, do ith particle
                     k = cnb[i]++;
                     bNums[i][k] = j;
@@ -140,7 +140,7 @@ void Bonds_GetBonds() {    // Get bonds using simple lengths
                 }
             }
             else if (dr2 < rcutAB2) {
-                if ((rtype[i]==1 && rtype[j]==2) || (rtype[i]==2 && rtype[j]==1)) {
+                if ((particle_type[i]==1 && particle_type[j]==2) || (particle_type[i]==2 && particle_type[j]==1)) {
                     if (cnb[i] < nB && cnb[j] < nB){  // max number of bonds, do ith particle
                         k = cnb[i]++;
                         bNums[i][k] = j;
@@ -181,7 +181,7 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
     Sr2 = malloc(nBs*sizeof(double));
     store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV(): store_dr2[] malloc out of memory\n"); Error(errMsg); }
 
-    printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
+    printf("Vor: N%d rcut2 %.15lg\n",N,rcutAA2);
    
     if (PRINTINFO==1) { 
         printf("Voronoi fc %lg rcutAA %lg\n",fc,rcutAA);
@@ -356,12 +356,12 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
         
         for (l=0; l<cnbs2; ++l){ 
             j = S2[l];
-            if (rtype[i]==2 && rtype[j]==2) {
+            if (particle_type[i]==2 && particle_type[j]==2) {
                 if (Sr2[l]>rcutBB2) {
                     Sb[l]=0;
                 }
             }
-            else if (rtype[i]==2 || rtype[j]==2) {
+            else if (particle_type[i]==2 || particle_type[j]==2) {
                 if (Sr2[l]>rcutAB2) {
                     Sb[l]=0;
                 }
@@ -418,7 +418,7 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
     temp_bNums = malloc(N*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
     for (j=0; j<N; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
             
-    printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
+    printf("Vor: N%d rcut2 %.15lg\n",N,rcutAA2);
    
     if (PRINTINFO==1) { 
         printf("Voronoi fc %lg rcutAA %lg\n",fc,rcutAA);
@@ -635,12 +635,12 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
         
         for (l=0; l<cnbs2; ++l){ 
             j = S2[l];
-            if (rtype[i]==2 && rtype[j]==2) {
+            if (particle_type[i]==2 && particle_type[j]==2) {
                 if (Sr2[l]>rcutBB2) {
                     Sb[l]=0;
                 }
             }
-            else if (rtype[i]==2 || rtype[j]==2) {
+            else if (particle_type[i]==2 || particle_type[j]==2) {
                 if (Sr2[l]>rcutAB2) {
                     Sb[l]=0;
                 }
