@@ -9,6 +9,7 @@
 #include "output.h"
 #include "stats.h"
 #include "tools.h"
+#include "input.h"
 
 int num_cluster_types = 39;
 

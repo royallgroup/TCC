@@ -1,6 +1,7 @@
 #ifndef TOOLS_H_INCLUDED
 #define TOOLS_H_INCLUDED
 #include "setup.h"
+#include "stdio.h"
 
 FILE* open_file(char* file_name, char* mode);
 
