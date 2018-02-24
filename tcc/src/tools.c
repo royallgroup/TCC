@@ -1,8 +1,50 @@
 #include "tools.h"
 #include "globals.h"
+#include <errno.h>
+#include <limits.h>
+#include <mem.h>
 #ifdef _WIN32
     #include "direct.h"
 #endif
+
+long get_long_from_string(const char *buff, int *validLong) {
+    char *end;
+    errno = 0;
+    long converted_number = 0;
+    *validLong = 1;
+
+    const long sl = strtol(buff, &end, 10);
+
+    if (end == buff) {
+        fprintf(stderr, "%s: not a decimal number\n", buff);
+        *validLong = 0;
+    } else if ((sl == LONG_MIN || sl == LONG_MAX) && errno == ERANGE) {
+        fprintf(stderr, "%s out of range of type long\n", buff);
+        *validLong = 0;
+    } else {
+        converted_number = sl;
+    }
+    return converted_number;
+}
+
+int try_read_line_from_file(FILE *file_name) {
+    // Try to read a line from a file. If line successfuly read return 1 else return 0.
+    char line[1000];
+    size_t line_length;
+
+    if (fgets(line, 1000, file_name) != NULL) {
+        printf("EOF reached.");
+    }
+    else {
+        line_length = strlen(line);
+        if(line_length != 0 && line[line_length-1] == '\n') {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+}
 
 FILE* open_file(char* file_name, char* mode) {
     FILE *file_pointer;

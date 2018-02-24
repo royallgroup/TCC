@@ -96,16 +96,6 @@ void Setup_InitStaticVars() { // Initialize lots of important variables for stat
 
     mmem_sp3b=mmem_sp3c=mmem_sp4b=mmem_sp4c=mmem_sp5b=mmem_sp5c=initNoClustPerPart;
     
-    if (USELIST==1) {   // if using cell list to detect bond network allocate memory
-        head=malloc((ncells+1)*sizeof(int));    if (head==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): head[] malloc out of memory\n");  Error_no_free(errMsg); }
-        map=malloc((13*ncells+1)*sizeof(int));  if (map==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): map[] malloc out of memory\n");    Error_no_free(errMsg); }
-        llist=malloc((N+1)*sizeof(int));    if (llist==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): llist[] malloc out of memory\n");    Error_no_free(errMsg); }
-        
-        for (j=0; j<ncells+1; j++) head[j]=0;
-        for (j=0; j<13*ncells+1; j++) map[j]=0;
-        for (j=0; j<N+1; j++) llist[j]=0;
-    }
-
     mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
     for(i=0; i<num_cluster_types; i++) {
         mean_pop_per_frame[i] = 0.0;
@@ -601,35 +591,44 @@ int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells
 
 void Setup_Cell_List() {
 
+    int i;
     int ix, iy, iz;
     int imap;
+    char errMsg[1000];
 
-    if (USELIST==1) {
-        M = (int)(side/rcutAA);	// number of cells along box side
-        if (M<3) Error_no_free("main(): M<3, too few cells");
-        ncells = M*M*M;	// total number of cells
-        cellSide = side/M;	// length of cells
-        invcellSide = 1.0/cellSide;	// invcellSide
-        printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);
-        // routine to create the thirteen nearest neighbours array map[] of each cell
-        for (iz=1; iz<=M; iz++) {
-            for (iy=1; iy<=M; iy++) {
-                for (ix=1; ix<=M; ix++) {
-                    imap = (icell(ix,iy,iz)-1)*13;
-                    map[imap+1 ]=icell(ix+1,iy	,iz	);
-                    map[imap+2 ]=icell(ix+1,iy+1,iz	);
-                    map[imap+3 ]=icell(ix	 ,iy+1,iz	);
-                    map[imap+4 ]=icell(ix-1 ,iy+1,iz	);
-                    map[imap+5 ]=icell(ix+1,iy	,iz-1	);
-                    map[imap+6 ]=icell(ix+1,iy+1,iz-1	);
-                    map[imap+7 ]=icell(ix	 ,iy+1,iz-1	);
-                    map[imap+8 ]=icell(ix-1 ,iy+1,iz-1	);
-                    map[imap+9 ]=icell(ix+1,iy	,iz+1	);
-                    map[imap+10]=icell(ix+1,iy+1,iz+1	);
-                    map[imap+11]=icell(ix	 ,iy+1,iz+1	);
-                    map[imap+12]=icell(ix-1 ,iy+1,iz+1);
-                    map[imap+13]=icell(ix	 ,iy	,iz+1	);
-                }
+    head=malloc((ncells+1)*sizeof(int));    if (head==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): head[] malloc out of memory\n");  Error_no_free(errMsg); }
+    map=malloc((13*ncells+1)*sizeof(int));  if (map==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): map[] malloc out of memory\n");    Error_no_free(errMsg); }
+    llist=malloc((N+1)*sizeof(int));    if (llist==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): llist[] malloc out of memory\n");    Error_no_free(errMsg); }
+
+    for (i=0; i<ncells+1; i++) head[i]=0;
+    for (i=0; i<13*ncells+1; i++) map[i]=0;
+    for (i=0; i<N+1; i++) llist[i]=0;
+
+
+    M = (int)(side/rcutAA);	// number of cells along box side
+    if (M<3) Error_no_free("main(): M<3, too few cells");
+    ncells = M*M*M;	// total number of cells
+    cellSide = side/M;	// length of cells
+    invcellSide = 1.0/cellSide;	// invcellSide
+    printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);
+    // routine to create the thirteen nearest neighbours array map[] of each cell
+    for (iz=1; iz<=M; iz++) {
+        for (iy=1; iy<=M; iy++) {
+            for (ix=1; ix<=M; ix++) {
+                imap = (icell(ix,iy,iz)-1)*13;
+                map[imap+1 ]=icell(ix+1,iy	,iz	);
+                map[imap+2 ]=icell(ix+1,iy+1,iz	);
+                map[imap+3 ]=icell(ix	 ,iy+1,iz	);
+                map[imap+4 ]=icell(ix-1 ,iy+1,iz	);
+                map[imap+5 ]=icell(ix+1,iy	,iz-1	);
+                map[imap+6 ]=icell(ix+1,iy+1,iz-1	);
+                map[imap+7 ]=icell(ix	 ,iy+1,iz-1	);
+                map[imap+8 ]=icell(ix-1 ,iy+1,iz-1	);
+                map[imap+9 ]=icell(ix+1,iy	,iz+1	);
+                map[imap+10]=icell(ix+1,iy+1,iz+1	);
+                map[imap+11]=icell(ix	 ,iy+1,iz+1	);
+                map[imap+12]=icell(ix-1 ,iy+1,iz+1);
+                map[imap+13]=icell(ix	 ,iy	,iz+1	);
             }
         }
     }

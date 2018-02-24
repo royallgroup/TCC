@@ -3,6 +3,10 @@
 #include "setup.h"
 #include "stdio.h"
 
+long get_long_from_string(const char *buff, int *validLong);
+
+int try_read_line_from_file(FILE *file_name);
+
 FILE* open_file(char* file_name, char* mode);
 
 int make_directory(const char* name);

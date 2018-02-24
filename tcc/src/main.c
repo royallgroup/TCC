@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
     }
     
     Setup_InitStaticVars();
-    Setup_Cell_List();
+    if (USELIST == 1) Setup_Cell_List();
     Stats_Init();
     Setup_Output_Files();
 

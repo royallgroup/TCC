@@ -1,3 +1,4 @@
+#include "input.h"
 #include "math.h"
 #include "stdio.h"
 #include "globals.h"
@@ -111,31 +112,33 @@ void Setup_ReadBox(FILE *readIn)  {
 
 void xyz_parser(FILE *xyzfile) {
 
-    char *ptr;
-    int num_particles;
     char line[1000];
+    char error_message[100];
     int i;
-    double temp_x, temp_y, temp_z;
+    int line_number, num_frames, max_particles, frame_particles;
+    long file_offsets[1000];
+    int valid_long = 0;
 
-    if (feof(xyzfile)) Error("Setup_Readxyz(): Unexpected end of input file reached\n");
+    line_number = num_frames = max_particles = 0;
+
     // Read in num particles
-    fgets(line, 10, xyzfile);
-    num_particles = strtol(line, &ptr, 10);
-    // Get the comment line and ignore it
-    fgets(line, 1000, xyzfile);
-    for(i=0; i<num_particles; i++) {
-        fgets(line, 100, xyzfile);
-        if (line[0] == 'A' || line[0] == 'B') particle_type[i] = 1;
-        else particle_type[i] = 2;
-
-        temp_x = strtod(&line[1], &ptr);
-        temp_y = strtod(ptr, &ptr);
-        temp_z = strtod(ptr, &ptr);
-
-        wrap_particle_into_pbc(&temp_x, &temp_y, &temp_z);
-        x[i]=temp_x;
-        y[i]=temp_y;
-        z[i]=temp_z;
+    while(feof(xyzfile) == 0) {
+        frame_particles = get_long_from_string(line, &valid_long);
+        if (valid_long != 1) {
+            sprintf(error_message, "Unable to read XYZ file. Expected number of particles on line: %d", line_number);
+            Error(error_message);
+        }
+        line_number += 1;
+        if (frame_particles > max_particles) max_particles = frame_particles;
+        file_offsets[num_frames] = ftell(xyzfile);
+        for (i = 0; i < frame_particles+1; i++) {
+            try_read_line_from_file(xyzfile);
+            line_number += 1;
+            if feof(xyzfile) {
+                sprintf(error_message, "Unexpected end of file. Some particles are missing.");
+                Error(error_message);
+            }
+        }
     }
 }
 
