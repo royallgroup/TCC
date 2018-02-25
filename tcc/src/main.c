@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
 
     max_particle_number = get_max_particle_number(input_xyz_info);
-    Setup_InitStaticVars();
+    Initialise_Global_Variables();
     if (USELIST == 1) Setup_Cell_List();
     Stats_Init();
     Setup_Output_Files();
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
         }
         else write=0;
         current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
-        if (write==1) Setup_ResetStaticVars();
+        if (write==1) Reset_Frame_Variables();
 
         if (ISNOTCUBIC>=2) {
             Setup_ReadBox(rSizes);
@@ -177,7 +177,7 @@ int main(int argc, char **argv) {
     Stats_Report(output);
     printf("\nWritten %s\n\n",output);
 
-    Setup_FreeStaticVars();
+    Free_All_Variables();
     Stats_FreeMem();
     if (ISNOTCUBIC > 0) {
         fclose(rSizes);

@@ -58,7 +58,6 @@ int incrStatic; // when full, increment static cluster arrays by this amount
 int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
 
-int doSubClusts; // write sub clusters in tcc files
 int PRINTINFO; // print running information about progress
 
 int *cnb; // Current Number of Bonds for particles {1,...,N}

@@ -10,8 +10,8 @@ void Setup_ReadIniFile(char *filename) {
     char errMsg[1000];
     dictionary  *   ini ;
 
-    fXmolName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
-    fBoxSizeName=malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fXmolName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fBoxSizeName=malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
 
     ini = iniparser_load(filename);
     if (ini==NULL) {
@@ -46,7 +46,6 @@ void Setup_ReadIniFile(char *filename) {
     do11AcenXyz = iniparser_getboolean(ini, "output:11a", -1);
     do13AcenXyz = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
-    doSubClusts = iniparser_getboolean(ini, "output:subclusters", -1);
     PRINTINFO = iniparser_getboolean(ini, "extra:debug", -1);
     iniparser_getdouble(ini, "extra:shear", -1);
 
@@ -66,18 +65,12 @@ void Setup_ReadIniFile(char *filename) {
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
     printf("ISNOTCUBIC %d\n",ISNOTCUBIC);
-    printf("FRAMES %d\n",FRAMES);
-    printf("SAMPLEFREQ %d\n",SAMPLEFREQ);
+    printf("FRAMES %d SAMPLEFREQ %d\n",FRAMES, SAMPLEFREQ);
     printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
     printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
-    printf("doSubClusts %d PRINTINFO %d\n",doSubClusts, PRINTINFO);
-
-    if (ISNOTCUBIC==0) {
-        printf("calculating box sides from RHO\n");
-        printf("box side length = %.5lg, half side: %.5lg\n\n",sidex,halfSidex);
-    }
+    printf("PRINTINFO %d\n", PRINTINFO);
 
     iniparser_freedict(ini);
 }
