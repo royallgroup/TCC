@@ -71,7 +71,7 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
 void Bonds_CheckSymmetric() {
     int i, j, k;
 
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         for (j=0; j<cnb[i]; ++j) {
             for (k=0; k<cnb[bNums[i][j]]; k++) {
                 if (i==bNums[bNums[i][j]][k]) break;
@@ -86,7 +86,7 @@ void Bonds_CheckSymmetric() {
     }
 }
 
-void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
+void Bonds_GetBonds() {    // Get bonds using simple lengths
     int i, j, k;
     double dr2;
 
@@ -98,20 +98,20 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
         return;
     }
     
-    printf("Simple: N%d NA%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",N,NA,rcutAA2,rcutAB2,rcutBB2);
+    printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",current_frame_particle_number,rcutAA2,rcutAB2,rcutBB2);
     
     if (PRINTINFO==1) { 
         printf("Simple Bond Length rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
         if (PBCs==0) printf("No bonds through edge of box\n\n");
         else  printf("Periodic Boundary Conditions - PBC bonds\n\n");
     }
-    for (i=0; i<N; ++i) cnb[i] = 0;
+    for (i=0; i<current_frame_particle_number; ++i) cnb[i] = 0;
     // POSSIBLE IMPROVEMENT: add cell list here
-    for (i=0; i<N; ++i) {
-        for(j=i+1; j<N; ++j) {
+    for (i=0; i<current_frame_particle_number; ++i) {
+        for(j=i+1; j<current_frame_particle_number; ++j) {
             if (PBCs == 1) dr2 = Bonds_GetR2_PBCs(i,j);
             else dr2 = Bonds_GetR2(i,j);
-            if (rtype[i]==1 && rtype[j]==1 && dr2 < rcutAA2){
+            if (particle_type[i]==1 && particle_type[j]==1 && dr2 < rcutAA2){
                 if (cnb[i] < nB && cnb[j] < nB){  // max number of bonds, do ith particle
                     k = cnb[i]++;
                     bNums[i][k] = j;
@@ -125,7 +125,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
                     exit(1); 
                 }
             }
-            else if (rtype[i]==2 && rtype[j]==2 && dr2 < rcutBB2){
+            else if (particle_type[i]==2 && particle_type[j]==2 && dr2 < rcutBB2){
                 if (cnb[i] < nB && cnb[j] < nB){  // max number of bonds, do ith particle
                     k = cnb[i]++;
                     bNums[i][k] = j;
@@ -140,7 +140,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
                 }
             }
             else if (dr2 < rcutAB2) {
-                if ((rtype[i]==1 && rtype[j]==2) || (rtype[i]==2 && rtype[j]==1)) {
+                if ((particle_type[i]==1 && particle_type[j]==2) || (particle_type[i]==2 && particle_type[j]==1)) {
                     if (cnb[i] < nB && cnb[j] < nB){  // max number of bonds, do ith particle
                         k = cnb[i]++;
                         bNums[i][k] = j;
@@ -156,7 +156,7 @@ void Bonds_GetBonds(int f) {    // Get bonds using simple lengths
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBonds(): particle %d of %d done\n",i+1,N);
+        if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBonds(): particle %d of %d done\n",i+1,current_frame_particle_number);
     }
     printf("\n");
     printf("Got Bonds\n");
@@ -179,26 +179,26 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
     Sb = malloc(nBs*sizeof(int));
     Sr = malloc(nBs*sizeof(double));
     Sr2 = malloc(nBs*sizeof(double));
-    store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV(): store_dr2[] malloc out of memory\n"); Error(errMsg); }
+    store_dr2 = malloc(current_frame_particle_number*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV(): store_dr2[] malloc out of memory\n"); Error(errMsg); }
 
-    printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
+    printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
    
     if (PRINTINFO==1) { 
         printf("Voronoi fc %lg rcutAA %lg\n",fc,rcutAA);
         if (PBCs==0) printf("No bonds through edge of box\n\n");
         else  printf("Periodic Boundary Conditions - PBC bonds\n\n");
     }
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         cnb[i] = 0;
         store_dr2[i]=-1.0;
     }
     
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         cnbs = 0;
-        for (j=0; j<N; ++j) {
+        for (j=0; j<current_frame_particle_number; ++j) {
             store_dr2[j]=-1.0;
         }
-        for (j=0; j<N; ++j) {
+        for (j=0; j<current_frame_particle_number; ++j) {
             if (i==j) continue;
             if (PBCs == 1) dr2 = Bonds_GetR2_PBCs(i,j);
             else dr2 = Bonds_GetR2(i,j);
@@ -356,12 +356,12 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
         
         for (l=0; l<cnbs2; ++l){ 
             j = S2[l];
-            if (rtype[i]==2 && rtype[j]==2) {
+            if (particle_type[i]==2 && particle_type[j]==2) {
                 if (Sr2[l]>rcutBB2) {
                     Sb[l]=0;
                 }
             }
-            else if (rtype[i]==2 || rtype[j]==2) {
+            else if (particle_type[i]==2 || particle_type[j]==2) {
                 if (Sr2[l]>rcutAB2) {
                     Sb[l]=0;
                 }
@@ -382,7 +382,7 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBondsV(): particle %d of %d done\n",i+1,N);
+        if (PRINTINFO==1) if (!((i+1)%1000)) printf("Bonds_GetBondsV(): particle %d of %d done\n",i+1,current_frame_particle_number);
     }
     
     free(store_dr2);
@@ -413,12 +413,12 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
     Sr = malloc(nBs*sizeof(double));
     Sr2 = malloc(nBs*sizeof(double));
 
-    store_dr2 = malloc(N*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
-    temp_cnb = malloc(N*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
-    temp_bNums = malloc(N*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j=0; j<N; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
+    store_dr2 = malloc(current_frame_particle_number*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
+    temp_cnb = malloc(current_frame_particle_number*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
+    temp_bNums = malloc(current_frame_particle_number*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
+    for (j=0; j<current_frame_particle_number; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
             
-    printf("Vor: N%d NA%d rcut2 %.15lg\n",N,NA,rcutAA2);
+    printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
    
     if (PRINTINFO==1) { 
         printf("Voronoi fc %lg rcutAA %lg\n",fc,rcutAA);
@@ -426,7 +426,7 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
         else  printf("Periodic Boundary Conditions - PBC bonds\n\n");
     }
     llist[0]=-1;
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         llist[i+1]=-1;
         cnb[i] = 0;
         temp_cnb[i]=0;
@@ -483,9 +483,9 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
         }
     }
     
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         cnbs = 0;
-        for (j=0; j<N; ++j) {
+        for (j=0; j<current_frame_particle_number; ++j) {
             store_dr2[j]=-1.0;
         }
         for (j=0; j<temp_cnb[i]; ++j) {
@@ -635,12 +635,12 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
         
         for (l=0; l<cnbs2; ++l){ 
             j = S2[l];
-            if (rtype[i]==2 && rtype[j]==2) {
+            if (particle_type[i]==2 && particle_type[j]==2) {
                 if (Sr2[l]>rcutBB2) {
                     Sb[l]=0;
                 }
             }
-            else if (rtype[i]==2 || rtype[j]==2) {
+            else if (particle_type[i]==2 || particle_type[j]==2) {
                 if (Sr2[l]>rcutAB2) {
                     Sb[l]=0;
                 }
@@ -661,10 +661,10 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%10000)) printf("Bonds_GetBondsV_CellList(): particle %d of %d done\n",i+1,N);
+        if (PRINTINFO==1) if (!((i+1)%10000)) printf("Bonds_GetBondsV_CellList(): particle %d of %d done\n",i+1,current_frame_particle_number);
     } // End i loop
     
-    for (i=0; i<N; i++) free(temp_bNums[i]);
+    for (i=0; i<current_frame_particle_number; i++) free(temp_bNums[i]);
     free(temp_bNums);
     free(temp_cnb);
     free(store_dr2);

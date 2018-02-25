@@ -9,6 +9,8 @@
 #include "output.h"
 #include "stats.h"
 #include "tools.h"
+#include "input.h"
+#include <math.h>
 
 int num_cluster_types = 39;
 
@@ -44,10 +46,11 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
 
 int main(int argc, char **argv) {
     int current_frame_number, f, i;
-    int write, remainder;
+    int remainder;
     char errMsg[1000], output[1000], other[1000];
-    FILE *rXmol;
     FILE *rSizes;
+    struct xyz_info input_xyz_info;
+
 
     sprintf(fInputParamsName,"inputparameters.ini");
     Setup_ReadIniFile(fInputParamsName);    // read input params
@@ -59,8 +62,15 @@ int main(int argc, char **argv) {
         Error(errMsg);
         }
     }
+
+    input_xyz_info = parse_xyz_file(input_xyz_info);
+
     //read in box data if noncubic/NPT
-    if  (ISNOTCUBIC!=0){
+    if (ISNOTCUBIC==0) {
+        sidex=sidey=sidez=pow((double)current_frame_particle_number/RHO, 1.0/3.0);
+        halfSidex=halfSidey=halfSidez=sidex/2.0;
+    }
+    else {
         printf("reading box size data from %s\n",fBoxSizeName);
         rSizes=fopen(fBoxSizeName,"r");
         if(rSizes==NULL)  {
@@ -77,85 +87,75 @@ int main(int argc, char **argv) {
         }
     }
 
-    printf("reading coordinate frames from %s\n\n",fXmolName);
-    rXmol=fopen(fXmolName,"r");    // open xmol trajecotry
-    if (rXmol==NULL)  {
-        sprintf(errMsg,"main() : Error opening file %s",fXmolName);    // Always test file open
-        Error_no_free(errMsg);
-    }
-    
-    Setup_InitStaticVars();
-    Setup_Cell_List();
+
+    max_particle_number = get_max_particle_number(input_xyz_info);
+    Initialise_Global_Variables();
+    if (USELIST == 1) Setup_Cell_List();
     Stats_Init();
     Setup_Output_Files();
 
     f=0;
-    for (current_frame_number=0;current_frame_number<TOTALFRAMES;current_frame_number++) {
+    for (current_frame_number=0; current_frame_number < input_xyz_info.total_frames; current_frame_number++) {
         remainder=current_frame_number%SAMPLEFREQ;
-        if (remainder==0 && f<FRAMES && current_frame_number>=STARTFROM) {
-            write=1;
-        }
-        else write=0;
-        if (write==1) Setup_ResetStaticVars();
 
         if (ISNOTCUBIC>=2) {
             Setup_ReadBox(rSizes);
         }
-        Setup_Readxyz(current_frame_number,write,f,rXmol);
 
-        if (write==1) {
-            Bonds_GetBonds(f);
-            if (doWriteBonds==1) Write_Bonds_File(f);
+        if (remainder==0 && f<FRAMES) {
+            current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
+            Reset_Frame_Variables();
 
-            for(i=0; i<N; i++) {
-                if (cnb[i]>maxnb) maxnb=cnb[i];
-                if (dosp3==1) Rings_gSP3(i);
+            get_xyz_frame(&input_xyz_info, current_frame_number);
+            Bonds_GetBonds();
+            if (doWriteBonds == 1) Write_Bonds_File(f);
+
+            for (i = 0; i < current_frame_particle_number; i++) {
+                if (cnb[i] > maxnb) maxnb = cnb[i];
+                if (dosp3 == 1) Rings_gSP3(i);
             }
-            if (dosp3==1) Rings_setSP3c();
-            if (dosp4==1) Rings_setSP4c();
-            if (dosp5==1) Rings_setSP5c();
-            if (do6Z==1) Clusters_Get6Z();
-            if (do7K==1) Clusters_Get7K();
-            if (do8A==1) Clusters_Get8A();
-            if (do8B==1) Clusters_Get8B();
-            if (do8K==1) Clusters_Get8K();
-            if (do9A==1) Clusters_Get9A();
-            if (do9B==1) Clusters_Get9B_10B_11B_11E_12D();
-            if (do9K==1) Clusters_Get9K();
-            if (do10A==1) Clusters_Get10A();
-            if (do10K==1) Clusters_Get10K();
-            if (do10W==1) Clusters_Get10W();
-            if (do11A==1) Clusters_Get11A();
-            if (do11C==1) Clusters_Get11C();
-            if (do11F==1) Clusters_Get11F_12E_13K();
-            if (do11W==1) Clusters_Get11W();
-            if (do12A==1) Clusters_Get12A();
-            if (do12B==1) Clusters_Get12B_13A();
-            if (do12K==1) Clusters_Get12K();
-            if (do13B==1) Clusters_Get13B();
-            if (doFCC==1) Clusters_GetFCC();
-            if (doHCP==1) Clusters_GetHCP();
-            if (doBCC9==1) Clusters_GetBCC_9();
-            if (doBCC15==1) Clusters_GetBCC_15();
+            if (dosp3 == 1) Rings_setSP3c();
+            if (dosp4 == 1) Rings_setSP4c();
+            if (dosp5 == 1) Rings_setSP5c();
+            if (do6Z == 1) Clusters_Get6Z();
+            if (do7K == 1) Clusters_Get7K();
+            if (do8A == 1) Clusters_Get8A();
+            if (do8B == 1) Clusters_Get8B();
+            if (do8K == 1) Clusters_Get8K();
+            if (do9A == 1) Clusters_Get9A();
+            if (do9B == 1) Clusters_Get9B_10B_11B_11E_12D();
+            if (do9K == 1) Clusters_Get9K();
+            if (do10A == 1) Clusters_Get10A();
+            if (do10K == 1) Clusters_Get10K();
+            if (do10W == 1) Clusters_Get10W();
+            if (do11A == 1) Clusters_Get11A();
+            if (do11C == 1) Clusters_Get11C();
+            if (do11F == 1) Clusters_Get11F_12E_13K();
+            if (do11W == 1) Clusters_Get11W();
+            if (do12A == 1) Clusters_Get12A();
+            if (do12B == 1) Clusters_Get12B_13A();
+            if (do12K == 1) Clusters_Get12K();
+            if (do13B == 1) Clusters_Get13B();
+            if (doFCC == 1) Clusters_GetFCC();
+            if (doHCP == 1) Clusters_GetHCP();
+            if (doBCC9 == 1) Clusters_GetBCC_9();
+            if (doBCC15 == 1) Clusters_GetBCC_15();
 
             // Write output files
             Accumulate_Stats();
             Stats_Analyse();
             Pop_Per_Frame(f);
 
-            if (doWriteClus==1) Write_Cluster(f);
-            if (doWriteRaw==1) Write_Raw(f);
-            if (do11AcenXyz==1) Write_Cluster_Centers_xyz(f, 21);
-            if (do13AcenXyz==1) Write_Cluster_Centers_xyz(f, 32);
+            if (doWriteClus == 1) Write_Cluster(f);
+            if (doWriteRaw == 1) Write_Raw(f);
+            if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(f, 21);
+            if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
 
-            printf("f%d complete\n",f);
+            printf("f%d complete\n", f);
             f++;
+            if (f == FRAMES) break;
         }
-        if (f==FRAMES) break;
     }
-
-
-    fclose(rXmol);
 
     if (f!=FRAMES) {
         printf("\n\n\n!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!\n\n\n");
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
     Stats_Report(output);
     printf("\nWritten %s\n\n",output);
 
-    Setup_FreeStaticVars();
+    Free_All_Variables();
     Stats_FreeMem();
     if (ISNOTCUBIC > 0) {
         fclose(rSizes);

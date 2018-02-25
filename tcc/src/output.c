@@ -23,14 +23,14 @@ void Write_Raw(int f) {
 void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
     int i;
 
-    fprintf(thefile,"%d\nframe %d of %d\n",N,f+1,TOTALFRAMES);
-    for(i=0; i<N; i++) {
+    fprintf(thefile,"%d\nframe %d\n",current_frame_particle_number,f+1);
+    for(i=0; i<current_frame_particle_number; i++) {
         if (sarr[i]!='C') {
-            if (rtype[i]==1) fprintf(thefile,"C\n");
+            if (particle_type[i]==1) fprintf(thefile,"C\n");
             else fprintf(thefile,"D\n");
         }
         else if (sarr[i]=='C') {
-            if (rtype[i]==1) fprintf(thefile,"A\n");
+            if (particle_type[i]==1) fprintf(thefile,"A\n");
             else fprintf(thefile,"B\n");
         }
     }
@@ -45,7 +45,7 @@ void Write_Bonds_File(int f) {
     FILE *bondsout;
 
     sum=0;
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         sum+=cnb[i];
     }
     if (sum%2!=0) {
@@ -57,7 +57,7 @@ void Write_Bonds_File(int f) {
     bondsout=fopen(output_file, "a");
 
     fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
-    for (i=0; i<N; ++i) {
+    for (i=0; i<current_frame_particle_number; ++i) {
         fprintf(bondsout,"%d    %d",i,cnb[i]);
         for (j=0; j<cnb[i]; ++j) {
             fprintf(bondsout,"  %d  %.5lg",bNums[i][j],bondlengths[i][j]);
@@ -80,10 +80,10 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
 
     output_file = fopen(file_name, "a");
 
-    for(i=0; i<N; i++) if((*raw_list[cluster_type])[i]=='S') ++num_centers;
+    for(i=0; i<current_frame_particle_number; i++) if((*raw_list[cluster_type])[i]=='S') ++num_centers;
 
     fprintf(output_file,"%d\nframe %d of %d\n",num_centers,f+1,FRAMES);
-    for(i=0; i<N; i++) {
+    for(i=0; i<current_frame_particle_number; i++) {
         if ((*raw_list[cluster_type])[i]=='S') {
             fprintf(output_file ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
         }
