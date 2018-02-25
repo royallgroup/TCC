@@ -2,8 +2,13 @@
 #define TOOLS_H_INCLUDED
 #include "setup.h"
 #include "stdio.h"
+#include "globals.h"
+
+long get_max_particle_number(struct xyz_info);
 
 long get_long_from_string(const char *buff, int *validLong);
+
+double get_double_from_string(const char *buff, int *validDouble);
 
 int try_read_line_from_file(FILE *file_name);
 

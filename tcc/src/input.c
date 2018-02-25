@@ -8,7 +8,6 @@
 void Setup_ReadIniFile(char *filename) {
 
     char errMsg[1000];
-    double RHO;
     dictionary  *   ini ;
 
     fXmolName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Setup_InitStaticVars(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
@@ -27,10 +26,7 @@ void Setup_ReadIniFile(char *filename) {
     //run
     strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "-1"));
     FRAMES = iniparser_getint(ini, "run:frames", -1);
-    TOTALFRAMES=iniparser_getint(ini, "run:totalframes", -1);
-    N = iniparser_getint(ini, "run:num_particles", -1);
     RHO = iniparser_getdouble(ini, "run:number_density", -1);
-    STARTFROM = iniparser_getint(ini, "run:start_from", -1);
     SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
 
     //simulation
@@ -67,14 +63,11 @@ void Setup_ReadIniFile(char *filename) {
     }
     initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
 
-    sidex=sidey=sidez=pow((double)N/RHO, 1.0/3.0);
-    halfSidex=halfSidey=halfSidez=sidex/2.0;
-
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
     printf("ISNOTCUBIC %d\n",ISNOTCUBIC);
-    printf("FRAMES %d N %d RHO %lg\n",FRAMES,N,RHO);
-    printf("STARTFROM %d SAMPLEFREQ %d\n",STARTFROM,SAMPLEFREQ);
+    printf("FRAMES %d\n",FRAMES);
+    printf("SAMPLEFREQ %d\n",SAMPLEFREQ);
     printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
@@ -110,78 +103,115 @@ void Setup_ReadBox(FILE *readIn)  {
     halfSidez = sidez/2.0;
 }
 
-void xyz_parser(FILE *xyzfile) {
+struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
 
     char line[1000];
     char error_message[100];
     int i;
-    int line_number, num_frames, max_particles, frame_particles;
-    long file_offsets[1000];
+    int line_number;
     int valid_long = 0;
+    FILE *xyzfile;
 
-    line_number = num_frames = max_particles = 0;
+    line_number = 0;
 
-    // Read in num particles
+    initialize_xyz_info(&input_xyz_info);
+
+    xyzfile=fopen(fXmolName,"r");    // open xmol trajecotry
+    if (xyzfile==NULL)  {
+        sprintf(error_message,"Error opening XYZ file %s",fXmolName);    // Always test file open
+        Error_no_free(error_message);
+    }
+
     while(feof(xyzfile) == 0) {
-        frame_particles = get_long_from_string(line, &valid_long);
-        if (valid_long != 1) {
-            sprintf(error_message, "Unable to read XYZ file. Expected number of particles on line: %d", line_number);
-            Error(error_message);
-        }
-        line_number += 1;
-        if (frame_particles > max_particles) max_particles = frame_particles;
-        file_offsets[num_frames] = ftell(xyzfile);
-        for (i = 0; i < frame_particles+1; i++) {
-            try_read_line_from_file(xyzfile);
-            line_number += 1;
-            if feof(xyzfile) {
-                sprintf(error_message, "Unexpected end of file. Some particles are missing.");
-                Error(error_message);
+        // Read in num particles
+        line[0] = '\n';
+        fgets(line, 1000, xyzfile);
+        if (line[0] != '\n') {
+            input_xyz_info.num_particles[input_xyz_info.total_frames] = get_long_from_string(line, &valid_long);
+            if (valid_long != 1) {
+                sprintf(error_message, "Unable to read XYZ file. Expected number of particles on line: %d",
+                        line_number);
+                Error_no_free(error_message);
             }
+            line_number += 1;
+            input_xyz_info.frame_offsets[input_xyz_info.total_frames] = ftell(xyzfile);
+            for (i = 0; i < input_xyz_info.num_particles[input_xyz_info.total_frames]+1; i++) {
+                try_read_line_from_file(xyzfile);
+                if feof(xyzfile) {
+                    sprintf(error_message, "Unexpected end of file at line %d. Some particles are missing.",
+                            line_number);
+                    Error_no_free(error_message);
+                }
+                line_number += 1;
+
+            }
+            input_xyz_info.total_frames += 1;
         }
     }
+    fclose(xyzfile);
+    return input_xyz_info;
 }
 
-void Setup_Readxyz(int e, int write, int f, FILE *readin) {     // read configuration from xmol trajectory
-    int i;
-    char c;
-    double tx, ty, tz;
-    int cntA;
-    char input[1000],errMsg[1000];
+void initialize_xyz_info(struct xyz_info* input_xyz_info) {
+    (*input_xyz_info).total_frames = 0;
+    (*input_xyz_info).data_width = 100;
+    (*input_xyz_info).num_particles = malloc((*input_xyz_info).data_width * sizeof(long));
+    (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).data_width * sizeof(long));
+}
 
-    cntA=0; // check number of A-species is as expected
+void get_xyz_frame(const struct xyz_info* input_xyz_info, int frame_number) {
 
-    if (feof(readin)) Error("Setup_Readxyz(): end of input file reached\n");
-    fscanf(readin,"%d\n", &i);  // read number of particles
-    if (i!=N) { // check number of particles is as expecting
-        sprintf(errMsg,"Setup_Readxyz(): N %d from input frame %d does not match N %d from params file\n",i,e,N);
-        Error(errMsg);
+    FILE *xyzfile;
+    char error_message[1000];
+    char line[1000];
+    int particle;
+
+    xyzfile=fopen(fXmolName,"r");
+    if (xyzfile==NULL)  {
+        sprintf(error_message,"Error opening XYZ file %s",fXmolName);
+        Error(error_message);
     }
-    if (feof(readin)) Error("Setup_Readxyz(): end of input file reached\n");
-    fgets(input,1000,readin);   // get the information line and do nothing with it
-    if (write==1) { // if storing configurations, do some stuff
-        if (PRINTINFO==1) printf("Setup_Readxyz(): TCC analysis frame %d/%d - reading in %d particles frame %d of XMOL\n",f,FRAMES-1,i,e);
+
+    fseek(xyzfile, input_xyz_info->frame_offsets[frame_number], SEEK_SET);
+    fgets(line, 1000, xyzfile); // comment line
+    for(particle=0; particle<input_xyz_info->num_particles[frame_number]; particle++) {
+        get_coords_from_line(frame_number, xyzfile, particle);
     }
-    for (i=0; i<N; ++i) {   // loop over all particles
-        if (feof(readin)) Error("Setup_Readxyz(): end of input file reached\n");    // check not reached end of file
-        fscanf(readin," %c  %lg %lg %lg\n", &c,&tx,&ty,&tz);
-        if (c=='A') cntA++;     // check number of A-species is as expected
-        else if (c=='C') cntA++;    // check number of A-species is as expected
-        if (write==1) { // keeping configuration
-            if (c=='A') particle_type[i]=1; // set particle_type array denoting cluster species
-            else if (c=='B') particle_type[i]=2;
-            else if (c=='C') particle_type[i]=1;
-            else {
-                sprintf(errMsg,"Setup_Readxyz(): unrecognized character of particle i %d from input frame %d\n",i,e);
-                Error(errMsg);
-            }
-            if (PBCs == 1 && ISNOTCUBIC != 3) {
-                wrap_particle_into_pbc(&tx, &ty, &tz);
-            }
-            x[i]=tx;    y[i]=ty;    z[i]=tz;    // set positions
-            if (PRINTINFO==1) if (i==N-1) printf("f%d part%d %c %.5lg %.5lg %.5lg\n\n",f,i,c,x[i],y[i],z[i]);
+
+}
+
+void get_coords_from_line(int frame_number, FILE *xyzfile, int particle) {
+    char line[1000], error_message[1000];
+    int valid_double = 0;
+    double temp_coord[3];
+    char * word;
+    int dimension;
+
+    fgets(line, 1000, xyzfile);
+    word = strtok (line," \t");
+    if (strcmp(word, "A") == 0 || strcmp(word, "a") == 0 || strcmp(word, "1") == 0) {
+        particle_type[particle] = 1;
+    }
+    else{
+        particle_type[particle] = 2;
+    }
+
+    for(dimension=0; dimension<3; dimension++) {
+        word = strtok(NULL, " \t");
+        temp_coord[dimension] = get_double_from_string(word, &valid_double);
+        if (valid_double != 1) {
+            sprintf(error_message, "Unable to read XYZ file. Expected particle coordinate in frame number"
+                    " %d particle number %d. Actually got %s", frame_number, particle, word);
+            Error(error_message);
         }
     }
+
+    if (PBCs == 1 && ISNOTCUBIC != 3) {
+        wrap_particle_into_pbc(&temp_coord[0], &temp_coord[1], &temp_coord[2]);
+    }
+    x[particle] = temp_coord[0];
+    y[particle] = temp_coord[1];
+    z[particle] = temp_coord[2];
 }
 
 void wrap_particle_into_pbc(double *tx, double *ty, double *tz) {

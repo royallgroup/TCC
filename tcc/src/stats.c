@@ -6,16 +6,16 @@ void Stats_Init() {
     int i;
     char errMsg[1000];
 
-    a6=malloc(N*sizeof(int));	if (a6==NULL) { sprintf(errMsg,"Stats_Init(): a6[] malloc out of memory\n");	Error(errMsg); }
-    a7=malloc(N*sizeof(int));	if (a7==NULL) { sprintf(errMsg,"Stats_Init(): a7[] malloc out of memory\n");	Error(errMsg); }
-    a8=malloc(N*sizeof(int));	if (a8==NULL) { sprintf(errMsg,"Stats_Init(): a8[] malloc out of memory\n");	Error(errMsg); }
-    a9=malloc(N*sizeof(int));	if (a9==NULL) { sprintf(errMsg,"Stats_Init(): a9[] malloc out of memory\n");	Error(errMsg); }
-    a10=malloc(N*sizeof(int));	if (a10==NULL) { sprintf(errMsg,"Stats_Init(): a10[] malloc out of memory\n");	Error(errMsg); }
-    a11=malloc(N*sizeof(int));	if (a11==NULL) { sprintf(errMsg,"Stats_Init(): a11[] malloc out of memory\n");	Error(errMsg); }
-    a12=malloc(N*sizeof(int));	if (a12==NULL) { sprintf(errMsg,"Stats_Init(): a12[] malloc out of memory\n");	Error(errMsg); }
-    a13=malloc(N*sizeof(int));	if (a13==NULL) { sprintf(errMsg,"Stats_Init(): a13[] malloc out of memory\n");	Error(errMsg); }
+    a6=malloc(max_particle_number*sizeof(int));	if (a6==NULL) { sprintf(errMsg,"Stats_Init(): a6[] malloc out of memory\n");	Error(errMsg); }
+    a7=malloc(max_particle_number*sizeof(int));	if (a7==NULL) { sprintf(errMsg,"Stats_Init(): a7[] malloc out of memory\n");	Error(errMsg); }
+    a8=malloc(max_particle_number*sizeof(int));	if (a8==NULL) { sprintf(errMsg,"Stats_Init(): a8[] malloc out of memory\n");	Error(errMsg); }
+    a9=malloc(max_particle_number*sizeof(int));	if (a9==NULL) { sprintf(errMsg,"Stats_Init(): a9[] malloc out of memory\n");	Error(errMsg); }
+    a10=malloc(max_particle_number*sizeof(int));	if (a10==NULL) { sprintf(errMsg,"Stats_Init(): a10[] malloc out of memory\n");	Error(errMsg); }
+    a11=malloc(max_particle_number*sizeof(int));	if (a11==NULL) { sprintf(errMsg,"Stats_Init(): a11[] malloc out of memory\n");	Error(errMsg); }
+    a12=malloc(max_particle_number*sizeof(int));	if (a12==NULL) { sprintf(errMsg,"Stats_Init(): a12[] malloc out of memory\n");	Error(errMsg); }
+    a13=malloc(max_particle_number*sizeof(int));	if (a13==NULL) { sprintf(errMsg,"Stats_Init(): a13[] malloc out of memory\n");	Error(errMsg); }
 
-    for(i=0;i<N;i++) {
+    for(i=0;i<max_particle_number;i++) {
         a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=0;
     }
 
@@ -48,41 +48,41 @@ void Stats_SetA() { // Set arrays to true if the ith particle is a member of any
     int flg1, flg2;
     int i;
 
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = sFCC[i] != 'C' || sHCP[i] != 'C' || sBCC_15[i] != 'C' || s13A[i] != 'C' || s13B[i] != 'C' || s13K[i] != 'C';
         if(flg1==1) a13[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = s12A[i] != 'C' || s12B[i] != 'C' || s12D[i] != 'C' || s12E[i] != 'C' || s12K[i] != 'C';
         flg2 = a13[i];
         if(flg1==1 || flg2==1) a12[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = s11A[i] != 'C' || s11B[i] != 'C' || s11C[i] != 'C' || s11E[i] != 'C' || s11F[i] != 'C' || s11W[i] != 'C';
         flg2 = a12[i];
         if(flg1==1 || flg2==1) a11[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = s10A[i] != 'C' || s10B[i] != 'C' || s10K[i] != 'C' || s10W[i] != 'C';
         flg2 = a11[i];
         if(flg1==1 || flg2==1) a10[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = s9A[i] != 'C' || s9B[i] != 'C' || s9K[i] != 'C' || sBCC_9[i] != 'C';
         flg2 = a10[i];
         if(flg1==1 || flg2==1) a9[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = s8A[i] != 'C' || s8B[i] != 'C' || s8K[i] != 'C';
         flg2 = a9[i];
         if(flg1==1 || flg2==1) a8[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = ssp5c[i] != 'C' || s7K[i] != 'C';
         flg2 = a8[i];
         if(flg1==1 || flg2==1) a7[i] = 1;
     }
-    for (i=0;i<N;i++) {
+    for (i=0;i<current_frame_particle_number;i++) {
         flg1 = ssp4c[i] != 'C' || s6Z[i] != 'C';
         flg2 = a7[i];
         if(flg1==1 || flg2==1) a6[i] = 1;
@@ -92,14 +92,14 @@ void Stats_SetA() { // Set arrays to true if the ith particle is a member of any
 void Stats_Analyse() {
     int i;
 
-    for(i=0;i<N;i++) {
+    for(i=0;i<current_frame_particle_number;i++) {
         a6[i]=a7[i]=a8[i]=a9[i]=a10[i]=a11[i]=a12[i]=a13[i]=0;
     }
 
     count_gross_clusters();
 
     Stats_SetA();
-    for(i=0; i<N; ++i){
+    for(i=0; i<current_frame_particle_number; ++i){
         if(ssp3c[i] != 'C' && !a6[i]) ++net_clusters[2];
         if(ssp4c[i] != 'C' && !a7[i]) ++net_clusters[5];
         if(ssp5c[i] != 'C' && !a8[i]) ++net_clusters[8];
@@ -139,7 +139,7 @@ void Stats_Analyse() {
 void count_gross_clusters() {
     int i, cluster_type;
 
-    for(i=0; i < N; ++i){
+    for(i=0; i < current_frame_particle_number; ++i){
         for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
             if ((*raw_list[cluster_type])[i] != 'C') ++gross_clusters[cluster_type];
         }
@@ -182,7 +182,7 @@ void Stats_Report(char *filename) {
         fprintf(writeout,buffer);
     }
     sprintf(buffer, "maxnB	%d\ncorrectedBonds %d per frame %.5lg per part per frame %.5lg\n"
-            ,maxnb, correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*N));
+            ,maxnb, correctedBonds,(double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*current_frame_particle_number));
     printf(buffer);
     fprintf(writeout,buffer);
     fclose(writeout);
@@ -191,7 +191,7 @@ void Stats_Report(char *filename) {
 void Pop_Per_Frame(int f) {
     int i, cluster_type;
 
-    for(i=0; i<N; ++i){
+    for(i=0; i<current_frame_particle_number; ++i){
         for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
             if ((*raw_list[cluster_type])[i] != 'C') pop_per_frame[cluster_type][f] += 1.0;
         }
@@ -199,7 +199,7 @@ void Pop_Per_Frame(int f) {
 
     // Add pop per frame to running total over all frames
     for(i=0; i<num_cluster_types; i++) {
-        pop_per_frame[i][f]/=N;
+        pop_per_frame[i][f]/=current_frame_particle_number;
         mean_pop_per_frame[i] += pop_per_frame[i][f];
     }
 }

@@ -6,12 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int N;  // number of particles
+int current_frame_particle_number;  // number of particles
 int ISNOTCUBIC; //if the system in non-cubic or NPT, get box size info from a datafile
 int FRAMES; // frames to read from input xmol file
-int STARTFROM;  // start reading from this frame in the xmol file
+double RHO; //Density of particles in box
 int SAMPLEFREQ; // frequency at which to take frames from the xmol file
-int TOTALFRAMES;
+int max_particle_number; // The number of particles in the largest XYZ frame
 
 extern int num_cluster_types;  // The number of items in the cluster names array
 extern int cluster_size[]; // A list of the number of particles in each cluster type
@@ -20,6 +20,14 @@ extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
 extern int* num_cluster_list[];  // A list of pointers to the nclusts variables
 extern char** raw_list[];  // A list of pointers to the "s" raw storage variables
 extern int*** cluster_list[];  // A list of pointers to the "hc" cluster storage variables
+
+
+struct xyz_info {
+    int total_frames;
+    int data_width;
+    long *num_particles;
+    long *frame_offsets;
+};
 
 
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file

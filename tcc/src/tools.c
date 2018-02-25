@@ -3,9 +3,22 @@
 #include <errno.h>
 #include <limits.h>
 #include <mem.h>
+#include <math.h>
 #ifdef _WIN32
     #include "direct.h"
 #endif
+
+long get_max_particle_number(struct xyz_info input_xyz_info) {
+    int i;
+    long max_particle_number = 0;
+
+    for(i=0; i < input_xyz_info.total_frames; i++) {
+        if(input_xyz_info.num_particles[i] > max_particle_number) {
+            max_particle_number = input_xyz_info.num_particles[i];
+        }
+    }
+    return max_particle_number;
+}
 
 long get_long_from_string(const char *buff, int *validLong) {
     char *end;
@@ -27,12 +40,32 @@ long get_long_from_string(const char *buff, int *validLong) {
     return converted_number;
 }
 
+double get_double_from_string(const char *buff, int *validDouble) {
+    char *end;
+    errno = 0;
+    double converted_number = 0;
+    *validDouble = 1;
+
+    const double sl = strtod(buff, &end);
+
+    if (end == buff) {
+        fprintf(stderr, "%s: not a valid double number\n", buff);
+        *validDouble = 0;
+    } else if ((sl == HUGE_VAL || sl == -HUGE_VAL) && errno == ERANGE) {
+        fprintf(stderr, "%s out of range of type float\n", buff);
+        *validDouble = 0;
+    } else {
+        converted_number = sl;
+    }
+    return converted_number;
+}
+
 int try_read_line_from_file(FILE *file_name) {
     // Try to read a line from a file. If line successfuly read return 1 else return 0.
     char line[1000];
     size_t line_length;
 
-    if (fgets(line, 1000, file_name) != NULL) {
+    if (fgets(line, 1000, file_name) == NULL) {
         printf("EOF reached.");
     }
     else {
@@ -123,7 +156,7 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
 void links() {  // sorts all the particles into cells, result given by head-of-chain and linked list arrays
     int i, ic;
     for (ic=1;ic<=ncells;ic++) head[ic]=0;
-    for (i=1;i<=N;i++) {
+    for (i=1;i<=current_frame_particle_number;i++) {
         ic = 1 + (int)((x[i-1]+ halfSide)*invcellSide) + M*((int)((y[i-1]+halfSide)*invcellSide)) + M*M*((int)((z[i-1]+halfSide)*invcellSide));
         if (ic > ncells || ic <= 0) {
             printf("i %d r_x %lg r_y %lg r_z %lg side %lg halfSide %lg ic %d ncells %d\n",i-1,x[i-1],y[i-1],z[i-1],side,halfSide,ic,ncells);
