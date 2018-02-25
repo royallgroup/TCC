@@ -109,7 +109,7 @@ struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
 
     initialize_xyz_info(&input_xyz_info);
 
-    xyzfile=fopen(fXmolName,"r");    // open xmol trajecotry
+    xyzfile=fopen(fXmolName,"rb");    // open xmol trajecotry
     if (xyzfile==NULL)  {
         sprintf(error_message,"Error opening XYZ file %s",fXmolName);    // Always test file open
         Error_no_free(error_message);
@@ -117,6 +117,10 @@ struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
 
     while(feof(xyzfile) == 0) {
         // Read in num particles
+        if(input_xyz_info.total_frames > 1000) {
+            sprintf(error_message, "XYZ file has over 1000 frames, cannot process XYZ file");
+            Error_no_free(error_message);
+        }
         line[0] = '\n';
         fgets(line, 1000, xyzfile);
         if (line[0] != '\n') {
@@ -129,12 +133,12 @@ struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
             line_number += 1;
             input_xyz_info.frame_offsets[input_xyz_info.total_frames] = ftell(xyzfile);
             for (i = 0; i < input_xyz_info.num_particles[input_xyz_info.total_frames]+1; i++) {
-                try_read_line_from_file(xyzfile);
                 if feof(xyzfile) {
                     sprintf(error_message, "Unexpected end of file at line %d. Some particles are missing.",
                             line_number);
                     Error_no_free(error_message);
                 }
+                try_read_line_from_file(xyzfile);
                 line_number += 1;
 
             }
@@ -147,7 +151,7 @@ struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
 
 void initialize_xyz_info(struct xyz_info* input_xyz_info) {
     (*input_xyz_info).total_frames = 0;
-    (*input_xyz_info).data_width = 100;
+    (*input_xyz_info).data_width = 1000;
     (*input_xyz_info).num_particles = malloc((*input_xyz_info).data_width * sizeof(long));
     (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).data_width * sizeof(long));
 }
@@ -159,7 +163,7 @@ void get_xyz_frame(const struct xyz_info* input_xyz_info, int frame_number) {
     char line[1000];
     int particle;
 
-    xyzfile=fopen(fXmolName,"r");
+    xyzfile=fopen(fXmolName,"rb");
     if (xyzfile==NULL)  {
         sprintf(error_message,"Error opening XYZ file %s",fXmolName);
         Error(error_message);
