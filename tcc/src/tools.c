@@ -2,8 +2,13 @@
 #include "globals.h"
 #include <errno.h>
 #include <limits.h>
-#include <mem.h>
 #include <math.h>
+#include <string.h>
+
+#ifdef __linux__
+#include <stat.h>
+#endif
+
 #ifdef _WIN32
     #include "direct.h"
 #endif

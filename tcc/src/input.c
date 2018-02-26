@@ -1,5 +1,4 @@
 #include "input.h"
-#include "math.h"
 #include "stdio.h"
 #include "globals.h"
 #include "iniparser.h"
@@ -133,7 +132,7 @@ struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
             line_number += 1;
             input_xyz_info.frame_offsets[input_xyz_info.total_frames] = ftell(xyzfile);
             for (i = 0; i < input_xyz_info.num_particles[input_xyz_info.total_frames]+1; i++) {
-                if feof(xyzfile) {
+                if(feof(xyzfile)) {
                     sprintf(error_message, "Unexpected end of file at line %d. Some particles are missing.",
                             line_number);
                     Error_no_free(error_message);
