@@ -6,7 +6,7 @@
 #include <string.h>
 
 #ifdef __linux__
-#include <stat.h>
+#include <sys/stat.h>
 #endif
 
 #ifdef _WIN32
