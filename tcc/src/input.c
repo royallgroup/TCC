@@ -173,6 +173,7 @@ void get_xyz_frame(const struct xyz_info* input_xyz_info, int frame_number) {
     for(particle=0; particle<input_xyz_info->num_particles[frame_number]; particle++) {
         get_coords_from_line(frame_number, xyzfile, particle);
     }
+    fclose(xyzfile);
 
 }
 

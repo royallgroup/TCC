@@ -173,6 +173,8 @@ int main(int argc, char **argv) {
     Stats_Report(output);
     printf("\nWritten %s\n\n",output);
 
+    free(input_xyz_info.num_particles);
+    free(input_xyz_info.frame_offsets);
     Free_All_Variables();
     Stats_FreeMem();
     if (ISNOTCUBIC > 0) {
