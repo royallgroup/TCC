@@ -11,26 +11,18 @@ void Setup_Output_Files() {
 
     if(do11AcenXyz == 1) {
         make_directory("centers_output");
-        for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
-            if (*do_cluster_list[cluster_number] == 1) {
-                sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
-                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[24]);
-                file_pointer = open_file(output_file, "w");
-                fclose(file_pointer);
-            }
-        }
+        sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
+                fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[21]);
+        file_pointer = open_file(output_file, "w");
+        fclose(file_pointer);
     }
 
     if(do13AcenXyz == 1) {
         make_directory("centers_output");
-        for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
-            if (*do_cluster_list[cluster_number] == 1) {
-                sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
-                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[35]);
-                file_pointer = open_file(output_file, "w");
-                fclose(file_pointer);
-            }
-        }
+        sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
+                fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[32]);
+        file_pointer = open_file(output_file, "w");
+        fclose(file_pointer);
     }
 
     if(doWriteBonds == 1) {
