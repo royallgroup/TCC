@@ -160,11 +160,13 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
 
 void links() {  // sorts all the particles into cells, result given by head-of-chain and linked list arrays
     int i, ic;
-    for (ic=1;ic<=ncells;ic++) head[ic]=0;
+    for (ic=1;ic<=n_cells_total;ic++) head[ic]=0;
     for (i=1;i<=current_frame_particle_number;i++) {
-        ic = 1 + (int)((x[i-1]+ half_sidex)*invcellSide) + M*((int)((y[i-1]+half_sidex)*invcellSide)) + M*M*((int)((z[i-1]+half_sidex)*invcellSide));
-        if (ic > ncells || ic <= 0) {
-            printf("i %d r_x %lg r_y %lg r_z %lg side %lg halfSide %lg ic %d ncells %d\n",i-1,x[i-1],y[i-1],z[i-1],sidex,half_sidex,ic,ncells);
+        ic = 1 + (int)((x[i-1]+ half_sidex)*inv_cell_len_x)
+               + n_cells_y*((int)((y[i-1]+half_sidex)*inv_cell_len_y))
+               + n_cells_z*n_cells_z*((int)((z[i-1]+half_sidex)*inv_cell_len_z));
+        if (ic > n_cells_total || ic <= 0) {
+            printf("i %d r_x %lg r_y %lg r_z %lg side %lg halfSide %lg ic %d ncells %d\n",i-1,x[i-1],y[i-1],z[i-1],sidex,half_sidex,ic,n_cells_total);
             Error("links(): ic > ncells, i.e. particle coord no longer in simulation box!!\n");
         }
         llist[i]=head[ic];

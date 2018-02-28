@@ -435,9 +435,9 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
         store_dr2[i]=-1.0;
         for (j=0; j<nBs; j++) temp_bNums[i][j]=0;
     }
-    for (i=0; i<(ncells+1); ++i) head[i]=-1; 
+    for (i=0; i<(n_cells_total+1); ++i) head[i]=-1;
     links();
-    for (ic=1;ic<=ncells;ic++) {        // loop over all cells
+    for (ic=1;ic<=n_cells_total;ic++) {        // loop over all cells
         i=head[ic];     // head of list particle for cell ic    
         while (i>0) {   // loop over all particles in ic
             
