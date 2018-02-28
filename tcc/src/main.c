@@ -59,7 +59,6 @@ int main(int argc, char **argv) {
     max_particle_number = get_max_particle_number(input_xyz_info);
 
     Initialise_Global_Variables();
-    if (USELIST == 1) Setup_Cell_List();
     Stats_Init();
     Setup_Output_Files();
 
@@ -69,6 +68,7 @@ int main(int argc, char **argv) {
 
         if (remainder==0 && f<FRAMES) {
             current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
+            if (USELIST == 1) Setup_Cell_List();
             Reset_Frame_Variables();
             if (box_type != 1) get_box_size(current_frame_number);
             get_xyz_frame(&input_xyz_info, current_frame_number);

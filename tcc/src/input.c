@@ -90,6 +90,7 @@ void parse_box_file(int total_frames) {
     else {
         get_box_file_offsets(read_box_file, total_frames);
     }
+    fclose(read_box_file);
 }
 
 void get_NVT_box(FILE *read_box_file) {
@@ -189,6 +190,7 @@ void get_box_size(int current_frame_number) {
         tiltxz = sizes[4];
         tiltyz = sizes[5];
     }
+    fclose(read_box_file);
 }
 
 struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {

@@ -299,6 +299,12 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
             memset(*raw_list[cluster_type], 'C', max_particle_number*sizeof(char));
         }
     }
+
+    if (USELIST==1) {
+        free(map);
+        free(head);
+        free(llist);
+    }
 }
 
 void Free_All_Variables()  {  // Free bond detection variables
@@ -406,19 +412,12 @@ void Free_All_Variables()  {  // Free bond detection variables
     free(s12A); free(s12B); free(s12D); free(s12E); free(s12K);
     free(s13A); free(s13B); free(s13K);
     free(sFCC);free(sHCP); free(sBCC_9); free(sBCC_15);
-
-    if (USELIST==1) {
-        free(map);
-        free(head);
-        free(llist);
-    }
-
 }
 
 int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
-    return 1 + (tix-1+n_cells_x)%n_cells_x
-             + n_cells_y*((tiy-1+n_cells_y)%n_cells_y)
-             + n_cells_z*n_cells_z*((tiz-1+n_cells_z)%n_cells_z);
+    return 1 + (tix - 1 + n_cells_x) % n_cells_x
+             + n_cells_y * ((tiy - 1 + n_cells_y) % n_cells_y)
+             + n_cells_z * n_cells_z * ((tiz - 1 + n_cells_z) % n_cells_z);
 }
 
 void Setup_Cell_List() {
