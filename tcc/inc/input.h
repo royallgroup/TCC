@@ -6,7 +6,13 @@
 
 void Setup_ReadIniFile(char *);
 
-void Setup_ReadBox(FILE *);
+void parse_box_file(int total_frames);
+
+void get_NVT_box(FILE *read_box_file);
+
+void get_box_file_offsets(FILE *read_box_file, int total_frames);
+
+void get_box_size(int current_frame_number);
 
 struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info);
 

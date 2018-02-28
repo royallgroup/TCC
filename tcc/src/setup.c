@@ -435,10 +435,10 @@ void Setup_Cell_List() {
     for (i=0; i<current_frame_particle_number+1; i++) llist[i]=0;
 
 
-    M = (int)(side/rcutAA);	// number of cells along box side
+    M = (int)(sidex/rcutAA);	// number of cells along box side
     if (M<3) Error_no_free("main(): M<3, too few cells");
     ncells = M*M*M;	// total number of cells
-    cellSide = side/M;	// length of cells
+    cellSide = sidex/M;	// length of cells
     invcellSide = 1.0/cellSide;	// invcellSide
     printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);
     // routine to create the thirteen nearest neighbours array map[] of each cell

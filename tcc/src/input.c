@@ -19,13 +19,12 @@ void Setup_ReadIniFile(char *filename) {
     }
 
     //box
-    ISNOTCUBIC = iniparser_getint(ini, "box:box_type", -1);
+    box_type = iniparser_getint(ini, "box:box_type", -1);
     strcpy(fBoxSizeName, (char*)iniparser_getstring(ini, "box:box_name", "-1"));
 
     //run
     strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "-1"));
     FRAMES = iniparser_getint(ini, "run:frames", -1);
-    RHO = iniparser_getdouble(ini, "run:number_density", -1);
     SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
 
     //simulation
@@ -63,7 +62,7 @@ void Setup_ReadIniFile(char *filename) {
 
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
-    printf("ISNOTCUBIC %d\n",ISNOTCUBIC);
+    printf("box_type %d\n",box_type);
     printf("FRAMES %d SAMPLEFREQ %d\n",FRAMES, SAMPLEFREQ);
     printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
@@ -74,25 +73,122 @@ void Setup_ReadIniFile(char *filename) {
     iniparser_freedict(ini);
 }
 
-void Setup_ReadBox(FILE *readIn)  {
-    int sweep;
+void parse_box_file(int total_frames) {
+    FILE *read_box_file;
+    char other[1000], error_message[1000];
 
-    if (feof(readIn)) Error("Setup_ReadBox(): end of input file reached\n");
-    if(ISNOTCUBIC==3){
-        printf("Triclinic Boundary Conditions\n");
-
-        fscanf(readIn,"%i %lf %lf %lf %lf %lf %lf\n", &sweep,&sidex,&sidey,&sidez, &tiltxy, &tiltxz, &tiltyz);
-        printf("iter Lx Ly Lz xy xz yz\n");
-
-        printf("%i %lf %lf %lf %lf %lf %lf\n",sweep,sidex,sidey,sidez, tiltxy, tiltxz, tiltyz);}
-    else
-    {
-        fscanf(readIn,"%i %lg %lg %lg\n", &sweep,&sidex,&sidey,&sidez);
-        printf("%i %lg %lg %lg\n",sweep,sidex,sidey,sidez);
+    read_box_file=fopen(fBoxSizeName,"rb");
+    if(read_box_file==NULL)  {
+        sprintf(error_message,"main() : Error opening boxfile %s",fBoxSizeName);
+        Error_no_free(error_message);
     }
-    halfSidex = sidex/2.0;
-    halfSidey = sidey/2.0;
-    halfSidez = sidez/2.0;
+    fgets(other,1000,read_box_file); // Throw away comment line
+
+    if  (box_type==1) {
+        get_NVT_box(read_box_file);
+    }
+    else {
+        get_box_file_offsets(read_box_file, total_frames);
+    }
+}
+
+void get_NVT_box(FILE *read_box_file) {
+    char line[100], error_message[100];
+    char * word;
+    int dimension;
+    int valid_double = 0;
+    double tmp[3];
+
+    if (feof(read_box_file)) Error("Setup_ReadBox(): end of input file reached\n");
+
+    fgets(line, 1000, read_box_file);
+    word = strtok (line," \t");
+
+    for(dimension=0; dimension<3; dimension++) {
+        word = strtok(NULL, " \t");
+        tmp[dimension] = get_double_from_string(word, &valid_double);
+        if (valid_double != 1) {
+            sprintf(error_message, "Unable to read box file. Expected box size on line 2");
+            Error_no_free(error_message);
+        }
+    }
+    sidex = tmp[0];
+    sidey = tmp[1];
+    sidez = tmp[2];
+    half_sidex = sidex/2;
+    half_sidey = sidey/2;
+    half_sidez = sidez/2;
+}
+
+void get_box_file_offsets(FILE *read_box_file, int total_frames) {
+    char line[100], error_message[100];
+    char * word;
+    int dimension, frame, num_items;
+    int valid_double = 0;
+    double tmp[6];
+
+    if (feof(read_box_file)) Error("Setup_ReadBox(): end of input file reached\n");
+
+    // Read 3 numbers in for NPT, 6 for triclinic
+    if(box_type==2) num_items=3;
+    else num_items=6;
+
+    for(frame=0; frame<total_frames; frame++) {
+
+        box_offsets[frame] = ftell(read_box_file);
+        fgets(line, 1000, read_box_file);
+        word = strtok(line, " \t");
+
+        for (dimension = 0; dimension < num_items; dimension++) {
+            word = strtok(NULL, " \t");
+            tmp[dimension] = get_double_from_string(word, &valid_double);
+            if (valid_double != 1) {
+                sprintf(error_message, "Unable to read box file. Expected %d lines of box coordinates but box reading "
+                                "failed on %d", total_frames, frame);
+                Error_no_free(error_message);
+            }
+        }
+    }
+
+}
+
+void get_box_size(int current_frame_number) {
+    FILE *read_box_file;
+    char error_message[100], line[1000];
+    char * word;
+    double sizes[6];
+    int numbers_to_read, i;
+    int valid_long = 0;
+
+    read_box_file=fopen(fBoxSizeName,"rb");
+    if(read_box_file==NULL)  {
+        sprintf(error_message,"main() : Error opening boxfile %s",fBoxSizeName);
+        Error_no_free(error_message);
+    }
+
+    numbers_to_read = 3;
+    if(box_type == 3) numbers_to_read = 6;
+
+    fseek(read_box_file, box_offsets[current_frame_number],SEEK_SET);
+    fgets(line, 1000, read_box_file);
+    word = strtok(line, " \t");
+    for(i=0; i<numbers_to_read; i++) {
+        word = strtok(NULL, " \t");
+        sizes[i] = get_double_from_string(word, &valid_long);
+    }
+
+    sidex = sizes[0];
+    half_sidex = sidex/2;
+    sidey = sizes[1];
+    half_sidey = sidey/2;
+    sidez = sizes[2];
+    half_sidez = sidez/2;
+
+    if(box_type == 3) {
+        tiltxy = sizes[3];
+        tiltxz = sizes[4];
+        tiltyz = sizes[5];
+    }
 }
 
 struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
@@ -203,7 +299,7 @@ void get_coords_from_line(int frame_number, FILE *xyzfile, int particle) {
         }
     }
 
-    if (PBCs == 1 && ISNOTCUBIC != 3) {
+    if (PBCs == 1 && box_type != 3) {
         wrap_particle_into_pbc(&temp_coord[0], &temp_coord[1], &temp_coord[2]);
     }
     x[particle] = temp_coord[0];
@@ -213,10 +309,10 @@ void get_coords_from_line(int frame_number, FILE *xyzfile, int particle) {
 
 void wrap_particle_into_pbc(double *tx, double *ty, double *tz) {
     // wrap particles back into the box
-    if ((*tx) < -halfSidex) { (*tx) +=sidex; }
-    else if ((*tx) > halfSidex)   { (*tx) -=sidex; }
-    if ((*ty) < -halfSidey) { (*ty) +=sidey; }
-    else if ((*ty) > halfSidey)   { (*ty) -=sidey; }
-    if ((*tz) < -halfSidez) { (*tz) +=sidez; }
-    else if ((*tz) > halfSidez)   { (*tz) -=sidez; }
+    if ((*tx) < -half_sidex) { (*tx) +=sidex; }
+    else if ((*tx) > half_sidex)   { (*tx) -=sidex; }
+    if ((*ty) < -half_sidey) { (*ty) +=sidey; }
+    else if ((*ty) > half_sidey)   { (*ty) -=sidey; }
+    if ((*tz) < -half_sidez) { (*tz) +=sidez; }
+    else if ((*tz) > half_sidez)   { (*tz) -=sidez; }
 }

@@ -10,7 +10,6 @@
 #include "stats.h"
 #include "tools.h"
 #include "input.h"
-#include <math.h>
 
 int num_cluster_types = 39;
 
@@ -47,48 +46,19 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
 int main(int argc, char **argv) {
     int current_frame_number, f, i;
     int remainder;
-    char errMsg[1000], output[1000], other[1000];
-    FILE *rSizes;
+    char errMsg[1000], output[1000];
     struct xyz_info input_xyz_info;
-
 
     sprintf(fInputParamsName,"inputparameters.ini");
     Setup_ReadIniFile(fInputParamsName);    // read input params
     printf("box size file: %s\n",fBoxSizeName);
 
-    if (ISNOTCUBIC!=0){
-        if (USELIST==1) {
-        sprintf(errMsg,"main() : Error! Need switch cell list off for non-cubic/NPT system");    // Always test file open
-        Error(errMsg);
-        }
-    }
-
     input_xyz_info = parse_xyz_file(input_xyz_info);
 
-    //read in box data if noncubic/NPT
-    if (ISNOTCUBIC==0) {
-        sidex=sidey=sidez=pow((double)current_frame_particle_number/RHO, 1.0/3.0);
-        halfSidex=halfSidey=halfSidez=sidex/2.0;
-    }
-    else {
-        printf("reading box size data from %s\n",fBoxSizeName);
-        rSizes=fopen(fBoxSizeName,"r");
-        if(rSizes==NULL)  {
-            sprintf(errMsg,"main() : Error opening boxfile %s",fBoxSizeName);
-            Error_no_free(errMsg);
-        }
-        fgets(other,1000,rSizes); //reads first line
-        if  (ISNOTCUBIC==1) {
-            Setup_ReadBox(rSizes);
-            printf("sidex: %f, sidey: %f, sidez: %f\n", sidex,sidey,sidez);
-        }
-        if  (ISNOTCUBIC==3) {
-            printf("======> Triclinic Box \n");
-        }
-    }
-
+    parse_box_file(input_xyz_info.total_frames);
 
     max_particle_number = get_max_particle_number(input_xyz_info);
+
     Initialise_Global_Variables();
     if (USELIST == 1) Setup_Cell_List();
     Stats_Init();
@@ -98,14 +68,10 @@ int main(int argc, char **argv) {
     for (current_frame_number=0; current_frame_number < input_xyz_info.total_frames; current_frame_number++) {
         remainder=current_frame_number%SAMPLEFREQ;
 
-        if (ISNOTCUBIC>=2) {
-            Setup_ReadBox(rSizes);
-        }
-
         if (remainder==0 && f<FRAMES) {
             current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
-
+            if (box_type != 1) get_box_size(current_frame_number);
             get_xyz_frame(&input_xyz_info, current_frame_number);
             Bonds_GetBonds();
             if (doWriteBonds == 1) Write_Bonds_File(f);
@@ -157,11 +123,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (f!=FRAMES) {
-        printf("\n\n\n!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!\n\n\n");
-        printf("Analysed frames %d less than expected number of FRAMES %d from %s\n\n",f,FRAMES,fInputParamsName);
-    }
-    
     Normalise_Populations();
     
     if (doWritePopPerFrame==1) {
@@ -177,9 +138,7 @@ int main(int argc, char **argv) {
     free(input_xyz_info.frame_offsets);
     Free_All_Variables();
     Stats_FreeMem();
-    if (ISNOTCUBIC > 0) {
-        fclose(rSizes);
-    }
+
     printf("\n\nFIN \n\n");
     return 0;
 }

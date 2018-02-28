@@ -962,7 +962,7 @@ void Cluster_Write_9A() {
     ++n9A;
 }
 
-void Clusters_Get9B_10B_11B_11E_12D() {    // Detect 9B, 10B, 11A, 11E & 12D
+void Clusters_Get9B_10B_11B_11E_12D() {    // Detect 9B, 10B, 11B, 11E & 12D
     int sp1, sp2i, sp2j;
     int sp5com[2];
     int i, j, k, l, m;

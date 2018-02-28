@@ -7,9 +7,8 @@
 #include <stdlib.h>
 
 int current_frame_particle_number;  // number of particles
-int ISNOTCUBIC; //if the system in non-cubic or NPT, get box size info from a datafile
+int box_type; //if the system in non-cubic or NPT, get box size info from a datafile
 int FRAMES; // frames to read from input xmol file
-double RHO; //Density of particles in box
 int SAMPLEFREQ; // frequency at which to take frames from the xmol file
 int max_particle_number; // The number of particles in the largest XYZ frame
 
@@ -32,10 +31,10 @@ struct xyz_info {
 
 char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
+int box_offsets[1000];    // Offsets of each line in the box file
 double *x, *y, *z;  // positions in x y and z directions of N particles
 int *particle_type; // particle type
-double side, halfSide;  // box side length
-double sidex, sidey, sidez, halfSidex, halfSidey, halfSidez; //NPT_FIX
+double sidex, sidey, sidez, half_sidex, half_sidey, half_sidez;
 double tiltxy,tiltxz,tiltyz;
 
 

@@ -5,11 +5,13 @@
 
 double Bonds_GetR2(int i, int j) {  // get separation between particles i and j
     double dx, dy, dz;
+    double total_distance;
 
     dx = x[i] - x[j];
     dy = y[i] - y[j];
     dz = z[i] - z[j];
-    return dx * dx + dy * dy + dz * dz;
+    total_distance = dx * dx + dy * dy + dz * dz;
+    return total_distance;
 }
 
 double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between particles i and j
@@ -20,14 +22,14 @@ double Bonds_GetR2_PBCs(int i, int j) { // get PBC wrapped separation between pa
     dz = z[i] - z[j];
 
     
-    if(ISNOTCUBIC!=3)
+    if(box_type==2)
     {
-        if (dx<-halfSidex) dx+=sidex;
-        else if (dx>halfSidex) dx-=sidex;
-        if (dy<-halfSidey) dy+=sidey;
-        else if (dy>halfSidey) dy-=sidey;
-        if (dz<-halfSidez) dz+=sidez;
-        else if (dz>halfSidez) dz-=sidez;
+        if (dx<-half_sidex) dx+=sidex;
+        else if (dx>half_sidex) dx-=sidex;
+        if (dy<-half_sidey) dy+=sidey;
+        else if (dy>half_sidey) dy-=sidey;
+        if (dz<-half_sidez) dz+=sidez;
+        else if (dz>half_sidez) dz-=sidez;
         return dx * dx + dy * dy + dz * dz;
     }
 
@@ -257,89 +259,89 @@ void Bonds_GetBondsV()  {  // Get bonds using Voronoi
                 rjkx = x[j] - x[k];
                 rjky = y[j] - y[k];
                 rjkz = z[j] - z[k];
-                if (ISNOTCUBIC!=3){
+                if (box_type!=3){
                     if (PBCs==1) { // if PBCs are being used
-                        if (rijx>halfSidex) rijx-=sidex;
-                        else if (rijx<-halfSidex) rijx+=sidex;
-                        if (rijy>halfSidey) rijy-=sidey;
-                        else if (rijy<-halfSidey) rijy+=sidey;
-                        if (rijz>halfSidez) rijz-=sidez;
-                        else if (rijz<-halfSidez) rijz+=sidez;
+                        if (rijx>half_sidex) rijx-=sidex;
+                        else if (rijx<-half_sidex) rijx+=sidex;
+                        if (rijy>half_sidey) rijy-=sidey;
+                        else if (rijy<-half_sidey) rijy+=sidey;
+                        if (rijz>half_sidez) rijz-=sidez;
+                        else if (rijz<-half_sidez) rijz+=sidez;
 
-                        if (rikx>halfSidex) rikx-=sidex;
-                        else if (rikx<-halfSidex) rikx+=sidex;
-                        if (riky>halfSidey) riky-=sidey;
-                        else if (riky<-halfSidey) riky+=sidey;
-                        if (rikz>halfSidez) rikz-=sidez;
-                        else if (rikz<-halfSidez) rikz+=sidez;
+                        if (rikx>half_sidex) rikx-=sidex;
+                        else if (rikx<-half_sidex) rikx+=sidex;
+                        if (riky>half_sidey) riky-=sidey;
+                        else if (riky<-half_sidey) riky+=sidey;
+                        if (rikz>half_sidez) rikz-=sidez;
+                        else if (rikz<-half_sidez) rikz+=sidez;
 
-                        if (rjkx>halfSidex) rjkx-=sidex;
-                        else if (rjkx<-halfSidex) rjkx+=sidex;
-                        if (rjky>halfSidey) rjky-=sidey;
-                        else if (rjky<-halfSidey) rjky+=sidey;
-                        if (rjkz>halfSidez) rjkz-=sidez;
-                        else if (rjkz<-halfSidez) rjkz+=sidez;
+                        if (rjkx>half_sidex) rjkx-=sidex;
+                        else if (rjkx<-half_sidex) rjkx+=sidex;
+                        if (rjky>half_sidey) rjky-=sidey;
+                        else if (rjky<-half_sidey) rjky+=sidey;
+                        if (rjkz>half_sidez) rjkz-=sidez;
+                        else if (rjkz<-half_sidez) rjkz+=sidez;
                     }
                 }
                 else {//if triclinc PBC are used
                     // printf("tilt  %g\n", tilt);
-                    if (rijz<-halfSidez) {
+                    if (rijz<-half_sidez) {
                         rijz+=sidez;
                         rijy += tiltyz;
                         rijx += tiltxz;
                         }
-                    else if (rijz>halfSidez) {
+                    else if (rijz>half_sidez) {
                         rijz-=sidez;
                         rijy -= tiltyz;
                         rijx -= tiltxz;
                     }
-                    if (rijy<-halfSidey){   
+                    if (rijy<-half_sidey){
                             rijx+=tiltxy;
                             rijy+=sidey;}
 
-                    else if (rijy>halfSidey) {
+                    else if (rijy>half_sidey) {
                         rijx-=tiltxy;
                         rijy-=sidey;
                         }      
-                    if (rijx<-halfSidex) rijx+=sidex;
-                    else if (rijx>halfSidex) rijx-=sidex;
+                    if (rijx<-half_sidex) rijx+=sidex;
+                    else if (rijx>half_sidex) rijx-=sidex;
 
-                    if (rikz<-halfSidez) {
+                    if (rikz<-half_sidez) {
                         rikz+=sidez;
                         riky += tiltyz;
                         rikx += tiltxz;
 
                     }
-                    else if (rikz>halfSidez) rikz-=sidez;
-                    if (riky<-halfSidey){   
+                    else if (rikz>half_sidez) rikz-=sidez;
+                    if (riky<-half_sidey){
                             rikx+=tiltxy;
                             riky+=sidey;}
-                    else if (riky>halfSidey) {
+                    else if (riky>half_sidey) {
                         rikx-=tiltxy;
                         riky-=sidey;
                         }      
-                    if (rikx<-halfSidex) rikx+=sidex;
-                    else if (rikx>halfSidex) rikx-=sidex;
+                    if (rikx<-half_sidex) rikx+=sidex;
+                    else if (rikx>half_sidex) rikx-=sidex;
 
-                    if (rjkz<-halfSidez) {
+                    if (rjkz<-half_sidez) {
                         rjkz+=sidez;
                         rjky += tiltyz;
                         rjkx += tiltxz;
                     }
-                    else if (rjkz>halfSidez) {
+                    else if (rjkz>half_sidez) {
                         rjkz-=sidez;
                         rjky -= tiltyz;
                         rjkx -= tiltxz;
                     }
-                    if (rjky<-halfSidey){   
+                    if (rjky<-half_sidey){
                             rjkx+=tiltxy;
                             rjky+=sidey;}
-                    else if (rjky>halfSidey) {
+                    else if (rjky>half_sidey) {
                         rjkx-=tiltxy;
                         rjky-=sidey;
                         }      
-                    if (rjkx<-halfSidex) rjkx+=sidex;
-                    else if (rjkx>halfSidex) rjkx-=sidex;
+                    if (rjkx<-half_sidex) rjkx+=sidex;
+                    else if (rjkx>half_sidex) rjkx-=sidex;
 
                 }
 
@@ -540,85 +542,85 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
                 rjky = y[j] - y[k];
                 rjkz = z[j] - z[k];
 
-                if(ISNOTCUBIC!=3){
+                if(box_type!=3){
                 if (PBCs==1) { // if PBCs are being used
-                    if (rijx>halfSidex) rijx-=sidex;
-                    else if (rijx<-halfSidex) rijx+=sidex;
-                    if (rijy>halfSidey) rijy-=sidey;
-                    else if (rijy<-halfSidey) rijy+=sidey;
-                    if (rijz>halfSidez) rijz-=sidez;
-                    else if (rijz<-halfSidez) rijz+=sidez;
-                    if (rikx>halfSidex) rikx-=sidex;
-                    else if (rikx<-halfSidex) rikx+=sidex;
-                    if (riky>halfSidey) riky-=sidey;
-                    else if (riky<-halfSidey) riky+=sidey;
-                    if (rikz>halfSidez) rikz-=sidez;
-                    else if (rikz<-halfSidez) rikz+=sidez;
-                    if (rjkx>halfSidex) rjkx-=sidex;
-                    else if (rjkx<-halfSidex) rjkx+=sidex;
-                    if (rjky>halfSidey) rjky-=sidey;
-                    else if (rjky<-halfSidey) rjky+=sidey;
-                    if (rjkz>halfSidez) rjkz-=sidez;
-                    else if (rjkz<-halfSidez) rjkz+=sidez;
+                    if (rijx>half_sidex) rijx-=sidex;
+                    else if (rijx<-half_sidex) rijx+=sidex;
+                    if (rijy>half_sidey) rijy-=sidey;
+                    else if (rijy<-half_sidey) rijy+=sidey;
+                    if (rijz>half_sidez) rijz-=sidez;
+                    else if (rijz<-half_sidez) rijz+=sidez;
+                    if (rikx>half_sidex) rikx-=sidex;
+                    else if (rikx<-half_sidex) rikx+=sidex;
+                    if (riky>half_sidey) riky-=sidey;
+                    else if (riky<-half_sidey) riky+=sidey;
+                    if (rikz>half_sidez) rikz-=sidez;
+                    else if (rikz<-half_sidez) rikz+=sidez;
+                    if (rjkx>half_sidex) rjkx-=sidex;
+                    else if (rjkx<-half_sidex) rjkx+=sidex;
+                    if (rjky>half_sidey) rjky-=sidey;
+                    else if (rjky<-half_sidey) rjky+=sidey;
+                    if (rjkz>half_sidez) rjkz-=sidez;
+                    else if (rjkz<-half_sidez) rjkz+=sidez;
                 }
             }
                 else {//if triclinc PBC are used
-                    if (rijz<-halfSidez) {
+                    if (rijz<-half_sidez) {
                         rijz +=sidez;
                         rijy +=tiltyz;
                         rijx +=tiltxz;
                     }
-                    else if (rijz>halfSidez) {
+                    else if (rijz>half_sidez) {
                         rijz-=sidez;
                         rijy -=tiltyz;
                         rijx -=tiltxz;  
                     }
-                    if (rijy<-halfSidey){   
+                    if (rijy<-half_sidey){
                             rijx+=tiltxy;
                             rijy+=sidey;}
-                    else if (rijy>halfSidey) {
+                    else if (rijy>half_sidey) {
                         rijx-=tiltxy;
                         rijy-=sidey;
                         }
 
-                    if (rijx<-halfSidex) rijx+=sidex;
-                    else if (rijx>halfSidex) rijx-=sidex;
+                    if (rijx<-half_sidex) rijx+=sidex;
+                    else if (rijx>half_sidex) rijx-=sidex;
 
                     //k
 
-                    if (rikz<-halfSidez) {
+                    if (rikz<-half_sidez) {
                         rikz+=sidez;
                         rikz +=tiltyz;
                         rikz +=tiltxz;
 
                     }
-                    else if (rikz>halfSidez) {
+                    else if (rikz>half_sidez) {
                         rikz-=sidez;
                         rikz -=tiltyz;
                         rikz -=tiltxz;
 
                     }
-                    if (riky<-halfSidey){   
+                    if (riky<-half_sidey){
                             rikx+=tiltxy;
                             riky+=sidey;}
-                    else if (riky>halfSidey) {
+                    else if (riky>half_sidey) {
                         rikx-=tiltxy;
                         riky-=sidey;
                         }      
-                    if (rikx<-halfSidex) rikx+=sidex;
-                    else if (rikx>halfSidex) rikx-=sidex;
+                    if (rikx<-half_sidex) rikx+=sidex;
+                    else if (rikx>half_sidex) rikx-=sidex;
 
-                    if (rjkz<-halfSidez) rjkz+=sidez;
-                    else if (rjkz>halfSidez) rjkz-=sidez;
-                    if (rjky<-halfSidey){   
+                    if (rjkz<-half_sidez) rjkz+=sidez;
+                    else if (rjkz>half_sidez) rjkz-=sidez;
+                    if (rjky<-half_sidey){
                             rjkx+=tiltxy;
                             rjky+=sidey;}
-                    else if (rjky>halfSidey) {
+                    else if (rjky>half_sidey) {
                         rjkx-=tiltxy;
                         rjky-=sidey;
                         }      
-                    if (rjkx<-halfSidex) rjkx+=sidex;
-                    else if (rjkx>halfSidex) rjkx-=sidex;
+                    if (rjkx<-half_sidex) rjkx+=sidex;
+                    else if (rjkx>half_sidex) rjkx-=sidex;
 
                 }
 
