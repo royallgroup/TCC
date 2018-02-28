@@ -46,7 +46,6 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
 int main(int argc, char **argv) {
     int current_frame_number, f, i;
     int remainder;
-    char errMsg[1000], output[1000];
     struct xyz_info input_xyz_info;
 
     sprintf(fInputParamsName,"inputparameters.ini");
@@ -129,10 +128,8 @@ int main(int argc, char **argv) {
         Write_Pop_Per_Frame(f);
     }    
 
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    printf("\n");
-    Stats_Report(output);
-    printf("\nWritten %s\n\n",output);
+
+    Stats_Report();
 
     free(input_xyz_info.num_particles);
     free(input_xyz_info.frame_offsets);

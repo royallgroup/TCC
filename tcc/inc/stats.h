@@ -7,7 +7,7 @@ void Stats_SetA();	// Set arrays to true if the ith particle is a member of any 
 void Stats_Analyse();	// output Cluster statistics to file
 void count_gross_clusters();
 void Accumulate_Stats();
-void Stats_Report(char *filename);
+void Stats_Report();
 void Pop_Per_Frame(int f);
 void Normalise_Populations();
 

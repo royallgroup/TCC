@@ -435,9 +435,11 @@ void Setup_Cell_List() {
     for (i=0; i<current_frame_particle_number+1; i++) llist[i]=0;
 
 
-    M = (int)(sidex/rcutAA);	// number of cells along box side
-    if (M<3) Error_no_free("main(): M<3, too few cells");
-    ncells = M*M*M;	// total number of cells
+    n_cells_x = (int)(sidex/rcutAA);
+    n_cells_y = (int)(sidey/rcutAA);
+    n_cells_z = (int)(sidez/rcutAA);
+    if (n_cells_x < 3 || n_cells_y < 3 || n_cells_z < 3) Error_no_free("main(): M<3, too few cells");
+    n_cells_total = n_cells_x*n_cells_y*n_cells_z;
     cellSide = sidex/M;	// length of cells
     invcellSide = 1.0/cellSide;	// invcellSide
     printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);

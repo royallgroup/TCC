@@ -65,7 +65,8 @@ double **bondlengths;   // length of bonds in the bond network and squared
 int maxnb; // max number of bonds to one particle
 int correctedBonds; // max number of bonds to one particle
 
-int M, ncells;   // number of cells per box length, total number of cells
+
+int ncells, n_cells_x, n_cells_y, n_cells_z, n_cells_total;   // number of cells per box length, total number of cells
 int *head;   // head of cell array
 int *llist; // linked list array
 int *map; // list of neighbouring cells for cell i

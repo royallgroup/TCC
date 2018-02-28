@@ -154,18 +154,20 @@ void Accumulate_Stats() {
     }
 }
 
-void Stats_Report(char *filename) {
-    char errMsg[1000], buffer[1000];
+void Stats_Report() {
+    char errMsg[1000], buffer[1000], output_name[200];
     FILE *writeout;
     int i;
 
-    writeout=fopen(filename,"w");
+    sprintf(output_name,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+
+    writeout=fopen(output_name,"w");
     if (writeout==NULL)  {
-        sprintf(errMsg,"Stats_Report(): Error opening file %s",filename);	// Always test file open
+        sprintf(errMsg,"Stats_Report(): Error opening file %s",output_name);	// Always test file open
         Error(errMsg);
     }
 
-    fprintf(writeout,"%s\n",filename);
+    fprintf(writeout,"%s\n",output_name);
     sprintf(buffer, "Clust	Number	Gross	Net	Mean Pop Per Frame\n");
     printf(buffer);
     fprintf(writeout,buffer);
