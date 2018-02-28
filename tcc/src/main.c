@@ -116,6 +116,12 @@ int main(int argc, char **argv) {
             if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(f, 21);
             if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
 
+            if (USELIST==1) {
+                free(map);
+                free(head);
+                free(llist);
+            }
+            
             printf("f%d complete\n", f);
             f++;
             if (f == FRAMES) break;

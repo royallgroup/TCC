@@ -299,12 +299,6 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
             memset(*raw_list[cluster_type], 'C', max_particle_number*sizeof(char));
         }
     }
-
-    if (USELIST==1) {
-        free(map);
-        free(head);
-        free(llist);
-    }
 }
 
 void Free_All_Variables()  {  // Free bond detection variables
