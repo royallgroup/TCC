@@ -317,12 +317,6 @@ void Free_All_Variables()  {  // Free bond detection variables
     }
     free(bNums); free(bondlengths); free(cnb);
     
-    if (USELIST==1) {
-        free(map);
-        free(head);
-        free(llist);
-    }
-
     for (i=0; i<num_cluster_types; ++i) {
         free(pop_per_frame[i]);
     }
@@ -412,7 +406,13 @@ void Free_All_Variables()  {  // Free bond detection variables
     free(s12A); free(s12B); free(s12D); free(s12E); free(s12K);
     free(s13A); free(s13B); free(s13K);
     free(sFCC);free(sHCP); free(sBCC_9); free(sBCC_15);
-    
+
+    if (USELIST==1) {
+        free(map);
+        free(head);
+        free(llist);
+    }
+
 }
 
 int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
@@ -439,12 +439,12 @@ void Setup_Cell_List() {
 
     printf("x_cells %d y_cells %d z_cells %d total_cells %d\n", n_cells_x, n_cells_y, n_cells_z, n_cells_total);
 
-    head=malloc((n_cells_x+1)*sizeof(int));    if (head==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): head[] malloc out of memory\n");  Error_no_free(errMsg); }
-    map=malloc((13*n_cells_x+1)*sizeof(int));  if (map==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): map[] malloc out of memory\n");    Error_no_free(errMsg); }
-    llist=malloc((current_frame_particle_number+1)*sizeof(int));    if (llist==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): llist[] malloc out of memory\n");    Error_no_free(errMsg); }
+    head=malloc((n_cells_total+1)*sizeof(int));    if (head==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): head[] malloc out of memory\n");  Error_no_free(errMsg); }
+    map=malloc((13*n_cells_total+1)*sizeof(int));  if (map==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): map[] malloc out of memory\n");    Error_no_free(errMsg); }
+    llist=malloc((current_frame_particle_number+1)*sizeof(int)); if (llist==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): llist[] malloc out of memory\n");    Error_no_free(errMsg); }
 
-    for (i=0; i<n_cells_x+1; i++) head[i]=0;
-    for (i=0; i<13*n_cells_x+1; i++) map[i]=0;
+    for (i=0; i<n_cells_total+1; i++) head[i]=0;
+    for (i=0; i<13*n_cells_total+1; i++) map[i]=0;
     for (i=0; i<current_frame_particle_number+1; i++) llist[i]=0;
 
 

@@ -133,8 +133,8 @@ int main(int argc, char **argv) {
 
     free(input_xyz_info.num_particles);
     free(input_xyz_info.frame_offsets);
-    Free_All_Variables();
     Stats_FreeMem();
+    Free_All_Variables();
 
     printf("\n\nFIN \n\n");
     return 0;
