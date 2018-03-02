@@ -68,9 +68,9 @@ int main(int argc, char **argv) {
 
         if (remainder==0 && f<FRAMES) {
             current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
-            if (USELIST == 1) Setup_Cell_List();
             Reset_Frame_Variables();
             if (box_type != 1) get_box_size(current_frame_number);
+            if (USELIST == 1) Setup_Cell_List();
             get_xyz_frame(&input_xyz_info, current_frame_number);
             Bonds_GetBonds();
             if (doWriteBonds == 1) Write_Bonds_File(f);
