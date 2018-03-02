@@ -4,7 +4,7 @@
 #include "bonds.h"
 #include "math.h"
 
-void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
+void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     int i, j, k, l, m;
     int ic, jcell0, jcell,nabor;    // various counters
     const int nBs = 4 * nB;
@@ -24,10 +24,10 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
     Sr = malloc(nBs*sizeof(double));
     Sr2 = malloc(nBs*sizeof(double));
 
-    store_dr2 = malloc(current_frame_particle_number*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
-    temp_cnb = malloc(current_frame_particle_number*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
-    temp_bNums = malloc(current_frame_particle_number*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j=0; j<current_frame_particle_number; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Bonds_GetBondsV_CellList(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
+    store_dr2 = malloc(current_frame_particle_number*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
+    temp_cnb = malloc(current_frame_particle_number*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
+    temp_bNums = malloc(current_frame_particle_number*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
+    for (j=0; j<current_frame_particle_number; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
 
     printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
 
@@ -62,7 +62,7 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
                         temp_cnb[j-1]++;
                     }
                     else {    // list is now full
-                        printf("Bonds_GetBondsV_CellList(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
+                        printf("Get_Bonds_With_Voronoi_And_Cell_List(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
                         exit(1);
                     }
                 }
@@ -83,7 +83,7 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
                             temp_cnb[j-1]++;
                         }
                         else {    // list is now full
-                            printf("Bonds_GetBondsV_CellList(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
+                            printf("Get_Bonds_With_Voronoi_And_Cell_List(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
                             exit(1);
                         }
                     }
@@ -131,7 +131,7 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
         } // Now sorted the list in order of distance from i
 
         if (cnbs!=cnbs2) {
-            printf("Bonds_GetBondsV_CellList(): part %d - cnbs %d does not equal cnbs2 %d \n",i,cnbs,cnbs2);
+            printf("Get_Bonds_With_Voronoi_And_Cell_List(): part %d - cnbs %d does not equal cnbs2 %d \n",i,cnbs,cnbs2);
             exit(1);
         }
         cnb[i]=0;
@@ -267,12 +267,12 @@ void Bonds_GetBondsV_CellList() {  // Get bonds using Voronoi
                     bondlengths[i][k]=sqrt(store_dr2[j]);
                 }
                 else {    // list is now full
-                    printf("Bonds_GetBondsV_CellList(): nB %d number of bonds per particle is not big enough: particle i %d cnb[i] %d or j %d cnb[j] %d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,cnb[i],j,cnb[j]);
+                    printf("Get_Bonds_With_Voronoi_And_Cell_List(): nB %d number of bonds per particle is not big enough: particle i %d cnb[i] %d or j %d cnb[j] %d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,cnb[i],j,cnb[j]);
                     exit(1);
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%10000)) printf("Bonds_GetBondsV_CellList(): particle %d of %d done\n",i+1,current_frame_particle_number);
+        if (PRINTINFO==1) if (!((i+1)%10000)) printf("Get_Bonds_With_Voronoi_And_Cell_List(): particle %d of %d done\n",i+1,current_frame_particle_number);
     } // End i loop
 
     for (i=0; i<current_frame_particle_number; i++) free(temp_bNums[i]);
