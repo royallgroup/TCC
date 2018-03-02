@@ -104,7 +104,7 @@ void Get_Bonds() {
 
 void Get_Simple_Bonds() {
     // Get bonds using simple lengths
-    int particle_1, particle_2, k;
+    int particle_1, particle_2;
     double squared_distance;
 
     printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",current_frame_particle_number,rcutAA2,rcutAB2,rcutBB2);
@@ -119,53 +119,50 @@ void Get_Simple_Bonds() {
             else {
                 squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
             }
-            if (particle_type[particle_1]==1 && particle_type[particle_2]==1 && squared_distance < rcutAA2){
-                if (cnb[particle_1] < nB && cnb[particle_2] < nB){  // max number of bonds, do ith particle
-                    k = cnb[particle_1]++;
-                    bNums[particle_1][k] = particle_2;
-                    bondlengths[particle_1][k]=sqrt(squared_distance);
-                    k = cnb[particle_2]++;
-                    bNums[particle_2][k] = particle_1;
-                    bondlengths[particle_2][k]=sqrt(squared_distance);
-                }
-                else{    // list is now full
-                    printf("Get_Bonds(): nB %d number of bonds per particle is not big enough: particle particle_1 %d or particle_2% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,particle_1,particle_2);
-                    exit(1);
-                }
-            }
-            else if (particle_type[particle_1]==2 && particle_type[particle_2]==2 && squared_distance < rcutBB2){
-                if (cnb[particle_1] < nB && cnb[particle_2] < nB){  // max number of bonds, do ith particle
-                    k = cnb[particle_1]++;
-                    bNums[particle_1][k] = particle_2;
-                    bondlengths[particle_1][k]=sqrt(squared_distance);
-                    k = cnb[particle_2]++;
-                    bNums[particle_2][k] = particle_1;
-                    bondlengths[particle_2][k]=sqrt(squared_distance);
-                }
-                else{    // list is now full
-                    printf("Get_Bonds(): nB %d number of bonds per particle is not big enough: particle particle_1 %d or particle_2% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,particle_1,particle_2);
-                    exit(1);
-                }
-            }
-            else if (squared_distance < rcutAB2) {
-                if ((particle_type[particle_1]==1 && particle_type[particle_2]==2) || (particle_type[particle_1]==2 && particle_type[particle_2]==1)) {
-                    if (cnb[particle_1] < nB && cnb[particle_2] < nB){  // max number of bonds, do ith particle
-                        k = cnb[particle_1]++;
-                        bNums[particle_1][k] = particle_2;
-                        bondlengths[particle_1][k]=sqrt(squared_distance);
-                        k = cnb[particle_2]++;
-                        bNums[particle_2][k] = particle_1;
-                        bondlengths[particle_2][k]=sqrt(squared_distance);
-                    }
-                    else{    // list is now full
-                        printf("Get_Bonds(): nB %d number of bonds per particle is not big enough: particle particle_1 %d or particle_2% d has too many bonds\nThis is probably because rcutAA is too large\n",nB,particle_1,particle_2);
-                        exit(1);
-                    }
-                }
-            }
+
+            Check_For_Valid_Bond(particle_1, particle_2, squared_distance);
         }
-        if (PRINTINFO==1) if (!((particle_1+1)%1000)) printf("Get_Bonds(): particle %d of %d done\n",particle_1+1,current_frame_particle_number);
     }
+}
+
+void Check_For_Valid_Bond(int particle_1, int particle_2, double squared_distance) {
+    if (squared_distance < rcutAA2 && particle_type[particle_1] == 1 && particle_type[particle_2] == 1){
+        Check_Num_Bonds(particle_1, particle_2, squared_distance);
+    }
+    else if (squared_distance < rcutBB2 && particle_type[particle_1]==2 && particle_type[particle_2]==2){
+        Check_Num_Bonds(particle_1, particle_2, squared_distance);
+    }
+    else if (squared_distance < rcutAB2) {
+        Check_Num_Bonds(particle_1, particle_2, squared_distance);
+    }
+}
+
+void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance) {
+    if (cnb[particle_1] < nB && cnb[particle_2] < nB){
+        Add_New_Bond(particle_1, particle_2, squared_distance);
+    }
+    else {
+        Too_Many_Bonds(particle_1, particle_2);
+    }
+}
+
+void Too_Many_Bonds(int particle_1, int particle_2) {
+    char error_message[200];
+
+    sprintf(error_message, "Get_Simple_Bonds(): Too many bonds to particle %d or particle_2 %d.\n"
+            "This is probably because rcutAA or rcutBB is too large\n", particle_1,particle_2);
+    Error(error_message);
+}
+
+void Add_New_Bond(int particle_1, int particle_2, double squared_distance) {
+    int k;
+
+    k = cnb[particle_1]++;
+    bNums[particle_1][k] = particle_2;
+    bondlengths[particle_1][k]=sqrt(squared_distance);
+    k = cnb[particle_2]++;
+    bNums[particle_2][k] = particle_1;
+    bondlengths[particle_2][k]=sqrt(squared_distance);
 }
 
 void Bonds_GetBondsV()  {  // Get bonds using Voronoi
