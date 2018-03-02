@@ -10,6 +10,7 @@
 #include "stats.h"
 #include "tools.h"
 #include "input.h"
+#include "cell_list.h"
 
 int num_cluster_types = 39;
 
@@ -72,7 +73,7 @@ int main(int argc, char **argv) {
             if (box_type != 1) get_box_size(current_frame_number);
             if (USELIST == 1) Setup_Cell_List();
             get_xyz_frame(&input_xyz_info, current_frame_number);
-            Bonds_GetBonds();
+            Get_Bonds();
             if (doWriteBonds == 1) Write_Bonds_File(f);
 
             for (i = 0; i < current_frame_particle_number; i++) {
