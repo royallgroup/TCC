@@ -11,7 +11,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     int cnbs, cnbs2;
     int *S, *S2, *Sb;
     double *Sr, *Sr2;
-    double x1, x2, dr2;
+    double x1, x2, squared_distance;
     double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
     double *store_dr2;
     int *temp_cnb, **temp_bNums;
@@ -27,7 +27,12 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     store_dr2 = malloc(current_frame_particle_number*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
     temp_cnb = malloc(current_frame_particle_number*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
     temp_bNums = malloc(current_frame_particle_number*sizeof(int *));   if (temp_bNums==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_bNums[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j=0; j<current_frame_particle_number; ++j) { temp_bNums[j] = malloc(nBs*sizeof(int));  if (temp_bNums[j]==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg); } }
+    for (j=0; j<current_frame_particle_number; ++j) {
+        temp_bNums[j] = malloc(nBs*sizeof(int));
+        if (temp_bNums[j]==NULL) {
+            sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_bNums[][] malloc out of memory\n"); Error_no_free(errMsg);
+        }
+    }
 
     printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
 
@@ -44,7 +49,6 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
         store_dr2[i]=-1.0;
         for (j=0; j<nBs; j++) temp_bNums[i][j]=0;
     }
-    for (i=0; i<(n_cells_total+1); ++i) head[i]=-1;
     links();
     for (ic=1;ic<=n_cells_total;ic++) {        // loop over all cells
         i=head[ic];     // head of list particle for cell ic
@@ -52,8 +56,8 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
 
             j=llist[i]; // next particle in current cell ic
             while (j>0) {   // loop over all particles in cell ic
-                dr2 = Get_Interparticle_Distance(i - 1, j - 1);
-                if (dr2 < rcutAA2) {
+                squared_distance = Get_Interparticle_Distance(i - 1, j - 1);
+                if (squared_distance < rcutAA2) {
                     if (temp_cnb[i-1] < nBs && temp_cnb[j-1] < nBs) {  // max number of bonds, do ith particle
                         temp_bNums[i-1][temp_cnb[i-1]]=j-1;
                         temp_bNums[j-1][temp_cnb[j-1]]=i-1;
@@ -61,8 +65,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
                         temp_cnb[j-1]++;
                     }
                     else {    // list is now full
-                        printf("Get_Bonds_With_Voronoi_And_Cell_List(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
-                        exit(1);
+                        Too_Many_Bonds(i-1, j-1, __func__);
                     }
                 }
                 j=llist[j]; // loop over next particle in cell ic
@@ -72,17 +75,16 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
                 jcell=map[jcell0+nabor];
                 j=head[jcell];  // head of cell for jcell
                 while (j>0) {   // loop over head of cell and all other particles in jcell
-                    dr2 = Get_Interparticle_Distance(i - 1, j - 1);
-                    if (dr2 < rcutAA2) {
+                    squared_distance = Get_Interparticle_Distance(i - 1, j - 1);
+                    if (squared_distance < rcutAA2) {
                         if (temp_cnb[i-1] < nBs && temp_cnb[j-1] < nBs) {  // max number of bonds, do ith particle
                             temp_bNums[i-1][temp_cnb[i-1]]=j-1;
                             temp_bNums[j-1][temp_cnb[j-1]]=i-1;
                             temp_cnb[i-1]++;
                             temp_cnb[j-1]++;
                         }
-                        else {    // list is now full
-                            printf("Get_Bonds_With_Voronoi_And_Cell_List(): nBs %d number of bonds per particle is not big enough: particle i %d or j% d has too many bonds\nThis is probably because rcutAA is too large\n",nBs,i-1,j-1);
-                            exit(1);
+                        else {
+                            Too_Many_Bonds(i-1, j-1, __func__);
                         }
                     }
                     j=llist[j]; // next particle in jcell
@@ -98,13 +100,13 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
             store_dr2[j]=-1.0;
         }
         for (j=0; j<temp_cnb[i]; ++j) {
-            dr2 = Get_Interparticle_Distance(i, temp_bNums[i][j]);
+            squared_distance = Get_Interparticle_Distance(i, temp_bNums[i][j]);
             k = cnbs++;
             S[k] = temp_bNums[i][j];
             Sb[k] = 1;
-            Sr[k] = dr2;
+            Sr[k] = squared_distance;
 
-            store_dr2[temp_bNums[i][j]]=dr2;
+            store_dr2[temp_bNums[i][j]]=squared_distance;
 
         } // We've now filled up the initial S
         cnbs2 = 0;
@@ -148,86 +150,10 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
                 rjky = y[j] - y[k];
                 rjkz = z[j] - z[k];
 
-                if(box_type!=3){
-                    if (PBCs==1) { // if PBCs are being used
-                        if (rijx>half_sidex) rijx-=sidex;
-                        else if (rijx<-half_sidex) rijx+=sidex;
-                        if (rijy>half_sidey) rijy-=sidey;
-                        else if (rijy<-half_sidey) rijy+=sidey;
-                        if (rijz>half_sidez) rijz-=sidez;
-                        else if (rijz<-half_sidez) rijz+=sidez;
-                        if (rikx>half_sidex) rikx-=sidex;
-                        else if (rikx<-half_sidex) rikx+=sidex;
-                        if (riky>half_sidey) riky-=sidey;
-                        else if (riky<-half_sidey) riky+=sidey;
-                        if (rikz>half_sidez) rikz-=sidez;
-                        else if (rikz<-half_sidez) rikz+=sidez;
-                        if (rjkx>half_sidex) rjkx-=sidex;
-                        else if (rjkx<-half_sidex) rjkx+=sidex;
-                        if (rjky>half_sidey) rjky-=sidey;
-                        else if (rjky<-half_sidey) rjky+=sidey;
-                        if (rjkz>half_sidez) rjkz-=sidez;
-                        else if (rjkz<-half_sidez) rjkz+=sidez;
-                    }
-                }
-                else {//if triclinc PBC are used
-                    if (rijz<-half_sidez) {
-                        rijz +=sidez;
-                        rijy +=tiltyz;
-                        rijx +=tiltxz;
-                    }
-                    else if (rijz>half_sidez) {
-                        rijz-=sidez;
-                        rijy -=tiltyz;
-                        rijx -=tiltxz;
-                    }
-                    if (rijy<-half_sidey){
-                        rijx+=tiltxy;
-                        rijy+=sidey;}
-                    else if (rijy>half_sidey) {
-                        rijx-=tiltxy;
-                        rijy-=sidey;
-                    }
-
-                    if (rijx<-half_sidex) rijx+=sidex;
-                    else if (rijx>half_sidex) rijx-=sidex;
-
-                    //k
-
-                    if (rikz<-half_sidez) {
-                        rikz+=sidez;
-                        rikz +=tiltyz;
-                        rikz +=tiltxz;
-
-                    }
-                    else if (rikz>half_sidez) {
-                        rikz-=sidez;
-                        rikz -=tiltyz;
-                        rikz -=tiltxz;
-
-                    }
-                    if (riky<-half_sidey){
-                        rikx+=tiltxy;
-                        riky+=sidey;}
-                    else if (riky>half_sidey) {
-                        rikx-=tiltxy;
-                        riky-=sidey;
-                    }
-                    if (rikx<-half_sidex) rikx+=sidex;
-                    else if (rikx>half_sidex) rikx-=sidex;
-
-                    if (rjkz<-half_sidez) rjkz+=sidez;
-                    else if (rjkz>half_sidez) rjkz-=sidez;
-                    if (rjky<-half_sidey){
-                        rjkx+=tiltxy;
-                        rjky+=sidey;}
-                    else if (rjky>half_sidey) {
-                        rjkx-=tiltxy;
-                        rjky-=sidey;
-                    }
-                    if (rjkx<-half_sidex) rjkx+=sidex;
-                    else if (rjkx>half_sidex) rjkx-=sidex;
-
+                if (PBCs==1)  {
+                    enforce_PBCs(&rijx, &rijy, &rijz);
+                    enforce_PBCs(&rikx, &riky, &rikz);
+                    enforce_PBCs(&rjkx, &rjky, &rjkz);
                 }
 
                 x1 = rijx * rikx + rijy * riky + rijz * rikz;
@@ -264,13 +190,11 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
                     bondlengths[i][k]=sqrt(store_dr2[j]);
                 }
                 else {    // list is now full
-                    printf("Get_Bonds_With_Voronoi_And_Cell_List(): nB %d number of bonds per particle is not big enough: particle i %d cnb[i] %d or j %d cnb[j] %d has too many bonds\nThis is probably because rcutAA is too large\n",nB,i,cnb[i],j,cnb[j]);
-                    exit(1);
+                    Too_Many_Bonds(i, j, __func__);
                 }
             }
         }
-        if (PRINTINFO==1) if (!((i+1)%10000)) printf("Get_Bonds_With_Voronoi_And_Cell_List(): particle %d of %d done\n",i+1,current_frame_particle_number);
-    } // End i loop
+    }
 
     for (i=0; i<current_frame_particle_number; i++) free(temp_bNums[i]);
     free(temp_bNums);
