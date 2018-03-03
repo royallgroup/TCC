@@ -41,8 +41,7 @@ void Get_Bonds_With_Voronoi() {
         }
         for (j=0; j<current_frame_particle_number; ++j) {
             if (i==j) continue;
-            if (PBCs == 1) dr2 = Get_Interparticle_Distance_With_PBCs(i, j);
-            else dr2 = Get_Interparticle_Distance(i, j);
+            dr2 = Get_Interparticle_Distance(i, j);
             if (dr2 < rcutAA2) {
                 if (cnbs < nBs) {  // max number of bonds, do ith particle
                     k = cnbs++;

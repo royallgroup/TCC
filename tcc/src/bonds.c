@@ -4,70 +4,52 @@
 #include "tools.h"
 #include "cell_list.h"
 #include "string.h"
-#include "voronoi_bonds.h"
 
 double Get_Interparticle_Distance(int i, int j) {
-    // Returns the squared interparticle distance between i and j
+    // Returns the PBC wrapped squared interparticle distance between i and j
     double dx, dy, dz;
     double total_distance;
 
-    dx = x[i] - x[j];
-    dy = y[i] - y[j];
-    dz = z[i] - z[j];
+    get_distance_components(i, j, &dx, &dy, &dz);
+
+    if (PBCs == 1) {
+        enforce_PBCs(&dx, &dy, &dz);
+    }
     total_distance = dx * dx + dy * dy + dz * dz;
     return total_distance;
 }
 
-double Get_Interparticle_Distance_With_PBCs(int i, int j) {
-    // Returns the PBC wrapped squared interparticle distance between i and j
-    double dx, dy, dz;
-
-    dx = x[i] - x[j];
-    dy = y[i] - y[j];
-    dz = z[i] - z[j];
-
-    if(box_type==2)
-    {
-        if (dx<-half_sidex) dx+=sidex;
-        else if (dx>half_sidex) dx-=sidex;
-        if (dy<-half_sidey) dy+=sidey;
-        else if (dy>half_sidey) dy-=sidey;
-        if (dz<-half_sidez) dz+=sidez;
-        else if (dz>half_sidez) dz-=sidez;
-        return dx * dx + dy * dy + dz * dz;
+void enforce_PBCs(double *dx, double *dy, double *dz) {
+    if (*dz > half_sidez) {
+        *dz -= sidez;
+        *dy -= tiltyz;
+        *dx -= tiltxz;
     }
-
-    else {
-        // if it is a triclinic periodic box...
-        if (dz > sidez*0.5) {
-                dz -= sidez;
-                dy -= tiltyz;
-                dx -= tiltxz;
-        }
-        if (dz < -sidez*0.5) {
-            dz += sidez;
-            dy += tiltyz;
-            dx += tiltxz;
-        }
-            //deal with y, which affects x
-        if (dy > sidey*0.5) {
-                dx-=tiltxy;
-                dy -= sidey;
-        }
-        if (dy < -sidey*0.5) {
-                dx+=tiltxy ;
-                dy += sidey;
-        }
-            //deal with x
-        if (dx > sidex*0.5) {
-            dx -= sidex;
-        }
-        if (dx < -sidex*0.5) {
-            dx+= sidex;
-        }
-        return dx * dx + dy * dy + dz * dz;
+    if (*dz < -half_sidez) {
+        *dz += sidez;
+        *dy += tiltyz;
+        *dx += tiltxz;
     }
+    if (*dy > half_sidey) {
+        *dx -=tiltxy;
+        *dy -= sidey;
+    }
+    if (*dy < -half_sidey) {
+        *dx +=tiltxy ;
+        *dy += sidey;
+    }
+    if (*dx > half_sidex) {
+        *dx -= sidex;
+    }
+    if (*dx < -half_sidex) {
+        *dx += sidex;
+    }
+}
 
+void get_distance_components(int i, int j, double *dx, double *dy, double *dz) {
+    *dx = x[i] - x[j];
+    *dy = y[i] - y[j];
+    *dz = z[i] - z[j];
 }
 
 void Are_All_Bonds_Symmetric() {
@@ -118,12 +100,8 @@ void Get_Simple_Bonds() {
 
     for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
         for(particle_2=particle_1+1; particle_2<current_frame_particle_number; ++particle_2) {
-            if (PBCs == 1) {
-                squared_distance = Get_Interparticle_Distance_With_PBCs(particle_1, particle_2);
-            }
-            else {
-                squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
-            }
+
+            squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
 
             Check_For_Valid_Bond(particle_1, particle_2, squared_distance);
         }

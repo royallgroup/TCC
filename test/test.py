@@ -61,8 +61,7 @@ class FileChecks:
         return filecmp.cmp("sample.pop_per_frame", glob("sample.xyz*pop_per_frame")[0], shallow=False)
 
 
-def test_tcc():
-
+def test_simple_bonds():
     # Test a relatively large file with simple bonds that finds most clusters
     with cd("./simple_bonds"):
         assert FileOperations.copy_tcc() == 0
@@ -71,6 +70,8 @@ def test_tcc():
         assert FileChecks.check_bonds() is True
         assert FileOperations.tidy() == 0
 
+
+def test_basic_voronoi():
     # Test a small file with multiple frames
     with cd("./basic_voronoi"):
         assert FileOperations.copy_tcc() == 0
@@ -80,6 +81,8 @@ def test_tcc():
         assert FileChecks.check_bonds() is True
         assert FileOperations.tidy() == 0
 
+
+def test_voronoi_with_cell_list():
     # Test a medium file with cubic boundaries and cell list turned on
     with cd("./voronoi_cells"):
         assert FileOperations.copy_tcc() == 0
@@ -88,6 +91,3 @@ def test_tcc():
         assert FileChecks.check_pop_per_frame() is True
         assert FileChecks.check_bonds() is True
         assert FileOperations.tidy() == 0
-
-
-test_tcc()

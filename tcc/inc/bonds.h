@@ -3,7 +3,9 @@
 
 double Get_Interparticle_Distance(int i, int j);
 
-double Get_Interparticle_Distance_With_PBCs(int i, int j);
+void get_distance_components(int i, int j, double *dx, double *dy, double *dz);
+
+void enforce_PBCs(double *dx, double *dy, double *dz);
 
 void Are_All_Bonds_Symmetric();
 

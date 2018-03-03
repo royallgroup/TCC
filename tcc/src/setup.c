@@ -93,6 +93,7 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
         mean_pop_per_frame[i] = 0.0;
     }
 
+    tiltxy = tiltxz = tiltyz = 0;
     x = malloc(max_particle_number*sizeof(double));   if (x==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): x[] malloc out of memory\n");    Error_no_free(errMsg); }    // positions of particles in a configuration
     y = malloc(max_particle_number*sizeof(double));   if (y==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): y[] malloc out of memory\n");    Error_no_free(errMsg); }
     z = malloc(max_particle_number*sizeof(double));   if (z==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): z[] malloc out of memory\n");    Error_no_free(errMsg); }

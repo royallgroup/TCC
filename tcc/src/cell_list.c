@@ -52,8 +52,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
 
             j=llist[i]; // next particle in current cell ic
             while (j>0) {   // loop over all particles in cell ic
-                if (PBCs == 1) dr2 = Get_Interparticle_Distance_With_PBCs(i - 1, j - 1);
-                else dr2 = Get_Interparticle_Distance(i - 1, j - 1);
+                dr2 = Get_Interparticle_Distance(i - 1, j - 1);
                 if (dr2 < rcutAA2) {
                     if (temp_cnb[i-1] < nBs && temp_cnb[j-1] < nBs) {  // max number of bonds, do ith particle
                         temp_bNums[i-1][temp_cnb[i-1]]=j-1;
@@ -73,8 +72,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
                 jcell=map[jcell0+nabor];
                 j=head[jcell];  // head of cell for jcell
                 while (j>0) {   // loop over head of cell and all other particles in jcell
-                    if (PBCs == 1) dr2 = Get_Interparticle_Distance_With_PBCs(i - 1, j - 1);
-                    else dr2 = Get_Interparticle_Distance(i - 1, j - 1);
+                    dr2 = Get_Interparticle_Distance(i - 1, j - 1);
                     if (dr2 < rcutAA2) {
                         if (temp_cnb[i-1] < nBs && temp_cnb[j-1] < nBs) {  // max number of bonds, do ith particle
                             temp_bNums[i-1][temp_cnb[i-1]]=j-1;
@@ -100,8 +98,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
             store_dr2[j]=-1.0;
         }
         for (j=0; j<temp_cnb[i]; ++j) {
-            if (PBCs == 1) dr2 = Get_Interparticle_Distance_With_PBCs(i, temp_bNums[i][j]);
-            else dr2 = Get_Interparticle_Distance(i, temp_bNums[i][j]);
+            dr2 = Get_Interparticle_Distance(i, temp_bNums[i][j]);
             k = cnbs++;
             S[k] = temp_bNums[i][j];
             Sb[k] = 1;
