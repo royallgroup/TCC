@@ -3,17 +3,16 @@
 #include "globals.h"
 #include "tools.h"
 #include "bonds.h"
-#include "math.h"
 
 void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
-    int i, j, k, l, m;
+    int i, j;
     int ic, jcell0, jcell,nabor;    // various counters
     const int nBs = 4 * nB;
     int num_particle_1_neighbours;
     int *particle_1_neighbours, *sorted_particle_1_neighbours, *particle_1_bonds;
     double *particle_1_bond_lengths, *sorted_particle_1_bond_lengths;
-    double x1, x2, squared_distance;
-    double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
+    double squared_distance;
+
     double *store_dr2;
     int *temp_cnb, **temp_bNums;
     char errMsg[1000];
@@ -97,18 +96,13 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
 
     for (i=0; i<current_frame_particle_number; ++i) {
         num_particle_1_neighbours = 0;
-        for (j=0; j<current_frame_particle_number; ++j) {
-            store_dr2[j]=-1.0;
-        }
         for (j=0; j<temp_cnb[i]; ++j) {
             squared_distance = Get_Interparticle_Distance(i, temp_bNums[i][j]);
-            k = num_particle_1_neighbours++;
-            particle_1_neighbours[k] = temp_bNums[i][j];
-            particle_1_bonds[k] = 1;
-            particle_1_bond_lengths[k] = squared_distance;
-
+            particle_1_neighbours[num_particle_1_neighbours] = temp_bNums[i][j];
+            particle_1_bonds[num_particle_1_neighbours] = 1;
+            particle_1_bond_lengths[num_particle_1_neighbours] = squared_distance;
             store_dr2[temp_bNums[i][j]]=squared_distance;
-
+            num_particle_1_neighbours++;
         }
         Insertion_Sort_Bond_Lengths(num_particle_1_neighbours, particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bond_lengths, sorted_particle_1_bond_lengths);
 

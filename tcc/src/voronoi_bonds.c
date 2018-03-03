@@ -144,9 +144,8 @@ int get_particle_1_neighbours(int particle_1, const int max_allowed_bonds, int *
             squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
             if (squared_distance < rcutAA2) {
                 if (num_particle_1_neighbours < max_allowed_bonds) {
-                    k = num_particle_1_neighbours;
-                    particle_1_bonds[k] = particle_2;
-                    particle_1_bond_lengths[k] = squared_distance;
+                    particle_1_bonds[num_particle_1_neighbours] = particle_2;
+                    particle_1_bond_lengths[num_particle_1_neighbours] = squared_distance;
                     store_dr2[particle_2] = squared_distance;
                     num_particle_1_neighbours++;
                 }
