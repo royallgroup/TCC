@@ -1,4 +1,5 @@
 #include "cell_list.h"
+#include "voronoi_bonds.h"
 #include "globals.h"
 #include "tools.h"
 #include "bonds.h"
@@ -8,9 +9,9 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     int i, j, k, l, m;
     int ic, jcell0, jcell,nabor;    // various counters
     const int nBs = 4 * nB;
-    int cnbs, cnbs2;
-    int *S, *S2, *Sb;
-    double *Sr, *Sr2;
+    int num_particle_1_neighbours, cnbs2;
+    int *particle_1_neighbours, *sorted_particle_1_neighbours, *Sb;
+    double *particle_1_bond_lengths, *sorted_particle_1_bond_lengths;
     double x1, x2, squared_distance;
     double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
     double *store_dr2;
@@ -18,11 +19,11 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     char errMsg[1000];
 
 
-    S = malloc(nBs*sizeof(int));
-    S2 = malloc(nBs*sizeof(int));
+    particle_1_neighbours = malloc(nBs*sizeof(int));
+    sorted_particle_1_neighbours = malloc(nBs*sizeof(int));
     Sb = malloc(nBs*sizeof(int));
-    Sr = malloc(nBs*sizeof(double));
-    Sr2 = malloc(nBs*sizeof(double));
+    particle_1_bond_lengths = malloc(nBs*sizeof(double));
+    sorted_particle_1_bond_lengths = malloc(nBs*sizeof(double));
 
     store_dr2 = malloc(current_frame_particle_number*sizeof(double));   if (store_dr2==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): store_dr2[] malloc out of memory\n");    Error(errMsg); }
     temp_cnb = malloc(current_frame_particle_number*sizeof(int));   if (temp_cnb==NULL) { sprintf(errMsg,"Get_Bonds_With_Voronoi_And_Cell_List(): temp_cnb[] malloc out of memory\n");  Error(errMsg); }
@@ -95,51 +96,29 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     }
 
     for (i=0; i<current_frame_particle_number; ++i) {
-        cnbs = 0;
+        num_particle_1_neighbours = 0;
         for (j=0; j<current_frame_particle_number; ++j) {
             store_dr2[j]=-1.0;
         }
         for (j=0; j<temp_cnb[i]; ++j) {
             squared_distance = Get_Interparticle_Distance(i, temp_bNums[i][j]);
-            k = cnbs++;
-            S[k] = temp_bNums[i][j];
+            k = num_particle_1_neighbours++;
+            particle_1_neighbours[k] = temp_bNums[i][j];
             Sb[k] = 1;
-            Sr[k] = squared_distance;
+            particle_1_bond_lengths[k] = squared_distance;
 
             store_dr2[temp_bNums[i][j]]=squared_distance;
 
-        } // We've now filled up the initial S
-        cnbs2 = 0;
-        for (j=0; j<cnbs; ++j) {
-            for(k=0; k<cnbs2; ++k) { // find spot to insert S[j]
-                if (Sr[j] < Sr2[k]) {
-                    for (l=cnbs2; l>k; --l) {
-                        S2[l] = S2[l-1];
-                        Sr2[l] = Sr2[l-1];
-                    }
-                    S2[k] = S[j];
-                    Sr2[k] = Sr[j];
-                    break;
-                }
-            }
-            if (k==cnbs2){
-                S2[cnbs2] = S[j];
-                Sr2[cnbs2] = Sr[j];
-            }
-            ++cnbs2;
-        } // Now sorted the list in order of distance from i
-
-        if (cnbs!=cnbs2) {
-            printf("Get_Bonds_With_Voronoi_And_Cell_List(): part %d - cnbs %d does not equal cnbs2 %d \n",i,cnbs,cnbs2);
-            exit(1);
         }
-        cnb[i]=0;
-        for (j=0; j<cnbs2; ++j) Sb[j] = 1;
+        Insertion_Sort_Bond_Lengths(num_particle_1_neighbours, particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bond_lengths, sorted_particle_1_bond_lengths);
 
-        for (l=0; l<cnbs2-1; ++l){
-            k = S2[l];
-            for (m=l+1; m<cnbs2; ++m) {
-                j = S2[m];
+        cnb[i]=0;
+        for (j=0; j<num_particle_1_neighbours; ++j) Sb[j] = 1;
+
+        for (l=0; l<num_particle_1_neighbours-1; ++l){
+            k = sorted_particle_1_neighbours[l];
+            for (m=l+1; m<num_particle_1_neighbours; ++m) {
+                j = sorted_particle_1_neighbours[m];
                 rijx = x[i] - x[j];
                 rijy = y[i] - y[j];
                 rijz = z[i] - z[j];
@@ -161,29 +140,29 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
                 x2 = rikx * rikx + riky * riky + rikz * rikz;
                 x2 += rjkx * rjkx + rjky * rjky + rjkz * rjkz;
                 x1 = x1 / x2;
-                if (x1-fc > EPS) { // Eliminate j from S
+                if (x1-fc > EPS) { // Eliminate j from particle_1_neighbours
                     Sb[m] = 0;
                 }
             }
         }
 
-        for (l=0; l<cnbs2; ++l){
-            j = S2[l];
+        for (l=0; l<num_particle_1_neighbours; ++l){
+            j = sorted_particle_1_neighbours[l];
             if (particle_type[i]==2 && particle_type[j]==2) {
-                if (Sr2[l]>rcutBB2) {
+                if (sorted_particle_1_bond_lengths[l]>rcutBB2) {
                     Sb[l]=0;
                 }
             }
             else if (particle_type[i]==2 || particle_type[j]==2) {
-                if (Sr2[l]>rcutAB2) {
+                if (sorted_particle_1_bond_lengths[l]>rcutAB2) {
                     Sb[l]=0;
                 }
             }
         }
 
-        for (l=0; l<cnbs2; ++l) {
+        for (l=0; l<num_particle_1_neighbours; ++l) {
             if (Sb[l]) {
-                j = S2[l];
+                j = sorted_particle_1_neighbours[l];
                 if (cnb[i] < nB && cnb[j] < nB) {  // max number of bonds, do ith particle
                     k = cnb[i]++;
                     bNums[i][k] = j;
@@ -200,11 +179,11 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     free(temp_bNums);
     free(temp_cnb);
     free(store_dr2);
-    free(S);
-    free(S2);
+    free(particle_1_neighbours);
+    free(sorted_particle_1_neighbours);
     free(Sb);
-    free(Sr);
-    free(Sr2);
+    free(particle_1_bond_lengths);
+    free(sorted_particle_1_bond_lengths);
 }
 
 void links() {  // sorts all the particles into cells, result given by head-of-chain and linked list arrays

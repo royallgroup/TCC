@@ -149,7 +149,8 @@ int get_particle_1_neighbours(int particle_1, const int max_allowed_bonds, int *
                     particle_1_bond_lengths[k] = squared_distance;
                     store_dr2[particle_2] = squared_distance;
                     num_particle_1_neighbours++;
-                } else {
+                }
+                else {
                     Too_Many_Bonds(particle_1, particle_2, __func__);
                 }
             }
@@ -166,7 +167,7 @@ void Insertion_Sort_Bond_Lengths(int num_particle_1_neighbours, const int *parti
 
     cnbs2 = 0;
     for (i = 0; i < num_particle_1_neighbours; ++i) {
-        for (k = 0; k < cnbs2; ++k) { // find spot to insert particle_1_bonds[particle_2]
+        for (k = 0; k < cnbs2; ++k) { // find spot to insert particle_1_neighbours[i]
             if (particle_1_bond_lengths[i] < sorted_particle_1_bond_lengths[k]) {
                 for (l = cnbs2; l > k; --l) {
                     sorted_particle_1_neighbours[l] = sorted_particle_1_neighbours[l - 1];
