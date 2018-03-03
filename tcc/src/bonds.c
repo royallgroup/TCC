@@ -25,23 +25,23 @@ void enforce_PBCs(double *dx, double *dy, double *dz) {
         *dy -= tiltyz;
         *dx -= tiltxz;
     }
-    if (*dz < -half_sidez) {
+    else if (*dz < -half_sidez) {
         *dz += sidez;
         *dy += tiltyz;
         *dx += tiltxz;
     }
     if (*dy > half_sidey) {
-        *dx -=tiltxy;
         *dy -= sidey;
+        *dx -=tiltxy;
     }
-    if (*dy < -half_sidey) {
-        *dx +=tiltxy ;
+    else if (*dy < -half_sidey) {
         *dy += sidey;
+        *dx +=tiltxy ;
     }
     if (*dx > half_sidex) {
         *dx -= sidex;
     }
-    if (*dx < -half_sidex) {
+    else if (*dx < -half_sidex) {
         *dx += sidex;
     }
 }
@@ -125,15 +125,15 @@ void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance) {
         Add_New_Bond(particle_1, particle_2, squared_distance);
     }
     else {
-        Too_Many_Bonds(particle_1, particle_2);
+        Too_Many_Bonds(particle_1, particle_2, __func__);
     }
 }
 
-void Too_Many_Bonds(int particle_1, int particle_2) {
+void Too_Many_Bonds(int particle_1, int particle_2, const char *method_name) {
     char error_message[200];
 
-    sprintf(error_message, "Get_Simple_Bonds(): Too many bonds to particle %d or particle_2 %d.\n"
-            "This is probably because rcutAA or rcutBB is too large\n", particle_1,particle_2);
+    sprintf(error_message, "%s: Too many bonds to particle %d or particle_2 %d.\n"
+            "This is probably because rcutAA or rcutBB is too large\n", method_name, particle_1,particle_2);
     Error(error_message);
 }
 
