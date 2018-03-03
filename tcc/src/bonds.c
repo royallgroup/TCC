@@ -123,6 +123,7 @@ void Check_For_Valid_Bond(int particle_1, int particle_2, double squared_distanc
 void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance) {
     if (cnb[particle_1] < nB && cnb[particle_2] < nB){
         Add_New_Bond(particle_1, particle_2, squared_distance);
+        Add_New_Bond(particle_2, particle_1, squared_distance);
     }
     else {
         Too_Many_Bonds(particle_1, particle_2, __func__);
@@ -138,14 +139,9 @@ void Too_Many_Bonds(int particle_1, int particle_2, const char *method_name) {
 }
 
 void Add_New_Bond(int particle_1, int particle_2, double squared_distance) {
-    int k;
-
-    k = cnb[particle_1]++;
-    bNums[particle_1][k] = particle_2;
-    bondlengths[particle_1][k]=sqrt(squared_distance);
-    k = cnb[particle_2]++;
-    bNums[particle_2][k] = particle_1;
-    bondlengths[particle_2][k]=sqrt(squared_distance);
+    bNums[particle_1][cnb[particle_1]] = particle_2;
+    bondlengths[particle_1][cnb[particle_1]]=sqrt(squared_distance);
+    cnb[particle_1]++;
 }
 
 int Bonds_BondCheck(int i, int j) { // Returns 1 if i & j are bonded; 0 otherwise

@@ -1,25 +1,24 @@
 #include "globals.h"
 #include "tools.h"
 #include "bonds.h"
-#include "math.h"
+#include "voronoi_bonds.h"
 
 void Get_Bonds_With_Voronoi() {
-    char error_message[200];
-    int particle_1, particle_2, k, l, m;
-    const int nBs = 4 * nB;
-    int cnbs, cnbs2;
-    int *S, *S2;
-    double *Sr, *Sr2;
-    double x1, x2, squared_distance;
-    double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
-    double *store_dr2;
-    int *Sb;
+    int particle_1, i;
+    const int max_allowed_bonds = 4 * nB;
 
-    S = malloc(nBs*sizeof(int));
-    S2 = malloc(nBs*sizeof(int));
-    Sb = malloc(nBs*sizeof(int));
-    Sr = malloc(nBs*sizeof(double));
-    Sr2 = malloc(nBs*sizeof(double));
+    int num_particle_1_neighbours;
+    int *particle_1_neighbours, *sorted_particle_1_neighbours;
+    double *particle_1_bond_lengths, *sorted_particle_1_bond_lengths;
+
+    double *store_dr2;
+    int *particle_1_bonds;
+
+    particle_1_neighbours = malloc(max_allowed_bonds*sizeof(int));
+    sorted_particle_1_neighbours = malloc(max_allowed_bonds*sizeof(int));
+    particle_1_bonds = malloc(max_allowed_bonds*sizeof(int));
+    particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
+    sorted_particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
     store_dr2 = malloc(current_frame_particle_number*sizeof(double));
 
     printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
@@ -29,116 +28,163 @@ void Get_Bonds_With_Voronoi() {
     }
 
     for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
-        cnbs = 0;
-        for (particle_2=0; particle_2<current_frame_particle_number; ++particle_2) {
-            if (particle_1 != particle_2) {
-                squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
-                if (squared_distance < rcutAA2) {
-                    if (cnbs < nBs) {
-                        k = cnbs;
-                        S[k] = particle_2;
-                        Sb[k] = 1;
-                        Sr[k] = squared_distance;
-                        store_dr2[particle_2] = squared_distance;
-                        cnbs++;
-                    }
-                    else {
-                        Too_Many_Bonds(particle_1, particle_2, __func__);
-                    }
-                }
-            }
-        }
-        cnbs2 = 0;
-        for (particle_2=0; particle_2<cnbs; ++particle_2){
-            for(k=0; k<cnbs2; ++k){ // find spot to insert S[particle_2]
-                if (Sr[particle_2] < Sr2[k]){
-                    for (l=cnbs2; l>k; --l) {
-                        S2[l] = S2[l-1];
-                        Sr2[l] = Sr2[l-1];
-                    }
-                    S2[k] = S[particle_2];
-                    Sr2[k] = Sr[particle_2];
-                    break;
-                }
-            }
-            if (k==cnbs2){
-                S2[cnbs2] = S[particle_2];
-                Sr2[cnbs2] = Sr[particle_2];
-            }
-            ++cnbs2;
-        } // Now sorted the list in order of distance from particle_1
 
-        if (cnbs!=cnbs2) {
-            sprintf(error_message, "Bonds_GetBondsV(): part %d - cnbs %d does not equal cnbs2 %d \n",particle_1,cnbs,cnbs2);
-            Error(error_message);
+        num_particle_1_neighbours = get_particle_1_neighbours(particle_1, max_allowed_bonds, particle_1_neighbours, particle_1_bond_lengths, store_dr2);
+
+        Insertion_Sort_Bond_Lengths(num_particle_1_neighbours, particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bond_lengths, sorted_particle_1_bond_lengths);
+
+        for (i=0; i < num_particle_1_neighbours; i++) {
+            particle_1_bonds[i] = 1;
         }
 
-        for (particle_2=0; particle_2<cnbs2; ++particle_2) Sb[particle_2] = 1;
+        Remove_Unbonded_Neighbours(particle_1, num_particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bonds);
 
-        for (l=0; l<cnbs2-1; ++l){
-            k = S2[l];
-            for (m=l+1; m<cnbs2; ++m) {
-                particle_2 = S2[m];
-                rijx = x[particle_1] - x[particle_2];
-                rijy = y[particle_1] - y[particle_2];
-                rijz = z[particle_1] - z[particle_2];
-                rikx = x[particle_1] - x[k];
-                riky = y[particle_1] - y[k];
-                rikz = z[particle_1] - z[k];
-                rjkx = x[particle_2] - x[k];
-                rjky = y[particle_2] - y[k];
-                rjkz = z[particle_2] - z[k];
+        check_bond_cut_offs(particle_1, num_particle_1_neighbours, sorted_particle_1_neighbours, sorted_particle_1_bond_lengths, particle_1_bonds);
 
-                if (PBCs==1)  {
-                    enforce_PBCs(&rijx, &rijy, &rijz);
-                    enforce_PBCs(&rikx, &riky, &rikz);
-                    enforce_PBCs(&rjkx, &rjky, &rjkz);
-                }
+        add_new_voronoi_bond(particle_1, num_particle_1_neighbours, sorted_particle_1_neighbours, store_dr2, particle_1_bonds);
+    }
 
-                x1 = rijx * rikx + rijy * riky + rijz * rikz;
-                x1 -= rijx * rjkx + rijy * rjky + rijz * rjkz;
-                x2 = rikx * rikx + riky * riky + rikz * rikz;
-                x2 += rjkx * rjkx + rjky * rjky + rjkz * rjkz;
-                x1 = x1 / x2;
-                if (x1-fc > EPS) { // Eliminate particle_2 from S
-                    Sb[m] = 0;
-                }
+    free(store_dr2);
+    free(particle_1_neighbours);
+    free(sorted_particle_1_neighbours);
+    free(particle_1_bonds);
+    free(particle_1_bond_lengths);
+    free(sorted_particle_1_bond_lengths);
+}
+
+void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const int *sorted_particle_1_neighbours,
+                          const double *store_dr2, const int *particle_1_bonds) {
+    int particle_2_pointer, particle_2;
+
+    for (particle_2_pointer = 0; particle_2_pointer < num_particle_1_neighbours; ++particle_2_pointer) {
+        if (particle_1_bonds[particle_2_pointer] == 1) {
+            particle_2 = sorted_particle_1_neighbours[particle_2_pointer];
+            if (cnb[particle_1] < nB && cnb[particle_2] < nB) {
+                Add_New_Bond(particle_1, particle_2, store_dr2[particle_2]);
+            }
+            else {
+                Too_Many_Bonds(particle_1, particle_2, __func__);
             }
         }
+    }
+}
 
-        for (l=0; l<cnbs2; ++l){
-            particle_2 = S2[l];
-            if (particle_type[particle_1]==2 && particle_type[particle_2]==2) {
-                if (Sr2[l]>rcutBB2) {
-                    Sb[l]=0;
-                }
+void check_bond_cut_offs(int particle_1, int num_particle_1_neighbours, const int *sorted_particle_1_neighbours,
+                         const double *sorted_particle_1_bond_lengths, int *Sb) {
+    int i, particle_2;
+    for (i = 0; i < num_particle_1_neighbours; ++i) {
+        particle_2 = sorted_particle_1_neighbours[i];
+        if (particle_type[particle_1] == 2 && particle_type[particle_2] == 2) {
+            if (sorted_particle_1_bond_lengths[i] > rcutBB2) {
+                Sb[i] = 0;
             }
-            else if (particle_type[particle_1]==2 || particle_type[particle_2]==2) {
-                if (Sr2[l]>rcutAB2) {
-                    Sb[l]=0;
-                }
+        } else if (particle_type[particle_1] == 2 || particle_type[particle_2] == 2) {
+            if (sorted_particle_1_bond_lengths[i] > rcutAB2) {
+                Sb[i] = 0;
             }
         }
+    }
+}
 
-        for (l=0; l<cnbs2; ++l) {
-            if (Sb[l]) {
-                particle_2 = S2[l];
-                if (cnb[particle_1] < nB && cnb[particle_2] < nB) {  // max number of bonds, do ith particle
-                    k = cnb[particle_1]++;
-                    bNums[particle_1][k] = particle_2;
-                    bondlengths[particle_1][k]=sqrt(store_dr2[particle_2]);
-                }
-                else {    // list is now full
+void Remove_Unbonded_Neighbours(int particle_1, const int num_particle_1_neighbours, const int *sorted_particle_1_neighbours, int *Sb) {
+    int particle_2, particle_3, p3_pointer, p2_pointer;
+
+    for (p3_pointer = 0; p3_pointer < num_particle_1_neighbours - 1; ++p3_pointer) {
+        particle_3 = sorted_particle_1_neighbours[p3_pointer];
+        for (p2_pointer = p3_pointer + 1; p2_pointer < num_particle_1_neighbours; ++p2_pointer) {
+            particle_2 = sorted_particle_1_neighbours[p2_pointer];
+            if(is_particle_bonded(particle_1, particle_2, particle_3) == 0) {
+                Sb[p2_pointer] = 0;
+            }
+        }
+    }
+}
+
+double is_particle_bonded(int p1, int p2, int p3) {
+    double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
+    double x1, x2;
+
+    rijx = x[p1] - x[p2];
+    rijy = y[p1] - y[p2];
+    rijz = z[p1] - z[p2];
+    rikx = x[p1] - x[p3];
+    riky = y[p1] - y[p3];
+    rikz = z[p1] - z[p3];
+    rjkx = x[p2] - x[p3];
+    rjky = y[p2] - y[p3];
+    rjkz = z[p2] - z[p3];
+
+    if (PBCs == 1) {
+        enforce_PBCs(&rijx, &rijy, &rijz);
+        enforce_PBCs(&rikx, &riky, &rikz);
+        enforce_PBCs(&rjkx, &rjky, &rjkz);
+    }
+
+    x1 = rijx * rikx + rijy * riky + rijz * rikz;
+    x1 -= rijx * rjkx + rijy * rjky + rijz * rjkz;
+    x2 = rikx * rikx + riky * riky + rikz * rikz;
+    x2 += rjkx * rjkx + rjky * rjky + rjkz * rjkz;
+    x1 = x1 / x2;
+    if (x1 - fc > EPS) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
+
+int get_particle_1_neighbours(int particle_1, const int max_allowed_bonds, int *particle_1_bonds,
+                                double *particle_1_bond_lengths, double *store_dr2) {
+    int particle_2, num_particle_1_neighbours, k;
+    double squared_distance;
+
+    num_particle_1_neighbours = 0;
+    for (particle_2 = 0; particle_2 < current_frame_particle_number; ++particle_2) {
+        if (particle_1 != particle_2) {
+            squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
+            if (squared_distance < rcutAA2) {
+                if (num_particle_1_neighbours < max_allowed_bonds) {
+                    k = num_particle_1_neighbours;
+                    particle_1_bonds[k] = particle_2;
+                    particle_1_bond_lengths[k] = squared_distance;
+                    store_dr2[particle_2] = squared_distance;
+                    num_particle_1_neighbours++;
+                } else {
                     Too_Many_Bonds(particle_1, particle_2, __func__);
                 }
             }
         }
     }
+    return num_particle_1_neighbours;
+}
 
-    free(store_dr2);
-    free(S);
-    free(S2);
-    free(Sb);
-    free(Sr);
-    free(Sr2);
+void Insertion_Sort_Bond_Lengths(int num_particle_1_neighbours, const int *particle_1_neighbours, int *sorted_particle_1_neighbours,
+                                 const double *particle_1_bond_lengths, double *sorted_particle_1_bond_lengths) {
+    char error_message[200];
+    int i, k, l;
+    int cnbs2;
+
+    cnbs2 = 0;
+    for (i = 0; i < num_particle_1_neighbours; ++i) {
+        for (k = 0; k < cnbs2; ++k) { // find spot to insert particle_1_bonds[particle_2]
+            if (particle_1_bond_lengths[i] < sorted_particle_1_bond_lengths[k]) {
+                for (l = cnbs2; l > k; --l) {
+                    sorted_particle_1_neighbours[l] = sorted_particle_1_neighbours[l - 1];
+                    sorted_particle_1_bond_lengths[l] = sorted_particle_1_bond_lengths[l - 1];
+                }
+                sorted_particle_1_neighbours[k] = particle_1_neighbours[i];
+                sorted_particle_1_bond_lengths[k] = particle_1_bond_lengths[i];
+                break;
+            }
+        }
+        if (k == cnbs2) {
+            sorted_particle_1_neighbours[cnbs2] = particle_1_neighbours[i];
+            sorted_particle_1_bond_lengths[cnbs2] = particle_1_bond_lengths[i];
+        }
+        ++cnbs2;
+    }
+    if (num_particle_1_neighbours != cnbs2) {
+        sprintf(error_message, "%s: part particle_1_bond_num %d does not equal cnbs2 %d \n", __func__, num_particle_1_neighbours, cnbs2);
+        Error(error_message);
+    }
 }
