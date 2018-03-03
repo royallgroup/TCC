@@ -9,8 +9,8 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     int i, j, k, l, m;
     int ic, jcell0, jcell,nabor;    // various counters
     const int nBs = 4 * nB;
-    int num_particle_1_neighbours, cnbs2;
-    int *particle_1_neighbours, *sorted_particle_1_neighbours, *Sb;
+    int num_particle_1_neighbours;
+    int *particle_1_neighbours, *sorted_particle_1_neighbours, *particle_1_bonds;
     double *particle_1_bond_lengths, *sorted_particle_1_bond_lengths;
     double x1, x2, squared_distance;
     double rijx, rijy, rijz, rikx, riky, rikz, rjkx, rjky, rjkz;
@@ -21,7 +21,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
 
     particle_1_neighbours = malloc(nBs*sizeof(int));
     sorted_particle_1_neighbours = malloc(nBs*sizeof(int));
-    Sb = malloc(nBs*sizeof(int));
+    particle_1_bonds = malloc(nBs*sizeof(int));
     particle_1_bond_lengths = malloc(nBs*sizeof(double));
     sorted_particle_1_bond_lengths = malloc(nBs*sizeof(double));
 
@@ -104,7 +104,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
             squared_distance = Get_Interparticle_Distance(i, temp_bNums[i][j]);
             k = num_particle_1_neighbours++;
             particle_1_neighbours[k] = temp_bNums[i][j];
-            Sb[k] = 1;
+            particle_1_bonds[k] = 1;
             particle_1_bond_lengths[k] = squared_distance;
 
             store_dr2[temp_bNums[i][j]]=squared_distance;
@@ -112,67 +112,15 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
         }
         Insertion_Sort_Bond_Lengths(num_particle_1_neighbours, particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bond_lengths, sorted_particle_1_bond_lengths);
 
-        cnb[i]=0;
-        for (j=0; j<num_particle_1_neighbours; ++j) Sb[j] = 1;
-
-        for (l=0; l<num_particle_1_neighbours-1; ++l){
-            k = sorted_particle_1_neighbours[l];
-            for (m=l+1; m<num_particle_1_neighbours; ++m) {
-                j = sorted_particle_1_neighbours[m];
-                rijx = x[i] - x[j];
-                rijy = y[i] - y[j];
-                rijz = z[i] - z[j];
-                rikx = x[i] - x[k];
-                riky = y[i] - y[k];
-                rikz = z[i] - z[k];
-                rjkx = x[j] - x[k];
-                rjky = y[j] - y[k];
-                rjkz = z[j] - z[k];
-
-                if (PBCs==1)  {
-                    enforce_PBCs(&rijx, &rijy, &rijz);
-                    enforce_PBCs(&rikx, &riky, &rikz);
-                    enforce_PBCs(&rjkx, &rjky, &rjkz);
-                }
-
-                x1 = rijx * rikx + rijy * riky + rijz * rikz;
-                x1 -= rijx * rjkx + rijy * rjky + rijz * rjkz;
-                x2 = rikx * rikx + riky * riky + rikz * rikz;
-                x2 += rjkx * rjkx + rjky * rjky + rjkz * rjkz;
-                x1 = x1 / x2;
-                if (x1-fc > EPS) { // Eliminate j from particle_1_neighbours
-                    Sb[m] = 0;
-                }
-            }
+        for (j=0; j<num_particle_1_neighbours; ++j) {
+            particle_1_bonds[j] = 1;
         }
 
-        for (l=0; l<num_particle_1_neighbours; ++l){
-            j = sorted_particle_1_neighbours[l];
-            if (particle_type[i]==2 && particle_type[j]==2) {
-                if (sorted_particle_1_bond_lengths[l]>rcutBB2) {
-                    Sb[l]=0;
-                }
-            }
-            else if (particle_type[i]==2 || particle_type[j]==2) {
-                if (sorted_particle_1_bond_lengths[l]>rcutAB2) {
-                    Sb[l]=0;
-                }
-            }
-        }
+        Remove_Unbonded_Neighbours(i, num_particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bonds);
 
-        for (l=0; l<num_particle_1_neighbours; ++l) {
-            if (Sb[l]) {
-                j = sorted_particle_1_neighbours[l];
-                if (cnb[i] < nB && cnb[j] < nB) {  // max number of bonds, do ith particle
-                    k = cnb[i]++;
-                    bNums[i][k] = j;
-                    bondlengths[i][k]=sqrt(store_dr2[j]);
-                }
-                else {    // list is now full
-                    Too_Many_Bonds(i, j, __func__);
-                }
-            }
-        }
+        check_bond_cut_offs(i, num_particle_1_neighbours, sorted_particle_1_neighbours, sorted_particle_1_bond_lengths, particle_1_bonds);
+
+        add_new_voronoi_bond(i, num_particle_1_neighbours, sorted_particle_1_neighbours, store_dr2, particle_1_bonds);
     }
 
     for (i=0; i<current_frame_particle_number; i++) free(temp_bNums[i]);
@@ -181,7 +129,7 @@ void Get_Bonds_With_Voronoi_And_Cell_List() {  // Get bonds using Voronoi
     free(store_dr2);
     free(particle_1_neighbours);
     free(sorted_particle_1_neighbours);
-    free(Sb);
+    free(particle_1_bonds);
     free(particle_1_bond_lengths);
     free(sorted_particle_1_bond_lengths);
 }

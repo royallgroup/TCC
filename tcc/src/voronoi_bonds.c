@@ -70,23 +70,23 @@ void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const i
 }
 
 void check_bond_cut_offs(int particle_1, int num_particle_1_neighbours, const int *sorted_particle_1_neighbours,
-                         const double *sorted_particle_1_bond_lengths, int *Sb) {
+                         const double *sorted_particle_1_bond_lengths, int *particle_1_bonds) {
     int i, particle_2;
     for (i = 0; i < num_particle_1_neighbours; ++i) {
         particle_2 = sorted_particle_1_neighbours[i];
         if (particle_type[particle_1] == 2 && particle_type[particle_2] == 2) {
             if (sorted_particle_1_bond_lengths[i] > rcutBB2) {
-                Sb[i] = 0;
+                particle_1_bonds[i] = 0;
             }
         } else if (particle_type[particle_1] == 2 || particle_type[particle_2] == 2) {
             if (sorted_particle_1_bond_lengths[i] > rcutAB2) {
-                Sb[i] = 0;
+                particle_1_bonds[i] = 0;
             }
         }
     }
 }
 
-void Remove_Unbonded_Neighbours(int particle_1, const int num_particle_1_neighbours, const int *sorted_particle_1_neighbours, int *Sb) {
+void Remove_Unbonded_Neighbours(int particle_1, const int num_particle_1_neighbours, const int *sorted_particle_1_neighbours, int *particle_1_bonds) {
     int particle_2, particle_3, p3_pointer, p2_pointer;
 
     for (p3_pointer = 0; p3_pointer < num_particle_1_neighbours - 1; ++p3_pointer) {
@@ -94,7 +94,7 @@ void Remove_Unbonded_Neighbours(int particle_1, const int num_particle_1_neighbo
         for (p2_pointer = p3_pointer + 1; p2_pointer < num_particle_1_neighbours; ++p2_pointer) {
             particle_2 = sorted_particle_1_neighbours[p2_pointer];
             if(is_particle_bonded(particle_1, particle_2, particle_3) == 0) {
-                Sb[p2_pointer] = 0;
+                particle_1_bonds[p2_pointer] = 0;
             }
         }
     }
