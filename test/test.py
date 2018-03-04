@@ -3,6 +3,8 @@ from glob import glob
 import shutil
 import filecmp
 import os
+from subprocess import run
+from platform import system
 
 
 class cd:
@@ -19,6 +21,26 @@ class cd:
 
 
 class FileOperations:
+    @staticmethod
+    def build_tcc():
+        try:
+            if system() == "Windows":
+                make = run(['cmake', '..', '-G', 'MinGW Makefiles'])
+                build = run(['mingw32-make.exe'])
+            elif system() == "Linux":
+                make = run(['cmake', '..'])
+                build = run(['make'])
+            else:
+                print("I dont know how to build for your system:%s", system())
+                return 1
+            if make.returncode & build.returncode == 0:
+                return 0
+            else:
+                return 1
+        except Exception as e:
+            print(e)
+            return 1
+
     @staticmethod
     def copy_tcc():
         # Copy the exectuable to the current directory
@@ -59,6 +81,12 @@ class FileChecks:
     @staticmethod
     def check_pop_per_frame():
         return filecmp.cmp("sample.pop_per_frame", glob("sample.xyz*pop_per_frame")[0], shallow=False)
+
+
+def test_build():
+    # Build the binary before ececuting tests
+    with cd("../build"):
+        assert FileOperations.build_tcc() == 0
 
 
 def test_simple_bonds():
