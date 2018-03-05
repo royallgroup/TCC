@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
     int current_frame_number, f, i;
     int remainder;
     struct xyz_info input_xyz_info;
+    char fInputParamsName[50];
 
     sprintf(fInputParamsName,"inputparameters.ini");
     Setup_ReadIniFile(fInputParamsName);    // read input params
@@ -77,7 +78,7 @@ int main(int argc, char **argv) {
             if (doWriteBonds == 1) Write_Bonds_File(f);
 
             for (i = 0; i < current_frame_particle_number; i++) {
-                if (cnb[i] > maxnb) maxnb = cnb[i];
+                if (num_bonds[i] > maxnb) maxnb = num_bonds[i];
                 if (dosp3 == 1) Rings_gSP3(i);
             }
             if (dosp3 == 1) Rings_setSP3c();

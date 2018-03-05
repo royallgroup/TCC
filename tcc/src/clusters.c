@@ -567,7 +567,7 @@ void Clusters_8B_loop(int i, int clusSize, int primary_spindle, int secondary_sp
     int n1, nbs, unc[3];
     int break_out;
 
-    for (j=0; j < cnb[primary_spindle]; ++j) { // loop over all j particles bonded to first spindle of 7A_i
+    for (j=0; j < num_bonds[primary_spindle]; ++j) { // loop over all j particles bonded to first spindle of 7A_i
         n1 = bNums[primary_spindle][j];
         for (k=0; k<5; ++k) if (n1 == hcsp5c[i][k]) break;
         if (k<5) continue;
@@ -1283,7 +1283,7 @@ int Clusters_Get11B() { // Detect 11B C2v clusters
     int break_out;
     int clusSize=11;
 
-    if(cnb[hc9B[n9B][8]]!= 10) return 0; // s_com has 10 bonds in total (all forming the shell)
+    if(num_bonds[hc9B[n9B][8]]!= 10) return 0; // s_com has 10 bonds in total (all forming the shell)
 
     m = 0;
     break_out=0;
@@ -1378,7 +1378,7 @@ void Clusters_Get11W() {
 
     for(id_10B=0;id_10B<n10B; id_10B++) {
         spindle_10B = hc10B[id_10B][9];
-        if (cnb[spindle_10B] == 10) {   // s_com has 10 bonds in total (all forming the shell)
+        if (num_bonds[spindle_10B] == 10) {   // s_com has 10 bonds in total (all forming the shell)
 
             extra_particle = get_11W_extra_particle(id_10B, spindle_10B);
 
@@ -1999,9 +1999,9 @@ void Clusters_Get10K() { // Detect 10K clusters
 
     for (id_9K=0; id_9K<n9K; id_9K++) {
         id_9K_common = hc9K[id_9K][8];
-        if (cnb[id_9K_common] < 10) {
+        if (num_bonds[id_9K_common] < 10) {
             num_extra_particles = 0;
-            for (bonded_to_spindle_id = 0; bonded_to_spindle_id < cnb[id_9K_common]; bonded_to_spindle_id++) {
+            for (bonded_to_spindle_id = 0; bonded_to_spindle_id < num_bonds[id_9K_common]; bonded_to_spindle_id++) {
                 if (is_particle_in_9K(id_9K, bNums[id_9K_common][bonded_to_spindle_id])) {
                     num_extra_particles++;
                     extra_particle = bNums[id_9K_common][bonded_to_spindle_id];
@@ -2065,7 +2065,7 @@ void Clusters_Get10A() { // Detect 10A D4d clusters
     for (i=0; i<nsp4b-1; ++i) {  // loop over all sp4b_i
         for (j2=0; j2<nsp4b; ++j2) used_sp4b[j2] = 0;
         used_sp4b[i]=1;
-        for (j2=0; j2<cnb[hcsp4b[i][0]]; ++j2) {
+        for (j2=0; j2<num_bonds[hcsp4b[i][0]]; ++j2) {
             for (j=0; j<nmem_sp4b[bNums[hcsp4b[i][0]][j2]]; ++j) {    // loop over sp4b_j
                 if (mem_sp4b[bNums[hcsp4b[i][0]][j2]][j]<=i) continue;
                 if (used_sp4b[mem_sp4b[bNums[hcsp4b[i][0]][j2]][j]]==1) continue;
@@ -2136,7 +2136,7 @@ void Clusters_Get10W() { // Detect 10W clusters
 
 
     for (i=0; i<nsp5b; ++i) { // loop over all sp5b
-        if (cnb[hcsp5b[i][5]]!=9) continue;   // central particle must have coordination number 9
+        if (num_bonds[hcsp5b[i][5]]!=9) continue;   // central particle must have coordination number 9
 
         k=0;    // find 5 other sp5b's with spindle in common with sp5b_i
         for (j=0; j<nmem_sp5b[hcsp5b[i][5]]; ++j) { // note check that spindle of sp5b_i and sp5b_j must be common by later check
@@ -2340,7 +2340,7 @@ void find_12K_cluster(int ptr_11A, const int *sp3_ring) {
 
     num_attached_particles = 0;
     // loop through all particles bonded to the first sp3 ring particle
-    for (i = 0; i < cnb[sp3_ring[0]]; i++) {
+    for (i = 0; i < num_bonds[sp3_ring[0]]; i++) {
         particle_id = bNums[sp3_ring[0]][i];
         if (Bonds_BondCheck(sp3_ring[1], particle_id) == 1) {
             if (Bonds_BondCheck(sp3_ring[2], particle_id) == 1) {
@@ -2617,7 +2617,7 @@ int Clusters_Get12A() {
     int ep;
 
     for(id_11C=0; id_11C<n11C; id_11C++) {
-        if (cnb[hc11C[id_11C][0]] == 11) {
+        if (num_bonds[hc11C[id_11C][0]] == 11) {
 
             ep = get_12A_extra_particle(id_11C);
 

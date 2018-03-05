@@ -7,10 +7,10 @@ void Rings_gSP3(int n0) {	// get SP3/4/5 rings including particle n0
     int i,j;
     int n1, n2;
 
-    for (i=0; i<cnb[n0]-1; i++){
+    for (i=0; i<num_bonds[n0]-1; i++){
         n1=bNums[n0][i];
         if (n1 < n0) continue;
-        for (j=i+1; j<cnb[n0]; ++j){
+        for (j=i+1; j<num_bonds[n0]; ++j){
             n2=bNums[n0][j];
             if (n2<n0) continue;
             if (Bonds_BondCheck(n1,n2)) { // is n1 bonded to n2
@@ -31,7 +31,7 @@ void Rings_gSP4(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, i
     int i;
     int n3;
     
-    for (i=0; i<cnb[n1]; ++i) {
+    for (i=0; i<num_bonds[n1]; ++i) {
         n3=bNums[n1][i];
         if (n3 <= n0) continue;
         if (!Bonds_BondCheck(n0,n3)) {  // n1 not bonded to n2 & n0 not bonded to n3
@@ -50,16 +50,16 @@ void Rings_gSP5(int n0, int n1, int n2, int n3) {    // {n0,n1,n2,n3} is not an 
     int n4,n5;
     int bond4_1;
     
-    for (i=0; i<cnb[n2]; ++i){
+    for (i=0; i<num_bonds[n2]; ++i){
         n4=bNums[n2][i];
         if(n4 < n0 || n4 == n3) continue; // Now: is n4 bonded to n1 and not to n2 or n0
         bond4_1 = 0;
-        for (j=0; j<cnb[n4]; ++j){
+        for (j=0; j<num_bonds[n4]; ++j){
             n5=bNums[n4][j];
             if (n5==n3) bond4_1 = 1;
             if (n5==n1 || n5==n0) break; // Not SP ring
         }
-        if (j==cnb[n4] && bond4_1==1) {
+        if (j==num_bonds[n4] && bond4_1==1) {
             Rings_aSP5(n0, n1, n2, n4, n3); // check SP5 type and store
         }
     }
@@ -72,7 +72,7 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
     int bcheck;
 
     cp[0]=cp[1]=-1;
-    for (i=0; i<cnb[n0]; ++i) {
+    for (i=0; i<num_bonds[n0]; ++i) {
         j = bNums[n0][i];
         bcheck = j == n1 || j == n2;
         if (bcheck) continue;
@@ -159,7 +159,7 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
     int bcheck;
 
     cp[0]=cp[1]=-1;
-    for (i=0; i<cnb[n0]; ++i) {
+    for (i=0; i<num_bonds[n0]; ++i) {
         j = bNums[n0][i];
         bcheck = j == n1 || j == n3;
         if (bcheck) continue;
@@ -254,7 +254,7 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
     int bcheck;
 
     cp[0]=cp[1]=-1;
-    for (i=0; i<cnb[n0]; ++i) {
+    for (i=0; i<num_bonds[n0]; ++i) {
         j = bNums[n0][i];
         bcheck = j == n1 || j == n4;
         if (bcheck) continue;

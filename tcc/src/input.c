@@ -44,7 +44,6 @@ void Setup_ReadIniFile(char *filename) {
     do11AcenXyz = iniparser_getboolean(ini, "output:11a", -1);
     do13AcenXyz = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
-    PRINTINFO = 0;
 
     // calculate derived values
     rcutAA2=rcutAA*rcutAA;

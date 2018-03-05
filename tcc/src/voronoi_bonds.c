@@ -34,7 +34,7 @@ void Get_Bonds_With_Voronoi() {
     printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
 
     for (i=0; i<current_frame_particle_number; i++) {
-        cnb[i] = 0;
+        num_bonds[i] = 0;
         if(USELIST == 1) {
             llist[i+1]=-1;
             temp_cnb[i] = 0;
@@ -86,7 +86,7 @@ void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const i
     for (particle_2_pointer = 0; particle_2_pointer < num_particle_1_neighbours; ++particle_2_pointer) {
         if (particle_1_bonds[particle_2_pointer] == 1) {
             particle_2 = sorted_particle_1_neighbours[particle_2_pointer];
-            if (cnb[particle_1] < nB && cnb[particle_2] < nB) {
+            if (num_bonds[particle_1] < nB && num_bonds[particle_2] < nB) {
                 Add_New_Bond(particle_1, particle_2, store_dr2[particle_2]);
             }
             else {

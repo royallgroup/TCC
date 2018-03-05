@@ -28,8 +28,6 @@ struct xyz_info {
     long *frame_offsets;
 };
 
-
-char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 int box_offsets[1000];    // Offsets of each line in the box file
 double *x, *y, *z;  // positions in x y and z directions of N particles
@@ -57,9 +55,7 @@ int incrStatic; // when full, increment static cluster arrays by this amount
 int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
 
-int PRINTINFO; // print running information about progress
-
-int *cnb; // Current Number of Bonds for particles {1,...,N}
+int *num_bonds; // Current Number of Bonds for particles {1,...,N}
 int **bNums;    // list of particles (indices j) bonded to particle at index i
 double **bondlengths;   // length of bonds in the bond network and squared
 int maxnb; // max number of bonds to one particle

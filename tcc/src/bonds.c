@@ -56,13 +56,13 @@ void Are_All_Bonds_Symmetric() {
     int i, j, k;
 
     for (i=0; i<current_frame_particle_number; ++i) {
-        for (j=0; j<cnb[i]; ++j) {
-            for (k=0; k<cnb[bNums[i][j]]; k++) {
+        for (j=0; j<num_bonds[i]; ++j) {
+            for (k=0; k<num_bonds[bNums[i][j]]; k++) {
                 if (i==bNums[bNums[i][j]][k]) break;
             }
-            if (k==cnb[bNums[i][j]]) {
+            if (k==num_bonds[bNums[i][j]]) {
                 bNums[bNums[i][j]][k]=i;
-                cnb[bNums[i][j]]++;
+                num_bonds[bNums[i][j]]++;
                 bondlengths[bNums[i][j]][k]=bondlengths[i][j];
                 correctedBonds++;
             }
@@ -91,7 +91,7 @@ void Get_Simple_Bonds() {
 
     printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",current_frame_particle_number,rcutAA2,rcutAB2,rcutBB2);
 
-    memset(cnb, 0, current_frame_particle_number* sizeof(int));
+    memset(num_bonds, 0, current_frame_particle_number* sizeof(int));
 
     for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
         for(particle_2=particle_1+1; particle_2<current_frame_particle_number; ++particle_2) {
@@ -116,7 +116,7 @@ void Check_For_Valid_Bond(int particle_1, int particle_2, double squared_distanc
 }
 
 void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance) {
-    if (cnb[particle_1] < nB && cnb[particle_2] < nB){
+    if (num_bonds[particle_1] < nB && num_bonds[particle_2] < nB){
         Add_New_Bond(particle_1, particle_2, squared_distance);
         Add_New_Bond(particle_2, particle_1, squared_distance);
     }
@@ -134,15 +134,15 @@ void Too_Many_Bonds(int particle_1, int particle_2, const char *method_name) {
 }
 
 void Add_New_Bond(int particle_1, int particle_2, double squared_distance) {
-    bNums[particle_1][cnb[particle_1]] = particle_2;
-    bondlengths[particle_1][cnb[particle_1]]=sqrt(squared_distance);
-    cnb[particle_1]++;
+    bNums[particle_1][num_bonds[particle_1]] = particle_2;
+    bondlengths[particle_1][num_bonds[particle_1]]=sqrt(squared_distance);
+    num_bonds[particle_1]++;
 }
 
 int Bonds_BondCheck(int i, int j) { // Returns 1 if i & j are bonded; 0 otherwise
     int k;
 
-    for (k=0; k<cnb[i]; ++k) {
+    for (k=0; k<num_bonds[i]; ++k) {
         if (bNums[i][k] == j) return 1;
     } 
     return 0;

@@ -99,7 +99,7 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     z = malloc(max_particle_number*sizeof(double));   if (z==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): z[] malloc out of memory\n");    Error_no_free(errMsg); }
     particle_type=malloc(max_particle_number*sizeof(int)); if (particle_type==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): particle_type[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
 
-    cnb = malloc(max_particle_number*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
+    num_bonds = malloc(max_particle_number*sizeof(int));    if (num_bonds==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): num_bonds[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
 
     bNums = malloc(max_particle_number*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle
     for (j=0; j<max_particle_number; ++j) { bNums[j] = malloc(nB*sizeof(int));    if (bNums[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[][] malloc out of memory\n");   Error_no_free(errMsg); } }
@@ -316,7 +316,7 @@ void Free_All_Variables()  {  // Free bond detection variables
         free(bNums[i]); 
         free(bondlengths[i]);
     }
-    free(bNums); free(bondlengths); free(cnb);
+    free(bNums); free(bondlengths); free(num_bonds);
     
     for (i=0; i<num_cluster_types; ++i) {
         free(pop_per_frame[i]);
