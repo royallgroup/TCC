@@ -73,12 +73,7 @@ void Are_All_Bonds_Symmetric() {
 void Get_Bonds() {
 
     if (Vor==1) {
-        if (USELIST==0) {
-            Get_Bonds_With_Voronoi();
-        }
-        else {
-            Get_Bonds_With_Voronoi_And_Cell_List();
-        }
+        Get_Bonds_With_Voronoi();
         Are_All_Bonds_Symmetric();
     }
     else {

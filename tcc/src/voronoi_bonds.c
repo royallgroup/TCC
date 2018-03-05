@@ -2,9 +2,10 @@
 #include "tools.h"
 #include "bonds.h"
 #include "voronoi_bonds.h"
+#include "cell_list.h"
 
 void Get_Bonds_With_Voronoi() {
-    int particle_1, i;
+    int i, j, particle_1;
     const int max_allowed_bonds = 4 * nB;
 
     int num_particle_1_neighbours;
@@ -14,6 +15,9 @@ void Get_Bonds_With_Voronoi() {
     double *store_dr2;
     int *particle_1_bonds;
 
+    int *temp_cnb, **temp_bNums;
+        char errMsg[1000];
+
     particle_1_neighbours = malloc(max_allowed_bonds*sizeof(int));
     sorted_particle_1_neighbours = malloc(max_allowed_bonds*sizeof(int));
     particle_1_bonds = malloc(max_allowed_bonds*sizeof(int));
@@ -21,16 +25,41 @@ void Get_Bonds_With_Voronoi() {
     sorted_particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
     store_dr2 = malloc(current_frame_particle_number*sizeof(double));
 
-    printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
-
-    for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
-        cnb[particle_1] = 0;
+    if (USELIST == 1) {
+        temp_cnb = malloc(current_frame_particle_number * sizeof(int));
+        temp_bNums = malloc(current_frame_particle_number * sizeof(int *));
+        for (j=0; j<current_frame_particle_number; ++j) {
+            temp_bNums[j] = malloc(max_allowed_bonds*sizeof(int));
+        }
+        llist[0]=-1;
     }
 
-    for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
+    printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
 
-        num_particle_1_neighbours = get_particle_1_neighbours(particle_1, max_allowed_bonds, particle_1_neighbours, particle_1_bond_lengths, store_dr2);
+    for (i=0; i<current_frame_particle_number; i++) {
+        cnb[i] = 0;
+        if(USELIST == 1) {
+            llist[i+1]=-1;
+            temp_cnb[i] = 0;
+            for (j=0; j<max_allowed_bonds; j++) {
+                temp_bNums[i][j]=0;
+            }
+        }
+    }
 
+    if (USELIST == 1) cell_list_get_neigbours(max_allowed_bonds, temp_cnb, temp_bNums);
+
+    for (particle_1=0; particle_1<current_frame_particle_number; particle_1++) {
+        if(USELIST == 1) {
+            num_particle_1_neighbours = cell_list_get_particle_1_neighbours(particle_1, num_particle_1_neighbours,
+                                                                            particle_1_neighbours, particle_1_bonds,
+                                                                            particle_1_bond_lengths, store_dr2, temp_cnb,
+                                                                            temp_bNums);
+        }
+        else{
+            num_particle_1_neighbours = get_particle_1_neighbours(particle_1, max_allowed_bonds, particle_1_neighbours,
+                                                                  particle_1_bond_lengths, store_dr2);
+        }
         Insertion_Sort_Bond_Lengths(num_particle_1_neighbours, particle_1_neighbours, sorted_particle_1_neighbours, particle_1_bond_lengths, sorted_particle_1_bond_lengths);
 
         for (i=0; i < num_particle_1_neighbours; i++) {
@@ -42,6 +71,12 @@ void Get_Bonds_With_Voronoi() {
         check_bond_cut_offs(particle_1, num_particle_1_neighbours, sorted_particle_1_neighbours, sorted_particle_1_bond_lengths, particle_1_bonds);
 
         add_new_voronoi_bond(particle_1, num_particle_1_neighbours, sorted_particle_1_neighbours, store_dr2, particle_1_bonds);
+    }
+
+    if (USELIST == 1) {
+        for (i = 0; i < current_frame_particle_number; i++) free(temp_bNums[i]);
+        free(temp_bNums);
+        free(temp_cnb);
     }
 
     free(store_dr2);
@@ -135,7 +170,7 @@ double is_particle_bonded(int p1, int p2, int p3) {
 
 int get_particle_1_neighbours(int particle_1, const int max_allowed_bonds, int *particle_1_bonds,
                                 double *particle_1_bond_lengths, double *store_dr2) {
-    int particle_2, num_particle_1_neighbours, k;
+    int particle_2, num_particle_1_neighbours;
     double squared_distance;
 
     num_particle_1_neighbours = 0;
