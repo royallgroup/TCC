@@ -17,7 +17,7 @@ void Remove_Unbonded_Neighbours(int particle_1, int num_particle_1_neighbours, c
 int get_particle_1_neighbours(int particle_1, int max_allowed_bonds, int *particle_1_bonds,
                               double *particle_1_bond_lengths, double *store_dr2);
 
-void Insertion_Sort_Bond_Lengths(int num_particle_1_neighbours, const int *particle_1_neighbours, int *sorted_particle_1_neighbours,
-                                 const double *particle_1_bond_lengths, double *sorted_particle_1_bond_lengths);
+void Insertion_Sort_Bond_Lengths(int num_particle_1_neighbours, int *particle_1_neighbours,
+                                 double *particle_1_bond_lengths);
 
 #endif
