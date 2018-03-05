@@ -80,10 +80,7 @@ int main(int argc, char **argv) {
             for (i = 0; i < current_frame_particle_number; i++) {
                 if (num_bonds[i] > maxnb) maxnb = num_bonds[i];
             }
-            if (dosp3 == 1) Rings_gSP3();
-            if (dosp3 == 1) Rings_setSP3c();
-            if (dosp4 == 1) Rings_setSP4c();
-            if (dosp5 == 1) Rings_setSP5c();
+            if (dosp3 == 1) get_basic_clusters();
             if (do6Z == 1) Clusters_Get6Z();
             if (do7K == 1) Clusters_Get7K();
             if (do8A == 1) Clusters_Get8A();

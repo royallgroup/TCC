@@ -3,7 +3,7 @@
 #include "bonds.h"
 #include "tools.h"
 
-void Rings_gSP3() {	// get SP3/4/5 rings including particle n0
+void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
     int n1_pointer, n2_pointer;
     int n0, n1, n2;
 
@@ -15,19 +15,12 @@ void Rings_gSP3() {	// get SP3/4/5 rings including particle n0
                     n2 = bNums[n0][n2_pointer];
                     if (n2 > n0) {
                         if (Bonds_BondCheck(n1, n2)) {
-                            if (n1 < n2) {
-                                Rings_aSP3(n0, n1, n2);
-                            } // SP3 found, check type and store
-                            else {
-                                Rings_aSP3(n0, n2, n1);
-                            } // SP3 found, check type and store
-                        } else { // not SP3, search for SP4 & SP5
+                            // SP3 found, check type and store
+                            get_sp3_clusters(n0, n1, n2);
+                        }
+                        else { // not SP3, search for SP4 & SP5
                             if (dosp4 == 1) {
-                                if (n1 < n2) {
-                                    Rings_gSP4(n0, n1, n2);
-                                } else {
-                                    Rings_gSP4(n0, n2, n1);
-                                }
+                                get_basic_sp4_rings(n0, n1, n2);
                             }
                         }
                     }
@@ -37,20 +30,27 @@ void Rings_gSP3() {	// get SP3/4/5 rings including particle n0
     }
 }
 
-void Rings_gSP4(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
+void get_basic_sp4_rings(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
     int i;
     int n3;
+    int tmp;
+
+    if(n1 > n2) {
+        tmp = n2;
+        n2 = n1;
+        n1 = tmp;
+    }
 
     for (i=0; i<num_bonds[n1]; ++i) {
         n3 = bNums[n1][i];
         if (n3 > n0){
             if (Bonds_BondCheck(n0, n3) == 0) {  // n1 not bonded to n2 & n0 not bonded to n3
                 if (Bonds_BondCheck(n2, n3)) { // 4 membered ring found
-                    Rings_aSP4(n0, n1, n3, n2); // check SP4 type and store
+                    get_sp4_clusters(n0, n1, n3, n2); // check SP4 type and store
                 }
                 else { // n1 not bonded to n3
                     if (dosp5 == 1) {
-                        Rings_gSP5(n0, n1, n3, n2);
+                        get_basic_sp5_rings(n0, n1, n3, n2);
                     }
                 }
             }
@@ -58,7 +58,7 @@ void Rings_gSP4(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, i
     }
 }
 
-void Rings_gSP5(int n0, int n1, int n2, int n3) {    // {n0,n1,n2,n3} is not an SP4 ring, is it an SP5 ring?
+void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {    // {n0,n1,n2,n3} is not an SP4 ring, is it an SP5 ring?
     int i,j;
     int n4,n5;
     int bond4_1;
@@ -75,16 +75,23 @@ void Rings_gSP5(int n0, int n1, int n2, int n3) {    // {n0,n1,n2,n3} is not an 
             if (n5==n1 || n5==n0) break; // Not SP ring
         }
         if (j==num_bonds[n4] && bond4_1==1) {
-            Rings_aSP5(n0, n1, n2, n4, n3); // check SP5 type and store
+            get_sp5_clusters(n0, n1, n2, n4, n3); // check SP5 type and store
         }
     }
 }
 
-void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
+void get_sp3_clusters(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
     int i, j;
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
     int bcheck;
+    int tmp;
+
+    if(n1 > n2) {
+        tmp = n2;
+        n2 = n1;
+        n1 = tmp;
+    }
 
     cp[0]=cp[1]=-1;
     for (i=0; i<num_bonds[n0]; ++i) {
@@ -110,6 +117,10 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
         hcsp3a[nsp3a][1] = n1;
         hcsp3a[nsp3a][2] = n2;
 
+        ssp3a[hcsp3a[nsp3a][0]] = 'B';
+        ssp3a[hcsp3a[nsp3a][1]] = 'B';
+        ssp3a[hcsp3a[nsp3a][2]] = 'B';
+
         ++nsp3a;
     }
     else if (type==1 && dosp3b==1) {
@@ -121,6 +132,11 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
         hcsp3b[nsp3b][1] = n1;
         hcsp3b[nsp3b][2] = n2;
         hcsp3b[nsp3b][3] = cp[0];
+
+        if (ssp3b[hcsp3b[nsp3b][0]] == 'C') ssp3b[hcsp3b[nsp3b][0]] = 'B';
+        if (ssp3b[hcsp3b[nsp3b][1]] == 'C') ssp3b[hcsp3b[nsp3b][1]] = 'B';
+        if (ssp3b[hcsp3b[nsp3b][2]] == 'C') ssp3b[hcsp3b[nsp3b][2]] = 'B';
+        ssp3b[hcsp3b[nsp3b][3]] = 'O';
 
         add_mem_sp3b(n0);
         add_mem_sp3b(n1);
@@ -146,6 +162,12 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
             hcsp3c[nsp3c][4] = cp[0];
         }
 
+        if (ssp3c[hcsp3c[nsp3c][0]] == 'C') ssp3c[hcsp3c[nsp3c][0]] = 'B';
+        if (ssp3c[hcsp3c[nsp3c][1]] == 'C') ssp3c[hcsp3c[nsp3c][1]] = 'B';
+        if (ssp3c[hcsp3c[nsp3c][2]] == 'C') ssp3c[hcsp3c[nsp3c][2]] = 'B';
+        ssp3c[hcsp3c[nsp3c][3]] = 'O';
+        ssp3c[hcsp3c[nsp3c][4]] = 'O';
+
         add_mem_sp3c(n0);
         add_mem_sp3c(n1);
         add_mem_sp3c(n2);
@@ -163,11 +185,15 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
         hcsp3a[nsp3a][1] = n1;
         hcsp3a[nsp3a][2] = n2;
 
+        ssp3a[hcsp3a[nsp3a][0]] = 'B';
+        ssp3a[hcsp3a[nsp3a][1]] = 'B';
+        ssp3a[hcsp3a[nsp3a][2]] = 'B';
+
         ++nsp3a;
     }
 }
 
-void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, check SP4 ring and if so detect SP4a/b/c cluster
+void get_sp4_clusters(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, check SP4 ring and if so detect SP4a/b/c cluster
     int i, j;
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
@@ -198,6 +224,11 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
         hcsp4a[nsp4a][2] = n2;
         hcsp4a[nsp4a][3] = n3;
 
+        ssp4a[hcsp4a[nsp4a][0]] = 'B';
+        ssp4a[hcsp4a[nsp4a][1]] = 'B';
+        ssp4a[hcsp4a[nsp4a][2]] = 'B';
+        ssp4a[hcsp4a[nsp4a][3]] = 'B';
+
         ++nsp4a;
     }
     else if (type==1 && dosp4b==1) {
@@ -210,6 +241,12 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
         hcsp4b[nsp4b][2] = n2;
         hcsp4b[nsp4b][3] = n3;
         hcsp4b[nsp4b][4] = cp[0];
+
+        if (ssp4b[hcsp4b[nsp4b][0]] == 'C') ssp4b[hcsp4b[nsp4b][0]] = 'B';
+        if (ssp4b[hcsp4b[nsp4b][1]] == 'C') ssp4b[hcsp4b[nsp4b][1]] = 'B';
+        if (ssp4b[hcsp4b[nsp4b][2]] == 'C') ssp4b[hcsp4b[nsp4b][2]] = 'B';
+        if (ssp4b[hcsp4b[nsp4b][3]] == 'C') ssp4b[hcsp4b[nsp4b][3]] = 'B';
+        ssp4b[hcsp4b[nsp4b][4]] = 'O';
 
         add_mem_sp4b(n0);
         add_mem_sp4b(n1);
@@ -237,6 +274,13 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
             hcsp4c[nsp4c][5] = cp[0];
         }
 
+        if (ssp4c[hcsp4c[nsp4c][0]] == 'C') ssp4c[hcsp4c[nsp4c][0]] = 'B';
+        if (ssp4c[hcsp4c[nsp4c][1]] == 'C') ssp4c[hcsp4c[nsp4c][1]] = 'B';
+        if (ssp4c[hcsp4c[nsp4c][2]] == 'C') ssp4c[hcsp4c[nsp4c][2]] = 'B';
+        if (ssp4c[hcsp4c[nsp4c][3]] == 'C') ssp4c[hcsp4c[nsp4c][3]] = 'B';
+        ssp4c[hcsp4c[nsp4c][4]] = 'O';
+        ssp4c[hcsp4c[nsp4c][5]] = 'O';
+
         add_mem_sp4c(n0);
         add_mem_sp4c(n1);
         add_mem_sp4c(n2);
@@ -257,12 +301,17 @@ void Rings_aSP4(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, chec
         hcsp4a[nsp4a][1] = n1;
         hcsp4a[nsp4a][2] = n2;
         hcsp4a[nsp4a][3] = n3;
+
+        ssp4a[hcsp4a[nsp4a][0]] = 'B';
+        ssp4a[hcsp4a[nsp4a][1]] = 'B';
+        ssp4a[hcsp4a[nsp4a][2]] = 'B';
+        ssp4a[hcsp4a[nsp4a][3]] = 'B';
         
         ++nsp4a;
     }
 }
 
-void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n3,n4}, check SP5 ring and if so detect SP5a/b/c cluster
+void get_sp5_clusters(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n3,n4}, check SP5 ring and if so detect SP5a/b/c cluster
     int i, j;
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
@@ -293,6 +342,12 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
         hcsp5a[nsp5a][2] = n2;
         hcsp5a[nsp5a][3] = n3;
         hcsp5a[nsp5a][4] = n4;
+
+        ssp5a[hcsp5a[nsp5a][0]] = 'B';
+        ssp5a[hcsp5a[nsp5a][1]] = 'B';
+        ssp5a[hcsp5a[nsp5a][2]] = 'B';
+        ssp5a[hcsp5a[nsp5a][3]] = 'B';
+        ssp5a[hcsp5a[nsp5a][4]] = 'B';
         
         ++nsp5a;
     }
@@ -314,6 +369,13 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
         add_mem_sp5b(n3);
         add_mem_sp5b(n4);
         add_mem_sp5b(cp[0]);
+
+        if (ssp5b[hcsp5b[nsp5b][0]] == 'C') ssp5b[hcsp5b[nsp5b][0]] = 'B';
+        if (ssp5b[hcsp5b[nsp5b][1]] == 'C') ssp5b[hcsp5b[nsp5b][1]] = 'B';
+        if (ssp5b[hcsp5b[nsp5b][2]] == 'C') ssp5b[hcsp5b[nsp5b][2]] = 'B';
+        if (ssp5b[hcsp5b[nsp5b][3]] == 'C') ssp5b[hcsp5b[nsp5b][3]] = 'B';
+        if (ssp5b[hcsp5b[nsp5b][4]] == 'C') ssp5b[hcsp5b[nsp5b][4]] = 'B';
+        ssp5b[hcsp5b[nsp5b][5]] = 'O';
         
         ++nsp5b;
     }
@@ -344,6 +406,14 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
         add_mem_sp5c(cp[0]);
         add_mem_sp5c(cp[1]);
 
+        if (ssp5c[hcsp5c[nsp5c][0]] == 'C') ssp5c[hcsp5c[nsp5c][0]] = 'B';
+        if (ssp5c[hcsp5c[nsp5c][1]] == 'C') ssp5c[hcsp5c[nsp5c][1]] = 'B';
+        if (ssp5c[hcsp5c[nsp5c][2]] == 'C') ssp5c[hcsp5c[nsp5c][2]] = 'B';
+        if (ssp5c[hcsp5c[nsp5c][3]] == 'C') ssp5c[hcsp5c[nsp5c][3]] = 'B';
+        if (ssp5c[hcsp5c[nsp5c][4]] == 'C') ssp5c[hcsp5c[nsp5c][4]] = 'B';
+        ssp5c[hcsp5c[nsp5c][5]] = 'O';
+        ssp5c[hcsp5c[nsp5c][6]] = 'O';
+
         ++nsp5c;
     }
     else if (dosp5a==1) {   // Now store ring
@@ -356,92 +426,14 @@ void Rings_aSP5(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n
         hcsp5a[nsp5a][2] = n2;
         hcsp5a[nsp5a][3] = n3;
         hcsp5a[nsp5a][4] = n4;
-        
+
+        ssp5a[hcsp5a[nsp5a][0]] = 'B';
+        ssp5a[hcsp5a[nsp5a][1]] = 'B';
+        ssp5a[hcsp5a[nsp5a][2]] = 'B';
+        ssp5a[hcsp5a[nsp5a][3]] = 'B';
+        ssp5a[hcsp5a[nsp5a][4]] = 'B';
+
         ++nsp5a;
-    }
-}
-
-void Rings_setSP3c() { // store cluster 5A D3h from Bonds_aSP3
-    int i;
-
-    for (i=0; i<nsp3a; i++) {
-        ssp3a[hcsp3a[i][0]] = 'B';
-        ssp3a[hcsp3a[i][1]] = 'B';
-        ssp3a[hcsp3a[i][2]] = 'B';
-    }
-
-    for (i=0; i<nsp3b; i++) {
-        if (ssp3b[hcsp3b[i][0]] == 'C') ssp3b[hcsp3b[i][0]] = 'B';
-        if (ssp3b[hcsp3b[i][1]] == 'C') ssp3b[hcsp3b[i][1]] = 'B';
-        if (ssp3b[hcsp3b[i][2]] == 'C') ssp3b[hcsp3b[i][2]] = 'B';
-        ssp3b[hcsp3b[i][3]] = 'O';
-    }
-
-    for (i=0; i<nsp3c; i++) {
-        if (ssp3c[hcsp3c[i][0]] == 'C') ssp3c[hcsp3c[i][0]] = 'B';
-        if (ssp3c[hcsp3c[i][1]] == 'C') ssp3c[hcsp3c[i][1]] = 'B';
-        if (ssp3c[hcsp3c[i][2]] == 'C') ssp3c[hcsp3c[i][2]] = 'B';
-        ssp3c[hcsp3c[i][3]] = 'O';
-        ssp3c[hcsp3c[i][4]] = 'O';
-    }
-}
-
-void Rings_setSP4c() { // store cluster 6A Oh from Bonds_aSP4()
-    int i;
-
-    for (i=0; i<nsp4a; i++) {
-        ssp4a[hcsp4a[i][0]] = 'B';
-        ssp4a[hcsp4a[i][1]] = 'B';
-        ssp4a[hcsp4a[i][2]] = 'B';
-        ssp4a[hcsp4a[i][3]] = 'B';
-    }
-
-    for (i=0; i<nsp4b; i++) {
-        if (ssp4b[hcsp4b[i][0]] == 'C') ssp4b[hcsp4b[i][0]] = 'B';
-        if (ssp4b[hcsp4b[i][1]] == 'C') ssp4b[hcsp4b[i][1]] = 'B';
-        if (ssp4b[hcsp4b[i][2]] == 'C') ssp4b[hcsp4b[i][2]] = 'B';
-        if (ssp4b[hcsp4b[i][3]] == 'C') ssp4b[hcsp4b[i][3]] = 'B';
-        ssp4b[hcsp4b[i][4]] = 'O';
-    }
-
-    for (i=0; i<nsp4c; ++i) {
-        if (ssp4c[hcsp4c[i][0]] == 'C') ssp4c[hcsp4c[i][0]] = 'B';
-        if (ssp4c[hcsp4c[i][1]] == 'C') ssp4c[hcsp4c[i][1]] = 'B';
-        if (ssp4c[hcsp4c[i][2]] == 'C') ssp4c[hcsp4c[i][2]] = 'B';
-        if (ssp4c[hcsp4c[i][3]] == 'C') ssp4c[hcsp4c[i][3]] = 'B';
-        ssp4c[hcsp4c[i][4]] = 'O';
-        ssp4c[hcsp4c[i][5]] = 'O';
-    }
-}
-
-void Rings_setSP5c() { // store cluster 7A D5h from Bonds_aSP5()
-    int i;
-
-    for (i=0; i<nsp5a; i++) {
-        ssp5a[hcsp5a[i][0]] = 'B';
-        ssp5a[hcsp5a[i][1]] = 'B';
-        ssp5a[hcsp5a[i][2]] = 'B';
-        ssp5a[hcsp5a[i][3]] = 'B';
-        ssp5a[hcsp5a[i][4]] = 'B';
-    }
-
-    for (i=0; i<nsp5b; i++) {
-        if (ssp5b[hcsp5b[i][0]] == 'C') ssp5b[hcsp5b[i][0]] = 'B';
-        if (ssp5b[hcsp5b[i][1]] == 'C') ssp5b[hcsp5b[i][1]] = 'B';
-        if (ssp5b[hcsp5b[i][2]] == 'C') ssp5b[hcsp5b[i][2]] = 'B';
-        if (ssp5b[hcsp5b[i][3]] == 'C') ssp5b[hcsp5b[i][3]] = 'B';
-        if (ssp5b[hcsp5b[i][4]] == 'C') ssp5b[hcsp5b[i][4]] = 'B';
-        ssp5b[hcsp5b[i][5]] = 'O';
-    }
-
-    for (i=0; i<nsp5c; ++i) {
-        if (ssp5c[hcsp5c[i][0]] == 'C') ssp5c[hcsp5c[i][0]] = 'B';
-        if (ssp5c[hcsp5c[i][1]] == 'C') ssp5c[hcsp5c[i][1]] = 'B';
-        if (ssp5c[hcsp5c[i][2]] == 'C') ssp5c[hcsp5c[i][2]] = 'B';
-        if (ssp5c[hcsp5c[i][3]] == 'C') ssp5c[hcsp5c[i][3]] = 'B';
-        if (ssp5c[hcsp5c[i][4]] == 'C') ssp5c[hcsp5c[i][4]] = 'B';
-        ssp5c[hcsp5c[i][5]] = 'O';
-        ssp5c[hcsp5c[i][6]] = 'O';
     }
 }
 
