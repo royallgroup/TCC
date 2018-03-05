@@ -56,7 +56,8 @@ void Setup_ReadIniFile(char *filename) {
         rcutBB2=rcutAA2;
         printf("As voronoi method no individually specie-specie interaction length\nrcut %lg rcut2 %lg\n",rcutAA,rcutAA2);
     }
-    initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
+    initNoStatic=incrStatic=1000;
+    initNoClustPerPart=incrClustPerPart=1;
 
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);

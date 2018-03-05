@@ -3,24 +3,34 @@
 #include "bonds.h"
 #include "tools.h"
 
-void Rings_gSP3(int n0) {	// get SP3/4/5 rings including particle n0
-    int i,j;
-    int n1, n2;
+void Rings_gSP3() {	// get SP3/4/5 rings including particle n0
+    int n1_pointer, n2_pointer;
+    int n0, n1, n2;
 
-    for (i=0; i<num_bonds[n0]-1; i++){
-        n1=bNums[n0][i];
-        if (n1 < n0) continue;
-        for (j=i+1; j<num_bonds[n0]; ++j){
-            n2=bNums[n0][j];
-            if (n2<n0) continue;
-            if (Bonds_BondCheck(n1,n2)) { // is n1 bonded to n2
-                if (n1<n2) Rings_aSP3(n0, n1, n2); // SP3 found, check type and store
-                else Rings_aSP3(n0, n2, n1); // SP3 found, check type and store
-            }
-            else { // not SP3, search for SP4 & SP5
-                if (dosp4==1) {
-                    if (n1<n2) Rings_gSP4(n0, n1, n2);
-                    else Rings_gSP4(n0, n2, n1);
+    for (n0 = 0; n0 < current_frame_particle_number; n0++) {
+        for (n1_pointer = 0; n1_pointer < num_bonds[n0] - 1; n1_pointer++) {
+            n1 = bNums[n0][n1_pointer];
+            if (n1 > n0) {
+                for (n2_pointer = n1_pointer + 1; n2_pointer < num_bonds[n0]; n2_pointer++) {
+                    n2 = bNums[n0][n2_pointer];
+                    if (n2 > n0) {
+                        if (Bonds_BondCheck(n1, n2)) {
+                            if (n1 < n2) {
+                                Rings_aSP3(n0, n1, n2);
+                            } // SP3 found, check type and store
+                            else {
+                                Rings_aSP3(n0, n2, n1);
+                            } // SP3 found, check type and store
+                        } else { // not SP3, search for SP4 & SP5
+                            if (dosp4 == 1) {
+                                if (n1 < n2) {
+                                    Rings_gSP4(n0, n1, n2);
+                                } else {
+                                    Rings_gSP4(n0, n2, n1);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -30,16 +40,19 @@ void Rings_gSP3(int n0) {	// get SP3/4/5 rings including particle n0
 void Rings_gSP4(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
     int i;
     int n3;
-    
+
     for (i=0; i<num_bonds[n1]; ++i) {
-        n3=bNums[n1][i];
-        if (n3 <= n0) continue;
-        if (!Bonds_BondCheck(n0,n3)) {  // n1 not bonded to n2 & n0 not bonded to n3
-            if (Bonds_BondCheck(n2,n3)) { // 4 membered ring found 
-                Rings_aSP4(n0, n1, n3, n2); // check SP4 type and store
-            }
-            else{ // n1 not bonded to n3
-                if (dosp5==1) Rings_gSP5(n0, n1, n3, n2);
+        n3 = bNums[n1][i];
+        if (n3 > n0){
+            if (Bonds_BondCheck(n0, n3) == 0) {  // n1 not bonded to n2 & n0 not bonded to n3
+                if (Bonds_BondCheck(n2, n3)) { // 4 membered ring found
+                    Rings_aSP4(n0, n1, n3, n2); // check SP4 type and store
+                }
+                else { // n1 not bonded to n3
+                    if (dosp5 == 1) {
+                        Rings_gSP5(n0, n1, n3, n2);
+                    }
+                }
             }
         }       
     }
@@ -56,7 +69,9 @@ void Rings_gSP5(int n0, int n1, int n2, int n3) {    // {n0,n1,n2,n3} is not an 
         bond4_1 = 0;
         for (j=0; j<num_bonds[n4]; ++j){
             n5=bNums[n4][j];
-            if (n5==n3) bond4_1 = 1;
+            if (n5==n3) {
+                bond4_1 = 1;
+            }
             if (n5==n1 || n5==n0) break; // Not SP ring
         }
         if (j==num_bonds[n4] && bond4_1==1) {
@@ -94,7 +109,7 @@ void Rings_aSP3(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring 
         hcsp3a[nsp3a][0] = n0;
         hcsp3a[nsp3a][1] = n1;
         hcsp3a[nsp3a][2] = n2;
-        
+
         ++nsp3a;
     }
     else if (type==1 && dosp3b==1) {

@@ -79,8 +79,8 @@ int main(int argc, char **argv) {
 
             for (i = 0; i < current_frame_particle_number; i++) {
                 if (num_bonds[i] > maxnb) maxnb = num_bonds[i];
-                if (dosp3 == 1) Rings_gSP3(i);
             }
+            if (dosp3 == 1) Rings_gSP3();
             if (dosp3 == 1) Rings_setSP3c();
             if (dosp4 == 1) Rings_setSP4c();
             if (dosp5 == 1) Rings_setSP5c();

@@ -1,7 +1,7 @@
 #ifndef RINGS_H
 #define RINGS_H 
 
-void Rings_gSP3(int n0);	// get SP3/4/5 rings including particle n0
+void Rings_gSP3();	// get SP3/4/5 rings including particle n0
 void Rings_gSP4(int, int, int);   // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
 void Rings_gSP5(int, int, int, int);   // {n0,n1,n2,n3} is not an SP4 ring, is it an SP5 ring?
 
