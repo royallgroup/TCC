@@ -74,7 +74,7 @@ void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const i
                 Add_New_Bond(particle_1, particle_2, store_dr2[particle_2]);
             }
             else {
-                Too_Many_Bonds(particle_1, particle_2, __func__);
+                too_many_bonds(particle_1, particle_2, __func__);
             }
         }
     }
@@ -161,7 +161,7 @@ int get_particle_1_neighbours(int particle_1, const int max_allowed_bonds, int *
                     num_particle_1_neighbours++;
                 }
                 else {
-                    Too_Many_Bonds(particle_1, particle_2, __func__);
+                    too_many_bonds(particle_1, particle_2, __func__);
                 }
             }
         }

@@ -71,8 +71,14 @@ void check_for_bond(int particle_1, int particle_2) {
 
     sq_dist = Get_Interparticle_Distance(particle_1, particle_2);
     if(sq_dist < rcutAA2) {
-        Add_New_Bond(particle_1, particle_2, sq_dist);
-        Add_New_Bond(particle_2, particle_1, sq_dist);
+        if(num_bonds[particle_1] < nB && num_bonds[particle_2] < nB) {
+            Add_New_Bond(particle_1, particle_2, sq_dist);
+            Add_New_Bond(particle_2, particle_1, sq_dist);
+        }
+        else {
+            too_many_bonds(particle_1, particle_2, __func__);
+        }
+
     }
 }
 

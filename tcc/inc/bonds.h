@@ -13,7 +13,7 @@ void Get_Bonds();
 
 void Get_Simple_Bonds();
 
-void Too_Many_Bonds(int particle_1, int particle_2, const char *method_name);
+void too_many_bonds(int particle_1, int particle_2, const char *method_name);
 
 void Add_New_Bond(int particle_1, int particle_2, double squared_distance);
 

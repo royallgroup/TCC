@@ -121,11 +121,11 @@ void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance) {
         Add_New_Bond(particle_2, particle_1, squared_distance);
     }
     else {
-        Too_Many_Bonds(particle_1, particle_2, __func__);
+        too_many_bonds(particle_1, particle_2, __func__);
     }
 }
 
-void Too_Many_Bonds(int particle_1, int particle_2, const char *method_name) {
+void too_many_bonds(int particle_1, int particle_2, const char *method_name) {
     char error_message[200];
 
     sprintf(error_message, "%s: Too many bonds to particle %d or particle_2 %d.\n"
