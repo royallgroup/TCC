@@ -87,12 +87,15 @@ void fill_cell_list() {
     int x_index, y_index, z_index;
     int scalar_index;
 
-    for(particle=0; particle<max_particle_number; particle++) {
+    for(particle=0; particle<current_frame_particle_number; particle++) {
         x_index = (int) floor(x[particle] / cell_len_x);
         y_index = (int) floor(y[particle] / cell_len_y);
         z_index = (int) floor(z[particle] / cell_len_z);
 
         scalar_index = get_scalar_cell_index(x_index, y_index, z_index);
+        if(scalar_index < 0 || scalar_index >= n_cells_total) {
+            Error("Scalar index out of range");
+        }
         linked_list[particle] = head[scalar_index];
         head[scalar_index] = particle;
     }
