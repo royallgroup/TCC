@@ -4,6 +4,8 @@
 #include "tools.h"
 #include "bonds.h"
 
+void get_particle_bonds_in_cell_list(const int max_allowed_bonds, int *temp_cnb, int **temp_bNums, int i, int j);
+
 int cell_list_get_particle_1_neighbours(int i, int num_particle_1_neighbours, int *particle_1_neighbours,
                                         int *particle_1_bonds, double *particle_1_bond_lengths, double *store_dr2,
                                         const int *temp_cnb, int *const *temp_bNums) {
@@ -24,51 +26,44 @@ int cell_list_get_particle_1_neighbours(int i, int num_particle_1_neighbours, in
 
 void cell_list_get_neigbours(const int max_allowed_bonds, int *temp_cnb, int **temp_bNums) {
     int i, j;
-    int ic, jcell0, jcell,nabor;    // various counters
-    double squared_distance;
-    links();
-    for (ic=1;ic<=n_cells_total;ic++) {        // loop over all cells
-        i=head[ic];     // head of list particle for cell ic
-        while (i>0) {   // loop over all particles in ic
+    int ic, jcell0, jcell, nabor;    // various counters
 
-            j=llist[i]; // next particle in current cell ic
-            while (j>0) {   // loop over all particles in cell ic
-                squared_distance = Get_Interparticle_Distance(i - 1, j - 1);
-                if (squared_distance < rcutAA2) {
-                    if (temp_cnb[i-1] < max_allowed_bonds && temp_cnb[j-1] < max_allowed_bonds) {  // max number of bonds, do ith particle
-                        temp_bNums[i-1][temp_cnb[i-1]]=j-1;
-                        temp_bNums[j-1][temp_cnb[j-1]]=i-1;
-                        temp_cnb[i-1]++;
-                        temp_cnb[j-1]++;
-                    }
-                    else {    // list is now full
-                        Too_Many_Bonds(i-1, j-1, __func__);
-                    }
-                }
-                j=llist[j]; // loop over next particle in cell ic
-            }
-            jcell0=13*(ic-1);       // now loop over adjacent cells to cell ic
-            for (nabor=1;nabor<=13;nabor++) {
-                jcell=map[jcell0+nabor];
-                j=head[jcell];  // head of cell for jcell
-                while (j>0) {   // loop over head of cell and all other particles in jcell
-                    squared_distance = Get_Interparticle_Distance(i - 1, j - 1);
-                    if (squared_distance < rcutAA2) {
-                        if (temp_cnb[i-1] < max_allowed_bonds && temp_cnb[j-1] < max_allowed_bonds) {  // max number of bonds, do ith particle
-                            temp_bNums[i-1][temp_cnb[i-1]]=j-1;
-                            temp_bNums[j-1][temp_cnb[j-1]]=i-1;
-                            temp_cnb[i-1]++;
-                            temp_cnb[j-1]++;
-                        }
-                        else {
-                            Too_Many_Bonds(i-1, j-1, __func__);
-                        }
-                    }
-                    j=llist[j]; // next particle in jcell
-                }
+
+    links();
+
+    for (ic= 1; ic <= n_cells_total; ic++) {        // loop over all cells
+        i = head[ic];     // head of list particle for cell ic
+        while (i > 0) {   // loop over all particles in ic
+            j = llist[i]; // next particle in current cell ic
+            get_particle_bonds_in_cell_list(max_allowed_bonds, temp_cnb, temp_bNums, i, j);
+            jcell0 = 13 * (ic - 1);       // now loop over adjacent cells to cell ic
+            for (nabor = 1; nabor <= 13; nabor++) {
+                jcell = map[jcell0 + nabor];
+                j = head[jcell];  // head of cell for jcell
+                get_particle_bonds_in_cell_list(max_allowed_bonds, temp_cnb, temp_bNums, i, j);
             }
             i=llist[i]; // next particle in ic cell
         }
+    }
+}
+
+void get_particle_bonds_in_cell_list(const int max_allowed_bonds, int *temp_cnb, int **temp_bNums, int i, int j) {
+    double squared_distance;
+
+    while (j > 0) {   // loop over head of cell and all other particles in jcell
+        squared_distance = Get_Interparticle_Distance(i - 1, j - 1);
+        if (squared_distance < rcutAA2) {
+            if (temp_cnb[i - 1] < max_allowed_bonds &&
+                temp_cnb[j - 1] < max_allowed_bonds) {  // max number of bonds, do ith particle
+                temp_bNums[i - 1][temp_cnb[i - 1]] = j - 1;
+                temp_bNums[j - 1][temp_cnb[j - 1]] = i - 1;
+                temp_cnb[i - 1]++;
+                temp_cnb[j - 1]++;
+            } else {
+                Too_Many_Bonds(i - 1, j - 1, __func__);
+            }
+        }
+        j = llist[j]; // next particle in jcell
     }
 }
 
