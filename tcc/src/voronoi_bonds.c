@@ -4,6 +4,8 @@
 #include "voronoi_bonds.h"
 #include "cell_list.h"
 
+void get_all_particle_neighbours();
+
 void Get_Bonds_With_Voronoi() {
     int i, particle_1;
     const int max_allowed_bonds = 4 * nB;
@@ -15,40 +17,28 @@ void Get_Bonds_With_Voronoi() {
     double *store_dr2;
     int *particle_1_bonds;
 
-    int *temp_cnb, **temp_bNums;
-
     particle_1_neighbours = malloc(max_allowed_bonds*sizeof(int));
     particle_1_bonds = malloc(max_allowed_bonds*sizeof(int));
     particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
     store_dr2 = malloc(current_frame_particle_number*sizeof(double));
 
-    if (USELIST == 1) {
-        temp_cnb = malloc(current_frame_particle_number * sizeof(int));
-        temp_bNums = malloc(current_frame_particle_number * sizeof(int *));
-        for (i=0; i<current_frame_particle_number; i++) {
-            temp_bNums[i] = malloc(max_allowed_bonds*sizeof(int));
-        }
-        llist[0]=-1;
-    }
-
     printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
 
     for (i=0; i<current_frame_particle_number; i++) {
         num_bonds[i] = 0;
-        if(USELIST == 1) {
-            llist[i+1]=-1;
-            temp_cnb[i] = 0;
-        }
     }
 
-    if (USELIST == 1) cell_list_get_neigbours(max_allowed_bonds, temp_cnb, temp_bNums);
+    if (USELIST == 1) {
+        fill_cell_list();
+        get_all_particle_neighbours();
+    }
 
-    for (particle_1=0; particle_1<current_frame_particle_number; particle_1++) {
+    for (particle_1 = 0; particle_1 < current_frame_particle_number; particle_1++) {
         if(USELIST == 1) {
-            num_particle_1_neighbours = cell_list_get_particle_1_neighbours(particle_1, num_particle_1_neighbours,
-                                                                            particle_1_neighbours, particle_1_bonds,
-                                                                            particle_1_bond_lengths, store_dr2, temp_cnb,
-                                                                            temp_bNums);
+
+            num_particle_1_neighbours = cell_list_get_particle_1_neighbours(particle_1, particle_1_neighbours,
+                                                                            particle_1_bonds, particle_1_bond_lengths,
+                                                                            store_dr2);
         }
         else{
             num_particle_1_neighbours = get_particle_1_neighbours(particle_1, max_allowed_bonds, particle_1_neighbours,
@@ -67,16 +57,51 @@ void Get_Bonds_With_Voronoi() {
         add_new_voronoi_bond(particle_1, num_particle_1_neighbours, particle_1_neighbours, store_dr2, particle_1_bonds);
     }
 
-    if (USELIST == 1) {
-        for (i = 0; i < current_frame_particle_number; i++) free(temp_bNums[i]);
-        free(temp_bNums);
-        free(temp_cnb);
-    }
-
     free(store_dr2);
     free(particle_1_neighbours);
     free(particle_1_bonds);
     free(particle_1_bond_lengths);
+}
+
+void get_all_particle_neighbours() {
+    int cell_x, cell_y, cell_z;
+    int neighbour_x, neighbour_y, neighbour_z;
+    int current_cell_index;
+    int neighbour_cell_index;
+    int particle_1, particle_2;
+    double sq_dist;
+
+    for(cell_x = 0; cell_x<n_cells_x; cell_x++) {
+        for (cell_y = 0; cell_y<n_cells_y; cell_y++) {
+            for (cell_z = 0; cell_z < n_cells_z; cell_z++) {
+                current_cell_index = get_scalar_cell_index(cell_x, cell_y, cell_z);
+                for(neighbour_x = cell_x - 1; neighbour_x < cell_x + 2; neighbour_x++) {
+                    for (neighbour_y = cell_y - 1; neighbour_y < cell_y + 2; neighbour_y++) {
+                        for (neighbour_z = cell_z - 1; neighbour_z < cell_z + 2; neighbour_z++) {
+                            neighbour_cell_index = get_scalar_cell_index(neighbour_x, neighbour_y, neighbour_z);
+                            particle_1 = head[current_cell_index];
+                            while (particle_1 != -1) {
+                                particle_2 = head[neighbour_cell_index];
+                                while (particle_2 != -1) {
+                                    if (particle_1 < particle_2) {
+                                        sq_dist = Get_Interparticle_Distance(particle_1, particle_2);
+                                        if(sq_dist < rcutAA) {
+                                            bNums[particle_1][num_bonds[particle_1]] = particle_2;
+                                            bNums[particle_2][num_bonds[particle_2]] = particle_1;
+                                            num_bonds[particle_1]++;
+                                            num_bonds[particle_2]++;
+                                        }
+                                    }
+                                    particle_2 = linked_list[particle_2];
+                                }
+                                particle_1 = linked_list[particle_1];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const int *sorted_particle_1_neighbours,

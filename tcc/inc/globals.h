@@ -64,9 +64,8 @@ int correctedBonds; // max number of bonds to one particle
 
 int n_cells_x, n_cells_y, n_cells_z, n_cells_total;   // number of cells per box length, total number of cells
 int *head;   // head of cell array
-int *llist; // linked list array
-int *map; // list of neighbouring cells for cell i
-double inv_cell_len_x, inv_cell_len_y, inv_cell_len_z;
+int *linked_list; // linked list array
+double cell_len_x, cell_len_y, cell_len_z;
 
 // Whether to perform analysis of this type of cluster
 int dosp3, dosp3a, dosp3b, dosp3c;
