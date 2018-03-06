@@ -2943,7 +2943,7 @@ void Clusters_Get11F_12E_13K() {   // Detect 11F C2v & 12E 3h
 
                                     Cluster_Write_11F();
 
-                                    if (do12K == 1) {
+                                    if (do12E == 1) {
                                         if (Clusters_Get12E_D3h(mem_sp3c[hcsp3c[i][j2]][j])) ++n12E;
                                     }
 
