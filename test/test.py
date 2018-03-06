@@ -110,9 +110,20 @@ def test_basic_voronoi():
         assert FileOperations.tidy() == 0
 
 
-def test_voronoi_with_cell_list():
+def test_cubic_voronoi_with_cell_list():
     # Test a medium file with cubic boundaries and cell list turned on
-    with cd("./voronoi_cells"):
+    with cd("./voronoi_cells_cubic"):
+        assert FileOperations.copy_tcc() == 0
+        assert FileOperations.run_tcc() == 0
+        assert FileChecks.check_static_clust() is True
+        assert FileChecks.check_pop_per_frame() is True
+        assert FileChecks.check_bonds() is True
+        assert FileOperations.tidy() == 0
+
+
+def test_non_cubic_voronoi_with_cell_list():
+    # Test a medium file with cubic boundaries and cell list turned on
+    with cd("./voronoi_cells_non_cubic"):
         assert FileOperations.copy_tcc() == 0
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_static_clust() is True
