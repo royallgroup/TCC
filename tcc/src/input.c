@@ -44,8 +44,6 @@ void Setup_ReadIniFile(char *filename) {
     do11AcenXyz = iniparser_getboolean(ini, "output:11a", -1);
     do13AcenXyz = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
-    PRINTINFO = iniparser_getboolean(ini, "extra:debug", -1);
-    iniparser_getdouble(ini, "extra:shear", -1);
 
     // calculate derived values
     rcutAA2=rcutAA*rcutAA;
@@ -58,7 +56,8 @@ void Setup_ReadIniFile(char *filename) {
         rcutBB2=rcutAA2;
         printf("As voronoi method no individually specie-specie interaction length\nrcut %lg rcut2 %lg\n",rcutAA,rcutAA2);
     }
-    initNoStatic=incrStatic=initNoClustPerPart=incrClustPerPart=1;
+    initNoStatic=incrStatic=1000;
+    initNoClustPerPart=incrClustPerPart=1;
 
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
@@ -68,7 +67,6 @@ void Setup_ReadIniFile(char *filename) {
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
     printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
-    printf("PRINTINFO %d\n", PRINTINFO);
 
     iniparser_freedict(ini);
 }
@@ -90,6 +88,7 @@ void parse_box_file(int total_frames) {
     else {
         get_box_file_offsets(read_box_file, total_frames);
     }
+    fclose(read_box_file);
 }
 
 void get_NVT_box(FILE *read_box_file) {
@@ -189,6 +188,7 @@ void get_box_size(int current_frame_number) {
         tiltxz = sizes[4];
         tiltyz = sizes[5];
     }
+    fclose(read_box_file);
 }
 
 struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {

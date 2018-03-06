@@ -1,18 +1,28 @@
 #ifndef BONDS_H
 #define BONDS_H 
 
-double Bonds_GetR2(int i, int j) ;  // get separation between particles i and j
+double Get_Interparticle_Distance(int i, int j);
 
-double Bonds_GetR2_PBCs(int i, int j) ; // get PBC wrapped separation between particles i and j
+void get_distance_components(int i, int j, double *dx, double *dy, double *dz);
 
-void Bonds_CheckSymmetric();
+void enforce_PBCs(double *dx, double *dy, double *dz);
 
-void Bonds_GetBonds();    // Get bonds using simple lengths
+void Are_All_Bonds_Symmetric();
 
-void Bonds_GetBondsV()  ;  // Get bonds using Voronoi
+void Get_Bonds();
 
-void Bonds_GetBondsV_CellList() ; // Get bonds using Voronoi
+void Get_Simple_Bonds();
 
-int Bonds_BondCheck(int , int ) ; // Returns 1 if i & j are bonded; 0 otherwise
+void too_many_bonds(int particle_1, int particle_2, const char *method_name);
+
+void Add_New_Bond(int particle_1, int particle_2, double squared_distance);
+
+void Check_For_Valid_Bond(int particle_1, int particle_2, double squared_distance);
+
+void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance);
+
+void Get_Bonds_With_Voronoi();
+
+int Bonds_BondCheck(int , int );
 
 #endif

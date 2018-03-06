@@ -1,3 +1,4 @@
+#include <math.h>
 #include "output.h"
 #include "tools.h"
 #include "globals.h"
@@ -46,7 +47,7 @@ void Write_Bonds_File(int f) {
 
     sum=0;
     for (i=0; i<current_frame_particle_number; ++i) {
-        sum+=cnb[i];
+        sum+=num_bonds[i];
     }
     if (sum%2!=0) {
         sprintf(errMsg,"Write_Bonds_File(): total number of bonds is not even %d\n",sum);
@@ -58,9 +59,9 @@ void Write_Bonds_File(int f) {
 
     fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
     for (i=0; i<current_frame_particle_number; ++i) {
-        fprintf(bondsout,"%d    %d",i,cnb[i]);
-        for (j=0; j<cnb[i]; ++j) {
-            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],bondlengths[i][j]);
+        fprintf(bondsout,"%d    %d",i,num_bonds[i]);
+        for (j=0; j<num_bonds[i]; ++j) {
+            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],sqrt(squared_bondlengths[i][j]));
         }
         fprintf(bondsout,"\n");
     }

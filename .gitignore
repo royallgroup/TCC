@@ -1,6 +1,7 @@
 *.cbp
 /bin
 /obj
+*/.idea
 /.idea
 /cmake*
 /build

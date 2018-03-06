@@ -28,8 +28,6 @@ struct xyz_info {
     long *frame_offsets;
 };
 
-
-char fInputParamsName[1000];    // name of parameters file and r... coordinates file and memsize file
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
 int box_offsets[1000];    // Offsets of each line in the box file
 double *x, *y, *z;  // positions in x y and z directions of N particles
@@ -40,7 +38,7 @@ double tiltxy,tiltxz,tiltyz;
 
 double rcutAA,rcutAA2,rcutAB,rcutAB2,rcutBB,rcutBB2;    // diameters of AB and BB interactions for binary interactions
 double fc;  // Voronoi adjustment parameter
-int Vor;    // 0 use simple bond length method Bonds_GetBonds(), 1 use Voronoi method Bonds_GetBondsV()
+int Vor;    // 0 use simple bond length method Get_Bonds(), 1 use Voronoi method Get_Bonds_With_Voronoi()
 int PBCs;   // 0 do not impliment periodic boundary conditions, 1 implement periodic boundary conditions
 int nB; // max number of bonds per particle
 int USELIST;    // 0  do not use cell list, 1 use cell list
@@ -57,19 +55,17 @@ int incrStatic; // when full, increment static cluster arrays by this amount
 int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
 
-int PRINTINFO; // print running information about progress
-
-int *cnb; // Current Number of Bonds for particles {1,...,N}
+int *num_bonds; // Current Number of Bonds for particles {1,...,N}
 int **bNums;    // list of particles (indices j) bonded to particle at index i
-double **bondlengths;   // length of bonds in the bond network and squared
+double **squared_bondlengths;   // length of bonds in the bond network and squared
 int maxnb; // max number of bonds to one particle
 int correctedBonds; // max number of bonds to one particle
 
-int M, ncells;   // number of cells per box length, total number of cells
+
+int n_cells_x, n_cells_y, n_cells_z, n_cells_total;   // number of cells per box length, total number of cells
 int *head;   // head of cell array
-int *llist; // linked list array
-int *map; // list of neighbouring cells for cell i
-double cellSide, invcellSide;
+int *linked_list; // linked list array
+double cell_len_x, cell_len_y, cell_len_z;
 
 // Whether to perform analysis of this type of cluster
 int dosp3, dosp3a, dosp3b, dosp3c;

@@ -10,6 +10,7 @@
 #include "stats.h"
 #include "tools.h"
 #include "input.h"
+#include "cell_list.h"
 
 int num_cluster_types = 39;
 
@@ -46,8 +47,8 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
 int main(int argc, char **argv) {
     int current_frame_number, f, i;
     int remainder;
-    char errMsg[1000], output[1000];
     struct xyz_info input_xyz_info;
+    char fInputParamsName[50];
 
     sprintf(fInputParamsName,"inputparameters.ini");
     Setup_ReadIniFile(fInputParamsName);    // read input params
@@ -60,7 +61,6 @@ int main(int argc, char **argv) {
     max_particle_number = get_max_particle_number(input_xyz_info);
 
     Initialise_Global_Variables();
-    if (USELIST == 1) Setup_Cell_List();
     Stats_Init();
     Setup_Output_Files();
 
@@ -72,17 +72,15 @@ int main(int argc, char **argv) {
             current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
             if (box_type != 1) get_box_size(current_frame_number);
+            if (USELIST == 1) set_up_cell_list();
             get_xyz_frame(&input_xyz_info, current_frame_number);
-            Bonds_GetBonds();
+            Get_Bonds();
             if (doWriteBonds == 1) Write_Bonds_File(f);
 
             for (i = 0; i < current_frame_particle_number; i++) {
-                if (cnb[i] > maxnb) maxnb = cnb[i];
-                if (dosp3 == 1) Rings_gSP3(i);
+                if (num_bonds[i] > maxnb) maxnb = num_bonds[i];
             }
-            if (dosp3 == 1) Rings_setSP3c();
-            if (dosp4 == 1) Rings_setSP4c();
-            if (dosp5 == 1) Rings_setSP5c();
+            if (dosp3 == 1) get_basic_clusters();
             if (do6Z == 1) Clusters_Get6Z();
             if (do7K == 1) Clusters_Get7K();
             if (do8A == 1) Clusters_Get8A();
@@ -117,6 +115,11 @@ int main(int argc, char **argv) {
             if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(f, 21);
             if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
 
+            if (USELIST==1) {
+                free(head);
+                free(linked_list);
+            }
+            
             printf("f%d complete\n", f);
             f++;
             if (f == FRAMES) break;
@@ -129,15 +132,13 @@ int main(int argc, char **argv) {
         Write_Pop_Per_Frame(f);
     }    
 
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    printf("\n");
-    Stats_Report(output);
-    printf("\nWritten %s\n\n",output);
+
+    Stats_Report();
 
     free(input_xyz_info.num_particles);
     free(input_xyz_info.frame_offsets);
-    Free_All_Variables();
     Stats_FreeMem();
+    Free_All_Variables();
 
     printf("\n\nFIN \n\n");
     return 0;

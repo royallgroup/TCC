@@ -93,18 +93,19 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
         mean_pop_per_frame[i] = 0.0;
     }
 
+    tiltxy = tiltxz = tiltyz = 0;
     x = malloc(max_particle_number*sizeof(double));   if (x==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): x[] malloc out of memory\n");    Error_no_free(errMsg); }    // positions of particles in a configuration
     y = malloc(max_particle_number*sizeof(double));   if (y==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): y[] malloc out of memory\n");    Error_no_free(errMsg); }
     z = malloc(max_particle_number*sizeof(double));   if (z==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): z[] malloc out of memory\n");    Error_no_free(errMsg); }
     particle_type=malloc(max_particle_number*sizeof(int)); if (particle_type==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): particle_type[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
 
-    cnb = malloc(max_particle_number*sizeof(int));    if (cnb==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): cnb[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
+    num_bonds = malloc(max_particle_number*sizeof(int));    if (num_bonds==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): num_bonds[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
 
     bNums = malloc(max_particle_number*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle
     for (j=0; j<max_particle_number; ++j) { bNums[j] = malloc(nB*sizeof(int));    if (bNums[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[][] malloc out of memory\n");   Error_no_free(errMsg); } }
 
-    bondlengths = malloc(max_particle_number*sizeof(double *));   if (bondlengths==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
-    for (j=0; j<max_particle_number; ++j) { bondlengths[j] = malloc(nB*sizeof(double));   if (bondlengths[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bondlengths[][] malloc out of memory\n");   Error_no_free(errMsg); } }
+    squared_bondlengths = malloc(max_particle_number*sizeof(double *));   if (squared_bondlengths==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
+    for (j=0; j<max_particle_number; ++j) { squared_bondlengths[j] = malloc(nB*sizeof(double));   if (squared_bondlengths[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): squared_bondlengths[][] malloc out of memory\n");   Error_no_free(errMsg); } }
 
     // arrays for the number of clusters of each type bonded to each particle
     mem_sp3b = malloc(max_particle_number*sizeof(int *)); if (mem_sp3b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp3b[] malloc out of memory\n");  Error_no_free(errMsg); }
@@ -313,16 +314,10 @@ void Free_All_Variables()  {  // Free bond detection variables
 
     for (i=0; i<max_particle_number; ++i) {
         free(bNums[i]); 
-        free(bondlengths[i]);
+        free(squared_bondlengths[i]);
     }
-    free(bNums); free(bondlengths); free(cnb);
+    free(bNums); free(squared_bondlengths); free(num_bonds);
     
-    if (USELIST==1) {
-        free(map);
-        free(head);
-        free(llist);
-    }
-
     for (i=0; i<num_cluster_types; ++i) {
         free(pop_per_frame[i]);
     }
@@ -412,54 +407,4 @@ void Free_All_Variables()  {  // Free bond detection variables
     free(s12A); free(s12B); free(s12D); free(s12E); free(s12K);
     free(s13A); free(s13B); free(s13K);
     free(sFCC);free(sHCP); free(sBCC_9); free(sBCC_15);
-    
-}
-
-int icell(int tix, int tiy, int tiz) { 	// returns cell number (from 1 to ncells) for given (tix,tiy,tiz) coordinate
-    return 1 + (tix-1+M)%M + M*((tiy-1+M)%M) + M*M*((tiz-1+M)%M);
-}
-
-void Setup_Cell_List() {
-
-    int i;
-    int ix, iy, iz;
-    int imap;
-    char errMsg[1000];
-
-    head=malloc((ncells+1)*sizeof(int));    if (head==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): head[] malloc out of memory\n");  Error_no_free(errMsg); }
-    map=malloc((13*ncells+1)*sizeof(int));  if (map==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): map[] malloc out of memory\n");    Error_no_free(errMsg); }
-    llist=malloc((current_frame_particle_number+1)*sizeof(int));    if (llist==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): llist[] malloc out of memory\n");    Error_no_free(errMsg); }
-
-    for (i=0; i<ncells+1; i++) head[i]=0;
-    for (i=0; i<13*ncells+1; i++) map[i]=0;
-    for (i=0; i<current_frame_particle_number+1; i++) llist[i]=0;
-
-
-    M = (int)(sidex/rcutAA);	// number of cells along box side
-    if (M<3) Error_no_free("main(): M<3, too few cells");
-    ncells = M*M*M;	// total number of cells
-    cellSide = sidex/M;	// length of cells
-    invcellSide = 1.0/cellSide;	// invcellSide
-    printf("m %d ncells %d cellside %.15lg\n", M, ncells, cellSide);
-    // routine to create the thirteen nearest neighbours array map[] of each cell
-    for (iz=1; iz<=M; iz++) {
-        for (iy=1; iy<=M; iy++) {
-            for (ix=1; ix<=M; ix++) {
-                imap = (icell(ix,iy,iz)-1)*13;
-                map[imap+1 ]=icell(ix+1,iy	,iz	);
-                map[imap+2 ]=icell(ix+1,iy+1,iz	);
-                map[imap+3 ]=icell(ix	 ,iy+1,iz	);
-                map[imap+4 ]=icell(ix-1 ,iy+1,iz	);
-                map[imap+5 ]=icell(ix+1,iy	,iz-1	);
-                map[imap+6 ]=icell(ix+1,iy+1,iz-1	);
-                map[imap+7 ]=icell(ix	 ,iy+1,iz-1	);
-                map[imap+8 ]=icell(ix-1 ,iy+1,iz-1	);
-                map[imap+9 ]=icell(ix+1,iy	,iz+1	);
-                map[imap+10]=icell(ix+1,iy+1,iz+1	);
-                map[imap+11]=icell(ix	 ,iy+1,iz+1	);
-                map[imap+12]=icell(ix-1 ,iy+1,iz+1);
-                map[imap+13]=icell(ix	 ,iy	,iz+1	);
-            }
-        }
-    }
 }
