@@ -60,7 +60,7 @@ void Write_Bonds_File(int f) {
     for (i=0; i<current_frame_particle_number; ++i) {
         fprintf(bondsout,"%d    %d",i,num_bonds[i]);
         for (j=0; j<num_bonds[i]; ++j) {
-            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],bondlengths[i][j]);
+            fprintf(bondsout,"  %d  %.5lg",bNums[i][j],squared_bondlengths[i][j]);
         }
         fprintf(bondsout,"\n");
     }

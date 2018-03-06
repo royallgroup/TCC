@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
             current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
             if (box_type != 1) get_box_size(current_frame_number);
-            if (USELIST == 1) Setup_Cell_List();
+            if (USELIST == 1) set_up_cell_list();
             get_xyz_frame(&input_xyz_info, current_frame_number);
             Get_Bonds();
             if (doWriteBonds == 1) Write_Bonds_File(f);
@@ -116,9 +116,8 @@ int main(int argc, char **argv) {
             if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
 
             if (USELIST==1) {
-                free(map);
                 free(head);
-                free(llist);
+                free(linked_list);
             }
             
             printf("f%d complete\n", f);

@@ -57,7 +57,7 @@ int incrClustPerPart;   // when full, increment cluster per part arrays by this 
 
 int *num_bonds; // Current Number of Bonds for particles {1,...,N}
 int **bNums;    // list of particles (indices j) bonded to particle at index i
-double **bondlengths;   // length of bonds in the bond network and squared
+double **squared_bondlengths;   // length of bonds in the bond network and squared
 int maxnb; // max number of bonds to one particle
 int correctedBonds; // max number of bonds to one particle
 

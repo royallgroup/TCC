@@ -104,8 +104,8 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     bNums = malloc(max_particle_number*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle
     for (j=0; j<max_particle_number; ++j) { bNums[j] = malloc(nB*sizeof(int));    if (bNums[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[][] malloc out of memory\n");   Error_no_free(errMsg); } }
 
-    bondlengths = malloc(max_particle_number*sizeof(double *));   if (bondlengths==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
-    for (j=0; j<max_particle_number; ++j) { bondlengths[j] = malloc(nB*sizeof(double));   if (bondlengths[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bondlengths[][] malloc out of memory\n");   Error_no_free(errMsg); } }
+    squared_bondlengths = malloc(max_particle_number*sizeof(double *));   if (squared_bondlengths==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
+    for (j=0; j<max_particle_number; ++j) { squared_bondlengths[j] = malloc(nB*sizeof(double));   if (squared_bondlengths[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): squared_bondlengths[][] malloc out of memory\n");   Error_no_free(errMsg); } }
 
     // arrays for the number of clusters of each type bonded to each particle
     mem_sp3b = malloc(max_particle_number*sizeof(int *)); if (mem_sp3b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp3b[] malloc out of memory\n");  Error_no_free(errMsg); }
@@ -314,9 +314,9 @@ void Free_All_Variables()  {  // Free bond detection variables
 
     for (i=0; i<max_particle_number; ++i) {
         free(bNums[i]); 
-        free(bondlengths[i]);
+        free(squared_bondlengths[i]);
     }
-    free(bNums); free(bondlengths); free(num_bonds);
+    free(bNums); free(squared_bondlengths); free(num_bonds);
     
     for (i=0; i<num_cluster_types; ++i) {
         free(pop_per_frame[i]);
