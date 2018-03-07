@@ -32,11 +32,11 @@ void enforce_PBCs(double *dx, double *dy, double *dz) {
     }
     if (*dy > half_sidey) {
         *dy -= sidey;
-        *dx -=tiltxy;
+        *dx -= tiltxy;
     }
     else if (*dy < -half_sidey) {
         *dy += sidey;
-        *dx +=tiltxy ;
+        *dx += tiltxy ;
     }
     if (*dx > half_sidex) {
         *dx -= sidex;

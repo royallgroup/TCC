@@ -1,5 +1,4 @@
 #include "input.h"
-#include "stdio.h"
 #include "globals.h"
 #include "iniparser.h"
 #include "tools.h"
@@ -311,10 +310,22 @@ void get_coords_from_line(int frame_number, FILE *xyzfile, int particle) {
 
 void wrap_particle_into_pbc(double *tx, double *ty, double *tz) {
     // wrap particles back into the box
-    if ((*tx) < -half_sidex) { (*tx) +=sidex; }
-    else if ((*tx) > half_sidex)   { (*tx) -=sidex; }
-    if ((*ty) < -half_sidey) { (*ty) +=sidey; }
-    else if ((*ty) > half_sidey)   { (*ty) -=sidey; }
-    if ((*tz) < -half_sidez) { (*tz) +=sidez; }
-    else if ((*tz) > half_sidez)   { (*tz) -=sidez; }
+    while ((*tx) < -half_sidex) {
+        (*tx) +=sidex;
+    }
+    while ((*tx) > half_sidex) {
+        (*tx) -=sidex;
+    }
+    while ((*ty) < -half_sidey) {
+        (*ty) +=sidey;
+    }
+    while ((*ty) > half_sidey) {
+        (*ty) -=sidey;
+    }
+    while ((*tz) < -half_sidez) {
+        (*tz) +=sidez;
+    }
+    while ((*tz) > half_sidez) {
+        (*tz) -=sidez;
+    }
 }
