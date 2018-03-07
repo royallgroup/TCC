@@ -104,7 +104,7 @@ void Get_Simple_Bonds() {
 }
 
 void Check_For_Valid_Bond(int particle_1, int particle_2, double squared_distance) {
-    if (squared_distance < rcutAA2 && particle_type[particle_1] == 1 && particle_type[particle_2] == 1){
+    if (squared_distance < rcutAA2 && squared_distance > min_cutAA2 && particle_type[particle_1] == 1 && particle_type[particle_2] == 1){
         Check_Num_Bonds(particle_1, particle_2, squared_distance);
     }
     else if (squared_distance < rcutBB2 && particle_type[particle_1]==2 && particle_type[particle_2]==2){

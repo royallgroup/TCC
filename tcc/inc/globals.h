@@ -37,6 +37,7 @@ double tiltxy,tiltxz,tiltyz;
 
 
 double rcutAA,rcutAA2,rcutAB,rcutAB2,rcutBB,rcutBB2;    // diameters of AB and BB interactions for binary interactions
+double min_cutAA, min_cutAA2;
 double fc;  // Voronoi adjustment parameter
 int Vor;    // 0 use simple bond length method Get_Bonds(), 1 use Voronoi method Get_Bonds_With_Voronoi()
 int PBCs;   // 0 do not impliment periodic boundary conditions, 1 implement periodic boundary conditions

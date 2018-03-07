@@ -29,6 +29,7 @@ void Setup_ReadIniFile(char *filename) {
 
     //simulation
     rcutAA = iniparser_getdouble(ini, "simulation:rcutAA", -1);
+    min_cutAA = iniparser_getdouble(ini, "simulation:min_cutAA", -1);
     rcutAB = iniparser_getdouble(ini, "simulation:rcutAB", -1);
     rcutBB = iniparser_getdouble(ini, "simulation:rcutBB", -1);
     Vor = iniparser_getboolean(ini, "simulation:bond_type", -1);
@@ -46,14 +47,15 @@ void Setup_ReadIniFile(char *filename) {
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
 
     // calculate derived values
-    rcutAA2=rcutAA*rcutAA;
-    rcutAB2=rcutAB*rcutAB;
-    rcutBB2=rcutBB*rcutBB;
+    rcutAA2 = rcutAA*rcutAA;
+    rcutAB2 = rcutAB*rcutAB;
+    rcutBB2 = rcutBB*rcutBB;
+    min_cutAA2 = min_cutAA * min_cutAA;
     if (Vor==1) {   // if using modified Voronoi method can't have different cut off lengths for the bonds
-        rcutAB=rcutAA;
-        rcutBB=rcutAA;
-        rcutAB2=rcutAA2;
-        rcutBB2=rcutAA2;
+        rcutAB = rcutAA;
+        rcutBB = rcutAA;
+        rcutAB2 = rcutAA2;
+        rcutBB2 = rcutAA2;
         printf("As voronoi method no individually specie-specie interaction length\nrcut %lg rcut2 %lg\n",rcutAA,rcutAA2);
     }
     initNoStatic=incrStatic=1000;
