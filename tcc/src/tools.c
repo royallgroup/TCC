@@ -158,6 +158,9 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
     return the_array;
 }
 
+int qsort_cmpfunc (const void * a, const void * b) {
+    return ( *(int*)a - *(int*)b );
+}
 
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!BEGIN QUICKSORT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

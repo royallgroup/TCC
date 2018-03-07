@@ -83,6 +83,7 @@ void Get_Bonds() {
         if(USELIST == 1) {
             fill_cell_list();
             get_all_particle_neighbours();
+            //sort_bonds();
         }
         else {
             Get_Simple_Bonds();
@@ -99,8 +100,6 @@ void Get_Simple_Bonds() {
     double squared_distance;
 
     printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",current_frame_particle_number,rcutAA2,rcutAB2,rcutBB2);
-
-    memset(num_bonds, 0, current_frame_particle_number* sizeof(int));
 
     for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
         for(particle_2=particle_1+1; particle_2<current_frame_particle_number; ++particle_2) {

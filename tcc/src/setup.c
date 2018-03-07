@@ -288,6 +288,8 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
         *num_cluster_list[cluster_type] = 0;
     }
 
+    memset(num_bonds, 0, current_frame_particle_number* sizeof(int));
+
     memset(nmem_sp3b, 0, sizeof(int)*max_particle_number);
     memset(nmem_sp3c, 0, sizeof(int)*max_particle_number);
     memset(nmem_sp4b, 0, sizeof(int)*max_particle_number);
