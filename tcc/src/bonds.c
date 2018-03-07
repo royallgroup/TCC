@@ -72,12 +72,21 @@ void Are_All_Bonds_Symmetric() {
 
 void Get_Bonds() {
 
+    if (USELIST == 1) {
+        set_up_cell_list();
+    }
     if (Vor==1) {
         Get_Bonds_With_Voronoi();
         Are_All_Bonds_Symmetric();
     }
     else {
-        Get_Simple_Bonds();
+        if(USELIST == 1) {
+            fill_cell_list();
+            get_all_particle_neighbours();
+        }
+        else {
+            Get_Simple_Bonds();
+        }
     }
 
     printf("\n");

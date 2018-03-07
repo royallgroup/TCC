@@ -51,34 +51,19 @@ void loop_over_neighbouring_cells(int cell_x, int cell_y, int cell_z, int curren
 
 void loop_over_particles_in_cell(int current_cell_index, int neighbour_cell_index) {
     int particle_1, particle_2;
-
-
+    double sq_dist;
+    
     particle_1 = head[current_cell_index];
     while (particle_1 != -1) {
         particle_2 = head[neighbour_cell_index];
         while (particle_2 != -1) {
             if (particle_1 < particle_2) {
-                check_for_bond(particle_1, particle_2);
+                sq_dist = Get_Interparticle_Distance(particle_1, particle_2);
+                Check_For_Valid_Bond(particle_1, particle_2, sq_dist);
             }
             particle_2 = linked_list[particle_2];
         }
         particle_1 = linked_list[particle_1];
-    }
-}
-
-void check_for_bond(int particle_1, int particle_2) {
-    double sq_dist;
-
-    sq_dist = Get_Interparticle_Distance(particle_1, particle_2);
-    if(sq_dist < rcutAA2) {
-        if(num_bonds[particle_1] < nB && num_bonds[particle_2] < nB) {
-            Add_New_Bond(particle_1, particle_2, sq_dist);
-            Add_New_Bond(particle_2, particle_1, sq_dist);
-        }
-        else {
-            too_many_bonds(particle_1, particle_2, __func__);
-        }
-
     }
 }
 
