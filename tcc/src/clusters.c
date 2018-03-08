@@ -1423,7 +1423,7 @@ int is_particle_bonded_to_7As(int id_10B, int extra_particle) {
 
 int get_11W_extra_particle(int id_10B, int spindle_10B) {
     int i;
-    for (i = 0; i < 10; ++i) {
+    for (i = 0; i < num_bonds[spindle_10B]; ++i) {
         if (is_particle_in_10B(bNums[spindle_10B][i], id_10B) == 0) {
             return bNums[spindle_10B][i];
         }
@@ -2639,7 +2639,7 @@ int get_12A_extra_particle(int id_11C) {
     int i;
     // Returns id of extra particle
     // The extra particle is the one bonded to the 11C center that is not in the 11C,
-    for (i = 0; i < 11; ++i) {
+    for (i = 0; i < num_bonds[hc11C[id_11C][0]]; ++i) {
         if (is_particle_in_11C(bNums[hc11C[id_11C][0]][i], id_11C) == 0) {
             return bNums[hc11C[id_11C][0]][i]; // The extra particle
         }
