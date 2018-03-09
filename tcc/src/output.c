@@ -3,6 +3,8 @@
 #include "tools.h"
 #include "globals.h"
 
+void sort_clusters_before_output(int type);
+
 ////////// Raw Writing //////////
 
 void Write_Raw(int f) {
@@ -100,23 +102,38 @@ void Write_Cluster(int f) {
 
     for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
         if (*do_cluster_list[cluster_type] == 1) {
-            Write_Cluster_Compostions(f, *num_cluster_list[cluster_type], *cluster_list[cluster_type],
-                                      cluster_size[cluster_type], cluster_type);
+            Write_Cluster_Compostions(f, cluster_type);
         }
     }
 }
 
-void Write_Cluster_Compostions(int f, int num_clusters, int **hc, int clusSize, int cluster_number) {
+
+void sort_clusters_before_output(int type) {
+    int **hc;
+
+    hc = *cluster_list[type];
+    qsort(hcsp3a, *num_cluster_list[type], sizeof(int)*cluster_size[type], qsort_2dcmpfunc);
+
+}
+
+void Write_Cluster_Compostions(int f, int cluster_type) {
     int i,j;
     char output_file[200];
     FILE *file_pointer;
+    int num_clusters, clusSize;
+    int **hc;
+
+    num_clusters = *num_cluster_list[cluster_type];
+    hc = *cluster_list[cluster_type];
+    clusSize = cluster_size[cluster_type];
 
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
-            fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+            fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_type]);
     file_pointer = open_file(output_file, "a");
 
     fprintf(file_pointer,"Frame Number %d\n",f);
     for (i=0;i<num_clusters;i++) {
+        sort_clusters_before_output(cluster_type);
         fprintf(file_pointer,"%d",hc[i][0]);
         for (j=1;j<clusSize-1;j++) fprintf(file_pointer,"	%d",hc[i][j]);
         fprintf(file_pointer,"	%d\n",hc[i][clusSize-1]);

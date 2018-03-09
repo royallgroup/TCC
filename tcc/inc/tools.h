@@ -26,5 +26,7 @@ int *resize_1D_int(int *, int , int ) ;
 
 int qsort_cmpfunc (const void * a, const void * b);
 
+int qsort_2dcmpfunc (const void * a, const void * b);
+
 int quickSort(int *, int );
 #endif

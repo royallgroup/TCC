@@ -162,6 +162,16 @@ int qsort_cmpfunc (const void * a, const void * b) {
     return ( *(int*)a - *(int*)b );
 }
 
+int qsort_2dcmpfunc (const void* p1, const void* p2) {
+
+    int* arr1 = (int*)p1;
+    int* arr2 = (int*)p2;
+    int diff1 = arr1[0] - arr2[0];
+    if (diff1) return diff1;
+    return arr1[1] - arr2[1];
+
+}
+
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!BEGIN QUICKSORT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //  quickSort

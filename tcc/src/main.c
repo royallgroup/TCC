@@ -10,7 +10,6 @@
 #include "stats.h"
 #include "tools.h"
 #include "input.h"
-#include "cell_list.h"
 
 int num_cluster_types = 39;
 
