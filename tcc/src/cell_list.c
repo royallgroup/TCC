@@ -92,14 +92,6 @@ int get_scalar_cell_index(int x_index, int y_index, int z_index) {
            ((z_index + n_cells_z) % n_cells_z);
 }
 
-void sort_bonds() {
-    int i;
-
-    for(i=0; i<current_frame_particle_number; i++) {
-        qsort(bNums[i], num_bonds[i], sizeof(int), qsort_cmpfunc);
-    }
-}
-
 void set_up_cell_list() {
     int i;
 

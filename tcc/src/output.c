@@ -107,17 +107,8 @@ void Write_Cluster(int f) {
     }
 }
 
-
-void sort_clusters_before_output(int type) {
-    int **hc;
-
-    hc = *cluster_list[type];
-    qsort(hcsp3a, *num_cluster_list[type], sizeof(int)*cluster_size[type], qsort_2dcmpfunc);
-
-}
-
 void Write_Cluster_Compostions(int f, int cluster_type) {
-    int i,j;
+    int i, j;
     char output_file[200];
     FILE *file_pointer;
     int num_clusters, clusSize;
@@ -130,13 +121,14 @@ void Write_Cluster_Compostions(int f, int cluster_type) {
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
             fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_type]);
     file_pointer = open_file(output_file, "a");
-
+    num_sort_columns = *num_cluster_list[cluster_type];
+    qsort(*cluster_list[cluster_type], num_sort_columns, sizeof(int *), sort_list_of_lists_of_ints);
     fprintf(file_pointer,"Frame Number %d\n",f);
-    for (i=0;i<num_clusters;i++) {
-        sort_clusters_before_output(cluster_type);
-        fprintf(file_pointer,"%d",hc[i][0]);
-        for (j=1;j<clusSize-1;j++) fprintf(file_pointer,"	%d",hc[i][j]);
-        fprintf(file_pointer,"	%d\n",hc[i][clusSize-1]);
+    for (i = 0; i < num_clusters; i++) {
+        for (j = 0; j < clusSize - 1; j++) {
+            fprintf(file_pointer,"%d\t",hc[i][j]);
+        }
+        fprintf(file_pointer,"%d\n",hc[i][clusSize - 1]);
     }
     fclose(file_pointer);
 }

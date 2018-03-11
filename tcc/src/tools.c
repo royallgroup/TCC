@@ -158,18 +158,25 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
     return the_array;
 }
 
-int qsort_cmpfunc (const void * a, const void * b) {
-    return ( *(int*)a - *(int*)b );
+int sort_list_of_ints(const void *lhs, const void *rhs) {
+    int n1 = *(int *) lhs;
+    int n2 = *(int *) rhs;
+
+    if (n1 < n2) return -1;
+    else if (n2 < n1) return 1;
+    else return 0;
 }
 
-int qsort_2dcmpfunc (const void* p1, const void* p2) {
+int sort_list_of_lists_of_ints(const void *lhs, const void *rhs) {
+    int* n1 = *(int **) lhs;
+    int* n2 = *(int **) rhs;
+    int i;
 
-    int* arr1 = (int*)p1;
-    int* arr2 = (int*)p2;
-    int diff1 = arr1[0] - arr2[0];
-    if (diff1) return diff1;
-    return arr1[1] - arr2[1];
-
+    for(i=0; i< num_sort_columns; i++) {
+        if (n1[i] < n2[i]) return -1;
+        else if (n2[i] < n1[i]) return 1;
+    }
+    return 0;
 }
 
 
