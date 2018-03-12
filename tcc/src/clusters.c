@@ -6,6 +6,8 @@
 
 void Raw_Write_12E(int uncommon_sp3_ring_particle);
 
+int get_uncommon_5A_ring_particle(const int *common, const int *new_5A_cluster);
+
 void Clusters_Get6Z() {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -2978,51 +2980,51 @@ void Cluster_Write_11F() {
 int Clusters_Get12E(int j) {
     // Return 1 if 11F is also 12E
     // An 11F with an extra 5A bonded
-    int new_5A_id, i, m, ncom, common[2], uncom;
+    int new_5A_id, new_5A_ring_pointer, m;
+    int num_common_particles, common_particle_ids[4];
     int uncommon_sp3_ring_particle;
     int* new_5A_cluster;
 
 
-    for(new_5A_id = j + 1; new_5A_id < nsp3c; ++new_5A_id) { // loop through 5A clusters with ID > j
+    for(new_5A_id = j + 1; new_5A_id < nsp3c; new_5A_id++) { // loop through 5A clusters with ID > j
         new_5A_cluster = hcsp3c[new_5A_id];
 
-        // Check spindles of new 5A are common with uncommon spindles of 6A's in 11F
+        // Check spindles of new 5A are common with uncommon spindles of 6As in 11F
         if (new_5A_cluster[3] == hc11F[n11F][1] || new_5A_cluster[3] == hc11F[n11F][2]) {
             if (new_5A_cluster[4] == hc11F[n11F][1] || new_5A_cluster[4] == hc11F[n11F][2]) {
-
-                ncom = common[0] = common[1] = 0;
-                for (i=0; i < 3; i++) { // loop through sp3 ring particles
-                    for (m = 0; m < 5; m++) { // loop through ring particles of 11F
-                        if (m == 0) uncom = 0;
-                        else uncom = m + 6;
-                        if(new_5A_cluster[i] == hc11F[n11F][uncom]) {
-                            if (ncom==2) {
-                                ncom++;
-                                break;
-                            }
-                            common[ncom]=new_5A_cluster[i];
-                            ncom++;
+                // Check two new 5A ring particles are common with 11F ring particles
+                num_common_particles = 0;
+                for (new_5A_ring_pointer = 0; new_5A_ring_pointer < 3; new_5A_ring_pointer++) { // loop through sp3 ring particles
+                    for (m = 7; m < 11; m++) { // loop through ring particles of 11F
+                        if(new_5A_cluster[new_5A_ring_pointer] == hc11F[n11F][m]) {
+                            common_particle_ids[num_common_particles] = new_5A_cluster[new_5A_ring_pointer];
+                            num_common_particles++;
                         }
                     }
-                    if (ncom>2) break;
+                    if (num_common_particles > 2) break;
                 }
-                if (ncom!=2) continue;
+                if (num_common_particles == 2) {
+                    // Find which of the 3 ring particles in new_5A is the uncommon one
+                    uncommon_sp3_ring_particle = get_uncommon_5A_ring_particle(common_particle_ids, new_5A_cluster);
+                    Raw_Write_12E(uncommon_sp3_ring_particle);
+                    Cluster_Write_12E();
 
-                // Find which of the 3 ring particles in new_5A is the uncommon one
-                for (i = 0; i < 3; ++i) {
-                    if(new_5A_cluster[i] != common[0] && new_5A_cluster[i] != common[1]) {
-                        uncommon_sp3_ring_particle = new_5A_cluster[i];
-                        break;
-                    }
+                    return 1;
                 }
-                Raw_Write_12E(uncommon_sp3_ring_particle);
-                Cluster_Write_12E();
-
-                return 1;
             }
         }
     }
     return 0;
+}
+
+int get_uncommon_5A_ring_particle(const int *common, const int *new_5A_cluster) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        if (new_5A_cluster[i] != common[0] && new_5A_cluster[i] != common[1]) {
+            return(new_5A_cluster[i]);
+        }
+    }
 }
 
 void Raw_Write_12E(int uncommon_sp3_ring_particle) {// now we have found the 12E
