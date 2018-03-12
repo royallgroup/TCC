@@ -4,6 +4,8 @@
 #include "tools.h"
 #include "string.h"
 
+void Raw_Write_12E(int uncommon_sp3_ring_particle);
+
 void Clusters_Get6Z() {    // Detect 6Z clusters from 2 5A clusters
     int flg;
     int i, j, j2, k, l;
@@ -2707,10 +2709,10 @@ void Clusters_Get11F_12E_13K() {   // Detect 11F C2v & 12E 3h
 
     cp=bpi=bpj=ep1=ep2=the6A_i=the6A_j=-1;
 
-    for(i=0; i<nsp3c-1; i++) {   // loop over all sp3c clusters
-        for (j2=0; j2<3; j2++) {    // loop over only the rings of the sp3c clusters
-            for (j=0; j<nmem_sp3c[hcsp3c[i][j2]]; ++j) {
-                if (mem_sp3c[hcsp3c[i][j2]][j]>i) {
+    for(i=0; i < nsp3c - 1; i++) {   // loop over all sp3c clusters
+        for (j2 = 0; j2 < 3; j2++) {    // loop over only the rings of the sp3c clusters
+            for (j=0; j < nmem_sp3c[hcsp3c[i][j2]]; ++j) {
+                if (mem_sp3c[hcsp3c[i][j2]][j] > i) {
                     flg = hcsp3c[i][4] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4] ||
                           hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3] ||
                           hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4] ||
@@ -2824,7 +2826,7 @@ void Clusters_Get11F_12E_13K() {   // Detect 11F C2v & 12E 3h
                                     Cluster_Write_11F();
 
                                     if (do12E == 1) {
-                                        if (Clusters_Get12E_D3h(mem_sp3c[hcsp3c[i][j2]][j])) ++n12E;
+                                        if (Clusters_Get12E(mem_sp3c[hcsp3c[i][j2]][j])) ++n12E;
                                     }
 
                                     if (do13K == 1) {
@@ -2944,7 +2946,7 @@ void Clusters_Get11F_12E_13K() {   // Detect 11F C2v & 12E 3h
                                     Cluster_Write_11F();
 
                                     if (do12E == 1) {
-                                        if (Clusters_Get12E_D3h(mem_sp3c[hcsp3c[i][j2]][j])) ++n12E;
+                                        if (Clusters_Get12E(mem_sp3c[hcsp3c[i][j2]][j])) ++n12E;
                                     }
 
                                     if (do13K == 1) {
@@ -2973,62 +2975,74 @@ void Cluster_Write_11F() {
     }
 }
 
-int Clusters_Get12E_D3h(int j) {  // Return 1 is 11F is also 12E
-    //  Made from three sp3c or 5A clusters
-    int k, l, m, ncom, common[2], uncom;
-    int flg;
-    int clusSize=12;
+int Clusters_Get12E(int j) {
+    // Return 1 if 11F is also 12E
+    // An 11F with an extra 5A bonded
+    int new_5A_id, i, m, ncom, common[2], uncom;
+    int uncommon_sp3_ring_particle;
+    int* new_5A_cluster;
 
-    for(k=j+1; k<nsp3c; ++k) {
-        flg = (hcsp3c[k][3] == hc11F[n11F][1] && hcsp3c[k][4] == hc11F[n11F][2])  || (hcsp3c[k][3] == hc11F[n11F][2] && hcsp3c[k][4] == hc11F[n11F][1]);
-        if (flg==1) { // spindles bonded correctly :)
-            ncom=common[0]=common[1]=0;
-            for (l=0; l<3; ++l) {
-                for (m=0; m<5; ++m) {
-                    if (m==0) uncom=0;
-                    else uncom=m+6;
-                    if(hcsp3c[k][l] == hc11F[n11F][uncom]) {
-                        if (ncom==2) {
+
+    for(new_5A_id = j + 1; new_5A_id < nsp3c; ++new_5A_id) { // loop through 5A clusters with ID > j
+        new_5A_cluster = hcsp3c[new_5A_id];
+
+        // Check spindles of new 5A are common with uncommon spindles of 6A's in 11F
+        if (new_5A_cluster[3] == hc11F[n11F][1] || new_5A_cluster[3] == hc11F[n11F][2]) {
+            if (new_5A_cluster[4] == hc11F[n11F][1] || new_5A_cluster[4] == hc11F[n11F][2]) {
+
+                ncom = common[0] = common[1] = 0;
+                for (i=0; i < 3; i++) { // loop through sp3 ring particles
+                    for (m = 0; m < 5; m++) { // loop through ring particles of 11F
+                        if (m == 0) uncom = 0;
+                        else uncom = m + 6;
+                        if(new_5A_cluster[i] == hc11F[n11F][uncom]) {
+                            if (ncom==2) {
+                                ncom++;
+                                break;
+                            }
+                            common[ncom]=new_5A_cluster[i];
                             ncom++;
-                            break;
                         }
-                        common[ncom]=hcsp3c[k][l];
-                        ncom++;
+                    }
+                    if (ncom>2) break;
+                }
+                if (ncom!=2) continue;
+
+                // Find which of the 3 ring particles in new_5A is the uncommon one
+                for (i = 0; i < 3; ++i) {
+                    if(new_5A_cluster[i] != common[0] && new_5A_cluster[i] != common[1]) {
+                        uncommon_sp3_ring_particle = new_5A_cluster[i];
+                        break;
                     }
                 }
-                if (ncom>2) break;
+                Raw_Write_12E(uncommon_sp3_ring_particle);
+                Cluster_Write_12E();
+
+                return 1;
             }
-            if (ncom!=2) continue;
-
-            uncom=-1;
-            for (l=0; l<3; ++l) {
-                ncom=0;
-                for (m=0; m<2; ++m) {
-                    if(hcsp3c[k][l] == common[m]) ncom++;
-                }
-                if (ncom==0) {
-                    uncom=hcsp3c[k][l];
-                    break;
-                }
-            }
-
-            // now we have found the 12E
-            if(n12E == m12E) {
-                hc12E=resize_2D_int(hc12E,m12E,m12E+incrStatic,clusSize,-1);
-                m12E=m12E+incrStatic;
-            }
-
-            hc12E[n12E][11] = uncom;
-            for(l=0; l<10; ++l) hc12E[n12E][l] = hc11F[n11F][l+1];
-            hc12E[n12E][10] = hc11F[n11F][0];
-            quickSort(&hc12E[n12E][0],6);
-            quickSort(&hc12E[n12E][6],6);
-
-            Cluster_Write_12E();
-            return 1;
         }
     }
     return 0;
+}
+
+void Raw_Write_12E(int uncommon_sp3_ring_particle) {// now we have found the 12E
+    int i;
+    int clusSize = 12;
+
+    if (n12E == m12E) {
+        hc12E = resize_2D_int(hc12E, m12E, m12E + incrStatic, clusSize, -1);
+        m12E = m12E + incrStatic;
+    }
+
+    hc12E[n12E][11] = uncommon_sp3_ring_particle;
+    for (i = 0; i < 10; ++i) {
+        hc12E[n12E][i] = hc11F[n11F][i + 1];
+    }
+    hc12E[n12E][10] = hc11F[n11F][0];
+    quickSort(&hc12E[n12E][0], 6);
+    quickSort(&hc12E[n12E][6], 6);
+
+
 }
 
 void Cluster_Write_12E() {

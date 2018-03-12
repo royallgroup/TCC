@@ -84,7 +84,7 @@ void populate_s12A();
 void Clusters_Get11F_12E_13K();
 void Cluster_Write_11F();
 
-int Clusters_Get12E_D3h(int j);
+int Clusters_Get12E(int j);
 void Cluster_Write_12E();
 
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i);
