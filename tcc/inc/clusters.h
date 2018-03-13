@@ -81,14 +81,6 @@ void resize_hc12A();
 void populate_hc12A(int id_11C, int ep);
 void populate_s12A();
 
-void Clusters_Get11F_12E_13K();
-void Cluster_Write_11F();
-
-int Clusters_Get12E(int j);
-int get_uncommon_5A_ring_particle(const int *common, const int *new_5A_cluster);
-void Raw_Write_12E(int uncommon_sp3_ring_particle);
-void Cluster_Write_12E();
-
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i);
 void Cluster_Write_13K();
 
