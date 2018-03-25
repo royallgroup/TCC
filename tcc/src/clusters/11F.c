@@ -80,12 +80,6 @@ void check_common_particle(int first_5A_cluster_id, int second_5A_pointer, int f
                 raw_write_11F(common_particle, ep1, ep2, first_5A, second_5A);
                 cluster_write_11F();
 
-                if (do12E == 1) {
-                    if (Clusters_Get12E(second_5A_cluster_id)) {
-                        ++n12E;
-                    }
-                }
-
                 if (do13K == 1) {
                     if (Clusters_Get13K(first_5A_cluster_id, second_5A_cluster_id, bonded_6A_id)) {
                         ++n13K;

@@ -11,6 +11,7 @@
 #include "tools.h"
 #include "input.h"
 #include "11F.h"
+#include "12E.h"
 
 
 int num_cluster_types = 39;
@@ -98,6 +99,7 @@ int main(int argc, char **argv) {
             if (do11W == 1) Clusters_Get11W();
             if (do12A == 1) Clusters_Get12A();
             if (do12B == 1) Clusters_Get12B_13A();
+            if (do12E == 1) Clusters_Get12E();
             if (do12K == 1) Clusters_Get12K();
             if (do13B == 1) Clusters_Get13B();
             if (doFCC == 1) Clusters_GetFCC();
