@@ -61,12 +61,6 @@ int Check_unique_6A_rings(int first_6A_id, int second_6A_id);
 int Check_6A_rings_bonded(int first_6A_id, int second_6A_id);
 void Cluster_Write_11A(int first_6A_id, int second_6A_id, const int sother[], int scom);
 
-void Clusters_Get12K();
-void get_12K_ring_bonds(int ptr_11A, int (*sp3_rings)[3]);
-void find_12K_cluster(int ptr_11A, const int *sp3_ring);
-int is_particle_in_11A(int ptr_11A, int particle_id);
-void Cluster_Write_12K(int ep, int id_11A);
-
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i);
 void Cluster_Write_13K();
 
