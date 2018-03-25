@@ -67,12 +67,6 @@ void find_12K_cluster(int ptr_11A, const int *sp3_ring);
 int is_particle_in_11A(int ptr_11A, int particle_id);
 void Cluster_Write_12K(int ep, int id_11A);
 
-void Clusters_Get11C();
-int get_11C_spindle_particles(int *uncommon_spindle, int id_first_7A, int id_second7A, int *common_spindle);
-int get_bonded_7A_ring_particles(int *ar, int id_first_7A, int id_second7A, int ncom);
-void resize_hc11C();
-void Cluster_Write_11C();
-
 int Clusters_Get12A();
 int get_12A_extra_particle(int id_11C);
 int is_particle_in_11C(int particle_id, int id_11C);
