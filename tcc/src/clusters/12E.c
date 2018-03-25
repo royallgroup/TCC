@@ -9,6 +9,7 @@ int Clusters_Get12E(int j) {
     int num_common_particles, common_particle_ids[4];
     int uncommon_sp3_ring_particle;
     int* new_5A_cluster;
+    int common_particle_overlap;
 
 
     for(new_5A_id = j + 1; new_5A_id < nsp3c; new_5A_id++) { // loop through 5A clusters with ID > j
@@ -30,10 +31,19 @@ int Clusters_Get12E(int j) {
                 if (num_common_particles == 2) {
                     // Find which of the 3 ring particles in new_5A is the uncommon one
                     uncommon_sp3_ring_particle = get_uncommon_5A_ring_particle(common_particle_ids, new_5A_cluster);
-                    Raw_Write_12E(uncommon_sp3_ring_particle);
-                    Cluster_Write_12E();
-
-                    return 1;
+                    // check that new particle is not alread in 11F
+                    common_particle_overlap = 0;
+                    for(int i = 0; i < 11; i++) {
+                        if (uncommon_sp3_ring_particle == hc11F[n11F][i]) {
+                            common_particle_overlap = 1;
+                            break;
+                        }
+                    }
+                    if (common_particle_overlap == 0) {
+                        Raw_Write_12E(uncommon_sp3_ring_particle);
+                        Cluster_Write_12E();
+                        return 1;
+                    }
                 }
             }
         }
