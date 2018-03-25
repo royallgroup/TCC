@@ -1,7 +1,7 @@
-#import "globals.h"
-#import "bonds.h"
-#import "tools.h"
-#import "11C.h"
+#include "globals.h"
+#include "bonds.h"
+#include "tools.h"
+#include "11C.h"
 
 void Clusters_Get11C() {
     int ar[2],uncommon_spindle[2];

@@ -12,6 +12,7 @@
 #include "input.h"
 #include "11C.h"
 #include "11F.h"
+#include "12A.h"
 #include "12E.h"
 
 
