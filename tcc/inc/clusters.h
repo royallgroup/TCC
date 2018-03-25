@@ -56,11 +56,6 @@ void Cluster_Write_10A();
 void Clusters_Get10W();
 void Cluster_Write_10W();
 
-void Clusters_Get11A();
-int Check_unique_6A_rings(int first_6A_id, int second_6A_id);
-int Check_6A_rings_bonded(int first_6A_id, int second_6A_id);
-void Cluster_Write_11A(int first_6A_id, int second_6A_id, const int sother[], int scom);
-
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i);
 void Cluster_Write_13K();
 
