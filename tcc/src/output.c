@@ -3,8 +3,6 @@
 #include "tools.h"
 #include "globals.h"
 
-void sort_clusters_before_output(int type);
-
 ////////// Raw Writing //////////
 
 void Write_Raw(int f) {
@@ -95,7 +93,37 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
     fclose(output_file);
 }
 
-////////// Cluster Writing //////////
+////////// Cluster XYZ Writing //////////
+
+void Write_Cluster_XYZ(int f) {
+    int i, cluster_type, num_particles;
+    char output_file[200];
+    FILE *file_pointer;
+
+    for(cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
+        if (*do_cluster_list[cluster_type] == 1) {
+            sprintf(output_file, "cluster_xyzs/%s.%s_clusts.xyz", fXmolName, cluster_names[cluster_type]);
+            file_pointer = open_file(output_file, "a");
+
+            num_particles = 0;
+            for(i = 0; i < current_frame_particle_number; i++) {
+                if((*raw_list[cluster_type])[i] != 'C') {
+                    num_particles++;
+                }
+            }
+
+            fprintf(file_pointer,"%d\n", num_particles);
+            fprintf(file_pointer,"Frame number %d\n", f);
+            for(i = 0; i < current_frame_particle_number; i++) {
+                if ((*raw_list[cluster_type])[i] != 'C') {
+                    fprintf(file_pointer, "%c\t%f\t%f\t%f\n", (*raw_list[cluster_type])[i], x[i], y[i], z[i]);
+                }
+            }
+        }
+    }
+}
+
+////////// Cluster ids Writing //////////
 
 void Write_Cluster(int f) {
     int cluster_type;

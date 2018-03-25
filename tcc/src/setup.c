@@ -25,6 +25,17 @@ void Setup_Output_Files() {
         fclose(file_pointer);
     }
 
+    if(doWriteXYZ == 1) {
+        make_directory("cluster_xyzs");
+        for(cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
+            if (*do_cluster_list[cluster_number] == 1) {
+                sprintf(output_file, "cluster_xyzs/%s.%s_clusts.xyz", fXmolName, cluster_names[cluster_number]);
+                file_pointer = open_file(output_file, "w");
+                fclose(file_pointer);
+            }
+        }
+    }
+
     if(doWriteBonds == 1) {
         sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
         file_pointer=fopen(output_file, "w");

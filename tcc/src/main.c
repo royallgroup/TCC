@@ -112,6 +112,7 @@ int main(int argc, char **argv) {
 
             if (doWriteClus == 1) Write_Cluster(f);
             if (doWriteRaw == 1) Write_Raw(f);
+            if (doWriteXYZ == 1) Write_Cluster_XYZ(f);
             if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(f, 21);
             if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
 
