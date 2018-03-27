@@ -24,17 +24,5 @@ void Cluster_Write_10K(int id_9K, int ep);
 void Clusters_Get10A();
 void Cluster_Write_10A();
 
-void Clusters_Get10W();
-void Cluster_Write_10W();
-
-int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i);
-void Cluster_Write_13K();
-
 void Clusters_Get12B_13A();
-void Clust_Write_12B();
-void Clust_Write_13A();
-
-void Clusters_Get13B();
-void Cluster_Write_13B();
-
 #endif

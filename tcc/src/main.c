@@ -28,6 +28,9 @@
 #include "FCC.h"
 #include "BCC15.h"
 #include "BCC9.h"
+#include "13B.h"
+#include "12B.h"
+#include "10W.h"
 
 int num_cluster_types = 39;
 
