@@ -10,6 +10,8 @@
 #include "stats.h"
 #include "tools.h"
 #include "input.h"
+#include "6Z.h"
+#include "7K.h"
 #include "11A.h"
 #include "11B.h"
 #include "11C.h"

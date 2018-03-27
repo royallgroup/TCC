@@ -1,12 +1,6 @@
 #ifndef CLUSTERS_H
 #define CLUSTERS_H
 
-void Clusters_Get6Z();
-void Cluster_Write_6Z();
-
-void Clusters_Get7K();
-void Cluster_Write_7K();
-
 void Clusters_Get8A();
 void Cluster_Write_8A();
 
