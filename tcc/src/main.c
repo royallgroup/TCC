@@ -11,6 +11,7 @@
 #include "tools.h"
 #include "input.h"
 #include "11A.h"
+#include "11B.h"
 #include "11C.h"
 #include "11W.h"
 #include "11F.h"

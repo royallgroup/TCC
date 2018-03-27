@@ -26,9 +26,6 @@ void Cluster_Write_9B();
 void Clusters_Get10B(int i, int j);
 void Cluster_Write_10B();
 
-int Clusters_Get11B();
-void Cluster_Write_11B();
-
 void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j);
 void Clust_Write_11E();
 

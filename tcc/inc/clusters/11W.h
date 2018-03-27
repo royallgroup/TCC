@@ -15,4 +15,4 @@ void populate_hc11W(int id_10B, int extra_particle);
 
 void populate_s11W();
 
-#endif //TCC_11W_H
+#endif
