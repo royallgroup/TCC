@@ -185,6 +185,14 @@ void get_box_size(int current_frame_number) {
     sidez = sizes[2];
     half_sidez = sidez/2;
 
+    for(i = 0; i < 3; i++) {
+        if (sizes[i] < 3*rcutAA) {
+            printf("Warning. One box dimension is less than 3 * the bond cutoff length. This may cause "
+                           "clusters to be detected multiple times over periodic boundaries.\n");
+            break;
+        }
+    }
+
     if(box_type == 3) {
         tiltxy = sizes[3];
         tiltxz = sizes[4];

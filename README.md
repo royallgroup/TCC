@@ -49,3 +49,6 @@ Running the TCC requires 4 files, the binary, inputparameters.ini, box.txt and a
 * For NPT systems set the box_type parameter in inputparamers.in to 2. The box size will be read each xyz frame from the box.txt file. The syntax is "timestep sidex sidey sidez" with each timestep on a new line. There must be at least as many timesteps as frames in the xyz file.
 * For systems with triclinic boundary conditions with tilt, set the box_type parameter in inputparamers.in to 3. The box size will be read each xyz frame from the box.txt file. The syntax is "timestep sidex sidey sidez tilt" where the tilt has a sign.
 
+### Licenses
+
+This software makes use of the iniparser library (https://github.com/ndevilla/iniparser/) which is distributed under the MIT License.
