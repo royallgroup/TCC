@@ -72,12 +72,23 @@ void Are_All_Bonds_Symmetric() {
 
 void Get_Bonds() {
 
+    if (USELIST == 1) {
+        set_up_cell_list();
+    }
     if (Vor==1) {
         Get_Bonds_With_Voronoi();
         Are_All_Bonds_Symmetric();
     }
     else {
-        Get_Simple_Bonds();
+        if(USELIST == 1) {
+            //fill_cell_list();
+            //get_all_particle_neighbours();
+            printf("Cell list not currently implemented for simple bonds. Turning off cell list.");
+            Get_Simple_Bonds();
+        }
+        else {
+            Get_Simple_Bonds();
+        }
     }
 
     printf("\n");
@@ -90,8 +101,6 @@ void Get_Simple_Bonds() {
     double squared_distance;
 
     printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",current_frame_particle_number,rcutAA2,rcutAB2,rcutBB2);
-
-    memset(num_bonds, 0, current_frame_particle_number* sizeof(int));
 
     for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
         for(particle_2=particle_1+1; particle_2<current_frame_particle_number; ++particle_2) {

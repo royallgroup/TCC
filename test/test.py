@@ -6,7 +6,6 @@ import os
 from subprocess import run
 from platform import system
 
-
 class cd:
     """Context manager for changing the current working directory"""
     def __init__(self, newPath):
@@ -33,7 +32,7 @@ class FileOperations:
             else:
                 print("I dont know how to build for your system:%s", system())
                 return 1
-            if make.returncode & build.returncode == 0:
+            if make.returncode ==0 and build.returncode == 0:
                 return 0
             else:
                 return 1
@@ -54,8 +53,7 @@ class FileOperations:
     @staticmethod
     def run_tcc():
         try:
-            subprocess.call(glob("tcc*")[0], shell=True)
-            return 0
+            return subprocess.call(glob("tcc*")[0], shell=True)
         except Exception as e:
             print(e)
             return 1

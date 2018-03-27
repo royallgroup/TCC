@@ -8,7 +8,7 @@ void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
     int n0, n1, n2;
 
     for (n0 = 0; n0 < current_frame_particle_number; n0++) {
-        for (n1_pointer = 0; n1_pointer < num_bonds[n0] - 1; n1_pointer++) {
+        for (n1_pointer = 0; n1_pointer < num_bonds[n0]; n1_pointer++) {
             n1 = bNums[n0][n1_pointer];
             if (n1 > n0) {
                 for (n2_pointer = n1_pointer + 1; n2_pointer < num_bonds[n0]; n2_pointer++) {

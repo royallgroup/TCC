@@ -24,5 +24,9 @@ int **resize_2D_int(int **, int , int , int , int );
 
 int *resize_1D_int(int *, int , int ) ;
 
+int sort_list_of_ints(const void *lhs, const void *rhs);
+
+int sort_list_of_lists_of_ints(const void *lhs, const void *rhs);
+
 int quickSort(int *, int );
 #endif

@@ -50,6 +50,7 @@ int doWriteRaw; // write raw_*** cluster xmol files out
 int do11AcenXyz; // write centres of 11A
 int do13AcenXyz; // write centres of 13A
 int doWritePopPerFrame; // write pop_per_frame file
+int doWriteXYZ; // Write clusters as XYZ file
 
 int initNoStatic;   // initial size of static cluster arrays
 int incrStatic; // when full, increment static cluster arrays by this amount
@@ -62,6 +63,7 @@ double **squared_bondlengths;   // length of bonds in the bond network and squar
 int maxnb; // max number of bonds to one particle
 int correctedBonds; // max number of bonds to one particle
 
+int num_sort_columns; // Number of columns to iterate over with quicksort
 
 int n_cells_x, n_cells_y, n_cells_z, n_cells_total;   // number of cells per box length, total number of cells
 int *head;   // head of cell array

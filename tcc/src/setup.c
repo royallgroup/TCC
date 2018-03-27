@@ -25,6 +25,17 @@ void Setup_Output_Files() {
         fclose(file_pointer);
     }
 
+    if(doWriteXYZ == 1) {
+        make_directory("cluster_xyzs");
+        for(cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
+            if (*do_cluster_list[cluster_number] == 1) {
+                sprintf(output_file, "cluster_xyzs/%s.%s_clusts.xyz", fXmolName, cluster_names[cluster_number]);
+                file_pointer = open_file(output_file, "w");
+                fclose(file_pointer);
+            }
+        }
+    }
+
     if(doWriteBonds == 1) {
         sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
         file_pointer=fopen(output_file, "w");
@@ -287,6 +298,8 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
     for(cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
         *num_cluster_list[cluster_type] = 0;
     }
+
+    memset(num_bonds, 0, current_frame_particle_number* sizeof(int));
 
     memset(nmem_sp3b, 0, sizeof(int)*max_particle_number);
     memset(nmem_sp3c, 0, sizeof(int)*max_particle_number);

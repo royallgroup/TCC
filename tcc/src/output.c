@@ -93,33 +93,70 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
     fclose(output_file);
 }
 
-////////// Cluster Writing //////////
+////////// Cluster XYZ Writing //////////
+
+void Write_Cluster_XYZ(int f) {
+    int i, cluster_type, num_particles;
+    char output_file[200];
+    FILE *file_pointer;
+
+    for(cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
+        if (*do_cluster_list[cluster_type] == 1) {
+            sprintf(output_file, "cluster_xyzs/%s.%s_clusts.xyz", fXmolName, cluster_names[cluster_type]);
+            file_pointer = open_file(output_file, "a");
+
+            num_particles = 0;
+            for(i = 0; i < current_frame_particle_number; i++) {
+                if((*raw_list[cluster_type])[i] != 'C') {
+                    num_particles++;
+                }
+            }
+
+            fprintf(file_pointer,"%d\n", num_particles);
+            fprintf(file_pointer,"Frame number %d\n", f);
+            for(i = 0; i < current_frame_particle_number; i++) {
+                if ((*raw_list[cluster_type])[i] != 'C') {
+                    fprintf(file_pointer, "%c\t%f\t%f\t%f\n", (*raw_list[cluster_type])[i], x[i], y[i], z[i]);
+                }
+            }
+        }
+    }
+}
+
+////////// Cluster ids Writing //////////
 
 void Write_Cluster(int f) {
     int cluster_type;
 
     for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
         if (*do_cluster_list[cluster_type] == 1) {
-            Write_Cluster_Compostions(f, *num_cluster_list[cluster_type], *cluster_list[cluster_type],
-                                      cluster_size[cluster_type], cluster_type);
+            Write_Cluster_Compostions(f, cluster_type);
         }
     }
 }
 
-void Write_Cluster_Compostions(int f, int num_clusters, int **hc, int clusSize, int cluster_number) {
-    int i,j;
+void Write_Cluster_Compostions(int f, int cluster_type) {
+    int i, j;
     char output_file[200];
     FILE *file_pointer;
+    int num_clusters, clusSize;
+    int **hc;
+
+    num_clusters = *num_cluster_list[cluster_type];
+    hc = *cluster_list[cluster_type];
+    clusSize = cluster_size[cluster_type];
 
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
-            fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+            fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_type]);
     file_pointer = open_file(output_file, "a");
-
+    num_sort_columns = *num_cluster_list[cluster_type];
+    qsort(*cluster_list[cluster_type], num_sort_columns, sizeof(int *), sort_list_of_lists_of_ints);
     fprintf(file_pointer,"Frame Number %d\n",f);
-    for (i=0;i<num_clusters;i++) {
-        fprintf(file_pointer,"%d",hc[i][0]);
-        for (j=1;j<clusSize-1;j++) fprintf(file_pointer,"	%d",hc[i][j]);
-        fprintf(file_pointer,"	%d\n",hc[i][clusSize-1]);
+    for (i = 0; i < num_clusters; i++) {
+        for (j = 0; j < clusSize - 1; j++) {
+            fprintf(file_pointer,"%d\t",hc[i][j]);
+        }
+        fprintf(file_pointer,"%d\n",hc[i][clusSize - 1]);
     }
     fclose(file_pointer);
 }

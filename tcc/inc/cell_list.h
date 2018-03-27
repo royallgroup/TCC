@@ -10,11 +10,11 @@ void loop_over_neighbouring_cells(int cell_x, int cell_y, int cell_z, int curren
 
 void loop_over_particles_in_cell(int current_cell_index, int neighbour_cell_index);
 
-void check_for_bond(int particle_1, int particle_2);
-
 void fill_cell_list();  // sorts all the particles into cells, result given by head-of-chain and linked list arrays
 
 int get_scalar_cell_index(int tix, int tiy, int tiz);
+
+void sort_bonds();
 
 void set_up_cell_list();
 

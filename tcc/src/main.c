@@ -10,7 +10,12 @@
 #include "stats.h"
 #include "tools.h"
 #include "input.h"
-#include "cell_list.h"
+#include "11A.h"
+#include "11C.h"
+#include "11F.h"
+#include "12A.h"
+#include "12E.h"
+#include "12K.h"
 
 int num_cluster_types = 39;
 
@@ -72,7 +77,6 @@ int main(int argc, char **argv) {
             current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
             if (box_type != 1) get_box_size(current_frame_number);
-            if (USELIST == 1) set_up_cell_list();
             get_xyz_frame(&input_xyz_info, current_frame_number);
             Get_Bonds();
             if (doWriteBonds == 1) Write_Bonds_File(f);
@@ -98,6 +102,7 @@ int main(int argc, char **argv) {
             if (do11W == 1) Clusters_Get11W();
             if (do12A == 1) Clusters_Get12A();
             if (do12B == 1) Clusters_Get12B_13A();
+            if (do12E == 1) Clusters_Get12E();
             if (do12K == 1) Clusters_Get12K();
             if (do13B == 1) Clusters_Get13B();
             if (doFCC == 1) Clusters_GetFCC();
@@ -112,6 +117,7 @@ int main(int argc, char **argv) {
 
             if (doWriteClus == 1) Write_Cluster(f);
             if (doWriteRaw == 1) Write_Raw(f);
+            if (doWriteXYZ == 1) Write_Cluster_XYZ(f);
             if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(f, 21);
             if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
 

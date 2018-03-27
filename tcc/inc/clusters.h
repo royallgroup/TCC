@@ -56,37 +56,6 @@ void Cluster_Write_10A();
 void Clusters_Get10W();
 void Cluster_Write_10W();
 
-void Clusters_Get11A();
-int Check_unique_6A_rings(int first_6A_id, int second_6A_id);
-int Check_6A_rings_bonded(int first_6A_id, int second_6A_id);
-void Cluster_Write_11A(int first_6A_id, int second_6A_id, const int sother[], int scom);
-
-void Clusters_Get12K();
-void get_12K_ring_bonds(int ptr_11A, int (*sp3_rings)[3]);
-void find_12K_cluster(int ptr_11A, const int *sp3_ring);
-int is_particle_in_11A(int ptr_11A, int particle_id);
-void Cluster_Write_12K(int ep, int id_11A);
-
-void Clusters_Get11C();
-int get_11C_spindle_particles(int *uncommon_spindle, int id_first_7A, int id_second7A, int *common_spindle);
-int get_bonded_7A_ring_particles(int *ar, int id_first_7A, int id_second7A, int ncom);
-void resize_hc11C();
-void Cluster_Write_11C();
-
-int Clusters_Get12A();
-int get_12A_extra_particle(int id_11C);
-int is_particle_in_11C(int particle_id, int id_11C);
-int bond_check_12A_extra_particle(int id_11C, int ep);
-void resize_hc12A();
-void populate_hc12A(int id_11C, int ep);
-void populate_s12A();
-
-void Clusters_Get11F_12E_13K();
-void Cluster_Write_11F();
-
-int Clusters_Get12E_D3h(int j);
-void Cluster_Write_12E();
-
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i);
 void Cluster_Write_13K();
 

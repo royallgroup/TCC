@@ -41,6 +41,7 @@ void Setup_ReadIniFile(char *filename) {
     doWriteBonds = iniparser_getboolean(ini, "output:bonds", -1);
     doWriteClus = iniparser_getboolean(ini, "output:clusts", -1);
     doWriteRaw = iniparser_getboolean(ini, "output:raw", -1);
+    doWriteXYZ = iniparser_getboolean(ini, "output:do_XYZ", -1);
     do11AcenXyz = iniparser_getboolean(ini, "output:11a", -1);
     do13AcenXyz = iniparser_getboolean(ini, "output:13a", -1);
     doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
