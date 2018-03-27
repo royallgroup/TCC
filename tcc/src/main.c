@@ -22,6 +22,8 @@
 #include "12A.h"
 #include "12E.h"
 #include "12K.h"
+#include "8K.h"
+#include "9A.h"
 
 int num_cluster_types = 39;
 

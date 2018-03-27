@@ -2,13 +2,6 @@
 #define CLUSTERS_H
 
 
-
-void Clusters_Get8K();
-void Cluster_Write_8K();
-
-void Clusters_Get9A();
-void Cluster_Write_9A();
-
 void Clusters_Get9B_10B_11B_11E_12D();
 void Cluster_Write_9B();
 
