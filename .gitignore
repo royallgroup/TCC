@@ -1,10 +1,9 @@
+bin/
+obj/
+.idea/
+cmake*/
+build/
 *.cbp
-/bin
-/obj
-*/.idea
-/.idea
-/cmake*
-/build
 *.depend
 *.layout
 *.a
@@ -13,3 +12,5 @@
 *.exe
 *.pyc
 .cache/
+tools/net_clusters/raw_output/
+tools/net_clusters/*.xyz
