@@ -81,9 +81,10 @@ void Get_Bonds() {
     }
     else {
         if(USELIST == 1) {
-            fill_cell_list();
-            get_all_particle_neighbours();
-            //sort_bonds();
+            //fill_cell_list();
+            //get_all_particle_neighbours();
+            printf("Cell list not currently implemented for simple bonds. Turning off cell list.");
+            Get_Simple_Bonds();
         }
         else {
             Get_Simple_Bonds();
