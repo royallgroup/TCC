@@ -3,10 +3,14 @@
 
 void Clusters_Get11A();
 
-int Check_unique_6A_rings(int first_6A_id, int second_6A_id);
+int count_common_spindle_particles(const int *first6A, const int *second6A, int *scom);
 
-int Check_6A_rings_bonded(int first_6A_id, int second_6A_id);
+void get_non_common_spindles(const int *first6A, const int *second6A, int scom, int *sother);
 
-void Cluster_Write_11A(int first_6A_id, int second_6A_id, const int sother[], int scom);
+int Check_unique_6A_rings(const int *first_6A, const int *second_6A);
+
+int Check_6A_rings_bonded(const int *first_6A, const int *second_6A);
+
+void Cluster_Write_11A(const int *first_6A, const int *second_6A, const int *sother, int scom);
 
 #endif
