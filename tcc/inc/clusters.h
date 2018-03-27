@@ -1,12 +1,7 @@
 #ifndef CLUSTERS_H
 #define CLUSTERS_H
 
-void Clusters_Get8A();
-void Cluster_Write_8A();
 
-void Clusters_Get8B();
-void Clusters_8B_loop(int i, int clusSize, int s1, int s2);
-void Cluster_Write_8B();
 
 void Clusters_Get8K();
 void Cluster_Write_8K();
