@@ -24,6 +24,10 @@
 #include "12K.h"
 #include "8K.h"
 #include "9A.h"
+#include "HCP.h"
+#include "FCC.h"
+#include "BCC15.h"
+#include "BCC9.h"
 
 int num_cluster_types = 39;
 

@@ -37,16 +37,4 @@ void Clust_Write_13A();
 void Clusters_Get13B();
 void Cluster_Write_13B();
 
-void Clusters_GetFCC();
-void Cluster_Write_FCC();
-
-void Clusters_GetHCP();
-void Cluster_Write_HCP(int i, int j, int j2, int k);
-
-void Clusters_GetBCC_9();
-void Cluster_Write_BCC9();
-
-void Clusters_GetBCC_15();
-void Cluster_Write_BCC_15(int clusSize);
-
 #endif
