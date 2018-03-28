@@ -19,7 +19,7 @@ void stats_report_clusters(FILE *output_file);
 
 void stats_report_title(const char *output_name, FILE *output_file);
 
-void Pop_Per_Frame(int f);
+void count_frame_cluster_population(int f);
 
 void count_mean_pop_per_frame(int frames_analysed);
 

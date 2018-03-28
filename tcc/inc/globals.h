@@ -19,6 +19,7 @@ extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
 extern int* num_cluster_list[];  // A list of pointers to the nclusts variables
 extern char** raw_list[];  // A list of pointers to the "s" raw storage variables
 extern int*** cluster_list[];  // A list of pointers to the "hc" cluster storage variables
+extern int* cluster_list_width[]; // A list of pointers to the "m" storage width variables
 
 
 struct xyz_info {

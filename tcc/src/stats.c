@@ -88,9 +88,10 @@ void stats_report_title(const char *output_name, FILE *output_file) {
     fprintf(output_file,buffer);
 }
 
-void Pop_Per_Frame(int f) {
+void count_frame_cluster_population(int f) {
 
-    for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        pop_per_frame[cluster_type][f] = 0;
         for(int particle_number = 0; particle_number < current_frame_particle_number; particle_number++) {
             if ((*raw_list[cluster_type])[particle_number] != 'C') {
                 pop_per_frame[cluster_type][f] += 1;
