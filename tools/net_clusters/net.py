@@ -1,65 +1,73 @@
 import numpy as np
-import sys
-import glob
+from sys import argv, exit
+from glob import glob
 
 
-def read_and_split(filename, num_particles):
-
-    data = np.genfromtxt(filename, skip_header=1, invalid_raise=False, usecols=[0], dtype='U1')
-    frames = data.reshape((num_particles + 2, len(data) / (num_particles + 2)), order='F')
-
-    return frames[2:, :]
-
-
-def cluster(info):
-    return (info == 'C') + (info == 'D')
-
-
-def main():
-    if len(sys.argv) < 2:
+def set_up():
+    # Read XYZ file name from argv
+    if len(argv) != 2:
         print("Usage python net.py file.xyz")
-        sys.exit(0)
-    # input a file name
-    xyz_name = sys.argv[1]
+        exit(0)
+    xyz_name = argv[1]
+    return xyz_name
 
-    # Modify this list in order to have your favourite hierarchy
-    priority_list = ['FCC', '13A', '12E', '11F', '10B', '9B', '8B', '7A', '6A', '5A']
 
-    # read number of particles
-    with open(xyz_name, 'r') as xyz:
-        num_particles = int(xyz.readline())
-
-    TCCinfo = {}
-    netTCCinfo = {}
-    gross, net = {}, {}
+def load_cluster_data(num_particles, priority_list, xyz_name):
+    # Load data from the raw file into a dictionary
+    raw_data = {}
 
     for species in priority_list:
         print("Reading", species, "...")
-        TCCinfo[species] = read_and_split(glob.glob("raw_output/" + xyz_name + "*" + species)[0], num_particles)
+        filename = glob("raw_output/" + xyz_name + "*" + species)[0]
+        raw_data[species] = np.genfromtxt(filename, skip_header=2, invalid_raise=False, usecols=[0], dtype='U1',
+                                          max_rows=num_particles)
 
-    # Load first cluster in priority list
-    test = cluster(TCCinfo[priority_list[0]])
-    netTCCinfo[priority_list[0]] = test
-    net[priority_list[0]] = netTCCinfo[priority_list[0]].sum(axis=0) / float(num_particles)
-    gross[priority_list[0]] = net[priority_list[0]]
+    return raw_data
 
-    # Load the rest of the clusters in priority list
-    for species in priority_list[1:]:
-        c = cluster(TCCinfo[species])
-        netTCCinfo[species] = np.logical_not(test) * c
-        test += c
-        net[species] = netTCCinfo[species].sum(axis=0) / float(num_particles)
-        gross[species] = c.sum(axis=0) / float(num_particles)
 
-    for species in priority_list:
-        if net[species].shape[0] > 1:
-            net[species] = np.average(net[species])
-            gross[species] = np.average(gross[species])
+def is_particle_in_cluster(particle_identifier):
+    # A cluster is found if the particle identifier is the letter C or D.
+    return np.logical_or(particle_identifier == 'C', particle_identifier == 'D')
 
-    with open(xyz_name+"_net", 'w') as fout:
-        fout.write("Species\tGross\tNet\n")
+
+def write_output_file(gross_percentage, net_percentage, priority_list, xyz_name):
+    with open(xyz_name + "_net.txt", 'w') as output_file:
+        output_file.write("Species\tGross\tNet\n")
         for species in priority_list:
-            fout.write(species + ":\t%f\t%f\n" % (gross[species], net[species]))
+            output_file.write(species + ":\t%f\t%f\n" % (gross_percentage[species], net_percentage[species]))
 
+
+def main():
+    xyz_name = set_up()
+
+    # Modify this list in order to have your favourite hierarchy
+    priority_list = ['FCC', '13A', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c']
+
+    # read number of particles
+    with open(glob("raw_output/" + xyz_name + "*" + priority_list[0])[0], 'r') as xyz:
+        num_particles = int(xyz.readline())
+
+    gross_list = {}
+    net_list = {}
+    gross_percentage = {}
+    net_percentage = {}
+
+    raw_data = load_cluster_data(num_particles, priority_list, xyz_name)
+
+    cluster_tracker = np.full(num_particles, False)
+
+    # Loop through the clusters in priority list and process each
+    for species in priority_list:
+        gross_list[species] = is_particle_in_cluster(raw_data[species])
+        net_list[species] = np.logical_and(gross_list[species], np.logical_not(cluster_tracker))
+        cluster_tracker += gross_list[species]
+        net_percentage[species] = net_list[species].sum(axis=0) / float(num_particles)
+        gross_percentage[species] = gross_list[species].sum(axis=0) / float(num_particles)
+
+    write_output_file(gross_percentage, net_percentage, priority_list, xyz_name)
+
+
+if __name__ == '__main__':
+    main()
 
 main()
