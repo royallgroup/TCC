@@ -152,16 +152,10 @@ double **pop_per_frame;
 // The average population of each cluster type over all frames, index i is cluster type
 double *mean_pop_per_frame;
 
-// Gross number of clusters of the specified type accumulated over all frames
-int *gross_clusters;
-
-// Net number of clusters of the specified type accumulated over all frames
-int *net_clusters;
+// Gross number of particles in the specified cluster type accumulated over all frames
+int *num_gross_particles;
 
 // Total number of clusters of the specified type accumulated over all frames
 int *total_clusters;
-
-// Variable used in the counting of net clusters, index i is particle number
-int *a6, *a7, *a8, *a9, *a10, *a11, *a12, *a13;
 
 #endif

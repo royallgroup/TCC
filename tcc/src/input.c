@@ -201,7 +201,7 @@ void get_box_size(int current_frame_number) {
     fclose(read_box_file);
 }
 
-struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
+struct xyz_info parse_xyz_file() {
 
     char line[1000];
     char error_message[100];
@@ -209,6 +209,7 @@ struct xyz_info parse_xyz_file(struct xyz_info input_xyz_info) {
     int line_number;
     int valid_long = 0;
     FILE *xyzfile;
+    struct xyz_info input_xyz_info;
 
     line_number = 0;
 

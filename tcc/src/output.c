@@ -72,7 +72,7 @@ void Write_Bonds_File(int f) {
 
 void Write_Cluster_Centers_xyz(int f, int cluster_type) {
 
-    int i, num_centers=0;
+    int num_centers = 0;
     FILE *output_file;
     char file_name[200];
 
@@ -81,12 +81,16 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
 
     output_file = fopen(file_name, "a");
 
-    for(i=0; i<current_frame_particle_number; i++) if((*raw_list[cluster_type])[i]=='S') ++num_centers;
+    for(int particle_number = 0; particle_number < current_frame_particle_number; particle_number++) {
+        if((*raw_list[cluster_type])[particle_number]=='S') {
+            num_centers++;
+        }
+    }
 
-    fprintf(output_file,"%d\nframe %d of %d\n",num_centers,f+1,FRAMES);
-    for(i=0; i<current_frame_particle_number; i++) {
-        if ((*raw_list[cluster_type])[i]=='S') {
-            fprintf(output_file ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[i], y[i], z[i]);
+    fprintf(output_file, "%d\nframe %d of %d\n", num_centers, f+1, FRAMES);
+    for(int particle_number = 0; particle_number < current_frame_particle_number; particle_number++) {
+        if ((*raw_list[cluster_type])[particle_number] == 'S') {
+            fprintf(output_file ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[particle_number], y[particle_number], z[particle_number]);
         }
     }
 
@@ -165,7 +169,7 @@ void Write_Cluster_Compostions(int f, int cluster_type) {
 
 void Write_Pop_Per_Frame(int f) {
     char errMsg[1000], output[1000];
-    int i;
+    int cluster_type, frame;
     FILE *file_pointer;
 
     sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
@@ -178,15 +182,15 @@ void Write_Pop_Per_Frame(int f) {
     fprintf(file_pointer,"%s\n",output);
 
     fprintf(file_pointer,"frame	");
-    for(i=0; i<num_cluster_types; i++) {
-        fprintf(file_pointer, "%s	", cluster_names[i]);
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        fprintf(file_pointer, "%s	", cluster_names[cluster_type]);
     }
     fprintf(file_pointer,"\n");
 
     fprintf(file_pointer,"mean	");
-    for(i=0; i<num_cluster_types; i++) {
-        if(*do_cluster_list[i] == 1) {
-            fprintf(file_pointer, "%.15lg	", mean_pop_per_frame[i]);
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        if(*do_cluster_list[cluster_type] == 1) {
+            fprintf(file_pointer, "%.15lg	", mean_pop_per_frame[cluster_type]);
         }
         else {
             fprintf(file_pointer, "NA	");
@@ -194,11 +198,11 @@ void Write_Pop_Per_Frame(int f) {
     }
     fprintf(file_pointer,"\n");
 
-    for (f=0;f<FRAMES;f++) {
-        fprintf(file_pointer,"%d	",f);
-        for(i=0; i<num_cluster_types; i++) {
-            if(*do_cluster_list[i] == 1) {
-                fprintf(file_pointer, "%.15lg	", pop_per_frame[i][f]);
+    for (frame = 0; frame < f; frame++) {
+        fprintf(file_pointer,"%d	",frame);
+        for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+            if(*do_cluster_list[cluster_type] == 1) {
+                fprintf(file_pointer, "%.15lg	", pop_per_frame[cluster_type][frame]);
             }
             else {
                 fprintf(file_pointer, "NA	");

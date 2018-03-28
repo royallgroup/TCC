@@ -100,9 +100,6 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     mmem_sp3b=mmem_sp3c=mmem_sp4b=mmem_sp4c=mmem_sp5b=mmem_sp5c=initNoClustPerPart;
     
     mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
-    for(i=0; i<num_cluster_types; i++) {
-        mean_pop_per_frame[i] = 0.0;
-    }
 
     tiltxy = tiltxz = tiltyz = 0;
     x = malloc(max_particle_number*sizeof(double));   if (x==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): x[] malloc out of memory\n");    Error_no_free(errMsg); }    // positions of particles in a configuration

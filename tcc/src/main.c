@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
     Setup_ReadIniFile(fInputParamsName);    // read input params
     printf("box size file: %s\n",fBoxSizeName);
 
-    input_xyz_info = parse_xyz_file(input_xyz_info);
+    input_xyz_info = parse_xyz_file();
 
     parse_box_file(input_xyz_info.total_frames);
 
@@ -129,8 +129,7 @@ int main(int argc, char **argv) {
             if (doBCC15 == 1) Clusters_GetBCC_15();
 
             // Write output files
-            Accumulate_Stats();
-            Stats_Analyse();
+            count_number_of_clusters();
             Pop_Per_Frame(f);
 
             if (doWriteClus == 1) Write_Cluster(f);
@@ -150,14 +149,12 @@ int main(int argc, char **argv) {
         }
     }
 
-    Normalise_Populations();
-    
+    // Do post analysis statistics
+    count_mean_pop_per_frame(f);
+    Stats_Report();
     if (doWritePopPerFrame==1) {
         Write_Pop_Per_Frame(f);
-    }    
-
-
-    Stats_Report();
+    }
 
     free(input_xyz_info.num_particles);
     free(input_xyz_info.frame_offsets);
