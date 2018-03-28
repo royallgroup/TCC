@@ -16,18 +16,23 @@ def load_cluster_data(num_particles, priority_list, xyz_name):
     # Load data from the raw file into a dictionary
     raw_data = {}
 
+    print("Reading data from raw files...")
     for species in priority_list:
-        print("Reading", species, "...")
+        raw_data[species] = []
         filename = glob("raw_output/" + xyz_name + "*" + species)[0]
-        raw_data[species] = np.genfromtxt(filename, skip_header=2, invalid_raise=False, usecols=[0], dtype='U1',
-                                          max_rows=num_particles)
+        lines_read = 0
+        for frame_particles in num_particles:
+            raw_data[species].append(np.genfromtxt(filename, skip_header=lines_read+2, invalid_raise=False,
+                                                   usecols=[0], dtype='U1', max_rows=frame_particles))
+            lines_read += (frame_particles + 2)
 
+    print("Data read complete...")
     return raw_data
 
 
-def is_particle_in_cluster(particle_identifier):
+def is_particle_in_cluster(particle_identifier, frame_number):
     # A cluster is found if the particle identifier is the letter C or D.
-    return np.logical_or(particle_identifier == 'C', particle_identifier == 'D')
+    return np.logical_or(particle_identifier[frame_number] == 'C', particle_identifier[frame_number] == 'D')
 
 
 def write_output_file(gross_percentage, net_percentage, priority_list, xyz_name):
@@ -35,6 +40,24 @@ def write_output_file(gross_percentage, net_percentage, priority_list, xyz_name)
         output_file.write("Species\tGross\tNet\n")
         for species in priority_list:
             output_file.write(species + ":\t%f\t%f\n" % (gross_percentage[species], net_percentage[species]))
+    print("Analysis complete. Output file written.")
+
+
+def get_particles_per_frame(xyz_name, priority_list):
+    # Returns a list of particle numbers, one for each time frame
+    num_particles = []
+
+    filename = glob("raw_output/" + xyz_name + "*" + priority_list[0])[0]
+    with open(filename, 'r') as xyz_file:
+        line = xyz_file.readline()
+        while line != "":
+            num_particles.append(int(line))
+            # Skip the comment and all the data
+            for i in range(num_particles[-1] + 1):
+                xyz_file.readline()
+            line = xyz_file.readline()
+
+    return num_particles
 
 
 def main():
@@ -43,31 +66,32 @@ def main():
     # Modify this list in order to have your favourite hierarchy
     priority_list = ['FCC', '13A', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c']
 
-    # read number of particles
-    with open(glob("raw_output/" + xyz_name + "*" + priority_list[0])[0], 'r') as xyz:
-        num_particles = int(xyz.readline())
-
-    gross_list = {}
-    net_list = {}
+    # read number of particles and the data
+    frame_particles_list = get_particles_per_frame(xyz_name, priority_list)
+    total_particles = sum(frame_particles_list)
+    raw_data = load_cluster_data(frame_particles_list, priority_list, xyz_name)
     gross_percentage = {}
     net_percentage = {}
 
-    raw_data = load_cluster_data(num_particles, priority_list, xyz_name)
-
-    cluster_tracker = np.full(num_particles, False)
+    # intitialse totals
+    for species in priority_list:
+        gross_percentage[species] = 0
+        net_percentage[species] = 0
 
     # Loop through the clusters in priority list and process each
-    for species in priority_list:
-        gross_list[species] = is_particle_in_cluster(raw_data[species])
-        net_list[species] = np.logical_and(gross_list[species], np.logical_not(cluster_tracker))
-        cluster_tracker += gross_list[species]
-        net_percentage[species] = net_list[species].sum(axis=0) / float(num_particles)
-        gross_percentage[species] = gross_list[species].sum(axis=0) / float(num_particles)
+    for frame_number, particles_in_frame in enumerate(frame_particles_list):
+        cluster_tracker = np.full(particles_in_frame, False)
+        gross_list = {}
+        net_list = {}
+        for species in priority_list:
+            gross_list[species] = is_particle_in_cluster(raw_data[species], frame_number)
+            net_list[species] = np.logical_and(gross_list[species], np.logical_not(cluster_tracker))
+            cluster_tracker += gross_list[species]
+            net_percentage[species] += net_list[species].sum(axis=0) / float(total_particles)
+            gross_percentage[species] += gross_list[species].sum(axis=0) / float(total_particles)
 
     write_output_file(gross_percentage, net_percentage, priority_list, xyz_name)
 
 
 if __name__ == '__main__':
     main()
-
-main()
