@@ -23,7 +23,7 @@ class FileOperations:
     def copy_net():
         # Copy the exectuable to the current directory
         try:
-            shutil.copy("../../../tools/net_clusters/net.py", os.getcwd())
+            shutil.copy("../../../lib/net_clusters/net.py", os.getcwd())
             return 0
         except Exception as e:
             print(e)
@@ -58,4 +58,3 @@ def test_basic_configuration():
         assert FileOperations.run_net() == 0
         assert FileChecks.check_net() is True
         assert FileOperations.tidy() == 0
-        

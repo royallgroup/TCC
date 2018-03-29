@@ -59,8 +59,8 @@ void stats_report_bonds(FILE *output_file) {
 
     sprintf(buffer, "maxnB	%d\ncorrectedBonds %d per frame %.5lg per part per frame %.5lg\n" , maxnb, correctedBonds,
             (double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*current_frame_particle_number));
-    printf(buffer);
-    fprintf(output_file, buffer);
+    printf("%s", buffer);
+    fprintf(output_file, "%s", buffer);
 }
 
 void stats_report_clusters(FILE *output_file) {
@@ -74,8 +74,8 @@ void stats_report_clusters(FILE *output_file) {
         else {
             sprintf(buffer, "%s	NA	NA	NA	NA\n", cluster_names[cluster_type]);
         }
-        printf(buffer);
-        fprintf(output_file,buffer);
+        printf("%s", buffer);
+        fprintf(output_file, "%s", buffer);
     }
 }
 
@@ -84,8 +84,8 @@ void stats_report_title(const char *output_name, FILE *output_file) {
 
     fprintf(output_file, "%s\n", output_name);
     sprintf(buffer, "Cluster type	Number of clusters	Gross particles	Mean Pop Per Frame\n");
-    printf(buffer);
-    fprintf(output_file,buffer);
+    printf("%s", buffer);
+    fprintf(output_file, "%s", buffer);
 }
 
 void count_frame_cluster_population(int f) {
