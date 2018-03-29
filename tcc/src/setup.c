@@ -76,13 +76,8 @@ void Initialise_Global_Variables() {
     int cluster_type, j;
     char errMsg[1000];
 
-    dosp3=dosp3a=dosp3b=dosp3c=1;
-    dosp4=dosp4a=dosp4b=dosp4c=1;
-    dosp5=dosp5a=dosp5b=dosp5c=1;
-    do6Z=do7K=do8A=do8B=do8K=do9A=do9B=do9K=do10A=do10B=do10K=do10W=1;
-    do11A=do11B=do11C=do11E=do11F=do11W=do12A=do12B=do12D=do12E=do12K=1;
-    do13A=do13B=do13K=doFCC=doHCP=doBCC9=1;
-    doBCC15=0;
+    initNoStatic=incrStatic=1000;
+    initNoClustPerPart=incrClustPerPart=1;
 
     mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
 
@@ -240,4 +235,23 @@ void Free_All_Variables()  {  // Free bond detection variables
     free(pop_per_frame);
     free(num_gross_particles);
     free(total_clusters);
+}
+
+void analyse_cluster_dependencies() {
+
+    if(doBCC15 == 1) dosp4c = 1;
+    if(doBCC9 == 1) dosp4b = 1; dosp4c = 1;
+    if(doFCC == 1) dosp3b = 1; dosp3c = 1;
+    if(doHCP == 1) dosp3c = 1;
+    if(do13K == 1) dosp3c = 1; dosp3c = 1; do11F = 1;
+    if(do13B == 1) dosp5c = 1;
+    if(do13A == 1) do12B = 1;
+    if(do12K == 1) do11A = 1;
+    if(do12E == 1) dosp3c = 1; do11F = 1;
+    if(do12D == 1) dosp5c = 1; do11E = 1;
+    if(do12B == 1) dosp5c = 1;
+    if(do12A == 1) do11C = 1;
+    if(do11W == 1) do10B = 1;
+    if(do11F == 1) dosp3c = 1; dosp4c = 1;
+
 }

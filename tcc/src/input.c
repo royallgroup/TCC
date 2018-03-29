@@ -3,53 +3,54 @@
 #include "iniparser.h"
 #include "tools.h"
 
-void Setup_ReadIniFile(char *filename) {
+void read_ini_file(char *filename) {
 
     char errMsg[1000];
     dictionary  *   ini ;
 
-    fXmolName=malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
-    fBoxSizeName=malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fXmolName = malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fBoxSizeName = malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
 
     ini = iniparser_load(filename);
     if (ini==NULL) {
-        sprintf(errMsg,"Setup_ReadIniFile(): Error opening file %s",filename);  // Always test file open
+        sprintf(errMsg,"read_ini_file(): Error opening file %s",filename);
         Error_no_free(errMsg);
     }
 
     //box
-    box_type = iniparser_getint(ini, "box:box_type", -1);
-    strcpy(fBoxSizeName, (char*)iniparser_getstring(ini, "box:box_name", "-1"));
+    box_type = iniparser_getint(ini, "box:box_type", 1);
+    strcpy(fBoxSizeName, (char*)iniparser_getstring(ini, "box:box_name", "box.txt"));
 
     //run
-    strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "-1"));
-    frames_to_analyse = iniparser_getint(ini, "run:frames", -1);
-    SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
+    strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "sample.xyz"));
+    frames_to_analyse = iniparser_getint(ini, "run:frames", 1);
+    SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", 1);
 
     //simulation
-    rcutAA = iniparser_getdouble(ini, "simulation:rcutAA", -1);
-    min_cutAA = iniparser_getdouble(ini, "simulation:min_cutAA", -1);
-    rcutAB = iniparser_getdouble(ini, "simulation:rcutAB", -1);
-    rcutBB = iniparser_getdouble(ini, "simulation:rcutBB", -1);
-    Vor = iniparser_getboolean(ini, "simulation:bond_type", -1);
-    PBCs = iniparser_getboolean(ini, "simulation:pbcs", -1);
-    fc = iniparser_getdouble(ini, "simulation:voronoi_parameter", -1);
-    nB = iniparser_getint(ini, "simulation:num_bonds", -1);
-    USELIST = iniparser_getboolean(ini, "simulation:cell_list", -1);
+    rcutAA = iniparser_getdouble(ini, "simulation:rcutAA", 1.8);
+    min_cutAA = iniparser_getdouble(ini, "simulation:min_cutAA", 0);
+    rcutAB = iniparser_getdouble(ini, "simulation:rcutAB", 1.8);
+    rcutBB = iniparser_getdouble(ini, "simulation:rcutBB", 1.8);
+    Vor = iniparser_getboolean(ini, "simulation:bond_type", 1);
+    PBCs = iniparser_getboolean(ini, "simulation:pbcs", 1);
+    fc = iniparser_getdouble(ini, "simulation:voronoi_parameter", 1);
+    nB = iniparser_getint(ini, "simulation:num_bonds", 50);
+    USELIST = iniparser_getboolean(ini, "simulation:cell_list", 0);
+    analyse_all_clusters = iniparser_getboolean(ini, "simulation:analyse_all_clusters", 1);
 
     //output
-    doWriteBonds = iniparser_getboolean(ini, "output:bonds", -1);
-    doWriteClus = iniparser_getboolean(ini, "output:clusts", -1);
-    doWriteRaw = iniparser_getboolean(ini, "output:raw", -1);
-    doWriteXYZ = iniparser_getboolean(ini, "output:do_XYZ", -1);
-    do11AcenXyz = iniparser_getboolean(ini, "output:11a", -1);
-    do13AcenXyz = iniparser_getboolean(ini, "output:13a", -1);
-    doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", -1);
+    doWriteBonds = iniparser_getboolean(ini, "output:bonds", 0);
+    doWriteClus = iniparser_getboolean(ini, "output:clusts", 0);
+    doWriteRaw = iniparser_getboolean(ini, "output:raw", 0);
+    doWriteXYZ = iniparser_getboolean(ini, "output:do_XYZ", 0);
+    do11AcenXyz = iniparser_getboolean(ini, "output:11a", 0);
+    do13AcenXyz = iniparser_getboolean(ini, "output:13a", 0);
+    doWritePopPerFrame = iniparser_getboolean(ini, "output:pop_per_frame", 0);
 
     // calculate derived values
-    rcutAA2 = rcutAA*rcutAA;
-    rcutAB2 = rcutAB*rcutAB;
-    rcutBB2 = rcutBB*rcutBB;
+    rcutAA2 = rcutAA * rcutAA;
+    rcutAB2 = rcutAB * rcutAB;
+    rcutBB2 = rcutBB * rcutBB;
     min_cutAA2 = min_cutAA * min_cutAA;
     if (Vor==1) {   // if using modified Voronoi method can't have different cut off lengths for the bonds
         rcutAB = rcutAA;
@@ -58,8 +59,6 @@ void Setup_ReadIniFile(char *filename) {
         rcutBB2 = rcutAA2;
         printf("As voronoi method no individually specie-specie interaction length\nrcut %lg rcut2 %lg\n",rcutAA,rcutAA2);
     }
-    initNoStatic=incrStatic=1000;
-    initNoClustPerPart=incrClustPerPart=1;
 
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
@@ -72,6 +71,31 @@ void Setup_ReadIniFile(char *filename) {
 
     iniparser_freedict(ini);
 }
+
+void read_clusters_to_analyse() {
+    dictionary  *   ini ;
+    char errMsg[1000];
+    char cluster_name[100];
+
+    if (analyse_all_clusters == 0) {
+        ini = iniparser_load("clusters_to_analyse.ini");
+        if (ini == NULL) {
+            sprintf(errMsg, "read_ini_file(): Error opening file clusters_to_analyse.ini");
+            Error_no_free(errMsg);
+        }
+
+        for (int cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
+            sprintf(cluster_name, "cluster:%s", (cluster_names[cluster_number]));
+            *(do_cluster_list[cluster_number]) = iniparser_getboolean(ini, cluster_name, 1);
+        }
+    }
+    else {
+        for (int cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
+            *(do_cluster_list[cluster_number]) = 1;
+        }
+    }
+}
+
 
 void parse_box_file(int total_frames) {
     FILE *read_box_file;

@@ -83,7 +83,9 @@ int main(int argc, char **argv) {
     char fInputParamsName[50];
 
     sprintf(fInputParamsName,"inputparameters.ini");
-    Setup_ReadIniFile(fInputParamsName);    // read input params
+    read_ini_file(fInputParamsName);    // read input params
+    read_clusters_to_analyse();
+    analyse_cluster_dependencies();
     printf("box size file: %s\n",fBoxSizeName);
 
     input_xyz_info = parse_xyz_file();

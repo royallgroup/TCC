@@ -11,4 +11,6 @@ void Reset_Frame_Variables();
 
 void Free_All_Variables();
 
+void analyse_cluster_dependencies();
+
 #endif
