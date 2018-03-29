@@ -23,7 +23,7 @@ void Setup_ReadIniFile(char *filename) {
 
     //run
     strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "-1"));
-    FRAMES = iniparser_getint(ini, "run:frames", -1);
+    frames_to_analyse = iniparser_getint(ini, "run:frames", -1);
     SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", -1);
 
     //simulation
@@ -64,7 +64,7 @@ void Setup_ReadIniFile(char *filename) {
     // print out values read from ini file
     printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
     printf("box_type %d\n",box_type);
-    printf("FRAMES %d SAMPLEFREQ %d\n",FRAMES, SAMPLEFREQ);
+    printf("frames_to_analyse %d SAMPLEFREQ %d\n",frames_to_analyse, SAMPLEFREQ);
     printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
     printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
     printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
@@ -262,7 +262,7 @@ void initialize_xyz_info(struct xyz_info* input_xyz_info) {
     (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).data_width * sizeof(long));
 }
 
-void get_xyz_frame(const struct xyz_info* input_xyz_info, int frame_number) {
+void get_frame_coordinates_from_xyz(const struct xyz_info *input_xyz_info, int frame_number) {
 
     FILE *xyzfile;
     char error_message[1000];

@@ -72,7 +72,7 @@ void fill_cell_list() {
     int x_index, y_index, z_index;
     int scalar_index;
 
-    for(particle=0; particle<current_frame_particle_number; particle++) {
+    for(particle=0; particle<particles_in_current_frame; particle++) {
         x_index = (int) floor(x[particle] / cell_len_x);
         y_index = (int) floor(y[particle] / cell_len_y);
         z_index = (int) floor(z[particle] / cell_len_z);
@@ -107,12 +107,12 @@ void set_up_cell_list() {
     printf("x_cells %d y_cells %d z_cells %d total_cells %d\n", n_cells_x, n_cells_y, n_cells_z, n_cells_total);
 
     head=malloc((n_cells_total)*sizeof(int));
-    linked_list=malloc((current_frame_particle_number)*sizeof(int));
+    linked_list=malloc((particles_in_current_frame)*sizeof(int));
 
     for (i=0; i<n_cells_total; i++) {
         head[i]=-1;
     }
-    for (i=0; i<current_frame_particle_number; i++) {
+    for (i=0; i<particles_in_current_frame; i++) {
         linked_list[i]=0;
     }
 }

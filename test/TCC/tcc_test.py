@@ -45,7 +45,10 @@ class FileOperations:
     def copy_tcc():
         # Copy the exectuable to the current directory
         try:
-            shutil.copy(glob("../../../bin/tcc*")[0], os.getcwd())
+            if system() == "Windows":
+                shutil.copy(glob("../../../bin/tcc.exe")[0], os.getcwd())
+            else:
+                shutil.copy(glob("../../../bin/tcc")[0], os.getcwd())
             return 0
         except Exception as e:
             print(e)

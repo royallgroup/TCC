@@ -18,11 +18,11 @@ void Get_Bonds_With_Voronoi() {
     particle_1_neighbours = malloc(max_allowed_bonds*sizeof(int));
     particle_1_bonds = malloc(max_allowed_bonds*sizeof(int));
     particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
-    store_dr2 = malloc(current_frame_particle_number*sizeof(double));
+    store_dr2 = malloc(particles_in_current_frame*sizeof(double));
 
-    printf("Vor: N%d rcut2 %.15lg\n",current_frame_particle_number,rcutAA2);
+    printf("Vor: N%d rcut2 %.15lg\n",particles_in_current_frame,rcutAA2);
 
-    for (i=0; i<current_frame_particle_number; i++) {
+    for (i=0; i<particles_in_current_frame; i++) {
         num_bonds[i] = 0;
     }
 
@@ -31,7 +31,7 @@ void Get_Bonds_With_Voronoi() {
         get_all_particle_neighbours();
     }
 
-    for (particle_1 = 0; particle_1 < current_frame_particle_number; particle_1++) {
+    for (particle_1 = 0; particle_1 < particles_in_current_frame; particle_1++) {
         if(USELIST == 1) {
 
             num_particle_1_neighbours = cell_list_get_particle_1_neighbours(particle_1, particle_1_neighbours,
@@ -150,7 +150,7 @@ int get_particle_1_neighbours(int particle_1, const int max_allowed_bonds, int *
     double squared_distance;
 
     num_particle_1_neighbours = 0;
-    for (particle_2 = 0; particle_2 < current_frame_particle_number; ++particle_2) {
+    for (particle_2 = 0; particle_2 < particles_in_current_frame; ++particle_2) {
         if (particle_1 != particle_2) {
             squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
             if (squared_distance < rcutAA2) {

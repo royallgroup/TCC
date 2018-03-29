@@ -9,7 +9,7 @@ void enforce_PBCs(double *dx, double *dy, double *dz);
 
 void Are_All_Bonds_Symmetric();
 
-void Get_Bonds();
+void build_bond_network(int frame_number);
 
 void Get_Simple_Bonds();
 

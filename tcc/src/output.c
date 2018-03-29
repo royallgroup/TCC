@@ -24,8 +24,8 @@ void Write_Raw(int f) {
 void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
     int i;
 
-    fprintf(thefile,"%d\nframe %d\n",current_frame_particle_number,f+1);
-    for(i=0; i<current_frame_particle_number; i++) {
+    fprintf(thefile,"%d\nframe %d\n",particles_in_current_frame,f+1);
+    for(i=0; i<particles_in_current_frame; i++) {
         if (sarr[i]!='C') {
             if (particle_type[i]==1) fprintf(thefile,"C\n");
             else fprintf(thefile,"D\n");
@@ -46,7 +46,7 @@ void Write_Bonds_File(int f) {
     FILE *bondsout;
 
     sum=0;
-    for (i=0; i<current_frame_particle_number; ++i) {
+    for (i=0; i<particles_in_current_frame; ++i) {
         sum+=num_bonds[i];
     }
     if (sum%2!=0) {
@@ -58,7 +58,7 @@ void Write_Bonds_File(int f) {
     bondsout=fopen(output_file, "a");
 
     fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
-    for (i=0; i<current_frame_particle_number; ++i) {
+    for (i=0; i<particles_in_current_frame; ++i) {
         fprintf(bondsout,"%d    %d",i,num_bonds[i]);
         for (j=0; j<num_bonds[i]; ++j) {
             fprintf(bondsout,"  %d  %.5lg",bNums[i][j],sqrt(squared_bondlengths[i][j]));
@@ -81,14 +81,14 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
 
     output_file = fopen(file_name, "a");
 
-    for(int particle_number = 0; particle_number < current_frame_particle_number; particle_number++) {
+    for(int particle_number = 0; particle_number < particles_in_current_frame; particle_number++) {
         if((*raw_list[cluster_type])[particle_number]=='S') {
             num_centers++;
         }
     }
 
-    fprintf(output_file, "%d\nframe %d of %d\n", num_centers, f+1, FRAMES);
-    for(int particle_number = 0; particle_number < current_frame_particle_number; particle_number++) {
+    fprintf(output_file, "%d\nframe %d of %d\n", num_centers, f+1, frames_to_analyse);
+    for(int particle_number = 0; particle_number < particles_in_current_frame; particle_number++) {
         if ((*raw_list[cluster_type])[particle_number] == 'S') {
             fprintf(output_file ,"O\t%.5lg\t%.5lg\t%.5lg\n", x[particle_number], y[particle_number], z[particle_number]);
         }
@@ -110,7 +110,7 @@ void Write_Cluster_XYZ(int f) {
             file_pointer = open_file(output_file, "a");
 
             num_particles = 0;
-            for(i = 0; i < current_frame_particle_number; i++) {
+            for(i = 0; i < particles_in_current_frame; i++) {
                 if((*raw_list[cluster_type])[i] != 'C') {
                     num_particles++;
                 }
@@ -118,7 +118,7 @@ void Write_Cluster_XYZ(int f) {
 
             fprintf(file_pointer,"%d\n", num_particles);
             fprintf(file_pointer,"Frame number %d\n", f);
-            for(i = 0; i < current_frame_particle_number; i++) {
+            for(i = 0; i < particles_in_current_frame; i++) {
                 if ((*raw_list[cluster_type])[i] != 'C') {
                     fprintf(file_pointer, "%c\t%f\t%f\t%f\n", (*raw_list[cluster_type])[i], x[i], y[i], z[i]);
                 }

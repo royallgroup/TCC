@@ -1,3 +1,4 @@
+#include <output.h>
 #include "math.h"
 #include "bonds.h"
 #include "globals.h"
@@ -55,7 +56,7 @@ void get_distance_components(int i, int j, double *dx, double *dy, double *dz) {
 void Are_All_Bonds_Symmetric() {
     int i, j, k;
 
-    for (i=0; i<current_frame_particle_number; ++i) {
+    for (i=0; i<particles_in_current_frame; ++i) {
         for (j=0; j<num_bonds[i]; ++j) {
             for (k=0; k<num_bonds[bNums[i][j]]; k++) {
                 if (i==bNums[bNums[i][j]][k]) break;
@@ -70,7 +71,7 @@ void Are_All_Bonds_Symmetric() {
     }
 }
 
-void Get_Bonds() {
+void build_bond_network(int frame_number) {
 
     if (USELIST == 1) {
         set_up_cell_list();
@@ -91,6 +92,14 @@ void Get_Bonds() {
         }
     }
 
+    if (doWriteBonds == 1) {
+        Write_Bonds_File(frame_number);
+    }
+
+    for (int particle_number = 0; particle_number < particles_in_current_frame; particle_number++) {
+        if (num_bonds[particle_number] > maxnb) maxnb = num_bonds[particle_number];
+    }
+
     printf("\n");
     printf("Got Bonds\n");
 }
@@ -100,10 +109,10 @@ void Get_Simple_Bonds() {
     int particle_1, particle_2;
     double squared_distance;
 
-    printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",current_frame_particle_number,rcutAA2,rcutAB2,rcutBB2);
+    printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",particles_in_current_frame,rcutAA2,rcutAB2,rcutBB2);
 
-    for (particle_1=0; particle_1<current_frame_particle_number; ++particle_1) {
-        for(particle_2=particle_1+1; particle_2<current_frame_particle_number; ++particle_2) {
+    for (particle_1=0; particle_1<particles_in_current_frame; ++particle_1) {
+        for(particle_2=particle_1+1; particle_2<particles_in_current_frame; ++particle_2) {
 
             squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
 

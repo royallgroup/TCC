@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int current_frame_particle_number;  // number of particles
+int particles_in_current_frame;  // number of particles
 int box_type; //if the system in non-cubic or NPT, get box size info from a datafile
-int FRAMES; // frames to read from input xmol file
+int frames_to_analyse; // frames to read from input xmol file
 int SAMPLEFREQ; // frequency at which to take frames from the xmol file
 int max_particle_number; // The number of particles in the largest XYZ frame
 
@@ -40,7 +40,7 @@ double tiltxy,tiltxz,tiltyz;
 double rcutAA,rcutAA2,rcutAB,rcutAB2,rcutBB,rcutBB2;    // diameters of AB and BB interactions for binary interactions
 double min_cutAA, min_cutAA2;
 double fc;  // Voronoi adjustment parameter
-int Vor;    // 0 use simple bond length method Get_Bonds(), 1 use Voronoi method Get_Bonds_With_Voronoi()
+int Vor;    // 0 use simple bond length method build_bond_network(), 1 use Voronoi method Get_Bonds_With_Voronoi()
 int PBCs;   // 0 do not impliment periodic boundary conditions, 1 implement periodic boundary conditions
 int nB; // max number of bonds per particle
 int USELIST;    // 0  do not use cell list, 1 use cell list

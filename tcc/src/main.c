@@ -37,6 +37,10 @@
 
 int num_cluster_types = 39;
 
+// Cluster numbers
+static const int eleven_A_number = 21;
+static const int thirteen_A_number = 32;
+
 char* cluster_names[] = {"sp3a", "sp3b", "sp3c", "sp4a", "sp4b", "sp4c", "sp5a", "sp5b", "sp5c",
                          "6Z", "7K", "8A", "8B", "8K", "9A", "9B", "9K", "10A", "10B", "10K", "10W",
                          "11A", "11B", "11C", "11E", "11F", "11W", "12A", "12B", "12D",
@@ -72,8 +76,10 @@ int* cluster_list_width[] = {&msp3a, &msp3b, &msp3c, &msp4a, &msp4b, &msp4c, &ms
                              &m11A, &m11B, &m11C, &m11E, &m11F, &m11W, &m12A, &m12B, &m12D,
                              &m12E, &m12K, &m13A, &m13B, &m13K, &mFCC, &mHCP, &mBCC_9, &mBCC_15};
 
+void calculate_frames_to_process(int frames_in_xyz);
+
 int main(int argc, char **argv) {
-    int current_frame_number, f, i;
+    int current_frame_number;
     int remainder;
     struct xyz_info input_xyz_info;
     char fInputParamsName[50];
@@ -92,21 +98,20 @@ int main(int argc, char **argv) {
     Stats_Init();
     Setup_Output_Files();
 
-    f=0;
-    for (current_frame_number=0; current_frame_number < input_xyz_info.total_frames; current_frame_number++) {
-        remainder=current_frame_number%SAMPLEFREQ;
+    calculate_frames_to_process(input_xyz_info.total_frames);
 
-        if (remainder==0 && f<FRAMES) {
-            current_frame_particle_number = input_xyz_info.num_particles[current_frame_number];
+    for (current_frame_number = 0; current_frame_number < frames_to_analyse; current_frame_number++) {
+        remainder = current_frame_number % SAMPLEFREQ;
+
+        if (remainder == 0) {
+            particles_in_current_frame = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
-            if (box_type != 1) get_box_size(current_frame_number);
-            get_xyz_frame(&input_xyz_info, current_frame_number);
-            Get_Bonds();
-            if (doWriteBonds == 1) Write_Bonds_File(f);
-
-            for (i = 0; i < current_frame_particle_number; i++) {
-                if (num_bonds[i] > maxnb) maxnb = num_bonds[i];
+            if (box_type != 1) {
+                get_box_size(current_frame_number);
             }
+            get_frame_coordinates_from_xyz(&input_xyz_info, current_frame_number);
+            build_bond_network(current_frame_number);
+
             if (dosp3 == 1) get_basic_clusters();
             if (do6Z == 1) Clusters_Get6Z();
             if (do7K == 1) Clusters_Get7K();
@@ -135,30 +140,28 @@ int main(int argc, char **argv) {
 
             // Write output files
             count_number_of_clusters();
-            count_frame_cluster_population(f);
+            count_frame_cluster_population(current_frame_number);
 
-            if (doWriteClus == 1) Write_Cluster(f);
-            if (doWriteRaw == 1) Write_Raw(f);
-            if (doWriteXYZ == 1) Write_Cluster_XYZ(f);
-            if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(f, 21);
-            if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(f, 32);
+            if (doWriteClus == 1) Write_Cluster(current_frame_number);
+            if (doWriteRaw == 1) Write_Raw(current_frame_number);
+            if (doWriteXYZ == 1) Write_Cluster_XYZ(current_frame_number);
+            if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(current_frame_number, eleven_A_number);
+            if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(current_frame_number, thirteen_A_number);
 
             if (USELIST==1) {
                 free(head);
                 free(linked_list);
             }
 
-            printf("f%d complete\n", f);
-            f++;
-            if (f == FRAMES) break;
+            printf("f%d complete\n", current_frame_number);
         }
     }
 
     // Do post analysis statistics
-    count_mean_pop_per_frame(f);
+    count_mean_pop_per_frame(frames_to_analyse);
     Stats_Report();
     if (doWritePopPerFrame==1) {
-        Write_Pop_Per_Frame(f);
+        Write_Pop_Per_Frame(frames_to_analyse);
     }
 
     free(input_xyz_info.num_particles);
@@ -168,4 +171,10 @@ int main(int argc, char **argv) {
 
     printf("\n\nFIN \n\n");
     return 0;
+}
+
+void calculate_frames_to_process(int frames_in_xyz) {
+    if(frames_to_analyse > frames_in_xyz) {
+        frames_to_analyse = frames_in_xyz;
+    }
 }

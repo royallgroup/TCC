@@ -58,7 +58,7 @@ void stats_report_bonds(FILE *output_file) {
     char buffer[1000];
 
     sprintf(buffer, "maxnB	%d\ncorrectedBonds %d per frame %.5lg per part per frame %.5lg\n" , maxnb, correctedBonds,
-            (double)correctedBonds/FRAMES,(double)correctedBonds/(FRAMES*current_frame_particle_number));
+            (double)correctedBonds/frames_to_analyse,(double)correctedBonds/(frames_to_analyse*particles_in_current_frame));
     printf("%s", buffer);
     fprintf(output_file, "%s", buffer);
 }
@@ -92,7 +92,7 @@ void count_frame_cluster_population(int f) {
 
     for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         pop_per_frame[cluster_type][f] = 0;
-        for(int particle_number = 0; particle_number < current_frame_particle_number; particle_number++) {
+        for(int particle_number = 0; particle_number < particles_in_current_frame; particle_number++) {
             if ((*raw_list[cluster_type])[particle_number] != 'C') {
                 pop_per_frame[cluster_type][f] += 1;
                 num_gross_particles[cluster_type]++;
@@ -100,7 +100,7 @@ void count_frame_cluster_population(int f) {
         }
 
         // Normalise cluster count
-        pop_per_frame[cluster_type][f] /= current_frame_particle_number;
+        pop_per_frame[cluster_type][f] /= particles_in_current_frame;
     }
 }
 

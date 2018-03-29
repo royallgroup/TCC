@@ -274,7 +274,7 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     pop_per_frame = malloc(num_cluster_types*sizeof(double *));
 
     for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-        pop_per_frame[cluster_type] = malloc(FRAMES*sizeof(double));
+        pop_per_frame[cluster_type] = malloc(frames_to_analyse*sizeof(double));
         if (pop_per_frame[cluster_type] == NULL) {
             sprintf(errMsg,"Initialise_Global_Variables(): pop_per_frame malloc out of memory\n");
             Error_no_free(errMsg);
@@ -289,7 +289,7 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
         *num_cluster_list[cluster_type] = 0;
     }
 
-    memset(num_bonds, 0, current_frame_particle_number* sizeof(int));
+    memset(num_bonds, 0, particles_in_current_frame* sizeof(int));
 
     memset(nmem_sp3b, 0, sizeof(int)*max_particle_number);
     memset(nmem_sp3c, 0, sizeof(int)*max_particle_number);
