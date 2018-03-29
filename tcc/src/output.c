@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stats.h>
 #include "output.h"
 #include "tools.h"
 #include "globals.h"
@@ -172,43 +173,56 @@ void Write_Pop_Per_Frame(int f) {
     int cluster_type, frame;
     FILE *file_pointer;
 
-    sprintf(output,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
-    file_pointer = open_file(output, "a");
+    if (doWritePopPerFrame==1) {
 
-    if (file_pointer==NULL)  {
-        sprintf(errMsg,"main() : Error opening file %s",output);	// Always test file open
-        Error(errMsg);
-    }
-    fprintf(file_pointer,"%s\n",output);
+        sprintf(output, "%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame", fXmolName, rcutAA, rcutAB,
+                rcutBB, Vor, fc, PBCs);
+        file_pointer = open_file(output, "a");
 
-    fprintf(file_pointer,"frame	");
-    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-        fprintf(file_pointer, "%s	", cluster_names[cluster_type]);
-    }
-    fprintf(file_pointer,"\n");
-
-    fprintf(file_pointer,"mean	");
-    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-        if(*do_cluster_list[cluster_type] == 1) {
-            fprintf(file_pointer, "%.15lg	", mean_pop_per_frame[cluster_type]);
+        if (file_pointer == NULL) {
+            sprintf(errMsg, "main() : Error opening file %s", output);    // Always test file open
+            Error(errMsg);
         }
-        else {
-            fprintf(file_pointer, "NA	");
-        }
-    }
-    fprintf(file_pointer,"\n");
+        fprintf(file_pointer, "%s\n", output);
 
-    for (frame = 0; frame < f; frame++) {
-        fprintf(file_pointer,"%d	",frame);
-        for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-            if(*do_cluster_list[cluster_type] == 1) {
-                fprintf(file_pointer, "%.15lg	", pop_per_frame[cluster_type][frame]);
-            }
-            else {
+        fprintf(file_pointer, "frame	");
+        for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+            fprintf(file_pointer, "%s	", cluster_names[cluster_type]);
+        }
+        fprintf(file_pointer, "\n");
+
+        fprintf(file_pointer, "mean	");
+        for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+            if (*do_cluster_list[cluster_type] == 1) {
+                fprintf(file_pointer, "%.15lg	", mean_pop_per_frame[cluster_type]);
+            } else {
                 fprintf(file_pointer, "NA	");
             }
         }
-        fprintf(file_pointer,"\n");
+        fprintf(file_pointer, "\n");
+
+        for (frame = 0; frame < f; frame++) {
+            fprintf(file_pointer, "%d	", frame);
+            for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+                if (*do_cluster_list[cluster_type] == 1) {
+                    fprintf(file_pointer, "%.15lg	", pop_per_frame[cluster_type][frame]);
+                } else {
+                    fprintf(file_pointer, "NA	");
+                }
+            }
+            fprintf(file_pointer, "\n");
+        }
+        fclose(file_pointer);
     }
-    fclose(file_pointer);
+}
+
+void write_output_files(int current_frame_number, int eleven_A_number, int thirteen_A_number) {
+    count_number_of_clusters();
+    count_frame_cluster_population(current_frame_number);
+
+    if (doWriteClus == 1) Write_Cluster(current_frame_number);
+    if (doWriteRaw == 1) Write_Raw(current_frame_number);
+    if (doWriteXYZ == 1) Write_Cluster_XYZ(current_frame_number);
+    if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(current_frame_number, eleven_A_number);
+    if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(current_frame_number, thirteen_A_number);
 }

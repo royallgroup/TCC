@@ -103,7 +103,7 @@ void get_NVT_box(FILE *read_box_file) {
     if (feof(read_box_file)) Error("Setup_ReadBox(): end of input file reached\n");
 
     fgets(line, 1000, read_box_file);
-    word = strtok (line," \t");
+    strtok (line," \t");
 
     for(dimension=0; dimension<3; dimension++) {
         word = strtok(NULL, " \t");
@@ -138,7 +138,7 @@ void get_box_file_offsets(FILE *read_box_file, int total_frames) {
 
         box_offsets[frame] = ftell(read_box_file);
         fgets(line, 1000, read_box_file);
-        word = strtok(line, " \t");
+        strtok(line, " \t");
 
         for (dimension = 0; dimension < num_items; dimension++) {
             word = strtok(NULL, " \t");
@@ -161,44 +161,47 @@ void get_box_size(int current_frame_number) {
     int numbers_to_read, i;
     int valid_long = 0;
 
-    read_box_file=fopen(fBoxSizeName,"rb");
-    if(read_box_file==NULL)  {
-        sprintf(error_message,"main() : Error opening boxfile %s",fBoxSizeName);
-        Error_no_free(error_message);
-    }
+    if (box_type != 1) {
 
-    numbers_to_read = 3;
-    if(box_type == 3) numbers_to_read = 6;
-
-    fseek(read_box_file, box_offsets[current_frame_number],SEEK_SET);
-    fgets(line, 1000, read_box_file);
-    word = strtok(line, " \t");
-    for(i=0; i<numbers_to_read; i++) {
-        word = strtok(NULL, " \t");
-        sizes[i] = get_double_from_string(word, &valid_long);
-    }
-
-    sidex = sizes[0];
-    half_sidex = sidex/2;
-    sidey = sizes[1];
-    half_sidey = sidey/2;
-    sidez = sizes[2];
-    half_sidez = sidez/2;
-
-    for(i = 0; i < 3; i++) {
-        if (sizes[i] < 3*rcutAA) {
-            printf("Warning. One box dimension is less than 3 * the bond cutoff length. This may cause "
-                           "clusters to be detected multiple times over periodic boundaries.\n");
-            break;
+        read_box_file = fopen(fBoxSizeName, "rb");
+        if (read_box_file == NULL) {
+            sprintf(error_message, "main() : Error opening boxfile %s", fBoxSizeName);
+            Error_no_free(error_message);
         }
-    }
 
-    if(box_type == 3) {
-        tiltxy = sizes[3];
-        tiltxz = sizes[4];
-        tiltyz = sizes[5];
+        numbers_to_read = 3;
+        if (box_type == 3) numbers_to_read = 6;
+
+        fseek(read_box_file, box_offsets[current_frame_number], SEEK_SET);
+        fgets(line, 1000, read_box_file);
+        strtok(line, " \t");
+        for (i = 0; i < numbers_to_read; i++) {
+            word = strtok(NULL, " \t");
+            sizes[i] = get_double_from_string(word, &valid_long);
+        }
+
+        sidex = sizes[0];
+        half_sidex = sidex / 2;
+        sidey = sizes[1];
+        half_sidey = sidey / 2;
+        sidez = sizes[2];
+        half_sidez = sidez / 2;
+
+        for (i = 0; i < 3; i++) {
+            if (sizes[i] < 3 * rcutAA) {
+                printf("Warning. One box dimension is less than 3 * the bond cutoff length. This may cause "
+                       "clusters to be detected multiple times over periodic boundaries.\n");
+                break;
+            }
+        }
+
+        if (box_type == 3) {
+            tiltxy = sizes[3];
+            tiltxz = sizes[4];
+            tiltyz = sizes[5];
+        }
+        fclose(read_box_file);
     }
-    fclose(read_box_file);
 }
 
 struct xyz_info parse_xyz_file() {
@@ -260,6 +263,11 @@ void initialize_xyz_info(struct xyz_info* input_xyz_info) {
     (*input_xyz_info).data_width = 1000;
     (*input_xyz_info).num_particles = malloc((*input_xyz_info).data_width * sizeof(long));
     (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).data_width * sizeof(long));
+}
+
+void free_xyz_info(struct xyz_info* input_xyz_info) {
+    free((*input_xyz_info).num_particles);
+    free((*input_xyz_info).frame_offsets);
 }
 
 void get_frame_coordinates_from_xyz(const struct xyz_info *input_xyz_info, int frame_number) {

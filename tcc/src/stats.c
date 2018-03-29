@@ -2,23 +2,6 @@
 #include "globals.h"
 #include "tools.h"
 
-void Stats_Init() {
-    int cluster_type;
-
-    num_gross_particles = malloc(num_cluster_types*sizeof(int));
-    total_clusters = malloc(num_cluster_types*sizeof(int));
-
-    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-        num_gross_particles[cluster_type] = 0;
-        total_clusters[cluster_type] = 0;
-    }
-}
-
-void Stats_FreeMem() {
-    free(num_gross_particles);
-    free(total_clusters);
-}
-
 void count_number_of_clusters() {
     for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
         total_clusters[cluster_type] += *num_cluster_list[cluster_type];

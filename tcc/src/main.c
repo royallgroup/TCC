@@ -76,8 +76,6 @@ int* cluster_list_width[] = {&msp3a, &msp3b, &msp3c, &msp4a, &msp4b, &msp4c, &ms
                              &m11A, &m11B, &m11C, &m11E, &m11F, &m11W, &m12A, &m12B, &m12D,
                              &m12E, &m12K, &m13A, &m13B, &m13K, &mFCC, &mHCP, &mBCC_9, &mBCC_15};
 
-void calculate_frames_to_process(int frames_in_xyz);
-
 int main(int argc, char **argv) {
     int current_frame_number;
     int remainder;
@@ -95,10 +93,11 @@ int main(int argc, char **argv) {
     max_particle_number = get_max_particle_number(input_xyz_info);
 
     Initialise_Global_Variables();
-    Stats_Init();
     Setup_Output_Files();
 
-    calculate_frames_to_process(input_xyz_info.total_frames);
+    if(frames_to_analyse > input_xyz_info.total_frames) {
+        frames_to_analyse = input_xyz_info.total_frames;
+    }
 
     for (current_frame_number = 0; current_frame_number < frames_to_analyse; current_frame_number++) {
         remainder = current_frame_number % SAMPLEFREQ;
@@ -106,10 +105,9 @@ int main(int argc, char **argv) {
         if (remainder == 0) {
             particles_in_current_frame = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
-            if (box_type != 1) {
-                get_box_size(current_frame_number);
-            }
+            get_box_size(current_frame_number);
             get_frame_coordinates_from_xyz(&input_xyz_info, current_frame_number);
+
             build_bond_network(current_frame_number);
 
             if (dosp3 == 1) get_basic_clusters();
@@ -138,20 +136,7 @@ int main(int argc, char **argv) {
             if (doBCC9 == 1) Clusters_GetBCC_9();
             if (doBCC15 == 1) Clusters_GetBCC_15();
 
-            // Write output files
-            count_number_of_clusters();
-            count_frame_cluster_population(current_frame_number);
-
-            if (doWriteClus == 1) Write_Cluster(current_frame_number);
-            if (doWriteRaw == 1) Write_Raw(current_frame_number);
-            if (doWriteXYZ == 1) Write_Cluster_XYZ(current_frame_number);
-            if (do11AcenXyz == 1) Write_Cluster_Centers_xyz(current_frame_number, eleven_A_number);
-            if (do13AcenXyz == 1) Write_Cluster_Centers_xyz(current_frame_number, thirteen_A_number);
-
-            if (USELIST==1) {
-                free(head);
-                free(linked_list);
-            }
+            write_output_files(current_frame_number, eleven_A_number, thirteen_A_number);
 
             printf("f%d complete\n", current_frame_number);
         }
@@ -160,21 +145,11 @@ int main(int argc, char **argv) {
     // Do post analysis statistics
     count_mean_pop_per_frame(frames_to_analyse);
     Stats_Report();
-    if (doWritePopPerFrame==1) {
-        Write_Pop_Per_Frame(frames_to_analyse);
-    }
+    Write_Pop_Per_Frame(frames_to_analyse);
 
-    free(input_xyz_info.num_particles);
-    free(input_xyz_info.frame_offsets);
-    Stats_FreeMem();
+    free_xyz_info(&input_xyz_info);
     Free_All_Variables();
 
     printf("\n\nFIN \n\n");
     return 0;
-}
-
-void calculate_frames_to_process(int frames_in_xyz) {
-    if(frames_to_analyse > frames_in_xyz) {
-        frames_to_analyse = frames_in_xyz;
-    }
 }

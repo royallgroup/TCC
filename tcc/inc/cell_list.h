@@ -14,9 +14,9 @@ void fill_cell_list();  // sorts all the particles into cells, result given by h
 
 int get_scalar_cell_index(int tix, int tiy, int tiz);
 
-void sort_bonds();
-
 void set_up_cell_list();
+
+void free_cell_list();
 
 #endif
 

@@ -100,6 +100,8 @@ void build_bond_network(int frame_number) {
         if (num_bonds[particle_number] > maxnb) maxnb = num_bonds[particle_number];
     }
 
+    free_cell_list();
+
     printf("\n");
     printf("Got Bonds\n");
 }
