@@ -3,10 +3,6 @@
 
 #include "stdio.h"
 
-void Stats_Init();
-
-void Stats_FreeMem();
-
 void count_number_of_clusters();
 
 void Stats_Report();

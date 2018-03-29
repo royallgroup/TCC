@@ -103,7 +103,7 @@ void get_NVT_box(FILE *read_box_file) {
     if (feof(read_box_file)) Error("Setup_ReadBox(): end of input file reached\n");
 
     fgets(line, 1000, read_box_file);
-    word = strtok (line," \t");
+    strtok (line," \t");
 
     for(dimension=0; dimension<3; dimension++) {
         word = strtok(NULL, " \t");
@@ -138,7 +138,7 @@ void get_box_file_offsets(FILE *read_box_file, int total_frames) {
 
         box_offsets[frame] = ftell(read_box_file);
         fgets(line, 1000, read_box_file);
-        word = strtok(line, " \t");
+        strtok(line, " \t");
 
         for (dimension = 0; dimension < num_items; dimension++) {
             word = strtok(NULL, " \t");
@@ -172,7 +172,7 @@ void get_box_size(int current_frame_number) {
 
     fseek(read_box_file, box_offsets[current_frame_number],SEEK_SET);
     fgets(line, 1000, read_box_file);
-    word = strtok(line, " \t");
+    strtok(line, " \t");
     for(i=0; i<numbers_to_read; i++) {
         word = strtok(NULL, " \t");
         sizes[i] = get_double_from_string(word, &valid_long);
@@ -260,6 +260,11 @@ void initialize_xyz_info(struct xyz_info* input_xyz_info) {
     (*input_xyz_info).data_width = 1000;
     (*input_xyz_info).num_particles = malloc((*input_xyz_info).data_width * sizeof(long));
     (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).data_width * sizeof(long));
+}
+
+void free_xyz_info(struct xyz_info* input_xyz_info) {
+    free((*input_xyz_info).num_particles);
+    free((*input_xyz_info).frame_offsets);
 }
 
 void get_frame_coordinates_from_xyz(const struct xyz_info *input_xyz_info, int frame_number) {

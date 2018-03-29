@@ -230,11 +230,11 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     ssp3a=malloc(max_particle_number*sizeof(char)); if (ssp3a==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp3a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp3b=malloc(max_particle_number*sizeof(char)); if (ssp3b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp3b[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp3c=malloc(max_particle_number*sizeof(char)); if (ssp3c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp3c[] malloc out of memory\n"); Error_no_free(errMsg); }
-    
+
     ssp4a=malloc(max_particle_number*sizeof(char)); if (ssp4a==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp4a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp4b=malloc(max_particle_number*sizeof(char)); if (ssp4b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp4b[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp4c=malloc(max_particle_number*sizeof(char)); if (ssp4c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp4c[] malloc out of memory\n"); Error_no_free(errMsg); }
-    
+
     ssp5a=malloc(max_particle_number*sizeof(char)); if (ssp5a==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp5a[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp5b=malloc(max_particle_number*sizeof(char)); if (ssp5b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp5b[] malloc out of memory\n"); Error_no_free(errMsg); }
     ssp5c=malloc(max_particle_number*sizeof(char)); if (ssp5c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): ssp5c[] malloc out of memory\n"); Error_no_free(errMsg); }
@@ -279,6 +279,16 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
             sprintf(errMsg,"Initialise_Global_Variables(): pop_per_frame malloc out of memory\n");
             Error_no_free(errMsg);
         }
+    }
+
+
+
+    num_gross_particles = malloc(num_cluster_types*sizeof(int));
+    total_clusters = malloc(num_cluster_types*sizeof(int));
+
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        num_gross_particles[cluster_type] = 0;
+        total_clusters[cluster_type] = 0;
     }
 }
 
@@ -354,4 +364,6 @@ void Free_All_Variables()  {  // Free bond detection variables
     }
 
     free(pop_per_frame);
+    free(num_gross_particles);
+    free(total_clusters);
 }

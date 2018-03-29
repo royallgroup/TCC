@@ -95,7 +95,6 @@ int main(int argc, char **argv) {
     max_particle_number = get_max_particle_number(input_xyz_info);
 
     Initialise_Global_Variables();
-    Stats_Init();
     Setup_Output_Files();
 
     calculate_frames_to_process(input_xyz_info.total_frames);
@@ -164,9 +163,7 @@ int main(int argc, char **argv) {
         Write_Pop_Per_Frame(frames_to_analyse);
     }
 
-    free(input_xyz_info.num_particles);
-    free(input_xyz_info.frame_offsets);
-    Stats_FreeMem();
+    free_xyz_info(&input_xyz_info);
     Free_All_Variables();
 
     printf("\n\nFIN \n\n");
