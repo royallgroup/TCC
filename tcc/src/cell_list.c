@@ -116,3 +116,10 @@ void set_up_cell_list() {
         linked_list[i]=0;
     }
 }
+
+void free_cell_list() {
+    if (USELIST == 1) {
+        free(head);
+        free(linked_list);
+    }
+}

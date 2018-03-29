@@ -158,15 +158,6 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
     return the_array;
 }
 
-int sort_list_of_ints(const void *lhs, const void *rhs) {
-    int n1 = *(int *) lhs;
-    int n2 = *(int *) rhs;
-
-    if (n1 < n2) return -1;
-    else if (n2 < n1) return 1;
-    else return 0;
-}
-
 int sort_list_of_lists_of_ints(const void *lhs, const void *rhs) {
     int* n1 = *(int **) lhs;
     int* n2 = *(int **) rhs;
