@@ -243,7 +243,7 @@ void analyse_cluster_dependencies() {
     if(doBCC9 == 1) dosp4b = 1; dosp4c = 1;
     if(doFCC == 1) dosp3b = 1; dosp3c = 1;
     if(doHCP == 1) dosp3c = 1;
-    if(do13K == 1) dosp3c = 1; dosp3c = 1; do11F = 1;
+    if(do13K == 1) dosp3c = 1; dosp4c = 1; do11F = 1;
     if(do13B == 1) dosp5c = 1;
     if(do13A == 1) do12B = 1;
     if(do12K == 1) do11A = 1;
@@ -253,5 +253,32 @@ void analyse_cluster_dependencies() {
     if(do12A == 1) do11C = 1;
     if(do11W == 1) do10B = 1;
     if(do11F == 1) dosp3c = 1; dosp4c = 1;
+    if(do11E == 1) dosp5c = 1; do9B = 1;
+    if(do11C == 1) dosp5c = 1;
+    if(do11B == 1) do9B = 1;
+    if(do11A == 1) dosp4c = 1;
+    if(do10W == 1) dosp5b = 1;
+    if(do10K == 1) do9K = 1;
+    if(do10B == 1) dosp5c = 1; do9K = 1;
+    if(do10A == 1) dosp4b = 1;
+    if(do9K == 1) dosp4c = 1;
+    if(do9B == 1) dosp5c = 1;
+    if(do9A ==1) dosp4b = 1;
+    if(do8K == 1) dosp3c =1;
+    if(do8B == 1) dosp5c = 1;
+    if(do8A == 1) dosp5b = 1; dosp5c = 1;
+    if(do7K == 1) dosp3c = 1;
+    if(do6Z == 1) dosp3c = 1;
+    if(dosp5c == 1) dosp5 = 1;
+    if(dosp5b == 1) dosp5 = 1;
+    if(dosp5a == 1) dosp5 = 1;
+    if(dosp4c == 1) dosp4 = 1;
+    if(dosp4b == 1) dosp4 = 1;
+    if(dosp4a == 1) dosp4 = 1;
+    if(dosp3c == 1) dosp3 = 1;
+    if(dosp3b == 1) dosp3 = 1;
+    if(dosp3a == 1) dosp3 = 1;
+    if(dosp5 == 1) dosp4 = 1;
+    if(dosp4 == 1) dosp3 = 1;
 
 }

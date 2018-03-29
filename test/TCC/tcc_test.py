@@ -33,7 +33,7 @@ class FileOperations:
             else:
                 print("I dont know how to build for your system:%s", system())
                 return 1
-            if make.returncode ==0 and build.returncode == 0:
+            if make.returncode == 0 and build.returncode == 0:
                 return 0
             else:
                 return 1
@@ -87,7 +87,10 @@ class FileChecks:
 
 def test_build():
     # Build the binary before executing tests
-    with cd("../../build"):
+    build_directory = "../../build"
+    if not os.path.exists(build_directory):
+        os.makedirs(build_directory)
+    with cd(build_directory):
         assert FileOperations.build_tcc() == 0
 
 

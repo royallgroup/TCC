@@ -14,3 +14,4 @@ build/
 .cache/
 tools/net_clusters/raw_output/
 tools/net_clusters/*.xyz
+.pytest_cache/

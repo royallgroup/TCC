@@ -136,6 +136,8 @@ int main(int argc, char **argv) {
             if (doFCC == 1) Clusters_GetFCC();
             if (doHCP == 1) Clusters_GetHCP();
             if (doBCC9 == 1) Clusters_GetBCC_9();
+            // BCC15 currently broken so turned off
+            doBCC15 = 0;
             if (doBCC15 == 1) Clusters_GetBCC_15();
 
             write_output_files(current_frame_number, eleven_A_number, thirteen_A_number);
