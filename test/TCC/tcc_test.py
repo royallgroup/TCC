@@ -6,6 +6,7 @@ import os
 from subprocess import run
 from platform import system
 
+
 class cd:
     """Context manager for changing the current working directory"""
     def __init__(self, newPath):
@@ -44,7 +45,7 @@ class FileOperations:
     def copy_tcc():
         # Copy the exectuable to the current directory
         try:
-            shutil.copy(glob("../../bin/tcc*")[0], os.getcwd())
+            shutil.copy(glob("../../../bin/tcc*")[0], os.getcwd())
             return 0
         except Exception as e:
             print(e)
@@ -82,8 +83,8 @@ class FileChecks:
 
 
 def test_build():
-    # Build the binary before ececuting tests
-    with cd("../build"):
+    # Build the binary before executing tests
+    with cd("../../build"):
         assert FileOperations.build_tcc() == 0
 
 

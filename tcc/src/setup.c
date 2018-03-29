@@ -74,7 +74,7 @@ void Setup_Output_Files() {
 }
 
 void Initialise_Global_Variables() { // Initialize lots of important variables for static TCC algorithm
-    int i, f, j;
+    int cluster_type, f, j;
     char errMsg[1000];
 
     dosp3=dosp3a=dosp3b=dosp3c=1;
@@ -100,9 +100,6 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     mmem_sp3b=mmem_sp3c=mmem_sp4b=mmem_sp4c=mmem_sp5b=mmem_sp5c=initNoClustPerPart;
     
     mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
-    for(i=0; i<num_cluster_types; i++) {
-        mean_pop_per_frame[i] = 0.0;
-    }
 
     tiltxy = tiltxz = tiltyz = 0;
     x = malloc(max_particle_number*sizeof(double));   if (x==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): x[] malloc out of memory\n");    Error_no_free(errMsg); }    // positions of particles in a configuration
@@ -276,18 +273,11 @@ void Initialise_Global_Variables() { // Initialize lots of important variables f
     // particle fraction of particles in each cluster in each frame
     pop_per_frame = malloc(num_cluster_types*sizeof(double *));
 
-    for(i=0; i<num_cluster_types; i++) {
-        pop_per_frame[i] = malloc(FRAMES*sizeof(double));
-        if (pop_per_frame[i]==NULL) {
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        pop_per_frame[cluster_type] = malloc(FRAMES*sizeof(double));
+        if (pop_per_frame[cluster_type] == NULL) {
             sprintf(errMsg,"Initialise_Global_Variables(): pop_per_frame malloc out of memory\n");
             Error_no_free(errMsg);
-        }
-    }
-
-    // Zero the pop per frame arrays
-    for(i=0; i<num_cluster_types; i++) {
-        for (f=0; f<FRAMES; f++) {
-            pop_per_frame[i][f] = 0;
         }
     }
 }
@@ -325,63 +315,18 @@ void Free_All_Variables()  {  // Free bond detection variables
     free(fBoxSizeName);
     free(x); free(y); free(z);
 
-    for (i=0; i<max_particle_number; ++i) {
+    for (i = 0; i < max_particle_number; i++) {
         free(bNums[i]); 
         free(squared_bondlengths[i]);
     }
     free(bNums); free(squared_bondlengths); free(num_bonds);
-    
-    for (i=0; i<num_cluster_types; ++i) {
-        free(pop_per_frame[i]);
-    }
-    free(pop_per_frame);
 
-    for (i=0; i<msp3a; ++i) free(hcsp3a[i]);
-    for (i=0; i<msp3b; ++i) free(hcsp3b[i]);
-    for (i=0; i<msp3c; ++i) free(hcsp3c[i]);
-    for (i=0; i<msp4a; ++i) free(hcsp4a[i]);
-    for (i=0; i<msp4b; ++i) free(hcsp4b[i]);
-    for (i=0; i<msp4c; ++i) free(hcsp4c[i]);
-    for (i=0; i<msp5a; ++i) free(hcsp5a[i]);
-    for (i=0; i<msp5b; ++i) free(hcsp5b[i]);
-    for (i=0; i<msp5c; ++i) free(hcsp5c[i]);
-    for (i=0; i<m6Z; ++i) free(hc6Z[i]);
-    for (i=0; i<m7K; ++i) free(hc7K[i]);
-    for (i=0; i<m8A; ++i) free(hc8A[i]);
-    for (i=0; i<m8B; ++i) free(hc8B[i]);
-    for (i=0; i<m8K; ++i) free(hc8K[i]);
-    for (i=0; i<m9A; ++i) free(hc9A[i]);
-    for (i=0; i<m9B; ++i) free(hc9B[i]);
-    for (i=0; i<m9K; ++i) free(hc9K[i]);
-    for (i=0; i<m10A; ++i) free(hc10A[i]);
-    for (i=0; i<m10B; ++i) free(hc10B[i]);
-    for (i=0; i<m10K; ++i) free(hc10K[i]);
-    for (i=0; i<m10W; ++i) free(hc10W[i]);
-    for (i=0; i<m11A; ++i) free(hc11A[i]);
-    for (i=0; i<m11B; ++i) free(hc11B[i]);
-    for (i=0; i<m11C; ++i) free(hc11C[i]);
-    for (i=0; i<m11E; ++i) free(hc11E[i]);
-    for (i=0; i<m11F; ++i) free(hc11F[i]);
-    for (i=0; i<m11W; ++i) free(hc11W[i]);
-    for (i=0; i<m12A; ++i) free(hc12A[i]);
-    for (i=0; i<m12B; ++i) free(hc12B[i]);
-    for (i=0; i<m12D; ++i) free(hc12D[i]);
-    for (i=0; i<m12E; ++i) free(hc12E[i]);
-    for (i=0; i<m12K; ++i) free(hc12K[i]);
-    for (i=0; i<m13A; ++i) free(hc13A[i]);
-    for (i=0; i<m13B; ++i) free(hc13B[i]);
-    for (i=0; i<m13K; ++i) free(hc13K[i]);
-    for (i=0; i<mFCC; ++i) free(hcFCC[i]);
-    for (i=0; i<mHCP; ++i) free(hcHCP[i]);
-    for (i=0; i<mBCC_9; ++i) free(hcBCC_9[i]);
-    for (i=0; i<mBCC_15; ++i) free(hcBCC_15[i]);
-    
-    for (i=0; i<max_particle_number; ++i) free(mem_sp3b[i]);
-    for (i=0; i<max_particle_number; ++i) free(mem_sp3c[i]);
-    for (i=0; i<max_particle_number; ++i) free(mem_sp4b[i]);
-    for (i=0; i<max_particle_number; ++i) free(mem_sp4c[i]);
-    for (i=0; i<max_particle_number; ++i) free(mem_sp5b[i]);
-    for (i=0; i<max_particle_number; ++i) free(mem_sp5c[i]);
+    for (i = 0; i < max_particle_number; i++) free(mem_sp3b[i]);
+    for (i = 0; i < max_particle_number; i++) free(mem_sp3c[i]);
+    for (i = 0; i < max_particle_number; i++) free(mem_sp4b[i]);
+    for (i = 0; i < max_particle_number; i++) free(mem_sp4c[i]);
+    for (i = 0; i < max_particle_number; i++) free(mem_sp5b[i]);
+    for (i = 0; i < max_particle_number; i++) free(mem_sp5c[i]);
     
     free(mem_sp3b);
     free(mem_sp3c);
@@ -397,27 +342,16 @@ void Free_All_Variables()  {  // Free bond detection variables
     free(nmem_sp5b);
     free(nmem_sp5c);
 
-    free(hcsp3a); free(hcsp3b); free(hcsp3c);
-    free(hcsp4a); free(hcsp4b); free(hcsp4c);
-    free(hcsp5a); free(hcsp5b); free(hcsp5c);
-    free(hc6Z); free(hc7K);
-    free(hc8A); free(hc8B); free(hc8K);
-    free(hc9A); free(hc9B); free(hc9K);
-    free(hc10A); free(hc10B); free(hc10K); free(hc10W);
-    free(hc11A); free(hc11B); free(hc11C); free(hc11E); free(hc11F); free(hc11W);
-    free(hc12A); free(hc12B); free(hc12D); free(hc12E); free(hc12K);
-    free(hc13A); free(hc13B); free(hc13K);
-    free(hcFCC); free(hcHCP); free(hcBCC_9); free(hcBCC_15);
 
-    free(ssp3a); free(ssp3b); free(ssp3c);
-    free(ssp4a); free(ssp4b); free(ssp4c);
-    free(s6Z); free(s7K);
-    free(ssp5a); free(ssp5b); free(ssp5c);
-    free(s8A); free(s8B); free(s8K);
-    free(s9A); free(s9B); free(s9K);
-    free(s10A); free(s10B); free(s10K); free(s10W);
-    free(s11A); free(s11B); free(s11C); free(s11E); free(s11F); free(s11W);
-    free(s12A); free(s12B); free(s12D); free(s12E); free(s12K);
-    free(s13A); free(s13B); free(s13K);
-    free(sFCC);free(sHCP); free(sBCC_9); free(sBCC_15);
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        for (i = 0; i < *(cluster_list_width[cluster_type]); i++) {
+            free((*cluster_list[cluster_type])[i]);
+        }
+        free(pop_per_frame[cluster_type]);
+        free(*raw_list[cluster_type]);
+        free(*cluster_list[cluster_type]);
+
+    }
+
+    free(pop_per_frame);
 }

@@ -67,6 +67,11 @@ int*** cluster_list[] = {&hcsp3a, &hcsp3b, &hcsp3c, &hcsp4a, &hcsp4b, &hcsp4c, &
                          &hc11A, &hc11B, &hc11C, &hc11E, &hc11F, &hc11W, &hc12A, &hc12B, &hc12D,
                          &hc12E, &hc12K, &hc13A, &hc13B, &hc13K, &hcFCC, &hcHCP, &hcBCC_9, &hcBCC_15};
 
+int* cluster_list_width[] = {&msp3a, &msp3b, &msp3c, &msp4a, &msp4b, &msp4c, &msp5a, &msp5b, &msp5c,
+                             &m6Z, &m7K, &m8A, &m8B, &m8K, &m9A, &m9B, &m9K, &m10A, &m10B, &m10K, &m10W,
+                             &m11A, &m11B, &m11C, &m11E, &m11F, &m11W, &m12A, &m12B, &m12D,
+                             &m12E, &m12K, &m13A, &m13B, &m13K, &mFCC, &mHCP, &mBCC_9, &mBCC_15};
+
 int main(int argc, char **argv) {
     int current_frame_number, f, i;
     int remainder;
@@ -77,7 +82,7 @@ int main(int argc, char **argv) {
     Setup_ReadIniFile(fInputParamsName);    // read input params
     printf("box size file: %s\n",fBoxSizeName);
 
-    input_xyz_info = parse_xyz_file(input_xyz_info);
+    input_xyz_info = parse_xyz_file();
 
     parse_box_file(input_xyz_info.total_frames);
 
@@ -129,9 +134,8 @@ int main(int argc, char **argv) {
             if (doBCC15 == 1) Clusters_GetBCC_15();
 
             // Write output files
-            Accumulate_Stats();
-            Stats_Analyse();
-            Pop_Per_Frame(f);
+            count_number_of_clusters();
+            count_frame_cluster_population(f);
 
             if (doWriteClus == 1) Write_Cluster(f);
             if (doWriteRaw == 1) Write_Raw(f);
@@ -143,21 +147,19 @@ int main(int argc, char **argv) {
                 free(head);
                 free(linked_list);
             }
-            
+
             printf("f%d complete\n", f);
             f++;
             if (f == FRAMES) break;
         }
     }
 
-    Normalise_Populations();
-    
+    // Do post analysis statistics
+    count_mean_pop_per_frame(f);
+    Stats_Report();
     if (doWritePopPerFrame==1) {
         Write_Pop_Per_Frame(f);
-    }    
-
-
-    Stats_Report();
+    }
 
     free(input_xyz_info.num_particles);
     free(input_xyz_info.frame_offsets);
