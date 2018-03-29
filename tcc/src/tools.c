@@ -5,11 +5,11 @@
 #include <math.h>
 #include <string.h>
 
-#ifdef __linux__
-#include <sys/stat.h>
+#if defined(__linux__) || defined(__APPLE__)
+    #include <sys/stat.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32)
     #include "direct.h"
 #endif
 
@@ -96,17 +96,20 @@ int make_directory(const char* name) {
     int error_number;
     char errMsg[100];
 
-    #ifdef __linux__
+    #if defined(_WIN32)
+        if(_mkdir(name) != 0) {
+            error_number = errno;
+        }
+        else return 0;
+    #elif defined(__linux__) || defined(__APPLE__)
         if(mkdir(name, 0744) != 0) {
             error_number = errno;
         }
         else return 0;
     #else
-        if(_mkdir(name) != 0) {
-            error_number = errno;
-        }
-        else return 0;
+        Error("Compiler Not Recognised");
     #endif
+
     if(error_number == 17) {
         return 0;
     }
