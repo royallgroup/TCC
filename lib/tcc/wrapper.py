@@ -3,8 +3,9 @@ The main class is TCCWrapper, but there are a number of support classes
 to handle the parameters needed to interface with the TCC.
 """
 
-import sys, tempfile, shutil
-from enum import Enum
+import os, sys, tempfile, shutil, pandas
+from glob import glob
+from . import xyz, structures
 
 class BoxType:
     """Enumerations for the simulation box options."""
@@ -14,7 +15,7 @@ class BoxType:
 
 class BondType:
     """Enumerations for the bond detection algorithm."""
-    simple_bonds = 0
+    simple = 0
     voronoi = 1
 
 class TCCDefaults:
@@ -103,9 +104,9 @@ class TCCDefaults:
 
         section = dict()
 
-        section['bonds'] = True
+        section['bonds'] = False
         section['clusts'] = False
-        section['raw'] = True
+        section['raw'] = False
         section['do_XYZ'] = False
         section['11a'] = False
         section['13a'] = False
@@ -143,6 +144,9 @@ class TCCWrapper:
         It's not strictly necessary to output these with section headings,
         but it makes the resulting input script more legible and thus
         easier for debugging.
+
+        Args:
+            out: file stream or path to write to
         """
         if type(out) is str: out = open(out, 'w')
 
@@ -159,5 +163,52 @@ class TCCWrapper:
 
             out.write('\n')
 
-    def run(self):
-        self.serialise_input_parameters()
+    def serialise_box(self, box, out=sys.stdout):
+        """Serialise the box box size in the TCC format.
+
+        Args:
+            out: file stream or path to write to
+        """
+        if type(out) is str: out = open(out, 'w')
+        out.write('#iter Lx Ly Lz\n')
+        for frame,lengths in enumerate(box):
+            out.write('%d %s\n' % (frame, ' '.join(map(str, lengths))))
+
+    def parse_static_clusters(self):
+        """Retrive the static cluster information after running the TCC.
+        Returns:
+            pandas table giving the static cluster information
+        """
+        summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
+        table = pandas.read_table(summary_file, index_col='Clust', skiprows=1, nrows=len(structures.clusters))
+        table.fillna(0., inplace=True)
+        return table
+
+    def run(self, box, x, atoms='A', silent=True, **output):
+        """Run the TCC
+
+        Args:
+            box: box size for boundary conditions
+            x: coordinates of atoms
+            atoms: species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.
+            silent: if set TCC executable console output will be suppressed
+            output: dictionary of flags setting output options (see example INI files for possible options, or defaults)
+        Returns:
+            pandas table giving the static cluster information
+        """
+
+        # Create the INI file.
+        self.input_parameters['Output'] = TCCDefaults.output()
+        for key,value in output.items():
+            self.input_parameters['Output'][key] = value
+        self.serialise_input_parameters('%s/inputparameters.ini' % self.working_directory)
+
+        # Create the box and configuration files.
+        self.serialise_box([box], '%s/box.txt' % self.working_directory)
+        xyz.write(x, '%s/run.xyz' % self.working_directory, atoms=atoms)
+
+        # Run the TCC executable.
+        if not silent: os.system('(cd %s; tcc)' % self.working_directory)
+        else: os.system('(cd %s; tcc > /dev/null)' % self.working_directory)
+
+        return self.parse_static_clusters()

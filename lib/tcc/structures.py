@@ -1,26 +1,73 @@
 """Information on clusters used by the TCC."""
 
-class Translation:
-    """Translations between commonly used structure names to the
-    internal names used by the TCC and its outputs (which also
-    contains redundant point group information.
-    """
+# Commonly used names for structures and their equivalents in the TCC naming conventions.
+cluster_index = {
+    'sp3':  'sp3a',
+    'sp3a': 'sp3a',
+    'sp3b': 'sp3b',
+    'sp3c': 'sp3c',
+    '5A':   'sp3c',
+    'sp4':  'sp4a',
+    'sp4a': 'sp4a',
+    'sp4b': 'sp4b',
+    'sp4c': 'sp4c',
+    '6A':   'sp4c',
+    '6Z':   '6Z',
+    'sp5':  'sp5a',
+    'sp5a': 'sp5a',
+    'sp5b': 'sp5b',
+    'sp5c': 'sp5c',
+    '7A':   'sp5c',
+    '7K':   '7K',
+    '8A':   '8A',
+    '8B':   '8B',
+    '8K':   '8K',
+    '9A':   '9A',
+    '9B':   '9B',
+    '9K':   '9K',
+    '10A':  '10A',
+    '10B':  '10B',
+    '10K':  '10K',
+    '10W':  '10W',
+    '11A':  '11A',
+    '11B':  '11B',
+    '11C':  '11C',
+    '11D':  '11C',
+    '11E':  '11E',
+    '11F':  '11F',
+    '11W':  '11W',
+    '12A':  '12A',
+    '12B':  '12B',
+    '12C':  '12B',
+    '12D':  '12D',
+    '12E':  '12E',
+    '12K':  '12K',
+    '13A':  '13A',
+    '13B':  '13B',
+    '13K':  '13K',
+    'FCC':  'FCC',
+    'HCP':  'HCP',
+    'BCC_9': 'BCC_9',
+    'BCC_15': 'BCC_15'}
 
-    structure_to_tcc_id = {
-        'sp3': 'sp3', 'sp3a': 'sp3a', 'sp3b': 'sp3b', '5A': '5A_D3h',
-        'sp4': 'sp4', 'sp4a': 'sp4a', 'sp4b': 'sp4b', 'sp4c': 'sp4c',
-        '6A': '6A_Oh', '6Z': '6Z_C2v', 'tetra': 'tetra',
-        'sp5': 'sp5', 'sp5a': 'sp5a', 'sp5b': 'sp5b',
-        '7A': '7A_D5h', '7K': '7K',
-        '8A': '8A_D2d', '8B': '8B_Cs', '8K': '8K',
-        '9A': '9A_D3h', '9B': '9B_C2v', '9K': '9K',
-        '10A': '10A_D4d', '10B': '10B_C3v', '10K': '10K', '10W': '10W',
-        '11A': '11A_D4d', '11B': '11B_C2v', '11C': '11CD', '11E': '11E_C2',
-        '11F': '11F_C2v', '11W': '11W_Cs',
-        '12A': '12A_C2v', '12B': '12BC', '12D': '12D_D2d',
-        '12E': '12E_D3h', '12K': '12K',
-        '13A': '13A_Ih', '13B': '13B_D5h', '13K': '13K',
-        'FCC': 'FCC_m13', 'HCP': 'HCP_m13',
-        'BCC_9': 'BCC_m9', 'BCC_15': 'BCC_m15'}
+clusters = sorted(list(set(cluster_index.values())))
+symmetry_number = {cluster: 1 for cluster in clusters}
+symmetry_number['sp3b'] = 4
+symmetry_number['sp4c'] = 3
 
-    tcc_id_to_structure = {value: key for key,value in structure_to_tcc_id.items()}
+# Components of each cluster in terms of elementary structures (and itself) for e.g. unit testing.
+# Each cluster 'contains' at least one of itself by virtue of equality, though may find more it has symmetry axes.
+composition = {cluster: {cluster: symmetry_number[cluster]} for cluster in clusters}
+#for cluster in clusters: composition[cluster][cluster] = 1
+
+# A simple 3 membered ring: sp3a
+composition['sp3a']['sp3a'] = 1
+# The double tetrahedron: sp3c
+composition['sp3c']['sp3b'] = 6
+
+# The octahedron: sp4c
+composition['sp4c']['sp3a'] = 8
+
+# The polytetrahedron: 6Z
+composition['6Z']['sp3b'] = 8
+composition['6Z']['sp3c'] = 2
