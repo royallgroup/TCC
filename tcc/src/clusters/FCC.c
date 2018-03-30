@@ -201,19 +201,19 @@ void Clusters_GetFCC() {   // Detect 13 particle FCC clusters
 }
 
 void Cluster_Write_FCC() {
+    sFCC[hcFCC[nFCC][0]] = 'S';
     if(sFCC[hcFCC[nFCC][1]] == 'C') sFCC[hcFCC[nFCC][1]] = 'B';
     if(sFCC[hcFCC[nFCC][2]] == 'C') sFCC[hcFCC[nFCC][2]] = 'B';
-    if(sFCC[hcFCC[nFCC][5]] == 'C') sFCC[hcFCC[nFCC][5]] = 'B';
-    if(sFCC[hcFCC[nFCC][6]] == 'C') sFCC[hcFCC[nFCC][6]] = 'B';
-    if(sFCC[hcFCC[nFCC][8]] == 'C') sFCC[hcFCC[nFCC][8]] = 'B';
-    if(sFCC[hcFCC[nFCC][9]] == 'C') sFCC[hcFCC[nFCC][9]] = 'B';
     if(sFCC[hcFCC[nFCC][3]] != 'S') sFCC[hcFCC[nFCC][3]] = 'O';
     if(sFCC[hcFCC[nFCC][4]] != 'S') sFCC[hcFCC[nFCC][4]] = 'O';
+    if(sFCC[hcFCC[nFCC][5]] == 'C') sFCC[hcFCC[nFCC][5]] = 'B';
+    if(sFCC[hcFCC[nFCC][6]] == 'C') sFCC[hcFCC[nFCC][6]] = 'B';
     if(sFCC[hcFCC[nFCC][7]] != 'S') sFCC[hcFCC[nFCC][7]] = 'O';
+    if(sFCC[hcFCC[nFCC][8]] == 'C') sFCC[hcFCC[nFCC][8]] = 'B';
+    if(sFCC[hcFCC[nFCC][9]] == 'C') sFCC[hcFCC[nFCC][9]] = 'B';
     if(sFCC[hcFCC[nFCC][10]] != 'S') sFCC[hcFCC[nFCC][10]] = 'O';
     if(sFCC[hcFCC[nFCC][11]] != 'S') sFCC[hcFCC[nFCC][11]] = 'O';
     if(sFCC[hcFCC[nFCC][12]] != 'S') sFCC[hcFCC[nFCC][12]] = 'O';
-    sFCC[hcFCC[nFCC][0]] = 'S';
 
     ++nFCC;
 }

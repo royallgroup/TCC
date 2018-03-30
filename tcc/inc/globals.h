@@ -44,8 +44,9 @@ int Vor;    // 0 use simple bond length method build_bond_network(), 1 use Voron
 int PBCs;   // 0 do not impliment periodic boundary conditions, 1 implement periodic boundary conditions
 int nB; // max number of bonds per particle
 int USELIST;    // 0  do not use cell list, 1 use cell list
-int doWriteBonds;   // write bonds files out
+int analyse_all_clusters; // 0 Read clusters to analyse from file, 1 analyse all clusters
 
+int doWriteBonds;   // write bonds files out
 int doWriteClus;    // write out indices of each detected cluster
 int doWriteRaw; // write raw_*** cluster xmol files out
 int do11AcenXyz; // write centres of 11A

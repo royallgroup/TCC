@@ -55,10 +55,10 @@ void Get_Bonds_With_Voronoi() {
         add_new_voronoi_bond(particle_1, num_particle_1_neighbours, particle_1_neighbours, store_dr2, particle_1_bonds);
     }
 
-    free(store_dr2);
     free(particle_1_neighbours);
     free(particle_1_bonds);
     free(particle_1_bond_lengths);
+    free(store_dr2);
 }
 
 void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const int *sorted_particle_1_neighbours,

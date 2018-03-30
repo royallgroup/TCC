@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include "globals.h"
 
-void Setup_ReadIniFile(char *);
+void read_ini_file(char *);
+
+void read_clusters_to_analyse();
 
 void parse_box_file(int total_frames);
 

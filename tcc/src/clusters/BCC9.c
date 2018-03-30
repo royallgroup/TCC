@@ -265,10 +265,10 @@ void Clusters_GetBCC_9() {
 
 void Cluster_Write_BCC9() {
     int i;
+    sBCC_9[hcBCC_9[nBCC_9][0]] = 'S';
     for (i = 1; i< 9; i++){
         if (sBCC_9[hcBCC_9[nBCC_9][i]] == 'C') sBCC_9[hcBCC_9[nBCC_9][i]] = 'B';
     }
-    sBCC_9[hcBCC_9[nBCC_9][0]] = 'S';
 
     ++nBCC_9;
 }

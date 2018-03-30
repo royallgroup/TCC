@@ -162,10 +162,10 @@ int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i) {
 
 void Cluster_Write_13K() {
     int i;
+    s13K[hc13K[n13K][0]] = 'S';
     for(i=1; i<11; i++) {
         if (s13K[hc13K[n13K][i]] == 'C') s13K[hc13K[n13K][i]] = 'B';
     }
-    s13K[hc13K[n13K][0]] = 'S';
     if(s13K[hc13K[n13K][11]] != 'S') s13K[hc13K[n13K][11]] = 'O';
     if(s13K[hc13K[n13K][12]] != 'S') s13K[hc13K[n13K][12]] = 'O';
 }
