@@ -3,106 +3,101 @@
 #include "bonds.h"
 #include "tools.h"
 
-void Clusters_Get6Z() {    // Detect 6Z clusters from 2 5A clusters
-    int flg;
-    int i, j, j2, k, l;
-    int cnt;
-    int s1a, s2a, s1b, s2b;
-    int clusSize=6;
+void Clusters_Get6Z() {
 
-    s1a=s2a=s1b=s2b=-1;
+    int first_spindles[2], second_spindles[2], common_ring_particles[2];
+    int *first_5A_cluster, *second_5A_cluster;
+    int first_5A_id, second_5A_id;
+    int first_5A_neighbours;
 
-
-    for (i=0; i<nsp3c-1; ++i) {  // loop over all 5A_i
-        for (j2=0; j2<1; ++j2) {
-            for (j=0; j<nmem_sp3c[hcsp3c[i][j2]]; ++j) {  // loop over all 5A_j
-                if (mem_sp3c[hcsp3c[i][j2]][j]<=i) continue;
-                if (hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3] || hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4]) continue;   // no spindles of 5A_i and 5A_j are common
-                if (hcsp3c[i][4] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3] || hcsp3c[i][4] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4]) continue;
-
-                // for each cluster one spindle particle is in sp3 ring of other 5A and other spindle isn't
-                cnt = 0;    // check one 5A_i spindle are in sp3 ring of 5A_j
-                flg = hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][0] || hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][1] || hcsp3c[i][3] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][2];
-                if (flg==1){
-                    s1a = hcsp3c[i][3];
-                    s2a = hcsp3c[i][4];
-                    ++cnt;
-                }
-                flg = hcsp3c[i][4] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][0] || hcsp3c[i][4] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][1] || hcsp3c[i][4] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][2];
-                if (flg==1){
-                    s1a = hcsp3c[i][4];
-                    s2a = hcsp3c[i][3];
-                    ++cnt;
-                }
-                if (cnt != 1) continue;
-                cnt = 0;    // check one 5A_j spindle are in sp3 ring of 5A_i
-                flg = hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3] == hcsp3c[i][0] || hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3] == hcsp3c[i][1] || hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3] == hcsp3c[i][2];
-                if (flg==1){
-                    s1b = hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3];
-                    s2b = hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4];
-                    ++cnt;
-                }
-                flg = hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4] == hcsp3c[i][0] || hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4] == hcsp3c[i][1] || hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4] == hcsp3c[i][2];
-                if (flg==1){
-                    s1b = hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][4];
-                    s2b = hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][3];
-                    ++cnt;
-                }
-                if (cnt != 1) continue;
-                if (!Bonds_BondCheck(s1a, s1b)) continue;   // check spindles of i and j in sp3 ring of j and i respectively are bonded
-
-                cnt = 0;    // check 2 particles in the sp3 rings of 5A_i and 5A_j are common
-                for (k=0; k<3; ++k){
-                    for (l=0; l<3; ++l){
-                        if(hcsp3c[i][k] == hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][l]){
-                            ++cnt;
-                            break;
+    for (first_5A_id = 0; first_5A_id < nsp3c; first_5A_id++) {
+        first_5A_cluster = hcsp3c[first_5A_id];
+        for (first_5A_neighbours = 0; first_5A_neighbours < nmem_sp3c[first_5A_cluster[0]]; first_5A_neighbours++) {
+            second_5A_id = mem_sp3c[first_5A_cluster[0]][first_5A_neighbours];
+            second_5A_cluster = hcsp3c[second_5A_id];
+            if (second_5A_id > first_5A_id) {
+                if (check_for_common_spindle_particles(first_5A_cluster, second_5A_cluster) == 0) {
+                    if (count_spindles_in_ring(first_5A_cluster, second_5A_cluster, first_spindles) == 1) {
+                        if (count_spindles_in_ring(second_5A_cluster, first_5A_cluster, second_spindles) == 1) {
+                            if (Bonds_BondCheck(first_spindles[0], second_spindles[0]) == 1) {
+                                if (get_bonds_between_rings(first_5A_cluster, second_5A_cluster, common_ring_particles) == 2) {
+                                    Cluster_Write_6Z(first_spindles, second_spindles, common_ring_particles);
+                                }
+                            }
                         }
                     }
                 }
-                if (cnt != 2) continue;
-
-                if (n6Z==m6Z) {
-                    hc6Z=resize_2D_int(hc6Z,m6Z,m6Z+incrStatic,clusSize,-1);
-                    m6Z=m6Z+incrStatic;
-                }
-                // Now we have found the 6Z cluster
-                if (s1a<s1b) {
-                    hc6Z[n6Z][0]=s1a;    // insert cluster
-                    hc6Z[n6Z][1]=s1b;
-                    hc6Z[n6Z][2]=s2a;
-                    hc6Z[n6Z][3]=s2b;
-                }
-                else {
-                    hc6Z[n6Z][0]=s1b;    // insert cluster
-                    hc6Z[n6Z][1]=s1a;
-                    hc6Z[n6Z][2]=s2b;
-                    hc6Z[n6Z][3]=s2a;
-                }
-                cnt=4;
-                for (k=0; k<3; ++k) {
-                    flg=1;
-                    for (l=0; l<4; ++l){
-                        if (hcsp3c[i][k]==hc6Z[n6Z][l]) {
-                            flg=0;
-                            break;
-                        }
-                    }
-                    if (flg==1) { hc6Z[n6Z][cnt]=hcsp3c[i][k]; cnt++; }
-                }
-                if (hc6Z[n6Z][5]<hc6Z[n6Z][4]) {
-                    k=hc6Z[n6Z][5];
-                    hc6Z[n6Z][5]=hc6Z[n6Z][4];
-                    hc6Z[n6Z][4]=k;
-                }
-                Cluster_Write_6Z();
             }
         }
     }
 }
 
-void Cluster_Write_6Z() {
-    // hc6Z key: (5A_i_s_in_SP3_j, 5A_j_s_in_SP3_i, 5A_i_s_oth, 5A_j_s_oth, SP3_i_j_com_1, SP3_i_j_com_2)
+int check_for_common_spindle_particles(const int *first_5A_cluster, const int *second_5A_cluster) {
+    if (first_5A_cluster[3] == second_5A_cluster[3]) return 1;
+    else if (first_5A_cluster[3] == second_5A_cluster[4]) return 1;
+    else if (first_5A_cluster[4] == second_5A_cluster[3]) return 1;
+    else if (first_5A_cluster[4] == second_5A_cluster[4]) return 1;
+    else return 0;
+}
+
+int count_spindles_in_ring(const int *first_5A_cluster, const int *second_5A_cluster, int *spindles) {
+
+    int spindles_in_ring = 0;
+    spindles_in_ring += first_5A_cluster[3] == second_5A_cluster[0];
+    spindles_in_ring += first_5A_cluster[3] == second_5A_cluster[1];
+    spindles_in_ring += first_5A_cluster[3] == second_5A_cluster[2];
+
+    if (spindles_in_ring == 1) {
+        spindles[0] = first_5A_cluster[3];
+        spindles[1] = first_5A_cluster[4];
+        return 1;
+    }
+
+    spindles_in_ring += first_5A_cluster[4] == second_5A_cluster[0];
+    spindles_in_ring += first_5A_cluster[4] == second_5A_cluster[1];
+    spindles_in_ring += first_5A_cluster[4] == second_5A_cluster[2];
+
+    if (spindles_in_ring == 1) {
+        spindles[0] = first_5A_cluster[4];
+        spindles[1] = first_5A_cluster[3];
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+int get_bonds_between_rings(const int *first_5A_cluster, const int *second_5A_cluster, int *common_ring_particles) {
+    int bonds_between_rings = 0;
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (first_5A_cluster[i] == second_5A_cluster[j]) {
+                common_ring_particles[bonds_between_rings] = first_5A_cluster[i];
+                bonds_between_rings++;
+                break;
+            }
+        }
+    }
+    return bonds_between_rings;
+}
+
+void Cluster_Write_6Z(const int *first_spindles, const int *second_spindles, const int *common_ring_particles) {
+    int clusSize = 6;
+
+    if (n6Z == m6Z) {
+        hc6Z = resize_2D_int(hc6Z, m6Z, m6Z + incrStatic, clusSize, -1);
+        m6Z = m6Z + incrStatic;
+    }
+
+    hc6Z[n6Z][0] = first_spindles[0];
+    hc6Z[n6Z][1] = first_spindles[1];
+    hc6Z[n6Z][2] = second_spindles[0];
+    hc6Z[n6Z][3] = second_spindles[1];
+    hc6Z[n6Z][4] = common_ring_particles[0];
+    hc6Z[n6Z][5] = common_ring_particles[1];
+
+    // hc6Z key: (5A spindles * 4, 5A ring particles * 2)
     s6Z[hc6Z[n6Z][0]] = 'O';
     s6Z[hc6Z[n6Z][1]] = 'O';
     s6Z[hc6Z[n6Z][2]] = 'O';
