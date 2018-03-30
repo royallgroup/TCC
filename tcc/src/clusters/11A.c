@@ -67,37 +67,6 @@ int count_common_spindle_particles(const int *first6A, const int *second6A, int 
     return num_common_spindles;
 }
 
-void Cluster_Write_11A(const int *first_6A, const int *second_6A, const int *sother, const int scom) {
-    int clusSize=11;
-    int i;
-
-    if (n11A == m11A) {
-        hc11A = resize_2D_int(hc11A, m11A, m11A + incrStatic, clusSize, -1);
-        m11A = m11A + incrStatic;
-    }
-
-    hc11A[n11A][0] = first_6A[0];
-    hc11A[n11A][1] = first_6A[1];
-    hc11A[n11A][2] = first_6A[2];
-    hc11A[n11A][3] = first_6A[3];
-    hc11A[n11A][4] = second_6A[0];
-    hc11A[n11A][5] = second_6A[1];
-    hc11A[n11A][6] = second_6A[2];
-    hc11A[n11A][7] = second_6A[3];
-    hc11A[n11A][8] = sother[0];
-    hc11A[n11A][9] = sother[1];
-    hc11A[n11A][10] = scom;
-
-    for(i=0; i<8; i++) {
-        if (s11A[hc11A[n11A][i]] == 'C') s11A[hc11A[n11A][i]] = 'B';
-    }
-    for(i=8; i<10; i++) {
-        if (s11A[hc11A[n11A][i]] != 'S') s11A[hc11A[n11A][i]] = 'O';
-    }
-    s11A[hc11A[n11A][10]] = 'S';
-    ++n11A;
-}
-
 int Check_6A_rings_bonded(const int *first_6A, const int *second_6A) {
     int first_ring_pointer, second_ring_pointer, num_bonds;
     // Check if there are two bonds between each particle in ring 1 and particles in ring 2
@@ -130,4 +99,34 @@ int Check_unique_6A_rings(const int *first_6A, const int *second_6A) {
         }
     }
     return 0;
+}
+
+void Cluster_Write_11A(const int *first_6A, const int *second_6A, const int *sother, const int scom) {
+    int clusSize=11;
+    int i;
+
+    if (n11A == m11A) {
+        hc11A = resize_2D_int(hc11A, m11A, m11A + incrStatic, clusSize, -1);
+        m11A = m11A + incrStatic;
+    }
+
+    hc11A[n11A][0] = first_6A[0];
+    hc11A[n11A][1] = first_6A[1];
+    hc11A[n11A][2] = first_6A[2];
+    hc11A[n11A][3] = first_6A[3];
+    hc11A[n11A][4] = second_6A[0];
+    hc11A[n11A][5] = second_6A[1];
+    hc11A[n11A][6] = second_6A[2];
+    hc11A[n11A][7] = second_6A[3];
+    hc11A[n11A][8] = sother[0];
+    hc11A[n11A][9] = sother[1];
+    hc11A[n11A][10] = scom;
+
+    for(i=0; i<8; i++) {
+        if (s11A[hc11A[n11A][i]] == 'C') s11A[hc11A[n11A][i]] = 'B';
+    }
+    if (s11A[hc11A[n11A][8]] != 'S') s11A[hc11A[n11A][8]] = 'O';
+    if (s11A[hc11A[n11A][9]] != 'S') s11A[hc11A[n11A][9]] = 'O';
+    s11A[hc11A[n11A][10]] = 'S';
+    ++n11A;
 }
