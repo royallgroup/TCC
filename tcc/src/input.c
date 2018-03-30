@@ -85,8 +85,9 @@ void read_clusters_to_analyse() {
         }
 
         for (int cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
-            sprintf(cluster_name, "cluster:%s", (cluster_names[cluster_number]));
+            sprintf(cluster_name, "clusters:%s", cluster_names[cluster_number]);
             *(do_cluster_list[cluster_number]) = iniparser_getboolean(ini, cluster_name, 1);
+            printf("%s %d\n", cluster_names[cluster_number], *(do_cluster_list[cluster_number]));
         }
     }
     else {
