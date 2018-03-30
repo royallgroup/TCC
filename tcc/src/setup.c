@@ -178,9 +178,7 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
     memset(nmem_sp5c, 0, sizeof(int)*max_particle_number);
 
     for(cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
-        for (i = 0; i < max_particle_number; ++i) {
-            memset(*raw_list[cluster_type], 'C', max_particle_number*sizeof(char));
-        }
+        memset(*raw_list[cluster_type], 'C', max_particle_number*sizeof(char));
     }
 }
 
