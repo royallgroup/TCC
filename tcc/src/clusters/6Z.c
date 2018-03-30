@@ -3,31 +3,25 @@
 #include "bonds.h"
 #include "tools.h"
 
-void Clusters_Get6Z() {    // Detect 6Z clusters from 2 5A clusters
-
-    int j, first_5A_spindle_id;
+void Clusters_Get6Z() {
 
     int first_spindles[2], second_spindles[2], common_ring_particles[2];
-
-
     int *first_5A_cluster, *second_5A_cluster;
     int first_5A_id, second_5A_id;
+    int first_5A_neighbours;
 
-    for (first_5A_id = 0; first_5A_id < nsp3c - 1; first_5A_id++) {
+    for (first_5A_id = 0; first_5A_id < nsp3c; first_5A_id++) {
         first_5A_cluster = hcsp3c[first_5A_id];
-        for (first_5A_spindle_id = 0; first_5A_spindle_id < 1; first_5A_spindle_id++) {
-            for (j = 0; j < nmem_sp3c[first_5A_cluster[first_5A_spindle_id]]; j++) {
-                second_5A_id = mem_sp3c[first_5A_cluster[first_5A_spindle_id]][j];
-                second_5A_cluster = hcsp3c[second_5A_id];
-                if (second_5A_id > first_5A_id) {
-                    if (check_for_common_spindle_particles(first_5A_cluster, second_5A_cluster) == 0) {
-                        if (count_spindles_in_ring(first_5A_cluster, second_5A_cluster, first_spindles) == 1) {
-                            if (count_spindles_in_ring(second_5A_cluster, first_5A_cluster, second_spindles) == 1) {
-                                if (Bonds_BondCheck(first_spindles[0], second_spindles[0]) == 1) {
-                                    if (get_bonds_between_rings(first_5A_cluster, second_5A_cluster, common_ring_particles) == 2) {
-
-                                        Cluster_Write_6Z(first_spindles, second_spindles, common_ring_particles);
-                                    }
+        for (first_5A_neighbours = 0; first_5A_neighbours < nmem_sp3c[first_5A_cluster[0]]; first_5A_neighbours++) {
+            second_5A_id = mem_sp3c[first_5A_cluster[0]][first_5A_neighbours];
+            second_5A_cluster = hcsp3c[second_5A_id];
+            if (second_5A_id > first_5A_id) {
+                if (check_for_common_spindle_particles(first_5A_cluster, second_5A_cluster) == 0) {
+                    if (count_spindles_in_ring(first_5A_cluster, second_5A_cluster, first_spindles) == 1) {
+                        if (count_spindles_in_ring(second_5A_cluster, first_5A_cluster, second_spindles) == 1) {
+                            if (Bonds_BondCheck(first_spindles[0], second_spindles[0]) == 1) {
+                                if (get_bonds_between_rings(first_5A_cluster, second_5A_cluster, common_ring_particles) == 2) {
+                                    Cluster_Write_6Z(first_spindles, second_spindles, common_ring_particles);
                                 }
                             }
                         }
