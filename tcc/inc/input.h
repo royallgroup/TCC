@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "globals.h"
 
-void read_ini_file(char *);
+void read_ini_file();
 
 void read_clusters_to_analyse();
 

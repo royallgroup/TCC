@@ -3,7 +3,7 @@
 #include "iniparser.h"
 #include "tools.h"
 
-void read_ini_file(char *filename) {
+void read_ini_file() {
 
     char errMsg[1000];
     dictionary  *   ini ;
@@ -11,7 +11,7 @@ void read_ini_file(char *filename) {
     fXmolName = malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
     fBoxSizeName = malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
 
-    ini = iniparser_load(filename);
+    ini = iniparser_load("inputparameters.ini");
     if (ini==NULL) {
         sprintf(errMsg,"read_ini_file(): Error opening file %s",filename);
         Error_no_free(errMsg);
@@ -101,6 +101,8 @@ void read_clusters_to_analyse() {
 void parse_box_file(int total_frames) {
     FILE *read_box_file;
     char other[1000], error_message[1000];
+
+    printf("box size file: %s\n",fBoxSizeName);
 
     read_box_file=fopen(fBoxSizeName,"rb");
     if(read_box_file==NULL)  {

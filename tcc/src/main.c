@@ -80,13 +80,10 @@ int main(int argc, char **argv) {
     int current_frame_number;
     int remainder;
     struct xyz_info input_xyz_info;
-    char fInputParamsName[50];
 
-    sprintf(fInputParamsName,"inputparameters.ini");
-    read_ini_file(fInputParamsName);    // read input params
+    read_ini_file();
     read_clusters_to_analyse();
     analyse_cluster_dependencies();
-    printf("box size file: %s\n",fBoxSizeName);
 
     input_xyz_info = parse_xyz_file();
 
