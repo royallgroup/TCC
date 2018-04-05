@@ -7,13 +7,14 @@ void read_ini_file() {
 
     char errMsg[1000];
     dictionary  *   ini ;
+    const char *inputfilename = "inputparameters.ini";
 
     fXmolName = malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
     fBoxSizeName = malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
 
-    ini = iniparser_load("inputparameters.ini");
+    ini = iniparser_load(inputfilename);
     if (ini==NULL) {
-        sprintf(errMsg,"read_ini_file(): Error opening file %s",filename);
+        sprintf(errMsg,"read_ini_file(): Error opening file %s", inputfilename);
         Error_no_free(errMsg);
     }
 

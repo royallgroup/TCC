@@ -41,25 +41,51 @@ int check_for_common_spindle_particles(const int *first_5A_cluster, const int *s
 }
 
 int count_spindles_in_ring(const int *first_5A_cluster, const int *second_5A_cluster, int *spindles) {
+    int bonded_spindle = 0;
+    int non_bonded_spindle = 0;
 
     int spindles_in_ring = 0;
-    spindles_in_ring += first_5A_cluster[3] == second_5A_cluster[0];
-    spindles_in_ring += first_5A_cluster[3] == second_5A_cluster[1];
-    spindles_in_ring += first_5A_cluster[3] == second_5A_cluster[2];
+    if (first_5A_cluster[3] == second_5A_cluster[0]) {
+       bonded_spindle =  first_5A_cluster[3];
+       non_bonded_spindle = first_5A_cluster[4];
+       spindles_in_ring += 1;
+    }
+    if (first_5A_cluster[3] == second_5A_cluster[1]) {
+        bonded_spindle =  first_5A_cluster[3];
+        non_bonded_spindle = first_5A_cluster[4];
+        spindles_in_ring += 1;
+    }
+    if (first_5A_cluster[3] == second_5A_cluster[2]) {
+        bonded_spindle =  first_5A_cluster[3];
+        non_bonded_spindle = first_5A_cluster[4];
+        spindles_in_ring += 1;
+    }
 
     if (spindles_in_ring == 1) {
-        spindles[0] = first_5A_cluster[3];
-        spindles[1] = first_5A_cluster[4];
+        spindles[0] = bonded_spindle;
+        spindles[1] = non_bonded_spindle;
         return 1;
     }
 
-    spindles_in_ring += first_5A_cluster[4] == second_5A_cluster[0];
-    spindles_in_ring += first_5A_cluster[4] == second_5A_cluster[1];
-    spindles_in_ring += first_5A_cluster[4] == second_5A_cluster[2];
+    if(first_5A_cluster[4] == second_5A_cluster[0]) {
+        bonded_spindle =  first_5A_cluster[4];
+        non_bonded_spindle = first_5A_cluster[3];
+        spindles_in_ring += 1;
+    }
+    if (first_5A_cluster[4] == second_5A_cluster[1]) {
+        bonded_spindle =  first_5A_cluster[4];
+        non_bonded_spindle = first_5A_cluster[3];
+        spindles_in_ring += 1;
+    }
+    if (first_5A_cluster[4] == second_5A_cluster[2]) {
+        bonded_spindle =  first_5A_cluster[4];
+        non_bonded_spindle = first_5A_cluster[3];
+        spindles_in_ring += 1;
+    }
 
     if (spindles_in_ring == 1) {
-        spindles[0] = first_5A_cluster[4];
-        spindles[1] = first_5A_cluster[3];
+        spindles[0] = bonded_spindle;
+        spindles[1] = non_bonded_spindle;
         return 1;
     }
     else {
