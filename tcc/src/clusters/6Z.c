@@ -116,14 +116,13 @@ void Cluster_Write_6Z(const int *first_spindles, const int *second_spindles, con
         m6Z = m6Z + incrStatic;
     }
 
-    hc6Z[n6Z][0] = first_spindles[0];
-    hc6Z[n6Z][1] = first_spindles[1];
-    hc6Z[n6Z][2] = second_spindles[0];
-    hc6Z[n6Z][3] = second_spindles[1];
-    hc6Z[n6Z][4] = common_ring_particles[0];
-    hc6Z[n6Z][5] = common_ring_particles[1];
+    hc6Z[n6Z][0] = first_spindles[0];           // bonded spindle i
+    hc6Z[n6Z][1] = first_spindles[1];           // non-bonded spindle i
+    hc6Z[n6Z][2] = second_spindles[0];          // bonded spindle j
+    hc6Z[n6Z][3] = second_spindles[1];          // non-bonded spindle j
+    hc6Z[n6Z][4] = common_ring_particles[0];    // common ring
+    hc6Z[n6Z][5] = common_ring_particles[1];    // common ring
 
-    // hc6Z key: (5A spindles * 4, 5A ring particles * 2)
     s6Z[hc6Z[n6Z][0]] = 'O';
     s6Z[hc6Z[n6Z][1]] = 'O';
     s6Z[hc6Z[n6Z][2]] = 'O';
