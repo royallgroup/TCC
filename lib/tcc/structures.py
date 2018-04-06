@@ -18,8 +18,8 @@ cluster_index = {
     'sp5b': 'sp5b',
     'sp5c': 'sp5c',
     '7A':   'sp5c',
-    '7TA':  '7TA',
-    '7TS':  '7TS',
+    '7T_a':  '7T_a',
+    '7T_s':  '7T_s',
     '7K':   '7K',
     '8A':   '8A',
     '8B':   '8B',
@@ -73,3 +73,11 @@ composition['sp4c']['sp3a'] = 8
 # The polytetrahedron: 6Z
 composition['6Z']['sp3b'] = 8
 composition['6Z']['sp3c'] = 2
+
+# More complex polytetrahedra: 7T_a and 7T_s (4 tetrahedra)
+composition['7T_a']['sp3b'] = 10
+composition['7T_a']['sp3c'] = 3
+composition['7T_a']['6Z'] = 2
+composition['7T_s']['sp3b'] = 10
+composition['7T_s']['sp3c'] = 3
+composition['7T_s']['6Z'] = 3
