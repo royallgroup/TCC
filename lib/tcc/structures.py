@@ -18,6 +18,8 @@ cluster_index = {
     'sp5b': 'sp5b',
     'sp5c': 'sp5c',
     '7A':   'sp5c',
+    '7TA':  '7TA',
+    '7TS':  '7TS',
     '7K':   '7K',
     '8A':   '8A',
     '8B':   '8B',
