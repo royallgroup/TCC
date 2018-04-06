@@ -55,7 +55,7 @@ void stats_report_clusters(FILE *output_file) {
                     num_gross_particles[cluster_type], mean_pop_per_frame[cluster_type]);
         }
         else {
-            sprintf(buffer, "%s	NA	NA	NA	NA\n", cluster_names[cluster_type]);
+            sprintf(buffer, "%s	NA	NA	NA\n", cluster_names[cluster_type]);
         }
         printf("%s", buffer);
         fprintf(output_file, "%s", buffer);
