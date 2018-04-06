@@ -19,38 +19,38 @@ void Clusters_Get7T() {
                 new_5A_id = mem_sp3c[spindle_id][new_5A_pointer];
                 new_5A_cluster = hcsp3c[new_5A_id];
 
-                bond_counter = check_ring_bonds(new_5A_cluster);
+                bond_counter = check_ring_bonds(new_5A_cluster, old_6Z_cluster);
                 check_7T_type(bond_counter, old_6Z_cluster, new_particle_id);
             }
         }
     }
 }
 
-int check_ring_bonds(const int *new_5A_cluster) {
+int check_ring_bonds(const int *new_5A_cluster, const int *old_6Z_cluster) {
     int bond_counter = 0;
 
     for (int ring_pointer = 0; ring_pointer < 3; ++ring_pointer) {
-        if (new_5A_cluster[ring_pointer] == new_5A_cluster[0]) {
+        if (new_5A_cluster[ring_pointer] == old_6Z_cluster[0]) {
             bond_counter += 1;
             continue;
         }
-        if (new_5A_cluster[ring_pointer] == new_5A_cluster[1]) {
+        if (new_5A_cluster[ring_pointer] == old_6Z_cluster[1]) {
             bond_counter += 2;
             continue;
         }
-        if (new_5A_cluster[ring_pointer] == new_5A_cluster[2]) {
+        if (new_5A_cluster[ring_pointer] == old_6Z_cluster[2]) {
             bond_counter += 4;
             continue;
         }
-        if (new_5A_cluster[ring_pointer] == new_5A_cluster[3]) {
+        if (new_5A_cluster[ring_pointer] == old_6Z_cluster[3]) {
             bond_counter += 8;
             continue;
         }
-        if (new_5A_cluster[ring_pointer] == new_5A_cluster[4]) {
+        if (new_5A_cluster[ring_pointer] == old_6Z_cluster[4]) {
             bond_counter += 16;
             continue;
         }
-        if (new_5A_cluster[ring_pointer] == new_5A_cluster[5]) {
+        if (new_5A_cluster[ring_pointer] == old_6Z_cluster[5]) {
             bond_counter += 16;
             continue;
         }

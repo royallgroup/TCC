@@ -3,7 +3,7 @@
 
 void Clusters_Get7T();
 
-int check_ring_bonds(const int *new_5A_cluster);
+int check_ring_bonds(const int *new_5A_cluster, const int *old_6Z_cluster);
 
 void check_7T_type(int bond_counter, const int *old_6Z, int new_particle);
 
