@@ -265,7 +265,7 @@ void analyse_cluster_dependencies() {
     if(do8K == 1) dosp3c =1;
     if(do8B == 1) dosp5c = 1;
     if(do8A == 1) dosp5b = dosp5c = 1;
-    if(do7Z == 1) do6Z = 1;
+    if(do7T_a == 1 || do7T_s == 1) do6Z = 1;
     if(do7K == 1) dosp3c = 1;
     if(do6Z == 1) dosp3c = 1;
     if(dosp5c == 1) dosp5 = 1;
