@@ -137,7 +137,7 @@ class TCCWrapper:
     def __del__(self):
         """Upon deletion we can remove the temporary working folder
         to free up disk space."""
-        shutil.rmtree(self.working_directory)
+        #shutil.rmtree(self.working_directory)
 
     def serialise_input_parameters(self, out=sys.stdout):
         """Serialise the parameters in INI format.
@@ -180,7 +180,7 @@ class TCCWrapper:
             pandas table giving the static cluster information
         """
         summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
-        table = pandas.read_table(summary_file, index_col='Clust', skiprows=1, nrows=len(structures.clusters))
+        table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.clusters))
         table.fillna(0., inplace=True)
         return table
 
