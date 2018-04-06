@@ -27,7 +27,7 @@ class FileOperations:
             if system() == "Windows":
                 make = run(['cmake', '..', '-G', 'MinGW Makefiles'])
                 build = run(['mingw32-make.exe'])
-            elif system() == "Linux":
+            elif system() == "Linux" or system() == 'Darwin':
                 make = run(['cmake', '..'])
                 build = run(['make'])
             else:
