@@ -4,6 +4,8 @@ to handle the parameters needed to interface with the TCC.
 """
 
 import os, sys, tempfile, shutil, pandas
+tcc_exe = os.path.abspath(os.path.dirname(__file__) + '/../../bin/tcc')
+
 from glob import glob
 from . import xyz, structures
 
@@ -208,7 +210,7 @@ class TCCWrapper:
         xyz.write(x, '%s/run.xyz' % self.working_directory, atoms=atoms)
 
         # Run the TCC executable.
-        if not silent: os.system('(cd %s; tcc)' % self.working_directory)
-        else: os.system('(cd %s; tcc > /dev/null)' % self.working_directory)
+        if not silent: os.system('(cd %s; %s)' % (self.working_directory, tcc_exe))
+        else: os.system('(cd %s; %s > /dev/null)' % (self.working_directory, tcc_exe))
 
         return self.parse_static_clusters()

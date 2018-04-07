@@ -29,6 +29,7 @@ Hard Spheres: 'FCC', '13A', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp
 Kob-Andersen: '13K', '12K', '11A', '10K', '9K', '8K', '7K', 'sp4c', 'sp3c'
 Wahnstrom: '13A', '12B', '11W', '10B', '9B', '8A', 'sp5c', 'sp4c', 'sp3c'
 Lennard-Jones: '13A', '12B', '11C', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c'
+Sticky Spheres: 'FCC', 'HCP', '13B', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c'
 
 ## Tests
 

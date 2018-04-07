@@ -76,7 +76,7 @@ double cell_len_x, cell_len_y, cell_len_z;
 int dosp3, dosp3a, dosp3b, dosp3c;
 int dosp4, dosp4a, dosp4b, dosp4c;
 int dosp5, dosp5a, dosp5b, dosp5c;
-int do6Z, do7K;
+int do6Z, do7K, do7T_a, do7T_s;
 int do8A, do8B, do8K;
 int do9A, do9B, do9K;
 int do10A, do10B, do10K, do10W;
@@ -89,7 +89,7 @@ int doFCC, doHCP, doBCC9, doBCC15;
 int nsp3a, nsp3b, nsp3c;
 int nsp4a, nsp4b, nsp4c;
 int nsp5a, nsp5b, nsp5c;
-int n6Z, n7K;
+int n6Z, n7K, n7T_a, n7T_s;
 int n8A, n8B, n8K;
 int n9A, n9B, n9K;
 int n10A, n10B, n10K, n10W;
@@ -102,7 +102,7 @@ int nFCC, nHCP, nBCC_9, nBCC_15;
 int msp3a, msp3b, msp3c;
 int msp4a, msp4b, msp4c;
 int msp5a, msp5b, msp5c;
-int m6Z, m7K;
+int m6Z, m7K, m7T_a, m7T_s;
 int m8A, m8B, m8K;
 int m9A, m9B, m9K;
 int m10A, m10B, m10K, m10W;
@@ -115,7 +115,7 @@ int mFCC, mHCP, mBCC_9, mBCC_15;
 int **hcsp3a, **hcsp3b, **hcsp3c;
 int **hcsp4a, **hcsp4b, **hcsp4c;
 int **hcsp5a, **hcsp5b, **hcsp5c;
-int **hc6Z, **hc7K;
+int **hc6Z, **hc7K, **hc7T_a, **hc7T_s;
 int **hc8A, **hc8B, **hc8K;
 int **hc9A, **hc9B, **hc9K;
 int **hc10A, **hc10B, **hc10K, **hc10W;
@@ -124,21 +124,11 @@ int **hc12A, **hc12B, **hc12D, **hc12E, **hc12K;
 int **hc13A, **hc13B, **hc13K;
 int **hcFCC, **hcHCP, **hcBCC_9, **hcBCC_15;
 
-// mem lists the clusters of that type each particle is in, index i is the particle index, j is the cluster id
-// nmem lists the number of clusters of that type each particle is in, index i is the number of particles
-// mmem lists the width of mem, the maximum number of clusters of the specified type associated with a single particle
-int **mem_sp3b, *nmem_sp3b, mmem_sp3b;
-int **mem_sp3c, *nmem_sp3c, mmem_sp3c;
-int **mem_sp4b, *nmem_sp4b, mmem_sp4b;
-int **mem_sp4c, *nmem_sp4c, mmem_sp4c;
-int **mem_sp5b, *nmem_sp5b, mmem_sp5b;
-int **mem_sp5c, *nmem_sp5c, mmem_sp5c;
-
 // Raw lists of particle identity, output to RAW_clust files and reset each frame
 char *ssp3a, *ssp3b, *ssp3c;
 char *ssp4a, *ssp4b, *ssp4c;
 char *ssp5a, *ssp5b, *ssp5c;
-char *s6Z, *s7K;
+char *s6Z, *s7K, *s7T_a, *s7T_s;
 char *s8A, *s8B, *s8K;
 char *s9A, *s9B, *s9K;
 char *s10A, *s10B, *s10K, *s10W;
@@ -146,6 +136,16 @@ char *s11A, *s11B, *s11C, *s11E, *s11F, *s11W;
 char *s12A, *s12B, *s12D, *s12E, *s12K;
 char *s13A, *s13B, *s13K;
 char *sFCC, *sHCP, *sBCC_9, *sBCC_15;
+
+// mem lists the clusters of that type each particle is in, index i is the particle index, j is the cluster id
+// nmem lists the number of clusters of that type each particle is in, index i is the number of particles
+// mmem lists the width of mem, the maximum number of clusters of the specified type associated with a single particle (the largest value in nmem)
+int **mem_sp3b, *nmem_sp3b, mmem_sp3b;
+int **mem_sp3c, *nmem_sp3c, mmem_sp3c;
+int **mem_sp4b, *nmem_sp4b, mmem_sp4b;
+int **mem_sp4c, *nmem_sp4c, mmem_sp4c;
+int **mem_sp5b, *nmem_sp5b, mmem_sp5b;
+int **mem_sp5c, *nmem_sp5c, mmem_sp5c;
 
 // Lists of particle population of each cluster type in each frame, index i is the frame number,
 // index j is the cluster type
