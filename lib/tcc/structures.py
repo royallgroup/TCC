@@ -49,8 +49,9 @@ cluster_index = {
     '13K':  '13K',
     'FCC':  'FCC',
     'HCP':  'HCP',
-    'BCC_9': 'BCC_9',
-    'BCC_15': 'BCC_15'}
+    'BCC_9': 'BCC_9'#,
+    #'BCC_15': 'BCC_15'
+}
 
 clusters = sorted(list(set(cluster_index.values())))
 symmetry_number = {cluster: 1 for cluster in clusters}
@@ -70,7 +71,13 @@ composition['sp3c']['sp3b'] = 6
 # The octahedron: sp4c
 composition['sp4c']['sp3a'] = 8
 
-# The polytetrahedron: 6Z
+# The pentagonal ring cluster: sp5c (or 7A)
+composition['sp5c']['sp3b'] = 10
+composition['sp5c']['sp3c'] = 5
+composition['sp5c']['6Z'] = 5
+composition['sp5c']['7K'] = 5
+
+# The tritetrahedron: 6Z
 composition['6Z']['sp3b'] = 8
 composition['6Z']['sp3c'] = 2
 
@@ -78,6 +85,12 @@ composition['6Z']['sp3c'] = 2
 composition['7T_a']['sp3b'] = 10
 composition['7T_a']['sp3c'] = 3
 composition['7T_a']['6Z'] = 2
+composition['7T_a']['7T_a'] = 2
 composition['7T_s']['sp3b'] = 10
 composition['7T_s']['sp3c'] = 3
 composition['7T_s']['6Z'] = 3
+composition['7T_s']['7T_s'] = 3
+
+# Crystal structures
+composition['BCC_9']['sp3a'] = 12
+composition['BCC_9']['sp4b'] = 6

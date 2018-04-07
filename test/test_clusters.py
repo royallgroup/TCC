@@ -3,9 +3,12 @@
 import pytest
 
 import sys, os
-sys.path.append(os.path.abspath('../lib'))
-from tcc import structures, xyz, wrapper
+sys.path += [os.path.abspath('../lib')]
+
+import numpy, pandas
 from glob import glob
+
+from tcc import structures, xyz, wrapper
 structures_to_test = glob('clusters/*.xyz')
 
 def run_static_tcc_simple_bonds(x, box=[100.,100.,100.]):
@@ -46,8 +49,16 @@ def test_simple_bonds(path):
     cluster = path.split('/')[-1].split('.xyz')[0]
 
     found = run_static_tcc_simple_bonds(x)['Number of clusters']
+    report = pandas.DataFrame(found)
+    report['Expected'] = 0
     for component,n in structures.composition[cluster].items():
-        assert n == int(found[component])
+        report['Expected'][component] = n
+
+    try:
+        assert numpy.all(report['Number of clusters'] == report['Expected'])
+    except AssertionError:
+        print(report)
+        raise AssertionError from None
 
 @pytest.mark.parametrize('path', structures_to_test)
 def test_voronoi(path):
@@ -61,6 +72,14 @@ def test_voronoi(path):
     x = xyz.read(path)
     cluster = path.split('/')[-1].split('.xyz')[0]
 
-    found = run_static_tcc_voronoi(x)['Number of clusters']
+    found = run_static_tcc_simple_bonds(x)['Number of clusters']
+    report = pandas.DataFrame(found)
+    report['Expected'] = 0
     for component,n in structures.composition[cluster].items():
-        assert n == int(found[component])
+        report['Expected'][component] = n
+
+    try:
+        assert numpy.all(report['Number of clusters'] == report['Expected'])
+    except AssertionError:
+        print(report)
+        raise AssertionError from None
