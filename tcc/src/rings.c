@@ -1,2635 +1,525 @@
 #include "rings.h"
 #include "globals.h"
 #include "bonds.h"
-void Rings_gSP4(int f, int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
+#include "tools.h"
+
+void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
+    int n1_pointer, n2_pointer;
+    int n0, n1, n2;
+
+    for (n0 = 0; n0 < particles_in_current_frame; n0++) {
+        for (n1_pointer = 0; n1_pointer < num_bonds[n0]; n1_pointer++) {
+            n1 = bNums[n0][n1_pointer];
+            if (n1 > n0) {
+                for (n2_pointer = n1_pointer + 1; n2_pointer < num_bonds[n0]; n2_pointer++) {
+                    n2 = bNums[n0][n2_pointer];
+                    if (n2 > n0) {
+                        if (Bonds_BondCheck(n1, n2)) {
+                            // SP3 found, check type and store
+                            get_sp3_clusters(n0, n1, n2);
+                        }
+                        else { // not SP3, search for SP4 & SP5
+                            if (dosp4 == 1) {
+                                get_basic_sp4_rings(n0, n1, n2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void get_basic_sp4_rings(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
     int i;
     int n3;
-    
-    for (i=0; i<cnb[n1]; ++i) {
-        n3=bNums[n1][i];
-        if (n3 <= n0) continue;
-        if (!Bonds_BondCheck(n0,n3)) {  // n1 not bonded to n2 & n0 not bonded to n3
-            if (Bonds_BondCheck(n2,n3)) { // 4 membered ring found 
-                Rings_aSP4(f,n0,n1,n3,n2); // check SP4 type and store  
-            }
-            else{ // n1 not bonded to n3
-                if (dosp5==1) Rings_gSP5(f,n0,n1,n3,n2);
+    int tmp;
+
+    if(n1 > n2) {
+        tmp = n2;
+        n2 = n1;
+        n1 = tmp;
+    }
+
+    for (i=0; i<num_bonds[n1]; ++i) {
+        n3 = bNums[n1][i];
+        if (n3 > n0){
+            if (Bonds_BondCheck(n0, n3) == 0) {  // n1 not bonded to n2 & n0 not bonded to n3
+                if (Bonds_BondCheck(n2, n3)) { // 4 membered ring found
+                    get_sp4_clusters(n0, n1, n2, n3); // check SP4 type and store
+                }
+                else { // n1 not bonded to n3
+                    if (dosp5 == 1) {
+                        get_basic_sp5_rings(n0, n1, n2, n3);
+                    }
+                }
             }
         }       
     }
 }
 
-void Rings_gSP5(int f, int n0, int n1, int n2, int n3) {    // {n0,n1,n2,n3} is not an SP4 ring, is it an SP5 ring?
-    int i,j;
-    int n4,n5;
+void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {    // {n0,n1,n3,n2} is not an SP4 ring, is it an SP5 ring?
+    int i, j;
+    int n4, n5;
     int bond4_1;
-    
-    for (i=0; i<cnb[n2]; ++i){
-        n4=bNums[n2][i];
-        if(n4 < n0 || n4 == n3) continue; // Now: is n4 bonded to n1 and not to n2 or n0
-        bond4_1 = 0;
-        for (j=0; j<cnb[n4]; ++j){
-            n5=bNums[n4][j];
-            if (n5==n3) bond4_1 = 1;
-            if (n5==n1 || n5==n0) break; // Not SP ring
-        }
-        if (j==cnb[n4] && bond4_1==1) {
-            Rings_aSP5(f,n0, n1, n2, n4, n3); // check SP5 type and store 
+
+    // Loop through all neighbours of n3
+    for (i = 0; i < num_bonds[n3]; ++i){
+        n4 = bNums[n3][i];
+        if(n4 > n0) {
+            if (n4 != n2) {
+                bond4_1 = 0;
+                // loop through neighbours of n4
+                for (j = 0; j < num_bonds[n4]; ++j) {
+                    n5 = bNums[n4][j];
+                    // if n4 is bonded to n0 or n1 then it isn't an sp5
+                    if (n5 == n1 || n5 == n0) {
+                        break;
+                    }
+                    // if n4 is bonded to n2 then it might be an sp5
+                    if (n5 == n2) {
+                        bond4_1 = 1;
+                    }
+                }
+                if (j == num_bonds[n4] && bond4_1 == 1) {
+                    get_sp5_clusters(n0, n1, n3, n4, n2); // check SP5 type and store
+                }
+            }
         }
     }
 }
 
-void Rings_aSP3(int f, int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
+void get_sp3_clusters(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
     int i, j;
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
-    int bcheck;
-    int binAcnt;
-    int number_of_A, number_of_A_ring;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+    int tmp;
+
+    if(n1 > n2) {
+        tmp = n2;
+        n2 = n1;
+        n1 = tmp;
+    }
+
     cp[0]=cp[1]=-1;
-    for (i=0; i<cnb[n0]; ++i) {
+    for (i=0; i<num_bonds[n0]; ++i) {
         j = bNums[n0][i];
-        bcheck = j == n1 || j == n2;
-        if (bcheck) continue;
-        bcheck = Bonds_BondCheck(n1,j)==1 && Bonds_BondCheck(n2,j)==1;
-        if (bcheck) {
-            if (type<2) {
-                cp[type] = j;
-                type++;
+        if (j != n1 && j != n2) {
+            if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
+                if (type < 2) {
+                    cp[type] = j;
+                    type++;
+                }
+                else {
+                    type++;
+                }
             }
-            else type++;
         }
     }
-    
-    if (maxto3<type) maxto3=type;
     
     if (type==0 && dosp3a==1) {
-        if (nsp3a[f] == msp3a) {
-            sp3a=resize_2D_int(sp3a,msp3a,msp3a+incrStatic,3,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp3a=resize_1D_double(bl_mom_sp3a,msp3a,msp3a+incrStatic);
-                bl_mom_sp3=resize_1D_double(bl_mom_sp3,msp3,msp3+incrStatic);
-                msp3=msp3+incrStatic;
-            }
-            msp3a=msp3a+incrStatic;
-        }
-        sp3a[nsp3a[f]][0] = n0;
-        sp3a[nsp3a[f]][1] = n1;
-        sp3a[nsp3a[f]][2] = n2;
-        if (doDynamics==1 && dyn_msp3a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp3a[nsp3a[f]], f, 3, &dyn_nsp3a, &dyn_msp3a, &dyn_lsp3a, &dyn_sp3a, do_up, dummy_up, nsp3a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3a,&BLDistroNoSamplessp3a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3a,&BLDistroNoSamplessp3a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3a,&BLDistroNoSamplessp3a);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                av_pot_sp3a+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-                av_pot_sp3+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                if (rtype[sp3a[nsp3a[f]][binAcnt]]==1) {
-                    nAsp3a++;
-                    number_of_A++;
-                    nAsp3++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp3a++;
-                    nBsp3++;
-                }
-            }
-            n_distro_sp3a[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n2]==1) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n2]==2) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            bl_mom_sp3a[nsp3a[f]]/=3.0;
-            bl_mom_sp3[nsp3[f]]/=3.0;
-        }
-        
-        ++nsp3a[f];
+        Store_sp3a(n0, n1, n2);
     }
     else if (type==1 && dosp3b==1) {
-        if (nsp3b[f] == msp3b) { 
-            sp3b=resize_2D_int(sp3b,msp3b,msp3b+incrStatic,4,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp3b=resize_1D_double(bl_mom_sp3b,msp3b,msp3b+incrStatic);
-                bl_mom_sp3=resize_1D_double(bl_mom_sp3,msp3,msp3+incrStatic);
-                msp3=msp3+incrStatic;
-            }
-            msp3b=msp3b+incrStatic;
-        }
-        sp3b[nsp3b[f]][0] = n0;
-        sp3b[nsp3b[f]][1] = n1;
-        sp3b[nsp3b[f]][2] = n2;
-        sp3b[nsp3b[f]][3] = cp[0];
-        if (doDynamics==1 && dyn_msp3b!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp3b[nsp3b[f]], f, 4, &dyn_nsp3b, &dyn_msp3b, &dyn_lsp3b, &dyn_sp3b, do_up, dyn_up_sp3b, nsp3b[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        //printf("3b\n");
-        mem_sp3b[n0][nmem_sp3b[n0]]=nsp3b[f];       
-        nmem_sp3b[n0]++;        
-        if (nmem_sp3b[n0] >= mmem_sp3b) {
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        mem_sp3b[n1][nmem_sp3b[n1]]=nsp3b[f];       
-        nmem_sp3b[n1]++;        
-        if (nmem_sp3b[n1] >= mmem_sp3b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        mem_sp3b[n2][nmem_sp3b[n2]]=nsp3b[f];       
-        nmem_sp3b[n2]++;        
-        if (nmem_sp3b[n2] >= mmem_sp3b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        mem_sp3b[cp[0]][nmem_sp3b[cp[0]]]=nsp3b[f]; 
-        nmem_sp3b[cp[0]]++;     
-        if (nmem_sp3b[cp[0]] >= mmem_sp3b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
-            }
-            mmem_sp3b=mmem_sp3b+incrClustPerPart;
-        }
-        
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp3b,&BLDistroNoSamplessp3b);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                av_pot_sp3b+=part_pot[sp3b[nsp3b[f]][binAcnt]];
-                if (binAcnt<3) av_pot_sp3+=part_pot[sp3b[nsp3b[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[sp3b[nsp3b[f]][binAcnt]]==1) {
-                    nAsp3b++;
-                    number_of_A++;
-                    if (binAcnt<3) {
-                        nAsp3++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp3b++;
-                    if (binAcnt<3) nBsp3++;
-                }
-            }
-            n_distro_sp3b[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3b)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3b);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3b*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3b*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3b*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3b*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n2]==1) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3b)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3b);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n2]==2) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3b*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3b*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3b*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3b*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3b)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3b);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3b*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3b*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3b*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3b*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[cp[0]]==1 && rtype[n0]==1) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3b)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3b);
-            }
-            else if (rtype[cp[0]]==2 && rtype[n0]==2) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3b*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3b*sigma_BB);
-            }
-            else {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3b*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3b*sigma_AB);
-            }
-            
-            if (rtype[cp[0]]==1 && rtype[n1]==1) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3b)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3b);
-            }
-            else if (rtype[cp[0]]==2 && rtype[n1]==2) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3b*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3b*sigma_BB);
-            }
-            else {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3b*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3b*sigma_AB);
-            }
-            
-            if (rtype[cp[0]]==1 && rtype[n2]==1) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3b)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3b);
-            }
-            else if (rtype[cp[0]]==2 && rtype[n2]==2) {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3b*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3b*sigma_BB);
-            }
-            else {
-                bl_mom_sp3b[nsp3b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3b*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3b*sigma_AB);
-            }
-            
-            bl_mom_sp3b[nsp3b[f]]/=6.0;
-            bl_mom_sp3[nsp3[f]]/=3.0;
-        }
-        
-        ++nsp3b[f];
+        Store_sp3b(n0, n1, n2, cp);
     }
     else if (type==2 && dosp3c==1) {
-        if (nsp3c[f] == msp3c) { 
-            sp3c=resize_2D_int(sp3c,msp3c,msp3c+incrStatic,5,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp3c=resize_1D_double(bl_mom_sp3c,msp3c,msp3c+incrStatic);
-                bl_mom_sp3=resize_1D_double(bl_mom_sp3,msp3,msp3+incrStatic);
-                msp3=msp3+incrStatic;
-            }
-            msp3c=msp3c+incrStatic;
-        }
-        sp3c[nsp3c[f]][0] = n0;
-        sp3c[nsp3c[f]][1] = n1;
-        sp3c[nsp3c[f]][2] = n2; 
-        if (cp[0]<cp[1]) {
-            sp3c[nsp3c[f]][3] = cp[0];
-            sp3c[nsp3c[f]][4] = cp[1];
-        }
-        else {
-            sp3c[nsp3c[f]][3] = cp[1];
-            sp3c[nsp3c[f]][4] = cp[0];
-        }
-        if (doDynamics==1 && dyn_msp3c!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp3c[nsp3c[f]], f, 5, &dyn_nsp3c, &dyn_msp3c, &dyn_lsp3c, &dyn_sp3c, do_up, dyn_up_sp3c, nsp3c[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        //printf("3c\n");
-        mem_sp3c[n0][nmem_sp3c[n0]]=nsp3c[f];       
-        nmem_sp3c[n0]++;        
-        if (nmem_sp3c[n0] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[n1][nmem_sp3c[n1]]=nsp3c[f];       
-        nmem_sp3c[n1]++;        
-        if (nmem_sp3c[n1] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[n2][nmem_sp3c[n2]]=nsp3c[f];       
-        nmem_sp3c[n2]++;        
-        if (nmem_sp3c[n2] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[cp[0]][nmem_sp3c[cp[0]]]=nsp3c[f]; 
-        nmem_sp3c[cp[0]]++;     
-        if (nmem_sp3c[cp[0]] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        mem_sp3c[cp[1]][nmem_sp3c[cp[1]]]=nsp3c[f]; 
-        nmem_sp3c[cp[1]]++;     
-        if (nmem_sp3c[cp[1]] >= mmem_sp3c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
-            }
-            mmem_sp3c=mmem_sp3c+incrClustPerPart;
-        }
-        
-        
-        if (Bonds_BondCheck(sp3c[nsp3c[f]][3],sp3c[nsp3c[f]][4])==1) nsp3c_spindlebonds[f]++;
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)],BLDistrosp3c,&BLDistroNoSamplessp3c);
-            
-            if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp3c,&BLDistroNoSamplessp3c);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp3c+=part_pot[sp3c[nsp3c[f]][binAcnt]];
-                if (binAcnt<3) av_pot_sp3+=part_pot[sp3c[nsp3c[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp3c[nsp3c[f]][binAcnt]]==1) {
-                    nAsp3c++;
-                    number_of_A++;
-                    if (binAcnt<3) {
-                        nAsp3++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp3c++;
-                    if (binAcnt<3) nBsp3++;
-                }
-            }
-            n_distro_sp3c[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3c)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3c);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3c*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3c*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3c*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3c*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n2]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3c)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3c);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n2]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3c*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3c*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3c*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3c*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3c)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3c);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3c*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3c*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3c*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3c*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[cp[0]]==1 && rtype[n0]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3c)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3c);
-            }
-            else if (rtype[cp[0]]==2 && rtype[n0]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3c*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3c*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3c*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_sp3c*sigma_AB);
-            }
-            
-            if (rtype[cp[0]]==1 && rtype[n1]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3c)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3c);
-            }
-            else if (rtype[cp[0]]==2 && rtype[n1]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3c*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3c*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3c*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_sp3c*sigma_AB);
-            }
-            
-            if (rtype[cp[0]]==1 && rtype[n2]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3c)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3c);
-            }
-            else if (rtype[cp[0]]==2 && rtype[n2]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3c*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3c*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3c*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_sp3c*sigma_AB);
-            }
-            
-            if (rtype[cp[1]]==1 && rtype[n0]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_sp3c)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_sp3c);
-            }
-            else if (rtype[cp[1]]==2 && rtype[n0]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_sp3c*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_sp3c*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_sp3c*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_sp3c*sigma_AB);
-            }
-            
-            if (rtype[cp[1]]==1 && rtype[n1]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_sp3c)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_sp3c);
-            }
-            else if (rtype[cp[1]]==2 && rtype[n1]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_sp3c*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_sp3c*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_sp3c*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_sp3c*sigma_AB);
-            }
-            
-            if (rtype[cp[1]]==1 && rtype[n2]==1) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_sp3c)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_sp3c);
-            }
-            else if (rtype[cp[1]]==2 && rtype[n2]==2) {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_sp3c*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_sp3c*sigma_BB);
-            }
-            else {
-                bl_mom_sp3c[nsp3c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_sp3c*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_sp3c*sigma_AB);
-            }
-            
-            bl_mom_sp3c[nsp3c[f]]/=9.0;
-            bl_mom_sp3[nsp3[f]]/=3.0;
-        }
-        
-        ++nsp3c[f];
+        Store_sp3c(n0, n1, n2, cp);
     }
     else if (dosp3a==1) {
-        if (nsp3a[f] == msp3a) { 
-            sp3a=resize_2D_int(sp3a,msp3a,msp3a+incrStatic,3,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp3a=resize_1D_double(bl_mom_sp3a,msp3a,msp3a+incrStatic);
-                bl_mom_sp3=resize_1D_double(bl_mom_sp3,msp3,msp3+incrStatic);
-                msp3=msp3+incrStatic;
-            }
-            msp3a=msp3a+incrStatic;
-        }
-        sp3a[nsp3a[f]][0] = n0;
-        sp3a[nsp3a[f]][1] = n1;
-        sp3a[nsp3a[f]][2] = n2;
-        if (doDynamics==1 && dyn_msp3a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp3a[nsp3a[f]], f, 3, &dyn_nsp3a, &dyn_msp3a, &dyn_lsp3a, &dyn_sp3a, do_up, dummy_up, nsp3a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3a,&BLDistroNoSamplessp3a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3a,&BLDistroNoSamplessp3a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-            
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3a,&BLDistroNoSamplessp3a);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,n2)],BLDistrosp3,&BLDistroNoSamplessp3);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                av_pot_sp3a+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-                av_pot_sp3+=part_pot[sp3a[nsp3a[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<3; binAcnt++) {
-                if (rtype[sp3a[nsp3a[f]][binAcnt]]==1) {
-                    nAsp3a++;
-                    number_of_A++;
-                    nAsp3++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp3a++;
-                    nBsp3++;
-                }
-            }
-            n_distro_sp3a[number_of_A]++;
-            n_distro_sp3[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3a*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n2]==1) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3);
-            }
-            else if (rtype[n0]==2 && rtype[n2]==2) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3a*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n2)]-gsbl_sp3*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_BB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_BB);
-            }
-            else {
-                bl_mom_sp3a[nsp3a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3a*sigma_AB);
-                bl_mom_sp3[nsp3[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp3*sigma_AB);
-            }
-            
-            bl_mom_sp3a[nsp3a[f]]/=3.0;
-            bl_mom_sp3[nsp3[f]]/=3.0;
-        }
-        
-        ++nsp3a[f];
-        ++nsp3_excess_spindles[f];
+        Store_sp3a(n0, n1, n2);
     }
-    
-    ++nsp3[f];
 }
 
-void Rings_aSP4(int f, int n0, int n1, int n2, int n3) {    // Take {n0,n1,n2,n3}, check SP4 ring and if so detect SP4a/b/c cluster
+void Store_sp3c(int n0, int n1, int n2, const int *cp) {
+    if (nsp3c == msp3c) {
+        hcsp3c=resize_2D_int(hcsp3c,msp3c,msp3c+incrStatic,5,-1);
+        msp3c=msp3c+incrStatic;
+    }
+    hcsp3c[nsp3c][0] = n0;
+    hcsp3c[nsp3c][1] = n1;
+    hcsp3c[nsp3c][2] = n2;
+    if (cp[0]<cp[1]) {
+        hcsp3c[nsp3c][3] = cp[0];
+        hcsp3c[nsp3c][4] = cp[1];
+    }
+    else {
+        hcsp3c[nsp3c][3] = cp[1];
+        hcsp3c[nsp3c][4] = cp[0];
+    }
+
+    if (ssp3c[hcsp3c[nsp3c][0]] == 'C') ssp3c[hcsp3c[nsp3c][0]] = 'B';
+    if (ssp3c[hcsp3c[nsp3c][1]] == 'C') ssp3c[hcsp3c[nsp3c][1]] = 'B';
+    if (ssp3c[hcsp3c[nsp3c][2]] == 'C') ssp3c[hcsp3c[nsp3c][2]] = 'B';
+    ssp3c[hcsp3c[nsp3c][3]] = 'O';
+    ssp3c[hcsp3c[nsp3c][4]] = 'O';
+
+    add_mem_sp3c(n0);
+    add_mem_sp3c(n1);
+    add_mem_sp3c(n2);
+    add_mem_sp3c(cp[0]);
+    add_mem_sp3c(cp[1]);
+
+    ++nsp3c;
+}
+
+void Store_sp3b(int n0, int n1, int n2, const int *cp) {
+    if (nsp3b == msp3b) {
+        hcsp3b=resize_2D_int(hcsp3b,msp3b,msp3b+incrStatic,4,-1);
+        msp3b=msp3b+incrStatic;
+    }
+    hcsp3b[nsp3b][0] = n0;
+    hcsp3b[nsp3b][1] = n1;
+    hcsp3b[nsp3b][2] = n2;
+    hcsp3b[nsp3b][3] = cp[0];
+
+    if (ssp3b[hcsp3b[nsp3b][0]] == 'C') ssp3b[hcsp3b[nsp3b][0]] = 'B';
+    if (ssp3b[hcsp3b[nsp3b][1]] == 'C') ssp3b[hcsp3b[nsp3b][1]] = 'B';
+    if (ssp3b[hcsp3b[nsp3b][2]] == 'C') ssp3b[hcsp3b[nsp3b][2]] = 'B';
+    ssp3b[hcsp3b[nsp3b][3]] = 'O';
+
+    add_mem_sp3b(n0);
+    add_mem_sp3b(n1);
+    add_mem_sp3b(n2);
+    add_mem_sp3b(cp[0]);
+
+    ++nsp3b;
+}
+
+void Store_sp3a(int n0, int n1, int n2) {
+    if (nsp3a == msp3a) {
+        hcsp3a=resize_2D_int(hcsp3a,msp3a,msp3a+incrStatic,3,-1);
+        msp3a=msp3a+incrStatic;
+    }
+    hcsp3a[nsp3a][0] = n0;
+    hcsp3a[nsp3a][1] = n1;
+    hcsp3a[nsp3a][2] = n2;
+
+    ssp3a[hcsp3a[nsp3a][0]] = 'B';
+    ssp3a[hcsp3a[nsp3a][1]] = 'B';
+    ssp3a[hcsp3a[nsp3a][2]] = 'B';
+
+    ++nsp3a;
+}
+
+void get_sp4_clusters(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n3,n2}, check SP4 ring and if so detect SP4a/b/c cluster
     int i, j;
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
-    int bcheck;
-    int flg;
-    int trial[6];
-    int binAcnt;
-    int number_of_A, number_of_A_ring;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
+
     cp[0]=cp[1]=-1;
-    for (i=0; i<cnb[n0]; ++i) {
+    for (i=0; i<num_bonds[n0]; ++i) {
         j = bNums[n0][i];
-        bcheck = j == n1 || j == n3;
-        if (bcheck) continue;
-        bcheck = Bonds_BondCheck(n1,j)==1 && Bonds_BondCheck(n2,j)==1 && Bonds_BondCheck(n3,j)==1;
-        if (bcheck) {
-            if (type<2) {
-                cp[type] = j;
-                type++;
+        if (j != n1 && j != n2) {
+            if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n3, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
+                if (type < 2) {
+                    cp[type] = j;
+                    type++;
+                }
+                else {
+                    type++;
+                }
             }
-            else type++;
         }
     }
-    
-    if (maxto4<type) maxto4=type;
     
     if (type==0 && dosp4a==1) {
-        if (nsp4a[f] == msp4a) { 
-            sp4a=resize_2D_int(sp4a,msp4a,msp4a+incrStatic,4,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp4a=resize_1D_double(bl_mom_sp4a,msp4a,msp4a+incrStatic);
-                bl_mom_sp4=resize_1D_double(bl_mom_sp4,msp4,msp4+incrStatic);
-                msp4=msp4+incrStatic;
-            }
-            msp4a=msp4a+incrStatic;
-        }
-        sp4a[nsp4a[f]][0] = n0;
-        sp4a[nsp4a[f]][1] = n1;
-        sp4a[nsp4a[f]][2] = n2;
-        sp4a[nsp4a[f]][3] = n3;
-        if (doDynamics==1 && dyn_msp4a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp4a[nsp4a[f]], f, 4, &dyn_nsp4a, &dyn_msp4a, &dyn_lsp4a, &dyn_sp4a, do_up, dummy_up, nsp4a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                av_pot_sp4a+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-                av_pot_sp4+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[sp4a[nsp4a[f]][binAcnt]]==1) {
-                    nAsp4a++;
-                    number_of_A++;
-                    nAsp4++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp4a++;
-                    nBsp4++;
-                }
-            }
-            n_distro_sp4a[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n3]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n3]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            bl_mom_sp4a[nsp4a[f]]/=4.0;
-            bl_mom_sp4[nsp4[f]]/=4.0;
-        }
-        
-        ++nsp4a[f];
+        Store_sp4a(n0, n1, n2, n3);
     }
     else if (type==1 && dosp4b==1) {
-        if (nsp4b[f] == msp4b) { 
-            sp4b=resize_2D_int(sp4b,msp4b,msp4b+incrStatic,5,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp4b=resize_1D_double(bl_mom_sp4b,msp4b,msp4b+incrStatic);
-                bl_mom_sp4=resize_1D_double(bl_mom_sp4,msp4,msp4+incrStatic);
-                msp4=msp4+incrStatic;
-            }
-            msp4b=msp4b+incrStatic;
-        }
-        sp4b[nsp4b[f]][0] = n0;
-        sp4b[nsp4b[f]][1] = n1;
-        sp4b[nsp4b[f]][2] = n2;
-        sp4b[nsp4b[f]][3] = n3;
-        sp4b[nsp4b[f]][4] = cp[0];
-        if (doDynamics==1 && dyn_msp4b!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp4b[nsp4b[f]], f, 5, &dyn_nsp4b, &dyn_msp4b, &dyn_lsp4b, &dyn_sp4b, do_up, dyn_up_sp4b, nsp4b[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        //printf("4b\n");
-        mem_sp4b[n0][nmem_sp4b[n0]]=nsp4b[f];       
-        nmem_sp4b[n0]++;        
-        if (nmem_sp4b[n0] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[n1][nmem_sp4b[n1]]=nsp4b[f];       
-        nmem_sp4b[n1]++;        
-        if (nmem_sp4b[n1] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[n2][nmem_sp4b[n2]]=nsp4b[f];       
-        nmem_sp4b[n2]++;        
-        if (nmem_sp4b[n2] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[n3][nmem_sp4b[n3]]=nsp4b[f];       
-        nmem_sp4b[n3]++;        
-        if (nmem_sp4b[n3] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        mem_sp4b[cp[0]][nmem_sp4b[cp[0]]]=nsp4b[f]; 
-        nmem_sp4b[cp[0]]++;     
-        if (nmem_sp4b[cp[0]] >= mmem_sp4b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4b[binAcnt]=resize_1D_int(mem_sp4b[binAcnt],mmem_sp4b,mmem_sp4b+incrClustPerPart);
-            }
-            mmem_sp4b=mmem_sp4b+incrClustPerPart;
-        }
-        
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)],BLDistrosp4b,&BLDistroNoSamplessp4b);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp4b+=part_pot[sp4b[nsp4b[f]][binAcnt]];
-                if (binAcnt<4) av_pot_sp4+=part_pot[sp4b[nsp4b[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp4b[nsp4b[f]][binAcnt]]==1) {
-                    nAsp4b++;
-                    number_of_A++;
-                    if (binAcnt<4) {
-                        nAsp4++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp4b++;
-                    if (binAcnt<4) nBsp4++;
-                }
-            }
-            n_distro_sp4b[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4b*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4b)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4b);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4b*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4b*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4b*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4b*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4b)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4b);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4b*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4b*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4b*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4b*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n3]==1) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4b)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4b);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n3]==2) {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4b*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4b*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4b[nsp4b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4b*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4b*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[cp[0]]==1 && rtype[sp4b[nsp4b[f]][binAcnt]]==1) {
-                    bl_mom_sp4b[nsp4b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4b[nsp4b[f]][binAcnt])]-gsbl_sp4b)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4b[nsp4b[f]][binAcnt])]-gsbl_sp4b);
-                }
-                else if (rtype[cp[0]]==2 && rtype[sp4b[nsp4b[f]][binAcnt]]==2) {
-                    bl_mom_sp4b[nsp4b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4b[nsp4b[f]][binAcnt])]-gsbl_sp4b*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4b[nsp4b[f]][binAcnt])]-gsbl_sp4b*sigma_BB);
-                }
-                else {
-                    bl_mom_sp4b[nsp4b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4b[nsp4b[f]][binAcnt])]-gsbl_sp4b*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4b[nsp4b[f]][binAcnt])]-gsbl_sp4b*sigma_AB);
-                }
-            }
-            
-            bl_mom_sp4b[nsp4b[f]]/=8.0;
-            bl_mom_sp4[nsp4[f]]/=4.0;
-        }
-        
-        ++nsp4b[f];
+        Store_sp4b(n0, n1, n2, n3, cp);
     }
     else if (type==2 && dosp4c==1) {
-        if (nsp4c[f] == msp4c) { 
-            sp4c=resize_2D_int(sp4c,msp4c,msp4c+incrStatic,6,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp4c=resize_1D_double(bl_mom_sp4c,msp4c,msp4c+incrStatic);
-                bl_mom_sp4=resize_1D_double(bl_mom_sp4,msp4,msp4+incrStatic);
-                msp4=msp4+incrStatic;
-            }
-            msp4c=msp4c+incrStatic;
-        }
-        sp4c[nsp4c[f]][0] = n0;
-        sp4c[nsp4c[f]][1] = n1;
-        sp4c[nsp4c[f]][2] = n2;
-        sp4c[nsp4c[f]][3] = n3; 
-        if (cp[0]<cp[1]) {
-            sp4c[nsp4c[f]][4] = cp[0];
-            sp4c[nsp4c[f]][5] = cp[1];
-        }
-        else {
-            sp4c[nsp4c[f]][4] = cp[1];
-            sp4c[nsp4c[f]][5] = cp[0];
-        }
-        //printf("4c\n");
-        mem_sp4c[n0][nmem_sp4c[n0]]=nsp4c[f];       
-        nmem_sp4c[n0]++;        
-        if (nmem_sp4c[n0] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[n1][nmem_sp4c[n1]]=nsp4c[f];       
-        nmem_sp4c[n1]++;        
-        if (nmem_sp4c[n1] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[n2][nmem_sp4c[n2]]=nsp4c[f];       
-        nmem_sp4c[n2]++;        
-        if (nmem_sp4c[n2] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[n3][nmem_sp4c[n3]]=nsp4c[f];       
-        nmem_sp4c[n3]++;        
-        if (nmem_sp4c[n3] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[cp[0]][nmem_sp4c[cp[0]]]=nsp4c[f]; 
-        nmem_sp4c[cp[0]]++;     
-        if (nmem_sp4c[cp[0]] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        mem_sp4c[cp[1]][nmem_sp4c[cp[1]]]=nsp4c[f]; 
-        nmem_sp4c[cp[1]]++;     
-        if (nmem_sp4c[cp[1]] >= mmem_sp4c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp4c[binAcnt]=resize_1D_int(mem_sp4c[binAcnt],mmem_sp4c,mmem_sp4c+incrClustPerPart);
-            }
-            mmem_sp4c=mmem_sp4c+incrClustPerPart;
-        }
-        
-        if (Bonds_BondCheck(sp4c[nsp4c[f]][4],sp4c[nsp4c[f]][5])==1) nsp4c_spindlebonds[f]++;
-        
-        for (i=0;i<6;i++) trial[i]=sp4c[nsp4c[f]][i];
-        quickSort(&trial[0],6);
-        flg=0;  // check trial cluster not already found
-        for (i=0; i<n6A[f]; ++i) {
-            for (j=0; j<6; ++j) {
-                if (trial[j]!=hc6A[i][j]) break;
-            }   
-            if (j==6) {
-                flg=1;
-                break;
-            }
-        }
-        if (flg==0) {
-            if (n6A[f] == m6A) { 
-                hc6A=resize_2D_int(hc6A,m6A,m6A+incrStatic,6,-1);
-                if (doClusBLDeviation==1) {
-                    bl_mom_6A=resize_1D_double(bl_mom_6A,m6A,m6A+incrStatic);
-                }
-                m6A=m6A+incrStatic;
-            }
-            for (i=0; i<6; ++i) hc6A[n6A[f]][i]=trial[i];
-            
-            if (Bonds_BondCheck(cp[0],cp[1])==1) n6A_spindlebonds[f]++;
-            
-            if (doClusBLDistros==1) {
-                Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistro6A,&BLDistroNoSamples6A);
-                
-                Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,cp[0])],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,cp[0])],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,cp[0])],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[0])],BLDistro6A,&BLDistroNoSamples6A);
-                
-                Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,cp[1])],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,cp[1])],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,cp[1])],BLDistro6A,&BLDistroNoSamples6A);
-                Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[1])],BLDistro6A,&BLDistroNoSamples6A);
-                
-                if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistro6A,&BLDistroNoSamples6A);
-            }
-            
-            /*if (doPotential==1) {
-                for (binAcnt=0; binAcnt<6; binAcnt++) {
-                    av_pot_6A+=part_pot[hc6A[n6A[f]][binAcnt]];
-                }
-            }*/
-            
-            if (doClusComp==1) {
-                number_of_A=0;
-                for (binAcnt=0; binAcnt<6; binAcnt++) {
-                    if (rtype[hc6A[n6A[f]][binAcnt]]==1) {
-                        number_of_A++;
-                        nA6A++;
-                    }
-                    else nB6A++;
-                }
-                n_distro_6A[number_of_A]++;
-            }
-            
-            if (doClusBLDeviation==1) {
-                if (rtype[n0]==1 && rtype[n1]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A);
-                }
-                else if (rtype[n0]==2 && rtype[n1]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[n2]==1 && rtype[n1]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_6A)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_6A);
-                }
-                else if (rtype[n2]==2 && rtype[n1]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_6A*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_6A*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[n2]==1 && rtype[n3]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_6A)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_6A);
-                }
-                else if (rtype[n2]==2 && rtype[n3]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_6A*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_6A*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[n0]==1 && rtype[n3]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_6A)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_6A);
-                }
-                else if (rtype[n0]==2 && rtype[n3]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_6A*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_6A*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[cp[0]]==1 && rtype[n0]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_6A)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_6A);
-                }
-                else if (rtype[cp[0]]==2 && rtype[n0]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_6A*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_6A*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)]-gsbl_6A*sigma_AB);
-                }
-                    
-                if (rtype[cp[0]]==1 && rtype[n1]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_6A)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_6A);
-                }
-                else if (rtype[cp[0]]==2 && rtype[n1]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_6A*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_6A*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[cp[0]]==1 && rtype[n2]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_6A)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_6A);
-                }
-                else if (rtype[cp[0]]==2 && rtype[n2]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_6A*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_6A*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[cp[0]]==1 && rtype[n3]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)]-gsbl_6A)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)]-gsbl_6A);
-                }
-                else if (rtype[cp[0]]==2 && rtype[n3]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)]-gsbl_6A*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)]-gsbl_6A*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[cp[1]]==1 && rtype[n0]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_6A)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_6A);
-                }
-                else if (rtype[cp[1]]==2 && rtype[n0]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_6A*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_6A*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)]-gsbl_6A*sigma_AB);
-                }
-                    
-                if (rtype[cp[1]]==1 && rtype[n1]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_6A)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_6A);
-                }
-                else if (rtype[cp[1]]==2 && rtype[n1]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_6A*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_6A*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[cp[1]]==1 && rtype[n2]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_6A)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_6A);
-                }
-                else if (rtype[cp[1]]==2 && rtype[n2]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_6A*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_6A*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)]-gsbl_6A*sigma_AB);
-                }
-                
-                if (rtype[cp[1]]==1 && rtype[n3]==1) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)]-gsbl_6A)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)]-gsbl_6A);
-                }
-                else if (rtype[cp[1]]==2 && rtype[n3]==2) {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)]-gsbl_6A*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)]-gsbl_6A*sigma_BB);
-                }
-                else {
-                    bl_mom_6A[n6A[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)]-gsbl_6A*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)]-gsbl_6A*sigma_AB);
-                }
-                
-                bl_mom_6A[n6A[f]]/=12.0;
-            }
-            
-            ++n6A[f];
-        }
-        if (doDynamics==1 && dyn_m6A!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add_6A(flg, trial, f, 6, &dyn_n6A, &dyn_m6A, &dyn_l6A, &dyn_hc6A, do_up, dyn_up_sp4c, nsp4c[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n0)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n1)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n2)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],n3)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n0)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n1)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n2)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            Bonds_TickBLDistro(bondlengths[cp[1]][Bonds_cnb_j(cp[1],n3)],BLDistrosp4c,&BLDistroNoSamplessp4c);
-            
-            if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp4c,&BLDistroNoSamplessp4c);
-        }
-            
-        // hc6A key: (SP4_1, SP4_2, SP4_3, SP4_4, s1, s2)
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                av_pot_sp4c+=part_pot[sp4c[nsp4c[f]][binAcnt]];
-                if (binAcnt<4) av_pot_sp4+=part_pot[sp4c[nsp4c[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                if (rtype[sp4c[nsp4c[f]][binAcnt]]==1) {
-                    nAsp4c++;
-                    number_of_A++;
-                    if (binAcnt<4) {
-                        nAsp4++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp4c++;
-                    if (binAcnt<4) nBsp4++;
-                }
-            }
-            n_distro_sp4c[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4c*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4c)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4c);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4c*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4c*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4c*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4c*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4c)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4c);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4c*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4c*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4c*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4c*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n3]==1) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4c)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4c);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n3]==2) {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4c*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4c*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4c[nsp4c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4c*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4c*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[cp[0]]==1 && rtype[sp4c[nsp4c[f]][binAcnt]]==1) {
-                    bl_mom_sp4c[nsp4c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c);
-                }
-                else if (rtype[cp[0]]==2 && rtype[sp4c[nsp4c[f]][binAcnt]]==2) {
-                    bl_mom_sp4c[nsp4c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_BB);
-                }
-                else {
-                    bl_mom_sp4c[nsp4c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_AB);
-                }
-                
-                if (rtype[cp[1]]==1 && rtype[sp4c[nsp4c[f]][binAcnt]]==1) {
-                    bl_mom_sp4c[nsp4c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c);
-                }
-                else if (rtype[cp[1]]==2 && rtype[sp4c[nsp4c[f]][binAcnt]]==2) {
-                    bl_mom_sp4c[nsp4c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_BB);
-                }
-                else {
-                    bl_mom_sp4c[nsp4c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp4c[nsp4c[f]][binAcnt])]-gsbl_sp4c*sigma_AB);
-                }
-            }
-            
-            bl_mom_sp4c[nsp4c[f]]/=12.0;
-            bl_mom_sp4[nsp4[f]]/=4.0;
-        }
-        
-        ++nsp4c[f];
+        Store_sp4c(n0, n1, n2, n3, cp);
     }
     else if (dosp4a==1) {
-        if (nsp4a[f] == msp4a) { 
-            sp4a=resize_2D_int(sp4a,msp4a,msp4a+incrStatic,4,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp4a=resize_1D_double(bl_mom_sp4a,msp4a,msp4a+incrStatic);
-                bl_mom_sp4=resize_1D_double(bl_mom_sp4,msp4,msp4+incrStatic);
-                msp4=msp4+incrStatic;
-            }
-            msp4a=msp4a+incrStatic;
-        }
-        sp4a[nsp4a[f]][0] = n0;
-        sp4a[nsp4a[f]][1] = n1;
-        sp4a[nsp4a[f]][2] = n2;
-        sp4a[nsp4a[f]][3] = n3;
-        if (doDynamics==1 && dyn_msp4a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp4a[nsp4a[f]], f, 4, &dyn_nsp4a, &dyn_msp4a, &dyn_lsp4a, &dyn_sp4a, do_up, dummy_up, nsp4a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4a,&BLDistroNoSamplessp4a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n3)],BLDistrosp4,&BLDistroNoSamplessp4);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                av_pot_sp4a+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-                av_pot_sp4+=part_pot[sp4a[nsp4a[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<4; binAcnt++) {
-                if (rtype[sp4a[nsp4a[f]][binAcnt]]==1) {
-                    nAsp4a++;
-                    number_of_A++;
-                    nAsp4++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp4a++;
-                    nBsp4++;
-                }
-            }
-            n_distro_sp4a[number_of_A]++;
-            n_distro_sp4[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            if (rtype[n0]==1 && rtype[n3]==1) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4);
-            }
-            else if (rtype[n0]==2 && rtype[n3]==2) {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_BB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_BB);
-            }
-            else {
-                bl_mom_sp4a[nsp4a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4a*sigma_AB);
-                bl_mom_sp4[nsp4[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n3)]-gsbl_sp4*sigma_AB);
-            }
-            
-            bl_mom_sp4a[nsp4a[f]]/=4.0;
-            bl_mom_sp4[nsp4[f]]/=4.0;
-        }
-        
-        ++nsp4a[f];
-        ++nsp4_excess_spindles[f];
+        Store_sp4a(n0, n1, n3, n2);
     }
-    
-    ++nsp4[f];
 }
 
-void Rings_aSP5(int f, int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n3,n4}, check SP5 ring and if so detect SP5a/b/c cluster
+void Store_sp4c(int n0, int n1, int n2, int n3, const int *cp) {
+
+    if (nsp4c == msp4c) {
+        hcsp4c=resize_2D_int(hcsp4c,msp4c,msp4c+incrStatic,6,-1);
+        msp4c=msp4c+incrStatic;
+    }
+    hcsp4c[nsp4c][0] = n0;
+    hcsp4c[nsp4c][1] = n1;
+    hcsp4c[nsp4c][2] = n3;
+    hcsp4c[nsp4c][3] = n2;
+    if (cp[0]<cp[1]) {
+        hcsp4c[nsp4c][4] = cp[0];
+        hcsp4c[nsp4c][5] = cp[1];
+    }
+    else {
+        hcsp4c[nsp4c][4] = cp[1];
+        hcsp4c[nsp4c][5] = cp[0];
+    }
+
+    if (ssp4c[hcsp4c[nsp4c][0]] == 'C') ssp4c[hcsp4c[nsp4c][0]] = 'B';
+    if (ssp4c[hcsp4c[nsp4c][1]] == 'C') ssp4c[hcsp4c[nsp4c][1]] = 'B';
+    if (ssp4c[hcsp4c[nsp4c][2]] == 'C') ssp4c[hcsp4c[nsp4c][2]] = 'B';
+    if (ssp4c[hcsp4c[nsp4c][3]] == 'C') ssp4c[hcsp4c[nsp4c][3]] = 'B';
+    ssp4c[hcsp4c[nsp4c][4]] = 'O';
+    ssp4c[hcsp4c[nsp4c][5]] = 'O';
+
+    add_mem_sp4c(n0);
+    add_mem_sp4c(n1);
+    add_mem_sp4c(n2);
+    add_mem_sp4c(n3);
+    add_mem_sp4c(cp[0]);
+    add_mem_sp4c(cp[1]);
+
+    // hc6A key: (SP4_1, SP4_2, SP4_3, SP4_4, s1, s2)
+
+    ++nsp4c;
+}
+
+void Store_sp4b(int n0, int n1, int n2, int n3, const int *cp) {
+    if (nsp4b == msp4b) {
+        hcsp4b=resize_2D_int(hcsp4b,msp4b,msp4b+incrStatic,5,-1);
+        msp4b=msp4b+incrStatic;
+    }
+    hcsp4b[nsp4b][0] = n0;
+    hcsp4b[nsp4b][1] = n1;
+    hcsp4b[nsp4b][2] = n3;
+    hcsp4b[nsp4b][3] = n2;
+    hcsp4b[nsp4b][4] = cp[0];
+
+    if (ssp4b[hcsp4b[nsp4b][0]] == 'C') ssp4b[hcsp4b[nsp4b][0]] = 'B';
+    if (ssp4b[hcsp4b[nsp4b][1]] == 'C') ssp4b[hcsp4b[nsp4b][1]] = 'B';
+    if (ssp4b[hcsp4b[nsp4b][2]] == 'C') ssp4b[hcsp4b[nsp4b][2]] = 'B';
+    if (ssp4b[hcsp4b[nsp4b][3]] == 'C') ssp4b[hcsp4b[nsp4b][3]] = 'B';
+    ssp4b[hcsp4b[nsp4b][4]] = 'O';
+
+    add_mem_sp4b(n0);
+    add_mem_sp4b(n1);
+    add_mem_sp4b(n2);
+    add_mem_sp4b(n3);
+    add_mem_sp4b(cp[0]);
+
+    ++nsp4b;
+}
+
+void Store_sp4a(int n0, int n1, int n2, int n3) {
+    if (nsp4a == msp4a) {
+        hcsp4a=resize_2D_int(hcsp4a,msp4a,msp4a+incrStatic,4,-1);
+        msp4a=msp4a+incrStatic;
+    }
+    hcsp4a[nsp4a][0] = n0;
+    hcsp4a[nsp4a][1] = n1;
+    hcsp4a[nsp4a][2] = n3;
+    hcsp4a[nsp4a][3] = n2;
+
+    ssp4a[hcsp4a[nsp4a][0]] = 'B';
+    ssp4a[hcsp4a[nsp4a][1]] = 'B';
+    ssp4a[hcsp4a[nsp4a][2]] = 'B';
+    ssp4a[hcsp4a[nsp4a][3]] = 'B';
+
+    ++nsp4a;
+}
+
+void get_sp5_clusters(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n3,n4}, check SP5 ring and if so detect SP5a/b/c cluster
     int i, j;
     int type = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
-    int bcheck;
-    int binAcnt;
-    int number_of_A, number_of_A_ring;
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
-    cp[0]=cp[1]=-1;
-    for (i=0; i<cnb[n0]; ++i) {
+
+    // Loop through all neighbours of n0
+    for (i=0; i<num_bonds[n0]; ++i) {
         j = bNums[n0][i];
-        bcheck = j == n1 || j == n4;
-        if (bcheck) continue;
-        bcheck = Bonds_BondCheck(n1,j)==1 && Bonds_BondCheck(n2,j)==1 && Bonds_BondCheck(n3,j)==1 && Bonds_BondCheck(n4,j)==1;
-        if (bcheck) {
-            if (type<2) {
-                cp[type] = j;
-                type++;
-            }
-            else type++;
-        }
-    }
-    
-    if (maxto5<type) maxto5=type;
-    
-    if (type==0 && dosp5a==1) { // Now store ring
-        if (nsp5a[f] == msp5a) { 
-            sp5a=resize_2D_int(sp5a,msp5a,msp5a+incrStatic,5,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp5a=resize_1D_double(bl_mom_sp5a,msp5a,msp5a+incrStatic);
-                bl_mom_sp5=resize_1D_double(bl_mom_sp5,msp5,msp5+incrStatic);
-                msp5=msp5+incrStatic;
-            }
-            msp5a=msp5a+incrStatic;
-        }
-        sp5a[nsp5a[f]][0] = n0;
-        sp5a[nsp5a[f]][1] = n1;
-        sp5a[nsp5a[f]][2] = n2;
-        sp5a[nsp5a[f]][3] = n3;
-        sp5a[nsp5a[f]][4] = n4;
-        if (doDynamics==1 && dyn_msp5a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp5a[nsp5a[f]], f, 5, &dyn_nsp5a, &dyn_msp5a, &dyn_lsp5a, &dyn_sp5a, do_up, dummy_up, nsp5a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp5a+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-                av_pot_sp5+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp5a[nsp5a[f]][binAcnt]]==1) {
-                    nAsp5a++;
-                    number_of_A++;
-                    nAsp5++;
-                    number_of_A_ring++;
+        // If the n0 neighbour is not n1 or n4
+        if (j != n1 || j != n4) {
+            // If the neighbour is bonded to all other ring particles
+            if (Bonds_BondCheck(n1,j)==1 && Bonds_BondCheck(n2,j)==1 && Bonds_BondCheck(n3,j)==1 && Bonds_BondCheck(n4,j)==1) {
+                if (type < 2) {
+                    cp[type] = j;
+                    type++;
                 }
                 else {
-                    nBsp5a++;
-                    nBsp5++;
+                    type++;
                 }
             }
-            n_distro_sp5a[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
         }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n3]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n3]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n0]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n0]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB);
-            }
-            
-            bl_mom_sp5a[nsp5a[f]]/=5.0;
-            bl_mom_sp5[nsp5[f]]/=5.0;
-        }
-        
-        ++nsp5a[f];
+    }
+
+    if (type==0 && dosp5a==1) {
+        Store_sp5a(n0, n1, n2, n3, n4);
+
     }
     else if (type==1 && dosp5b==1) {
-        if (nsp5b[f] == msp5b) { 
-            sp5b=resize_2D_int(sp5b,msp5b,msp5b+incrStatic,6,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp5b=resize_1D_double(bl_mom_sp5b,msp5b,msp5b+incrStatic);
-                bl_mom_sp5=resize_1D_double(bl_mom_sp5,msp5,msp5+incrStatic);
-                msp5=msp5+incrStatic;
-            }
-            msp5b=msp5b+incrStatic;
-        }
-        sp5b[nsp5b[f]][0] = n0;
-        sp5b[nsp5b[f]][1] = n1;
-        sp5b[nsp5b[f]][2] = n2;
-        sp5b[nsp5b[f]][3] = n3;
-        sp5b[nsp5b[f]][4] = n4;
-        sp5b[nsp5b[f]][5] = cp[0];
-        if (doDynamics==1 && dyn_msp5b!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp5b[nsp5b[f]], f, 6, &dyn_nsp5b, &dyn_msp5b, &dyn_lsp5b, &dyn_sp5b, do_up, dyn_up_sp5b, nsp5b[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        //printf("5b\n");
-        mem_sp5b[n0][nmem_sp5b[n0]]=nsp5b[f];       
-        nmem_sp5b[n0]++;        
-        if (nmem_sp5b[n0] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n1][nmem_sp5b[n1]]=nsp5b[f];       
-        nmem_sp5b[n1]++;        
-        if (nmem_sp5b[n1] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n2][nmem_sp5b[n2]]=nsp5b[f];       
-        nmem_sp5b[n2]++;        
-        if (nmem_sp5b[n2] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n3][nmem_sp5b[n3]]=nsp5b[f];       
-        nmem_sp5b[n3]++;        
-        if (nmem_sp5b[n3] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[n4][nmem_sp5b[n4]]=nsp5b[f];       
-        nmem_sp5b[n4]++;        
-        if (nmem_sp5b[n4] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        mem_sp5b[cp[0]][nmem_sp5b[cp[0]]]=nsp5b[f]; 
-        nmem_sp5b[cp[0]]++;     
-        if (nmem_sp5b[cp[0]] >= mmem_sp5b) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5b[binAcnt]=resize_1D_int(mem_sp5b[binAcnt],mmem_sp5b,mmem_sp5b+incrClustPerPart);
-            }
-            mmem_sp5b=mmem_sp5b+incrClustPerPart;
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,cp[0])],BLDistrosp5b,&BLDistroNoSamplessp5b);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                av_pot_sp5b+=part_pot[sp5b[nsp5b[f]][binAcnt]];
-                if (binAcnt<5) av_pot_sp5+=part_pot[sp5b[nsp5b[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<6; binAcnt++) {
-                if (rtype[sp5b[nsp5b[f]][binAcnt]]==1) {
-                    nAsp5b++;
-                    number_of_A++;
-                    if (binAcnt<5) {
-                        nAsp5++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp5b++;
-                    if (binAcnt<5) nBsp5++;
-                }
-            }
-            n_distro_sp5b[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5b)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5b);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5b*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5b*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5b*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5b*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5b)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5b);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5b*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5b*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5b*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5b*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5b)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5b);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5b*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5b*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5b*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5b*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n3]==1) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5b)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5b);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n3]==2) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5b*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5b*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5b*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5b*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n0]==1) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5b)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5b);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n0]==2) {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5b*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5b*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5b[nsp5b[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5b*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5b*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB);
-            }
-            
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[cp[0]]==1 && rtype[sp5b[nsp5b[f]][binAcnt]]==1) {
-                    bl_mom_sp5b[nsp5b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5b[nsp5b[f]][binAcnt])]-gsbl_sp5b)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5b[nsp5b[f]][binAcnt])]-gsbl_sp5b);
-                }
-                else if (rtype[cp[0]]==2 && rtype[sp5b[nsp5b[f]][binAcnt]]==2) {
-                    bl_mom_sp5b[nsp5b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5b[nsp5b[f]][binAcnt])]-gsbl_sp5b*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5b[nsp5b[f]][binAcnt])]-gsbl_sp5b*sigma_BB);
-                }
-                else {
-                    bl_mom_sp5b[nsp5b[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5b[nsp5b[f]][binAcnt])]-gsbl_sp5b*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5b[nsp5b[f]][binAcnt])]-gsbl_sp5b*sigma_AB);
-                }
-            }
-            
-            bl_mom_sp5b[nsp5b[f]]/=10.0;
-            bl_mom_sp5[nsp5[f]]/=5.0;
-        }
-        
-        ++nsp5b[f];
+        Store_sp5b(n0, n1, n2, n3, n4, cp);
+
     }
     else if (type==2 && dosp5c==1) {
-        if (nsp5c[f] == msp5c) { 
-            sp5c=resize_2D_int(sp5c,msp5c,msp5c+incrStatic,7,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp5c=resize_1D_double(bl_mom_sp5c,msp5c,msp5c+incrStatic);
-                bl_mom_sp5=resize_1D_double(bl_mom_sp5,msp5,msp5+incrStatic);
-                msp5=msp5+incrStatic;
-            }
-            msp5c=msp5c+incrStatic;
-        }
-        sp5c[nsp5c[f]][0] = n0;
-        sp5c[nsp5c[f]][1] = n1;
-        sp5c[nsp5c[f]][2] = n2;
-        sp5c[nsp5c[f]][3] = n3; 
-        sp5c[nsp5c[f]][4] = n4; 
-        if (cp[0]<cp[1]) {
-            sp5c[nsp5c[f]][5] = cp[0];
-            sp5c[nsp5c[f]][6] = cp[1];
-        }
-        else {
-            sp5c[nsp5c[f]][5] = cp[1];
-            sp5c[nsp5c[f]][6] = cp[0];
-        }
-        if (doDynamics==1 && dyn_msp5c!=-1) {
-            do_sub=0;
-            if (doSubClusts==1) do_up=1;
-            else do_up=0;
-            Dyn_add(sp5c[nsp5c[f]], f, 7, &dyn_nsp5c, &dyn_msp5c, &dyn_lsp5c, &dyn_sp5c, do_up, dyn_up_sp5c, nsp5c[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        //printf("5c\n");
-        mem_sp5c[n0][nmem_sp5c[n0]]=nsp5c[f];       
-        nmem_sp5c[n0]++;        
-        if (nmem_sp5c[n0] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n1][nmem_sp5c[n1]]=nsp5c[f];       
-        nmem_sp5c[n1]++;        
-        if (nmem_sp5c[n1] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n2][nmem_sp5c[n2]]=nsp5c[f];       
-        nmem_sp5c[n2]++;        
-        if (nmem_sp5c[n2] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n3][nmem_sp5c[n3]]=nsp5c[f];       
-        nmem_sp5c[n3]++;        
-        if (nmem_sp5c[n3] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[n4][nmem_sp5c[n4]]=nsp5c[f];       
-        nmem_sp5c[n4]++;        
-        if (nmem_sp5c[n4] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[cp[0]][nmem_sp5c[cp[0]]]=nsp5c[f]; 
-        nmem_sp5c[cp[0]]++;     
-        if (nmem_sp5c[cp[0]] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        mem_sp5c[cp[1]][nmem_sp5c[cp[1]]]=nsp5c[f]; 
-        nmem_sp5c[cp[1]]++;     
-        if (nmem_sp5c[cp[1]] >= mmem_sp5c) { 
-            for (binAcnt=0; binAcnt<N; binAcnt++) {
-                mem_sp5c[binAcnt]=resize_1D_int(mem_sp5c[binAcnt],mmem_sp5c,mmem_sp5c+incrClustPerPart);
-            }
-            mmem_sp5c=mmem_sp5c+incrClustPerPart;
-        }
-        
-        
-        if (Bonds_BondCheck(sp5c[nsp5c[f]][5],sp5c[nsp5c[f]][6])==1) nsp5c_spindlebonds[f]++;
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,cp[0])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,cp[0])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,cp[0])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[0])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,cp[0])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n1][Bonds_cnb_j(n1,cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n3][Bonds_cnb_j(n3,cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-            
-            if (Bonds_BondCheck(cp[0],cp[1])==1) Bonds_TickBLDistro(bondlengths[cp[0]][Bonds_cnb_j(cp[0],cp[1])],BLDistrosp5c,&BLDistroNoSamplessp5c);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<7; binAcnt++) {
-                av_pot_sp5c+=part_pot[sp5c[nsp5c[f]][binAcnt]];
-                if (binAcnt<5) av_pot_sp5+=part_pot[sp5c[nsp5c[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<7; binAcnt++) {
-                if (rtype[sp5c[nsp5c[f]][binAcnt]]==1) {
-                    nAsp5c++;
-                    number_of_A++;
-                    if (binAcnt<5) {
-                        nAsp5++;
-                        number_of_A_ring++;
-                    }
-                }
-                else {
-                    nBsp5c++;
-                    if (binAcnt<5) nBsp5++;
-                }
-            }
-            n_distro_sp5c[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5c*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5c)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5c);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5c*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5c*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5c*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5c*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5c)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5c);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5c*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5c*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5c*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5c*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n3]==1) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5c)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5c);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n3]==2) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5c*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5c*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5c*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5c*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n0]==1) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5c)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5c);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n0]==2) {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5c*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5c*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5c[nsp5c[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5c*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5c*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB);
-            }
-            
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[cp[0]]==1 && rtype[sp5c[nsp5c[f]][binAcnt]]==1) {
-                    bl_mom_sp5c[nsp5c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c);
-                }
-                else if (rtype[cp[0]]==2 && rtype[sp5c[nsp5c[f]][binAcnt]]==2) {
-                    bl_mom_sp5c[nsp5c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_BB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_BB);
-                }
-                else {
-                    bl_mom_sp5c[nsp5c[f]]+=(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_AB)*(bondlengths[cp[0]][Bonds_cnb_j(cp[0],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_AB);
-                }
-                
-                if (rtype[cp[1]]==1 && rtype[sp5c[nsp5c[f]][binAcnt]]==1) {
-                    bl_mom_sp5c[nsp5c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c);
-                }
-                else if (rtype[cp[1]]==2 && rtype[sp5c[nsp5c[f]][binAcnt]]==2) {
-                    bl_mom_sp5c[nsp5c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_BB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_BB);
-                }
-                else {
-                    bl_mom_sp5c[nsp5c[f]]+=(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_AB)*(bondlengths[cp[1]][Bonds_cnb_j(cp[1],sp5c[nsp5c[f]][binAcnt])]-gsbl_sp5c*sigma_AB);
-                }
-            }
-            
-            bl_mom_sp5c[nsp5c[f]]/=15.0;
-            bl_mom_sp5[nsp5[f]]/=5.0;
-        }
-        
-        ++nsp5c[f];
+        Store_sp5c(n0, n1, n2, n3, n4, cp);
+
     }
-    else if (dosp5a==1) {   // Now store ring
-        if (nsp5a[f] == msp5a) { 
-            sp5a=resize_2D_int(sp5a,msp5a,msp5a+incrStatic,5,-1);
-            if (doClusBLDeviation==1) {
-                bl_mom_sp5a=resize_1D_double(bl_mom_sp5a,msp5a,msp5a+incrStatic);
-                bl_mom_sp5=resize_1D_double(bl_mom_sp5,msp5,msp5+incrStatic);
-                msp5=msp5+incrStatic;
-            }
-            msp5a=msp5a+incrStatic;
-        }
-        sp5a[nsp5a[f]][0] = n0;
-        sp5a[nsp5a[f]][1] = n1;
-        sp5a[nsp5a[f]][2] = n2;
-        sp5a[nsp5a[f]][3] = n3;
-        sp5a[nsp5a[f]][4] = n4;
-        if (doDynamics==1 && dyn_msp5a!=-1) {
-            do_sub=0;
-            do_up=0;
-            Dyn_add(sp5a[nsp5a[f]], f, 5, &dyn_nsp5a, &dyn_msp5a, &dyn_lsp5a, &dyn_sp5a, do_up, dummy_up, nsp5a[f], do_sub, n_sub, &dummy_sub, sub);
-        }
-        
-        if (doClusBLDistros==1) {
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n0][Bonds_cnb_j(n0,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n1)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n2][Bonds_cnb_j(n2,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n3)],BLDistrosp5,&BLDistroNoSamplessp5);
-            
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5a,&BLDistroNoSamplessp5a);
-            Bonds_TickBLDistro(bondlengths[n4][Bonds_cnb_j(n4,n0)],BLDistrosp5,&BLDistroNoSamplessp5);
-        }
-        
-        /*if (doPotential==1) {
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                av_pot_sp5a+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-                av_pot_sp5+=part_pot[sp5a[nsp5a[f]][binAcnt]];
-            }
-        }*/
-        
-        if (doClusComp==1) {
-            number_of_A=0;
-            number_of_A_ring=0;
-            for (binAcnt=0; binAcnt<5; binAcnt++) {
-                if (rtype[sp5a[nsp5a[f]][binAcnt]]==1) {
-                    nAsp5a++;
-                    number_of_A++;
-                    nAsp5++;
-                    number_of_A_ring++;
-                }
-                else {
-                    nBsp5a++;
-                    nBsp5++;
-                }
-            }
-            n_distro_sp5a[number_of_A]++;
-            n_distro_sp5[number_of_A_ring]++;
-        }
-        
-        if (doClusBLDeviation==1) {
-            if (rtype[n0]==1 && rtype[n1]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n0]==2 && rtype[n1]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n0][Bonds_cnb_j(n0,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n1]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n1]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n1)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n2]==1 && rtype[n3]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n2]==2 && rtype[n3]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n2][Bonds_cnb_j(n2,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n3]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n3]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n3)]-gsbl_sp5*sigma_AB);
-            }
-            
-            if (rtype[n4]==1 && rtype[n0]==1) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5);
-            }
-            else if (rtype[n4]==2 && rtype[n0]==2) {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_BB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_BB);
-            }
-            else {
-                bl_mom_sp5a[nsp5a[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5a*sigma_AB);
-                bl_mom_sp5[nsp5[f]]+=(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB)*(bondlengths[n4][Bonds_cnb_j(n4,n0)]-gsbl_sp5*sigma_AB);
-            }
-            
-            bl_mom_sp5a[nsp5a[f]]/=5.0;
-            bl_mom_sp5[nsp5[f]]/=5.0;
-        }
-        
-        ++nsp5a[f];
-        ++nsp5_excess_spindles[f];
+    else if (dosp5a==1) {
+        Store_sp5a(n0, n1, n2, n3, n4);
     }
-    
-    ++nsp5[f];
 }
 
-void Rings_setSP3c(int f) { // store cluster 5A D3h from Bonds_aSP3
-    int i, arr[3];
-    char *ach, errMsg[1000];
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP3c(): ach[] malloc out of memory\n");   Error(errMsg); }
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp3a[f]; i++) {
-        if (ach[sp3a[i][0]] == 'C') ach[sp3a[i][0]] = 'B';
-        if (ach[sp3a[i][1]] == 'C') ach[sp3a[i][1]] = 'B';
-        if (ach[sp3a[i][2]] == 'C') ach[sp3a[i][2]] = 'B';
+void Store_sp5c(int n0, int n1, int n2, int n3, int n4, const int *cp) {
+    if (nsp5c == msp5c) {
+        hcsp5c=resize_2D_int(hcsp5c,msp5c,msp5c+incrStatic,7,-1);
+        msp5c=msp5c+incrStatic;
     }
-    for (i=0; i<N; ++i) ssp3a[i]=ach[i];
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp3b[f]; i++) {
-        if (ach[sp3b[i][0]] == 'C') ach[sp3b[i][0]] = 'B';
-        if (ach[sp3b[i][1]] == 'C') ach[sp3b[i][1]] = 'B';
-        if (ach[sp3b[i][2]] == 'C') ach[sp3b[i][2]] = 'B';
-        ach[sp3b[i][3]] = 'O';
+    hcsp5c[nsp5c][0] = n0;
+    hcsp5c[nsp5c][1] = n1;
+    hcsp5c[nsp5c][2] = n2;
+    hcsp5c[nsp5c][3] = n3;
+    hcsp5c[nsp5c][4] = n4;
+    if (cp[0]<cp[1]) {
+        hcsp5c[nsp5c][5] = cp[0];
+        hcsp5c[nsp5c][6] = cp[1];
     }
-    for (i=0; i<N; ++i) ssp3b[i]=ach[i];
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp3c[f]; i++) {
-        if (ach[sp3c[i][0]] == 'C') ach[sp3c[i][0]] = 'B';
-        if (ach[sp3c[i][1]] == 'C') ach[sp3c[i][1]] = 'B';
-        if (ach[sp3c[i][2]] == 'C') ach[sp3c[i][2]] = 'B';
-        ach[sp3c[i][3]] = 'O';
-        ach[sp3c[i][4]] = 'O';
+    else {
+        hcsp5c[nsp5c][5] = cp[1];
+        hcsp5c[nsp5c][6] = cp[0];
     }
-    for (i=0; i<N; ++i) s5A[i]=ach[i];
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp3a[f]; i++) {
-        if (ach[sp3a[i][0]] == 'C') ach[sp3a[i][0]] = 'B';
-        if (ach[sp3a[i][1]] == 'C') ach[sp3a[i][1]] = 'B';
-        if (ach[sp3a[i][2]] == 'C') ach[sp3a[i][2]] = 'B';
-    }
-    for (i=0; i<nsp3b[f]; i++) {
-        if (ach[sp3b[i][0]] == 'C') ach[sp3b[i][0]] = 'B';
-        if (ach[sp3b[i][1]] == 'C') ach[sp3b[i][1]] = 'B';
-        if (ach[sp3b[i][2]] == 'C') ach[sp3b[i][2]] = 'B';
-    }
-    for (i=0; i<nsp3c[f]; i++) {
-        if (ach[sp3c[i][0]] == 'C') ach[sp3c[i][0]] = 'B';
-        if (ach[sp3c[i][1]] == 'C') ach[sp3c[i][1]] = 'B';
-        if (ach[sp3c[i][2]] == 'C') ach[sp3c[i][2]] = 'B';
-    }
-    for (i=0; i<N; ++i) ssp3[i]=ach[i];
-    
-    if (doDynamics==1 && dyn_msp3!=-1) {
-        for (i=0; i<nsp3a[f]; i++) {
-            arr[0]=sp3a[i][0];
-            arr[1]=sp3a[i][1];
-            arr[2]=sp3a[i][2];
-            if (doDynamics==1 && dyn_msp3!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 3, &dyn_nsp3, &dyn_msp3, &dyn_lsp3, &dyn_sp3, do_up, dummy_up, nsp3[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp3b[f]; i++) {
-            arr[0]=sp3b[i][0];
-            arr[1]=sp3b[i][1];
-            arr[2]=sp3b[i][2];
-            if (doDynamics==1 && dyn_msp3!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 3, &dyn_nsp3, &dyn_msp3, &dyn_lsp3, &dyn_sp3, do_up, dummy_up, nsp3[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp3c[f]; ++i) {
-            arr[0]=sp3c[i][0];
-            arr[1]=sp3c[i][1];
-            arr[2]=sp3c[i][2];
-            if (doDynamics==1 && dyn_msp3!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 3, &dyn_nsp3, &dyn_msp3, &dyn_lsp3, &dyn_sp3, do_up, dummy_up, nsp3[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-    }
-    
-    free(ach);
+
+    add_mem_sp5c(n0);
+    add_mem_sp5c(n1);
+    add_mem_sp5c(n2);
+    add_mem_sp5c(n3);
+    add_mem_sp5c(n4);
+    add_mem_sp5c(cp[0]);
+    add_mem_sp5c(cp[1]);
+
+    if (ssp5c[hcsp5c[nsp5c][0]] == 'C') ssp5c[hcsp5c[nsp5c][0]] = 'B';
+    if (ssp5c[hcsp5c[nsp5c][1]] == 'C') ssp5c[hcsp5c[nsp5c][1]] = 'B';
+    if (ssp5c[hcsp5c[nsp5c][2]] == 'C') ssp5c[hcsp5c[nsp5c][2]] = 'B';
+    if (ssp5c[hcsp5c[nsp5c][3]] == 'C') ssp5c[hcsp5c[nsp5c][3]] = 'B';
+    if (ssp5c[hcsp5c[nsp5c][4]] == 'C') ssp5c[hcsp5c[nsp5c][4]] = 'B';
+    ssp5c[hcsp5c[nsp5c][5]] = 'O';
+    ssp5c[hcsp5c[nsp5c][6]] = 'O';
+
+    ++nsp5c;
 }
 
-void Rings_setSP4c(int f) { // store cluster 6A Oh from Bonds_aSP4()
-    int i, arr[4];
-    char *ach, errMsg[1000];
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP4c(): ach[] malloc out of memory\n");   Error(errMsg); }
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp4a[f]; i++) {
-        if (ach[sp4a[i][0]] == 'C') ach[sp4a[i][0]] = 'B';
-        if (ach[sp4a[i][1]] == 'C') ach[sp4a[i][1]] = 'B';
-        if (ach[sp4a[i][2]] == 'C') ach[sp4a[i][2]] = 'B';
-        if (ach[sp4a[i][3]] == 'C') ach[sp4a[i][3]] = 'B';
+void Store_sp5b(int n0, int n1, int n2, int n3, int n4, const int *cp) {
+    if (nsp5b == msp5b) {
+        hcsp5b=resize_2D_int(hcsp5b,msp5b,msp5b+incrStatic,6,-1);
+        msp5b=msp5b+incrStatic;
     }
-    for (i=0; i<N; ++i) ssp4a[i]=ach[i];
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp4b[f]; i++) {
-        if (ach[sp4b[i][0]] == 'C') ach[sp4b[i][0]] = 'B';
-        if (ach[sp4b[i][1]] == 'C') ach[sp4b[i][1]] = 'B';
-        if (ach[sp4b[i][2]] == 'C') ach[sp4b[i][2]] = 'B';
-        if (ach[sp4b[i][3]] == 'C') ach[sp4b[i][3]] = 'B';
-        ach[sp4b[i][4]] = 'O';
-    }
-    for (i=0; i<N; ++i) ssp4b[i]=ach[i];
-    
-    for (i=0; i<N; ++i) ach[i] = 'C';
-    for (i=0; i<nsp4c[f]; ++i) {
-        if (ach[sp4c[i][0]] == 'C') ach[sp4c[i][0]] = 'B';
-        if (ach[sp4c[i][1]] == 'C') ach[sp4c[i][1]] = 'B';
-        if (ach[sp4c[i][2]] == 'C') ach[sp4c[i][2]] = 'B';
-        if (ach[sp4c[i][3]] == 'C') ach[sp4c[i][3]] = 'B';
-        ach[sp4c[i][4]] = 'O';
-        ach[sp4c[i][5]] = 'O';
-    }
-    for (i=0; i<N; ++i) s6A[i]=ach[i];
-    
-    for (i=0; i<N; ++i) ach[i] = 'C';
-    for (i=0; i<nsp4a[f]; i++) {
-        if (ach[sp4a[i][0]] == 'C') ach[sp4a[i][0]] = 'B';
-        if (ach[sp4a[i][1]] == 'C') ach[sp4a[i][1]] = 'B';
-        if (ach[sp4a[i][2]] == 'C') ach[sp4a[i][2]] = 'B';
-        if (ach[sp4a[i][3]] == 'C') ach[sp4a[i][3]] = 'B';
-    }
-    for (i=0; i<nsp4b[f]; i++) {
-        if (ach[sp4b[i][0]] == 'C') ach[sp4b[i][0]] = 'B';
-        if (ach[sp4b[i][1]] == 'C') ach[sp4b[i][1]] = 'B';
-        if (ach[sp4b[i][2]] == 'C') ach[sp4b[i][2]] = 'B';
-        if (ach[sp4b[i][3]] == 'C') ach[sp4b[i][3]] = 'B';
-    }
-    for (i=0; i<nsp4c[f]; ++i) {
-        if (ach[sp4c[i][0]] == 'C') ach[sp4c[i][0]] = 'B';
-        if (ach[sp4c[i][1]] == 'C') ach[sp4c[i][1]] = 'B';
-        if (ach[sp4c[i][2]] == 'C') ach[sp4c[i][2]] = 'B';
-        if (ach[sp4c[i][3]] == 'C') ach[sp4c[i][3]] = 'B';
-    }
-    for (i=0; i<N; ++i) ssp4[i]=ach[i];
-    
-    if (doDynamics==1 && dyn_msp4!=-1) {
-        for (i=0; i<nsp4a[f]; i++) {
-            arr[0]=sp4a[i][0];
-            arr[1]=sp4a[i][1];
-            arr[2]=sp4a[i][2];
-            arr[3]=sp4a[i][3];
-            if (doDynamics==1 && dyn_msp4!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 4, &dyn_nsp4, &dyn_msp4, &dyn_lsp4, &dyn_sp4, do_up, dummy_up, nsp4[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp4b[f]; i++) {
-            arr[0]=sp4b[i][0];
-            arr[1]=sp4b[i][1];
-            arr[2]=sp4b[i][2];
-            arr[3]=sp4b[i][3];
-            if (doDynamics==1 && dyn_msp4!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 4, &dyn_nsp4, &dyn_msp4, &dyn_lsp4, &dyn_sp4, do_up, dummy_up, nsp4[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp4c[f]; ++i) {
-            arr[0]=sp4c[i][0];
-            arr[1]=sp4c[i][1];
-            arr[2]=sp4c[i][2];
-            arr[3]=sp4c[i][3];
-            if (doDynamics==1 && dyn_msp4!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 4, &dyn_nsp4, &dyn_msp4, &dyn_lsp4, &dyn_sp4, do_up, dummy_up, nsp4[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-    }
-    
-    free(ach);
+    hcsp5b[nsp5b][0] = n0;
+    hcsp5b[nsp5b][1] = n1;
+    hcsp5b[nsp5b][2] = n2;
+    hcsp5b[nsp5b][3] = n3;
+    hcsp5b[nsp5b][4] = n4;
+    hcsp5b[nsp5b][5] = cp[0];
+
+    if (ssp5b[hcsp5b[nsp5b][0]] == 'C') ssp5b[hcsp5b[nsp5b][0]] = 'B';
+    if (ssp5b[hcsp5b[nsp5b][1]] == 'C') ssp5b[hcsp5b[nsp5b][1]] = 'B';
+    if (ssp5b[hcsp5b[nsp5b][2]] == 'C') ssp5b[hcsp5b[nsp5b][2]] = 'B';
+    if (ssp5b[hcsp5b[nsp5b][3]] == 'C') ssp5b[hcsp5b[nsp5b][3]] = 'B';
+    if (ssp5b[hcsp5b[nsp5b][4]] == 'C') ssp5b[hcsp5b[nsp5b][4]] = 'B';
+    ssp5b[hcsp5b[nsp5b][5]] = 'O';
+
+    add_mem_sp5b(n0);
+    add_mem_sp5b(n1);
+    add_mem_sp5b(n2);
+    add_mem_sp5b(n3);
+    add_mem_sp5b(n4);
+    add_mem_sp5b(cp[0]);
+
+    ++nsp5b;
 }
 
-void Rings_setSP5c(int f) { // store cluster 7A D5h from Bonds_aSP5()
-    int i, arr[5];
-    char *ach, errMsg[1000];
-    int do_up=0;
-    int *dummy_up=NULL;
-    int do_sub=0;
-    int n_sub=0;
-    int *sub=NULL;
-    int **dummy_sub=NULL;
-    
-    ach=malloc(N*sizeof(char)); if (ach==NULL) { sprintf(errMsg,"Rings_setSP5c(): ach[] malloc out of memory\n");   Error(errMsg); }
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp5a[f]; i++) {
-        if (ach[sp5a[i][0]] == 'C') ach[sp5a[i][0]] = 'B';
-        if (ach[sp5a[i][1]] == 'C') ach[sp5a[i][1]] = 'B';
-        if (ach[sp5a[i][2]] == 'C') ach[sp5a[i][2]] = 'B';
-        if (ach[sp5a[i][3]] == 'C') ach[sp5a[i][3]] = 'B';
-        if (ach[sp5a[i][4]] == 'C') ach[sp5a[i][4]] = 'B';
+void Store_sp5a(int n0, int n1, int n2, int n3, int n4) {
+    if (nsp5a == msp5a) {
+        hcsp5a=resize_2D_int(hcsp5a,msp5a,msp5a+incrStatic,5,-1);
+        msp5a=msp5a+incrStatic;
     }
-    for (i=0; i<N; ++i) ssp5a[i]=ach[i];
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp5b[f]; i++) {
-        if (ach[sp5b[i][0]] == 'C') ach[sp5b[i][0]] = 'B';
-        if (ach[sp5b[i][1]] == 'C') ach[sp5b[i][1]] = 'B';
-        if (ach[sp5b[i][2]] == 'C') ach[sp5b[i][2]] = 'B';
-        if (ach[sp5b[i][3]] == 'C') ach[sp5b[i][3]] = 'B';
-        if (ach[sp5b[i][4]] == 'C') ach[sp5b[i][4]] = 'B';
-        ach[sp5b[i][5]] = 'O';
-    }
-    for (i=0; i<N; ++i) ssp5b[i]=ach[i];
-    
-    for (i=0; i<N; ++i) ach[i] = 'C';
-    for (i=0; i<nsp5c[f]; ++i) {
-        if (ach[sp5c[i][0]] == 'C') ach[sp5c[i][0]] = 'B';
-        if (ach[sp5c[i][1]] == 'C') ach[sp5c[i][1]] = 'B';
-        if (ach[sp5c[i][2]] == 'C') ach[sp5c[i][2]] = 'B';
-        if (ach[sp5c[i][3]] == 'C') ach[sp5c[i][3]] = 'B';
-        if (ach[sp5c[i][4]] == 'C') ach[sp5c[i][4]] = 'B';
-        ach[sp5c[i][5]] = 'O';
-        ach[sp5c[i][6]] = 'O';
-    }
-    for (i=0; i<N; ++i) s7A[i]=ach[i];
-    
-    for (i=0; i<N; i++) ach[i] = 'C';
-    for (i=0; i<nsp5a[f]; i++) {
-        if (ach[sp5a[i][0]] == 'C') ach[sp5a[i][0]] = 'B';
-        if (ach[sp5a[i][1]] == 'C') ach[sp5a[i][1]] = 'B';
-        if (ach[sp5a[i][2]] == 'C') ach[sp5a[i][2]] = 'B';
-        if (ach[sp5a[i][3]] == 'C') ach[sp5a[i][3]] = 'B';
-        if (ach[sp5a[i][4]] == 'C') ach[sp5a[i][4]] = 'B';
-    }
-    for (i=0; i<nsp5b[f]; i++) {
-        if (ach[sp5b[i][0]] == 'C') ach[sp5b[i][0]] = 'B';
-        if (ach[sp5b[i][1]] == 'C') ach[sp5b[i][1]] = 'B';
-        if (ach[sp5b[i][2]] == 'C') ach[sp5b[i][2]] = 'B';
-        if (ach[sp5b[i][3]] == 'C') ach[sp5b[i][3]] = 'B';
-        if (ach[sp5b[i][4]] == 'C') ach[sp5b[i][4]] = 'B';
-    }
-    for (i=0; i<nsp5c[f]; ++i) {
-        if (ach[sp5c[i][0]] == 'C') ach[sp5c[i][0]] = 'B';
-        if (ach[sp5c[i][1]] == 'C') ach[sp5c[i][1]] = 'B';
-        if (ach[sp5c[i][2]] == 'C') ach[sp5c[i][2]] = 'B';
-        if (ach[sp5c[i][3]] == 'C') ach[sp5c[i][3]] = 'B';
-        if (ach[sp5c[i][4]] == 'C') ach[sp5c[i][4]] = 'B';
-    }
-    for (i=0; i<N; ++i) ssp5[i]=ach[i];
-    
-    if (doDynamics==1 && dyn_msp5!=-1) {
-        for (i=0; i<nsp5a[f]; i++) {
-            arr[0]=sp5a[i][0];
-            arr[1]=sp5a[i][1];
-            arr[2]=sp5a[i][2];
-            arr[3]=sp5a[i][3];
-            arr[4]=sp5a[i][4];
-            if (doDynamics==1 && dyn_msp5!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 5, &dyn_nsp5, &dyn_msp5, &dyn_lsp5, &dyn_sp5, do_up, dummy_up, nsp5[f], do_sub, n_sub, &dummy_sub, sub);
-            }
+    hcsp5a[nsp5a][0] = n0;
+    hcsp5a[nsp5a][1] = n1;
+    hcsp5a[nsp5a][2] = n2;
+    hcsp5a[nsp5a][3] = n3;
+    hcsp5a[nsp5a][4] = n4;
+
+    ssp5a[hcsp5a[nsp5a][0]] = 'B';
+    ssp5a[hcsp5a[nsp5a][1]] = 'B';
+    ssp5a[hcsp5a[nsp5a][2]] = 'B';
+    ssp5a[hcsp5a[nsp5a][3]] = 'B';
+    ssp5a[hcsp5a[nsp5a][4]] = 'B';
+
+    ++nsp5a;
+}
+
+void add_mem_sp3b(int particle_ID) {
+    int binAcnt;
+
+    mem_sp3b[particle_ID][nmem_sp3b[particle_ID]]=nsp3b;
+    nmem_sp3b[particle_ID]++;
+    if (nmem_sp3b[particle_ID] >= mmem_sp3b) {
+        for (binAcnt=0; binAcnt<max_particle_number; binAcnt++) {
+            mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
         }
-        for (i=0; i<nsp5b[f]; i++) {
-            arr[0]=sp5b[i][0];
-            arr[1]=sp5b[i][1];
-            arr[2]=sp5b[i][2];
-            arr[3]=sp5b[i][3];
-            arr[4]=sp5b[i][4];
-            if (doDynamics==1 && dyn_msp5!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 5, &dyn_nsp5, &dyn_msp5, &dyn_lsp5, &dyn_sp5, do_up, dummy_up, nsp5[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
-        for (i=0; i<nsp5c[f]; ++i) {
-            arr[0]=sp5c[i][0];
-            arr[1]=sp5c[i][1];
-            arr[2]=sp5c[i][2];
-            arr[3]=sp5c[i][3];
-            arr[4]=sp5c[i][4];
-            if (doDynamics==1 && dyn_msp5!=-1) {
-                do_sub=0;
-                do_up=0;
-                Dyn_add(arr, f, 5, &dyn_nsp5, &dyn_msp5, &dyn_lsp5, &dyn_sp5, do_up, dummy_up, nsp5[f], do_sub, n_sub, &dummy_sub, sub);
-            }
-        }
+        mmem_sp3b=mmem_sp3b+incrClustPerPart;
     }
-    
-    free(ach);
+}
+
+void add_mem_sp3c(int particle_ID) {
+    int binAcnt;
+
+    mem_sp3c[particle_ID][nmem_sp3c[particle_ID]]=nsp3c;
+    nmem_sp3c[particle_ID]++;
+    if (nmem_sp3c[particle_ID] >= mmem_sp3c) {
+        for (binAcnt=0; binAcnt<max_particle_number; binAcnt++) {
+            mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
+        }
+        mmem_sp3c=mmem_sp3c+incrClustPerPart;
+    }
+}
+
+void add_mem_sp4b(int particle_ID) {
+    int binAcnt;
+
+    mem_sp4b[particle_ID][nmem_sp4b[particle_ID]] = nsp4b;
+    nmem_sp4b[particle_ID]++;
+    if (nmem_sp4b[particle_ID] >= mmem_sp4b) {
+        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+            mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrClustPerPart);
+        }
+        mmem_sp4b = mmem_sp4b + incrClustPerPart;
+    }
+}
+
+void add_mem_sp4c(int particle_ID) {
+    int binAcnt;
+
+    mem_sp4c[particle_ID][nmem_sp4c[particle_ID]] = nsp4c;
+    nmem_sp4c[particle_ID]++;
+    if (nmem_sp4c[particle_ID] >= mmem_sp4c) {
+        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+            mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrClustPerPart);
+        }
+        mmem_sp4c = mmem_sp4c + incrClustPerPart;
+    }
+}
+
+void add_mem_sp5b(int particle_ID) {
+    int binAcnt;
+
+    mem_sp5b[particle_ID][nmem_sp5b[particle_ID]] = nsp5b;
+    nmem_sp5b[particle_ID]++;
+    if (nmem_sp5b[particle_ID] >= mmem_sp5b) {
+        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+            mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrClustPerPart);
+        }
+        mmem_sp5b = mmem_sp5b + incrClustPerPart;
+    }
+}
+
+void add_mem_sp5c(int particle_ID) {
+    int binAcnt;
+
+    mem_sp5c[particle_ID][nmem_sp5c[particle_ID]] = nsp5c;
+    nmem_sp5c[particle_ID]++;
+    if (nmem_sp5c[particle_ID] >= mmem_sp5c) {
+        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+            mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrClustPerPart);
+        }
+        mmem_sp5c = mmem_sp5c + incrClustPerPart;
+    }
 }
