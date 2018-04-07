@@ -9,6 +9,8 @@ import numpy, pandas
 from glob import glob
 
 from tcc import structures, xyz, wrapper
+from glob import glob
+
 structures_to_test = glob('clusters/*.xyz')
 
 def run_static_tcc_simple_bonds(x, box=[100.,100.,100.]):
@@ -49,8 +51,10 @@ def test_simple_bonds(path):
     cluster = path.split('/')[-1].split('.xyz')[0]
 
     found = run_static_tcc_simple_bonds(x)['Number of clusters']
+
     report = pandas.DataFrame(found)
     report['Expected'] = 0
+
     for component,n in structures.composition[cluster].items():
         report['Expected'][component] = n
 
@@ -72,9 +76,11 @@ def test_voronoi(path):
     x = xyz.read(path)
     cluster = path.split('/')[-1].split('.xyz')[0]
 
+
     found = run_static_tcc_simple_bonds(x)['Number of clusters']
     report = pandas.DataFrame(found)
     report['Expected'] = 0
+
     for component,n in structures.composition[cluster].items():
         report['Expected'][component] = n
 
