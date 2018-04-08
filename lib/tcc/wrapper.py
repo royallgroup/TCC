@@ -3,11 +3,16 @@ The main class is TCCWrapper, but there are a number of support classes
 to handle the parameters needed to interface with the TCC.
 """
 
-import os, sys, tempfile, shutil, pandas
-tcc_exe = os.path.abspath(os.path.dirname(__file__) + '/../../bin/tcc')
-
+import os
+import sys
+import tempfile
+import shutil
+import pandas
+import subprocess
+import platform
 from glob import glob
 from . import xyz, structures
+
 
 class BoxType:
     """Enumerations for the simulation box options."""
@@ -15,10 +20,12 @@ class BoxType:
     NPT = 2
     triclinic = 3
 
+
 class BondType:
     """Enumerations for the bond detection algorithm."""
     simple = 0
     voronoi = 1
+
 
 class TCCDefaults:
     @staticmethod
@@ -88,11 +95,11 @@ class TCCDefaults:
         section['rcutBB'] = 1.4*sigma
         section['min_cutAA'] = 0.
 
-        section['bond_type'] = BondType.voronoi # Bond detection algorithm
-        section['PBCs'] = True                  # Periodic boundary conditions
-        section['voronoi_parameter'] = 0.82     # Mysterious Fc parameter (citation?)
-        section['num_bonds'] = 30               # Maximum number of bonds for one particle
-        section['cell_list'] = True             # Optimise bond detection using cell lists
+        section['bond_type'] = BondType.voronoi  # Bond detection algorithm
+        section['PBCs'] = True                   # Periodic boundary conditions
+        section['voronoi_parameter'] = 0.82      # Mysterious Fc parameter (citation?)
+        section['num_bonds'] = 30                # Maximum number of bonds for one particle
+        section['cell_list'] = True              # Optimise bond detection using cell lists
 
         return section
 
@@ -115,6 +122,7 @@ class TCCDefaults:
         section['pop_per_frame'] = False
 
         return section
+
 
 class TCCWrapper:
     """Python interface to the TCC executable.
@@ -139,7 +147,7 @@ class TCCWrapper:
     def __del__(self):
         """Upon deletion we can remove the temporary working folder
         to free up disk space."""
-        #shutil.rmtree(self.working_directory)
+        shutil.rmtree(self.working_directory)
 
     def serialise_input_parameters(self, out=sys.stdout):
         """Serialise the parameters in INI format.
@@ -150,14 +158,16 @@ class TCCWrapper:
         Args:
             out: file stream or path to write to
         """
-        if type(out) is str: out = open(out, 'w')
+        if type(out) is str:
+            out = open(out, 'w')
 
-        for section_heading,section_values in self.input_parameters.items():
+        for section_heading, section_values in self.input_parameters.items():
             out.write('[%s]\n' % section_heading)
 
             # Write the key-value pairs
             for key, value in section_values.items():
-                if type(value) is bool: value = int(value)
+                if type(value) is bool:
+                    value = int(value)
                 if type(value) is str:
                     out.write('%s=%s\n' % (key, value))
                 else:
@@ -171,9 +181,10 @@ class TCCWrapper:
         Args:
             out: file stream or path to write to
         """
-        if type(out) is str: out = open(out, 'w')
+        if type(out) is str:
+            out = open(out, 'w')
         out.write('#iter Lx Ly Lz\n')
-        for frame,lengths in enumerate(box):
+        for frame, lengths in enumerate(box):
             out.write('%d %s\n' % (frame, ' '.join(map(str, lengths))))
 
     def parse_static_clusters(self):
@@ -185,6 +196,19 @@ class TCCWrapper:
         table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.clusters))
         table.fillna(0., inplace=True)
         return table
+
+    @staticmethod
+    def get_tcc_executable_path():
+        bin_directory = os.path.abspath(os.path.dirname(__file__) + '/../../bin/')
+        if platform.system() ==  "Windows":
+            tcc_exe = bin_directory + "\\tcc.exe"
+        else:
+            tcc_exe = bin_directory + "/tcc"
+        if os.path.exists(tcc_exe):
+            return tcc_exe
+        else:
+            print("TCC executable not found in bin directory.")
+            raise FileNotFoundError
 
     def run(self, box, x, atoms='A', silent=True, **output):
         """Run the TCC
@@ -199,9 +223,11 @@ class TCCWrapper:
             pandas table giving the static cluster information
         """
 
+        tcc_path = self.get_tcc_executable_path()
+
         # Create the INI file.
         self.input_parameters['Output'] = TCCDefaults.output()
-        for key,value in output.items():
+        for key, value in output.items():
             self.input_parameters['Output'][key] = value
         self.serialise_input_parameters('%s/inputparameters.ini' % self.working_directory)
 
@@ -210,7 +236,14 @@ class TCCWrapper:
         xyz.write(x, '%s/run.xyz' % self.working_directory, atoms=atoms)
 
         # Run the TCC executable.
-        if not silent: os.system('(cd %s; %s)' % (self.working_directory, tcc_exe))
-        else: os.system('(cd %s; %s > /dev/null)' % (self.working_directory, tcc_exe))
+        if silent:
+            subprocess_result = subprocess.run([tcc_path], stdout=subprocess.DEVNULL, stderror=subprocess.DEVNULL, cwd=self.working_directory)
+        else:
+            subprocess_result = subprocess.run([tcc_path], cwd=self.working_directory)
 
-        return self.parse_static_clusters()
+        if subprocess_result.returncode == 0:
+            return self.parse_static_clusters()
+        else:
+            self.__del__()
+            print("Error: TCC was not able to run.")
+            raise Exception
