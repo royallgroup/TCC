@@ -58,17 +58,15 @@ void read_ini_file() {
         rcutBB = rcutAA;
         rcutAB2 = rcutAA2;
         rcutBB2 = rcutAA2;
-        printf("As voronoi method no individually specie-specie interaction length\nrcut %lg rcut2 %lg\n",rcutAA,rcutAA2);
     }
 
     // print out values read from ini file
-    printf("Xmol file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
-    printf("box_type %d\n",box_type);
-    printf("frames_to_analyse %d SAMPLEFREQ %d\n",frames_to_analyse, SAMPLEFREQ);
-    printf("rcutAA %lg rcutAB %lg rcutBB %lg\n",rcutAA,rcutAB,rcutBB);
-    printf("rcutAA2 %lg rcutAB2 %lg rcutBB2 %lg\n",rcutAA2,rcutAB2,rcutBB2);
-    printf("Vor %d PBCs %d fc %lg nB %d USELIST %d\n",Vor,PBCs,fc,nB,USELIST);
-    printf("write bonds file %d doWriteClus %d doWriteRaw %d doWritePopPerFrame %d\n",doWriteBonds,doWriteClus,doWriteRaw,doWritePopPerFrame);
+    printf("XYZ file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
+    printf("Box type %d\n",box_type);
+    printf("Number of frames to analyse %d Sample frequency %d\n",frames_to_analyse, SAMPLEFREQ);
+    printf("A-A bond cut-off length %lg A-B bond cut-off length %lg B-B bond cut-off length %lg\n", rcutAA, rcutAB, rcutBB);
+    printf("Voronoi bond detection %d Periodic boundary conditions %d Voronoi fc parameter %lg maximum number of bonds per particle %d Use cell list for bond detection%d\n", Vor, PBCs, fc, nB, USELIST);
+    printf("Write bonds file %d Write cluster files %d Write raw files %d Write PopPerFrame %d\n", doWriteBonds, doWriteClus, doWriteRaw, doWritePopPerFrame);
 
     iniparser_freedict(ini);
 }
@@ -84,12 +82,13 @@ void read_clusters_to_analyse() {
             sprintf(errMsg, "read_ini_file(): Error opening file clusters_to_analyse.ini");
             Error_no_free(errMsg);
         }
-
+        printf("Clusters being analysed\n");
         for (int cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
             sprintf(cluster_name, "clusters:%s", cluster_names[cluster_number]);
             *(do_cluster_list[cluster_number]) = iniparser_getboolean(ini, cluster_name, 1);
             printf("%s %d\n", cluster_names[cluster_number], *(do_cluster_list[cluster_number]));
         }
+        printf("\n");
     }
     else {
         for (int cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
@@ -102,8 +101,6 @@ void read_clusters_to_analyse() {
 void parse_box_file(int total_frames) {
     FILE *read_box_file;
     char other[1000], error_message[1000];
-
-    printf("box size file: %s\n",fBoxSizeName);
 
     read_box_file=fopen(fBoxSizeName,"rb");
     if(read_box_file==NULL)  {

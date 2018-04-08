@@ -20,7 +20,7 @@ void Stats_Report() {
 
     stats_report_title(output_name, output_file);
     stats_report_clusters(output_file);
-    stats_report_bonds(output_file);
+
 
     fclose(output_file);
 }
@@ -35,15 +35,6 @@ FILE *open_stats_report_file(const char *output_name) {
         Error(errMsg);
     }
     return output_file;
-}
-
-void stats_report_bonds(FILE *output_file) {
-    char buffer[1000];
-
-    sprintf(buffer, "maxnB	%d\ncorrectedBonds %d per frame %.5lg per part per frame %.5lg\n" , maxnb, correctedBonds,
-            (double)correctedBonds/frames_to_analyse,(double)correctedBonds/(frames_to_analyse*particles_in_current_frame));
-    printf("%s", buffer);
-    fprintf(output_file, "%s", buffer);
 }
 
 void stats_report_clusters(FILE *output_file) {

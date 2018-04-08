@@ -20,7 +20,7 @@ void Get_Bonds_With_Voronoi() {
     particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
     store_dr2 = malloc(particles_in_current_frame*sizeof(double));
 
-    printf("Vor: N%d rcut2 %.15lg\n",particles_in_current_frame,rcutAA2);
+    printf("Calculating Voronoi bond network for %d particles.\n",particles_in_current_frame);
 
     for (i=0; i<particles_in_current_frame; i++) {
         num_bonds[i] = 0;

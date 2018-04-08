@@ -72,6 +72,7 @@ void Are_All_Bonds_Symmetric() {
 }
 
 void build_bond_network(int frame_number) {
+    char buffer[300];
 
     if (USELIST == 1) {
         set_up_cell_list();
@@ -102,8 +103,10 @@ void build_bond_network(int frame_number) {
 
     free_cell_list();
 
-    printf("\n");
-    printf("Got Bonds\n");
+    if(correctedBonds > 0) {
+        printf("Number of bonds requiring correction: %d\n", correctedBonds);
+    }
+    printf("Bond network complete. Starting cluster identification.\n");
 }
 
 void Get_Simple_Bonds() {
@@ -111,7 +114,7 @@ void Get_Simple_Bonds() {
     int particle_1, particle_2;
     double squared_distance;
 
-    printf("Simple: N%d rcut2_AA %.15lg rcutAB2 %.15lg rcutBB2 %.15lg\n",particles_in_current_frame,rcutAA2,rcutAB2,rcutBB2);
+    printf("Calculating simple bond network for %d particles.\n", particles_in_current_frame);
 
     for (particle_1=0; particle_1<particles_in_current_frame; ++particle_1) {
         for(particle_2=particle_1+1; particle_2<particles_in_current_frame; ++particle_2) {

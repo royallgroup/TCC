@@ -103,6 +103,7 @@ int main(int argc, char **argv) {
         remainder = current_frame_number % SAMPLEFREQ;
 
         if (remainder == 0) {
+            printf("Processing frame %d.\n", current_frame_number);
             particles_in_current_frame = input_xyz_info.num_particles[current_frame_number];
             Reset_Frame_Variables();
             get_box_size(current_frame_number);
@@ -141,7 +142,7 @@ int main(int argc, char **argv) {
 
             write_output_files(current_frame_number, eleven_A_number, thirteen_A_number);
 
-            printf("f%d complete\n", current_frame_number);
+            printf("Cluster analysis for frame%d complete\n\n", current_frame_number);
         }
     }
 
@@ -153,6 +154,6 @@ int main(int argc, char **argv) {
     free_xyz_info(&input_xyz_info);
     Free_All_Variables();
 
-    printf("\n\nFIN \n\n");
+    printf("\n\nTCC completed successfully.\n\n");
     return 0;
 }

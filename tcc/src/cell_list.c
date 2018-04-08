@@ -104,8 +104,6 @@ void set_up_cell_list() {
     cell_len_y = sidey/n_cells_y;
     cell_len_z = sidez/n_cells_z;
 
-    printf("x_cells %d y_cells %d z_cells %d total_cells %d\n", n_cells_x, n_cells_y, n_cells_z, n_cells_total);
-
     head=malloc((n_cells_total)*sizeof(int));
     linked_list=malloc((particles_in_current_frame)*sizeof(int));
 
