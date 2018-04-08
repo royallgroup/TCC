@@ -4,8 +4,8 @@ import pytest
 import sys
 import os
 
-sys.path += [os.path.abspath('../lib')]
-
+sys.path += [os.path.abspath('../../lib')]
+print(sys.path)
 import numpy, pandas
 from glob import glob
 from tcc import structures, xyz, wrapper

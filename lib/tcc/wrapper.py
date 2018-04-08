@@ -200,7 +200,7 @@ class TCCWrapper:
     @staticmethod
     def get_tcc_executable_path():
         bin_directory = os.path.abspath(os.path.dirname(__file__) + '/../../bin/')
-        if platform.system() ==  "Windows":
+        if platform.system() == "Windows":
             tcc_exe = bin_directory + "\\tcc.exe"
         else:
             tcc_exe = bin_directory + "/tcc"
@@ -237,7 +237,7 @@ class TCCWrapper:
 
         # Run the TCC executable.
         if silent:
-            subprocess_result = subprocess.run([tcc_path], stdout=subprocess.DEVNULL, stderror=subprocess.DEVNULL, cwd=self.working_directory)
+            subprocess_result = subprocess.run([tcc_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.working_directory)
         else:
             subprocess_result = subprocess.run([tcc_path], cwd=self.working_directory)
 
