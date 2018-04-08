@@ -281,3 +281,29 @@ void analyse_cluster_dependencies() {
     if(dosp4 == 1) dosp3 = 1;
 
 }
+
+void setup_cluster_lists() {
+    num_cluster_types = 0;
+
+    while(strcmp(cluster_names[num_cluster_types], "-1") != 0) {
+        num_cluster_types += 1;
+    }
+
+    if(cluster_size[num_cluster_types] != -1)
+        Error_no_free("Incorrect number of elements in cluster_size array");
+
+    if(do_cluster_list[num_cluster_types] != NULL)
+        Error_no_free("Incorrect number of elements in do_cluster_list");
+
+    if(num_cluster_list[num_cluster_types] != NULL)
+        Error_no_free("Incorrect number of elements in num_cluster_list");
+
+    if(raw_list[num_cluster_types] != NULL)
+        Error_no_free("Incorrect number of elements in raw_list");
+
+    if(cluster_list[num_cluster_types] != NULL)
+        Error_no_free("Incorrect number of elements in cluster_list");
+
+    if(cluster_list_width[num_cluster_types] != NULL)
+        Error_no_free("Incorrect number of elements in cluster_list_width");
+}

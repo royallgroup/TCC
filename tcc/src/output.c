@@ -183,8 +183,6 @@ void Write_Pop_Per_Frame(int f) {
             sprintf(errMsg, "main() : Error opening file %s", output);    // Always test file open
             Error(errMsg);
         }
-        fprintf(file_pointer, "%s\n", output);
-
         fprintf(file_pointer, "frame	");
         for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
             fprintf(file_pointer, "%s	", cluster_names[cluster_type]);

@@ -11,8 +11,8 @@ int box_type; //if the system in non-cubic or NPT, get box size info from a data
 int frames_to_analyse; // frames to read from input xmol file
 int SAMPLEFREQ; // frequency at which to take frames from the xmol file
 int max_particle_number; // The number of particles in the largest XYZ frame
+int num_cluster_types;  // The number of items in the cluster names array
 
-extern int num_cluster_types;  // The number of items in the cluster names array
 extern int cluster_size[]; // A list of the number of particles in each cluster type
 extern char* cluster_names[];  // A list of strings of cluster names
 extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
@@ -58,6 +58,7 @@ int initNoStatic;   // initial size of static cluster arrays
 int incrStatic; // when full, increment static cluster arrays by this amount
 int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
+
 
 int *num_bonds; // Current Number of Bonds for particles {1,...,N}
 int **bNums;    // list of particles (indices j) bonded to particle at index i

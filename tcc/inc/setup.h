@@ -13,4 +13,6 @@ void Free_All_Variables();
 
 void analyse_cluster_dependencies();
 
+void setup_cluster_lists();
+
 #endif
