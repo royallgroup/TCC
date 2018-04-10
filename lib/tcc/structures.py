@@ -63,8 +63,11 @@ symmetry_number['sp4c'] = 3
 composition = {cluster: {cluster: symmetry_number[cluster]} for cluster in clusters}
 #for cluster in clusters: composition[cluster][cluster] = 1
 
-# A simple 3 membered ring: sp3a
-composition['sp3a']['sp3a'] = 1
+# A square pyramid: sp4b
+composition['sp4b']['sp3a'] = 4
+# A Pentagonal pyramid: sp5b
+composition['sp5b']['sp3a'] = 5
+
 # The double tetrahedron: sp3c
 composition['sp3c']['sp3b'] = 6
 

@@ -29,6 +29,7 @@ def run_unit_test(cluster_path, bond_type):
     TCC = wrapper.TCCWrapper()
     if bond_type == "simple":
         TCC.input_parameters['Simulation']['bond_type'] = wrapper.BondType.simple
+        TCC.input_parameters['Simulation']['rcutAA'] = 1.1
 
     tcc_result_report = TCC.run((100., 100., 100.), particle_coordinates)
     tcc_result_report = tcc_result_report['Number of clusters']
