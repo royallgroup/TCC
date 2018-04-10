@@ -1,25 +1,27 @@
 import numpy as np
 from sys import argv, exit
 from glob import glob
+import os
 
 
 def set_up():
     # Read XYZ file name from argv
-    if len(argv) != 2:
-        print("Usage python net.py file.xyz")
+    if len(argv) != 3:
+        print("Usage python net.py directory_name priority_list")
         exit(0)
-    xyz_name = argv[1]
-    return xyz_name
+    dir_name = argv[1]
+    pritority_list = argv[2]
+    return dir_name, pritority_list
 
 
-def load_cluster_data(num_particles, priority_list, xyz_name):
+def load_cluster_data(num_particles, priority_list, dir_name):
     # Load data from the raw file into a dictionary
     raw_data = {}
 
     print("Reading data from raw files...")
     for species in priority_list:
         raw_data[species] = []
-        filename = glob("raw_output/" + xyz_name + "*" + species)[0]
+        filename = glob(dir_name + "/*" + species)[0]
         lines_read = 0
         for frame_particles in num_particles:
             raw_data[species].append(np.genfromtxt(filename, skip_header=lines_read+2, invalid_raise=False,
@@ -35,19 +37,18 @@ def is_particle_in_cluster(particle_identifier, frame_number):
     return np.logical_or(particle_identifier[frame_number] == 'C', particle_identifier[frame_number] == 'D')
 
 
-def write_output_file(gross_percentage, net_percentage, priority_list, xyz_name):
-    with open(xyz_name + "_net.txt", 'w') as output_file:
+def write_output_file(gross_percentage, net_percentage, priority_list, dir_name):
+    with open(dir_name + "/net_clusters.txt", 'w') as output_file:
         output_file.write("Species\tGross\tNet\n")
         for species in priority_list:
             output_file.write(species + ":\t%f\t%f\n" % (gross_percentage[species], net_percentage[species]))
     print("Analysis complete. Output file written.")
 
 
-def get_particles_per_frame(xyz_name, priority_list):
+def get_particles_per_frame(dir_name, priority_list):
     # Returns a list of particle numbers, one for each time frame
     num_particles = []
-
-    filename = glob("raw_output/" + xyz_name + "*" + priority_list[0])[0]
+    filename = glob(dir_name + "/*" + priority_list[0])[0]
     with open(filename, 'r') as xyz_file:
         line = xyz_file.readline()
         while line != "":
@@ -60,16 +61,12 @@ def get_particles_per_frame(xyz_name, priority_list):
     return num_particles
 
 
-def main():
-    xyz_name = set_up()
-
-    # Modify this list in order to have your favourite hierarchy
-    priority_list = ['FCC', '13A', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c']
-
+def net_cluster_calculation(dir_name, priority_list):
     # read number of particles and the data
-    frame_particles_list = get_particles_per_frame(xyz_name, priority_list)
+    priority_list = priority_list.strip('()').split(", ")
+    frame_particles_list = get_particles_per_frame(dir_name, priority_list)
     total_particles = sum(frame_particles_list)
-    raw_data = load_cluster_data(frame_particles_list, priority_list, xyz_name)
+    raw_data = load_cluster_data(frame_particles_list, priority_list, dir_name)
     gross_percentage = {}
     net_percentage = {}
 
@@ -90,8 +87,9 @@ def main():
             net_percentage[species] += net_list[species].sum(axis=0) / float(total_particles)
             gross_percentage[species] += gross_list[species].sum(axis=0) / float(total_particles)
 
-    write_output_file(gross_percentage, net_percentage, priority_list, xyz_name)
+    write_output_file(gross_percentage, net_percentage, priority_list, dir_name)
 
 
 if __name__ == '__main__':
-    main()
+    directory_name, cluster_list = set_up()
+    net_cluster_calculation(directory_name, cluster_list)

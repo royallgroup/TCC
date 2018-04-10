@@ -15,21 +15,27 @@ This definition relies on a hierarchy of cluster types which determines which is
 ## Using the net cluster script
 Requires Python 3 and NumPy (Python 2 may be supported but is untested).
 
-To change the list of clusters considered, edit the priority list dictionary. The clusters listed first will be those of highest priority in the net calculation, those listed last will be lowest priority.
+The list of clusters considered is determined by the priority list. The clusters listed first will be those of highest priority in the net calculation, those listed last will be lowest priority.
 
-The script must be run in the same directory as a folder called "raw_output" which contains the raw output files for each cluster type. The folder must contain a TCC raw file for each cluster specified in the priority list.
+The code requires a TCC raw file for each cluster specified in the priority list.
 
-The required command line argument is the stub of the xyz file name.
+The required command line argument is the directory containing the raw files and the priority list. For example:
 
-The results are averaged over all frames in the input files and are output as a text file.
+./net.py ./raw_output  (FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)
+
+The priority list must have the cluster names spelled exactly as the extensions on the raw files and the list must be in brackets. The results are averaged over all frames in the input files and are output as a text file.
 
 ## Cluster priority lists for common systems
 
-Hard Spheres: 'FCC', '13A', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c'
-Kob-Andersen: '13K', '12K', '11A', '10K', '9K', '8K', '7K', 'sp4c', 'sp3c'
-Wahnstrom: '13A', '12B', '11W', '10B', '9B', '8A', 'sp5c', 'sp4c', 'sp3c'
-Lennard-Jones: '13A', '12B', '11C', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c'
-Sticky Spheres: 'FCC', 'HCP', '13B', '12E', '11F', '10B', '9B', '8B', 'sp5c', 'sp4c', 'sp3c'
+Hard Spheres: (FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)
+
+Kob-Andersen: (13K, 12K, 11A, 10K, 9K, 8K, 7K, sp4c, sp3c)
+
+Wahnstrom: (13A, 12B, 11W, 10B, 9B, 8A, sp5c, sp4c, sp3c)
+
+Lennard-Jones: (13A, 12B, 11C, 10B, 9B, 8B, sp5c, sp4c, sp3c)
+
+Sticky Spheres: (FCC, HCP, 13B, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)
 
 ## Tests
 

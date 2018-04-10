@@ -9,8 +9,6 @@ void Stats_Report();
 
 FILE *open_stats_report_file(const char *output_name);
 
-void stats_report_bonds(FILE *output_file);
-
 void stats_report_clusters(FILE *output_file);
 
 void stats_report_title(const char *output_name, FILE *output_file);

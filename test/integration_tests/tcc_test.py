@@ -1,16 +1,15 @@
-import subprocess
 from glob import glob
-import shutil
 import filecmp
 import os
-from subprocess import run
-from platform import system
+import subprocess
+import platform
+import pandas as pd
 
 
 class cd:
     """Context manager for changing the current working directory"""
-    def __init__(self, newPath):
-        self.newPath = os.path.expanduser(newPath)
+    def __init__(self, new_path):
+        self.newPath = os.path.expanduser(new_path)
 
     def __enter__(self):
         self.savedPath = os.getcwd()
@@ -24,14 +23,14 @@ class FileOperations:
     @staticmethod
     def build_tcc():
         try:
-            if system() == "Windows":
-                make = run(['cmake', '..', '-G', 'MinGW Makefiles'])
-                build = run(['mingw32-make.exe'])
-            elif system() == "Linux" or system() == 'Darwin':
-                make = run(['cmake', '..'])
-                build = run(['make'])
+            if platform.system() == "Windows":
+                make = subprocess.run(['cmake', '..', '-G', 'MinGW Makefiles'])
+                build = subprocess.run(['mingw32-make.exe'])
+            elif platform.system() == "Linux" or platform.system() == 'Darwin':
+                make = subprocess.run(['cmake', '..'])
+                build = subprocess.run(['make'])
             else:
-                print("I dont know how to build for your system:%s", system())
+                print("I dont know how to build for your system:%s", platform.system())
                 return 1
             if make.returncode == 0 and build.returncode == 0:
                 return 0
@@ -42,22 +41,13 @@ class FileOperations:
             return 1
 
     @staticmethod
-    def copy_tcc():
-        # Copy the exectuable to the current directory
-        try:
-            if system() == "Windows":
-                shutil.copy(glob("../../../bin/tcc.exe")[0], os.getcwd())
-            else:
-                shutil.copy(glob("../../../bin/tcc")[0], os.getcwd())
-            return 0
-        except Exception as e:
-            print(e)
-            return 1
-
-    @staticmethod
     def run_tcc():
         try:
-            return subprocess.call(glob("tcc*")[0], shell=True)
+            if platform.system() == "Windows":
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0])
+            else:
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0])
+            return tcc_call_result.returncode
         except Exception as e:
             print(e)
             return 1
@@ -65,7 +55,6 @@ class FileOperations:
     @staticmethod
     def tidy():
         # Remove the files we have created
-        os.remove(glob("tcc*")[0])
         for file in (glob("sample.xyz.rc*")):
             os.remove(file)
         return 0
@@ -97,7 +86,6 @@ def test_build():
 def test_simple_bonds():
     # Test a relatively large file with simple bonds that finds most clusters
     with cd("./simple_bonds"):
-        assert FileOperations.copy_tcc() == 0
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_static_clust() is True
@@ -107,7 +95,6 @@ def test_simple_bonds():
 def test_basic_voronoi():
     # Test a small file with multiple frames
     with cd("./basic_voronoi"):
-        assert FileOperations.copy_tcc() == 0
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_pop_per_frame() is True
@@ -118,7 +105,6 @@ def test_basic_voronoi():
 def test_cubic_voronoi_with_cell_list():
     # Test a medium file with cubic boundaries and cell list turned on
     with cd("./voronoi_cells_cubic"):
-        assert FileOperations.copy_tcc() == 0
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_pop_per_frame() is True
@@ -129,7 +115,6 @@ def test_cubic_voronoi_with_cell_list():
 def test_non_cubic_voronoi_with_cell_list():
     # Test a medium file with cubic boundaries and cell list turned on
     with cd("./voronoi_cells_non_cubic"):
-        assert FileOperations.copy_tcc() == 0
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_pop_per_frame() is True

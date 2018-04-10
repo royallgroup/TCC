@@ -30,8 +30,8 @@ Building with debug symbols may be useful for debugging with gdb or profiling. C
 
 It is recommended you test the TCC to check it is compiled correctly on your system, this currently requires Python and the pytest module. The test will run a short configurration to check clusters are correctly detected.
 
-Once you have built the TCC, cd to the test directory and type
-'py.test test.py'
+Once you have built the TCC, cd to the test/integration_tests directory and type
+'pytest tcc_test.py'
 
 #### Running the TCC
 
