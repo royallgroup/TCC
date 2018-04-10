@@ -3,6 +3,8 @@
 #include "bonds.h"
 #include "tools.h"
 
+void get_6A_clusters();
+
 void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
     int n1_pointer, n2_pointer;
     int n0, n1, n2;
@@ -240,14 +242,14 @@ void get_sp4_clusters(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n3,n2}
 void Store_sp4c(int n0, int n1, int n2, int n3, const int *cp) {
 
     if (nsp4c == msp4c) {
-        hcsp4c=resize_2D_int(hcsp4c,msp4c,msp4c+incrStatic,6,-1);
-        msp4c=msp4c+incrStatic;
+        hcsp4c = resize_2D_int(hcsp4c, msp4c, msp4c + incrStatic, 6, -1);
+        msp4c = msp4c + incrStatic;
     }
     hcsp4c[nsp4c][0] = n0;
     hcsp4c[nsp4c][1] = n1;
     hcsp4c[nsp4c][2] = n3;
     hcsp4c[nsp4c][3] = n2;
-    if (cp[0]<cp[1]) {
+    if (cp[0] < cp[1]) {
         hcsp4c[nsp4c][4] = cp[0];
         hcsp4c[nsp4c][5] = cp[1];
     }
@@ -270,9 +272,50 @@ void Store_sp4c(int n0, int n1, int n2, int n3, const int *cp) {
     add_mem_sp4c(cp[0]);
     add_mem_sp4c(cp[1]);
 
-    // hc6A key: (SP4_1, SP4_2, SP4_3, SP4_4, s1, s2)
+
+    get_6A_clusters();
 
     ++nsp4c;
+}
+
+void get_6A_clusters() {
+    // The sp4c cluster can be detected multiple times within the same 6 particles by rotation.
+    // The 6A cluster is a unique sp4c such that no 6A has identical particles to another 6A.
+    // This means that the 6A is a subset of the sp4c
+
+    int trial[6];
+    int flg;
+    int trial_pointer;
+
+    // Check for sp4c isomers
+    for (int i = 0; i < 6; ++i) {
+        trial[i] = hcsp4c[nsp4c][i];
+    }
+    quickSort(&trial[0], 6);
+    flg = 0;  // check trial cluster not already found
+    for (int existing_6A_pointer = 0; existing_6A_pointer < n6A; ++existing_6A_pointer) {
+        int * exisiting_6A_cluster = hc6A[existing_6A_pointer];
+        for (trial_pointer = 0; trial_pointer < 6; ++trial_pointer) {
+            if (trial[trial_pointer] != exisiting_6A_cluster[trial_pointer]) {
+                break;
+            }
+        }
+        if (trial_pointer==6) {
+            flg=1;
+            break;
+        }
+    }
+    if (flg==0) {
+        if (n6A == m6A) {
+            hc6A = resize_2D_int(hc6A, m6A, m6A + incrStatic, 6, -1);
+            m6A = m6A + incrStatic;
+        }
+        for (int i = 0; i < 6; ++i) {
+            hc6A[n6A][i] = trial[i];
+            s6A[trial[i]] = 'B';
+        }
+        ++n6A;
+    }
 }
 
 void Store_sp4b(int n0, int n1, int n2, int n3, const int *cp) {
