@@ -48,5 +48,5 @@ def run_unit_test(cluster_path, bond_type):
 
 @pytest.mark.parametrize('path', structures_to_test)
 def test_clusters(path):
-    run_unit_test(path, "simple")
     run_unit_test(path, "voronoi")
+    run_unit_test(path, "simple")
