@@ -2,13 +2,7 @@
 #include "globals.h"
 #include "tools.h"
 
-int count_common_spindles_between_5As(const int *first_5A_cluster, const int *second_5A_cluster, int *scom);
-
-void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int scom, int *sother);
-
-int is_particle_in_5A(const int *five_A_cluster, int particle_id);
-
-int count_common_ring_particles(const int *first_5A_cluster, const int *second_5A_cluster, int *sp3_com);
+int get_uncommon_ring_particle(const int *first_5A_cluster, const int *sp3_com);
 
 void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
     int first_5A_id, second_5A_pointer, first_5A_spindle_pointer, k, l, m;
@@ -38,37 +32,8 @@ void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
 
                                 if (count_common_ring_particles(first_5A_cluster, second_5A_cluster, sp3_com) == 2) {
 
-                                    m = 0;
-                                    for (k = 0; k < 3; k++) {
-                                        for (l = 0; l < 2; l++) {
-                                            if (first_5A_cluster[k] == sp3_com[l]) break;
-                                        }
-                                        if (l == 2) {
-                                            if (m >= 1) {
-                                                m++;
-                                                break;
-                                            }
-                                            sp3c_i_other = first_5A_cluster[k];
-                                            m++;
-                                        }
-                                    }
-                                    if (m != 1) continue; // found other uncommon particle from SP3 ring of 5A_i
-
-                                    m = 0;
-                                    for (k = 0; k < 3; k++) {
-                                        for (l = 0; l < 2; l++) {
-                                            if (second_5A_cluster[k] == sp3_com[l]) break;
-                                        }
-                                        if (l == 2) {
-                                            if (m >= 1) {
-                                                m++;
-                                                break;
-                                            }
-                                            sp3c_j_other = second_5A_cluster[k];
-                                            m++;
-                                        }
-                                    }
-                                    if (m != 1) continue; // found other uncommon particle from SP3 ring of 5A_i
+                                    sp3c_i_other = get_uncommon_ring_particle(first_5A_cluster, sp3_com);
+                                    sp3c_j_other = get_uncommon_ring_particle(second_5A_cluster, sp3_com);
 
                                     m = 0;
                                     for (k = 0; k < 5; k++) {
@@ -114,6 +79,14 @@ void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
                 }
             }
         }
+    }
+}
+
+int get_uncommon_ring_particle(const int *first_5A_cluster, const int *sp3_com) {
+    for (int first_5A_pointer = 0; first_5A_pointer < 3; first_5A_pointer++) {
+       if (first_5A_cluster[first_5A_pointer] != sp3_com[0] && first_5A_cluster[first_5A_pointer] != sp3_com[1]) {
+           return (first_5A_cluster[first_5A_pointer]);
+       }
     }
 }
 
