@@ -91,8 +91,8 @@ int main(int argc, char **argv) {
 
     max_particle_number = get_max_particle_number(input_xyz_info);
 
-    Initialise_Global_Variables();
-    initialise_frame_variables();
+    initialise_run_variables();
+    initialise_frame_variables(max_particle_number);
     Setup_Output_Files();
 
     if(frames_to_analyse > input_xyz_info.total_frames) {
@@ -152,7 +152,8 @@ int main(int argc, char **argv) {
     Write_Pop_Per_Frame(frames_to_analyse);
 
     free_xyz_info(&input_xyz_info);
-    Free_All_Variables();
+    free_frame_variables(max_particle_number);
+    free_run_variables();
 
     printf("\n\nTCC completed successfully.\n\n");
     return 0;

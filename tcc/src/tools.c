@@ -127,7 +127,7 @@ void Error_no_free(char *msg) { // Exit program printing error message but don't
 void Error(char *msg) { // Exit program printing error message and trying to free any allocated memory
     printf("\n%s\n",msg);
 
-    Free_All_Variables();
+    free_run_variables();
     exit(1);
 }
 

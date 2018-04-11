@@ -72,22 +72,16 @@ void Setup_Output_Files() {
     }
 }
 
-void Initialise_Global_Variables() {
+void initialise_run_variables() {
     int cluster_type;
 
     incrStatic=1000;
     incrClustPerPart=1;
 
-    mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
-
-    x = malloc(max_particle_number*sizeof(double));   if (x==NULL) Error_no_free("Initialise_Global_Variables(): x[] malloc out of memory\n");    // positions of particles in a configuration
-    y = malloc(max_particle_number*sizeof(double));   if (y==NULL) Error_no_free("Initialise_Global_Variables(): y[] malloc out of memory\n");
-    z = malloc(max_particle_number*sizeof(double));   if (z==NULL) Error_no_free("Initialise_Global_Variables(): z[] malloc out of memory\n");
-    particle_type=malloc(max_particle_number*sizeof(int)); if (particle_type==NULL) { Error_no_free("Initialise_Global_Variables(): particle_type[] malloc out of memory\n"); }    // type of species
-
-    num_gross_particles = malloc(num_cluster_types*sizeof(int));
-    total_clusters = malloc(num_cluster_types*sizeof(int));
-    pop_per_frame = malloc(num_cluster_types*sizeof(double *));
+    num_gross_particles = malloc(num_cluster_types * sizeof(int));
+    total_clusters = malloc(num_cluster_types * sizeof(int));
+    mean_pop_per_frame = malloc(num_cluster_types * sizeof(double));
+    pop_per_frame = malloc(num_cluster_types * sizeof(double *));
 
     for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
 
@@ -97,22 +91,43 @@ void Initialise_Global_Variables() {
 
         num_gross_particles[cluster_type] = 0;
         total_clusters[cluster_type] = 0;
+        mean_pop_per_frame[cluster_type] = 0;
     }
 }
 
-void initialise_frame_variables() {
+void free_run_variables()  {  // Free bond detection variables
+
+    free(fXmolName);
+    free(fBoxSizeName);
+
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        free(pop_per_frame[cluster_type]);
+    }
+
+    free(num_gross_particles);
+    free(total_clusters);
+    free(mean_pop_per_frame);
+    free(pop_per_frame);
+}
+
+void initialise_frame_variables(int num_particles) {
     int ***mem_pointers[] = {&mem_sp3b,  &mem_sp3c,  &mem_sp4b,  &mem_sp4c,  &mem_sp5b,  &mem_sp5c};
     int **nmem_pointers[] = {&nmem_sp3b, &nmem_sp3c, &nmem_sp4b, &nmem_sp4c, &nmem_sp5b, &nmem_sp5c};
     int *mmem_pointers[] = {&mmem_sp3b, &mmem_sp3c, &mmem_sp4b, &mmem_sp4c, &mmem_sp5b, &mmem_sp5c};
 
     tiltxy = tiltxz = tiltyz = 0;
 
-    num_bonds = malloc(max_particle_number * sizeof(int));  if (num_bonds==NULL) Error_no_free("Initialise_Global_Variables(): num_bonds[] malloc out of memory\n");    // number of "bonded" neighbours of a particle
-    bNums = malloc(max_particle_number * sizeof(int *));    if (bNums==NULL) Error_no_free("Initialise_Global_Variables(): bNums[] malloc out of memory\n");    // list of bonded particles to each particle
-    squared_bondlengths = malloc(max_particle_number * sizeof(double *));   if (squared_bondlengths==NULL) Error_no_free("Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    // array of bond lengths
+    x = malloc(num_particles * sizeof(double));   if (x==NULL) Error_no_free("Initialise_Global_Variables(): x[] malloc out of memory\n");    // positions of particles in a configuration
+    y = malloc(num_particles * sizeof(double));   if (y==NULL) Error_no_free("Initialise_Global_Variables(): y[] malloc out of memory\n");
+    z = malloc(num_particles * sizeof(double));   if (z==NULL) Error_no_free("Initialise_Global_Variables(): z[] malloc out of memory\n");
+    particle_type=malloc(num_particles * sizeof(int)); if (particle_type==NULL) { Error_no_free("Initialise_Global_Variables(): particle_type[] malloc out of memory\n"); }    // type of species
+
+    num_bonds = malloc(num_particles * sizeof(int));  if (num_bonds==NULL) Error_no_free("Initialise_Global_Variables(): num_bonds[] malloc out of memory\n");    // number of "bonded" neighbours of a particle
+    bNums = malloc(num_particles * sizeof(int *));    if (bNums==NULL) Error_no_free("Initialise_Global_Variables(): bNums[] malloc out of memory\n");    // list of bonded particles to each particle
+    squared_bondlengths = malloc(num_particles * sizeof(double *));   if (squared_bondlengths==NULL) Error_no_free("Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    // array of bond lengths
 
 
-    for (int particle_number = 0; particle_number < max_particle_number; particle_number++) {
+    for (int particle_number = 0; particle_number < num_particles; particle_number++) {
         bNums[particle_number] = malloc(max_num_bonds*sizeof(int));
         check_null_pointer((void *) bNums[particle_number], "bnums[][]");
 
@@ -123,17 +138,17 @@ void initialise_frame_variables() {
     // Memory arrays
     for (int i = 0; i < 6; ++i) {
         *(mmem_pointers[i]) = 1;
-        *(mem_pointers[i]) = malloc(max_particle_number * sizeof(int *));
+        *(mem_pointers[i]) = malloc(num_particles * sizeof(int *));
         if (*(mem_pointers[i]) == NULL) {
             Error_no_free("Initialise_Global_Variables(): mem[] malloc out of memory\n");
         }
-        for (int j = 0; j < max_particle_number; j++) {
+        for (int j = 0; j < num_particles; j++) {
             (*(mem_pointers[i]))[j] = malloc(*(mmem_pointers[i]) * sizeof(int));
             if ((*(mem_pointers[i]))[j] == NULL) {
                 Error_no_free("Initialise_Global_Variables(): mem[][] malloc out of memory\n");
             }
         }
-        *(nmem_pointers[i]) = malloc(max_particle_number * sizeof(int));
+        *(nmem_pointers[i]) = malloc(num_particles * sizeof(int));
         if (*(nmem_pointers[i]) == NULL) {
             Error_no_free("Initialise_Global_Variables(): nmem_sp3b[] malloc out of memory\n");
         }
@@ -153,10 +168,55 @@ void initialise_frame_variables() {
         }
 
         // character arrays listing what type each particle is when found in a cluster
-        *(raw_list[cluster_type]) = malloc(max_particle_number * sizeof(char));
+        *(raw_list[cluster_type]) = malloc(num_particles * sizeof(char));
         check_null_pointer((void *) *(raw_list[cluster_type]), cluster_names[cluster_type]);
     }
 }
+
+void free_frame_variables(int num_particles) {
+
+    free(x); free(y); free(z);
+    free(particle_type);
+
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+        for (int i = 0; i < *(cluster_list_width[cluster_type]); i++) {
+            free((*cluster_list[cluster_type])[i]);
+        }
+        free(*raw_list[cluster_type]);
+        free(*cluster_list[cluster_type]);
+
+    }
+
+    for (int particle_number = 0; particle_number < num_particles; particle_number++) {
+        free(bNums[particle_number]);
+        free(squared_bondlengths[particle_number]);
+
+        free(mem_sp3b[particle_number]);
+        free(mem_sp3c[particle_number]);
+        free(mem_sp4b[particle_number]);
+        free(mem_sp4c[particle_number]);
+        free(mem_sp5b[particle_number]);
+        free(mem_sp5c[particle_number]);
+    }
+    free(bNums);
+    free(squared_bondlengths);
+    free(num_bonds);
+
+    free(mem_sp3b);
+    free(mem_sp3c);
+    free(mem_sp4b);
+    free(mem_sp4c);
+    free(mem_sp5b);
+    free(mem_sp5c);
+
+    free(nmem_sp3b);
+    free(nmem_sp3c);
+    free(nmem_sp4b);
+    free(nmem_sp4c);
+    free(nmem_sp5b);
+    free(nmem_sp5c);
+
+};
 
 void check_null_pointer(void *pointer, char *pointer_name) {
     char errMsg[200];
@@ -185,59 +245,6 @@ void Reset_Frame_Variables() { // Reset static variables in each frame
     for(cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
         memset(*raw_list[cluster_type], 'C', max_particle_number*sizeof(char));
     }
-}
-
-void Free_All_Variables()  {  // Free bond detection variables
-    int i;
-
-    free(mean_pop_per_frame);
-
-    free(particle_type);
-    free(fXmolName);
-    free(fBoxSizeName);
-    free(x); free(y); free(z);
-
-    for (i = 0; i < max_particle_number; i++) {
-        free(bNums[i]); 
-        free(squared_bondlengths[i]);
-    }
-    free(bNums); free(squared_bondlengths); free(num_bonds);
-
-    for (i = 0; i < max_particle_number; i++) free(mem_sp3b[i]);
-    for (i = 0; i < max_particle_number; i++) free(mem_sp3c[i]);
-    for (i = 0; i < max_particle_number; i++) free(mem_sp4b[i]);
-    for (i = 0; i < max_particle_number; i++) free(mem_sp4c[i]);
-    for (i = 0; i < max_particle_number; i++) free(mem_sp5b[i]);
-    for (i = 0; i < max_particle_number; i++) free(mem_sp5c[i]);
-    
-    free(mem_sp3b);
-    free(mem_sp3c);
-    free(mem_sp4b);
-    free(mem_sp4c);
-    free(mem_sp5b);
-    free(mem_sp5c);
-
-    free(nmem_sp3b);
-    free(nmem_sp3c);
-    free(nmem_sp4b);
-    free(nmem_sp4c);
-    free(nmem_sp5b);
-    free(nmem_sp5c);
-
-
-    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-        for (i = 0; i < *(cluster_list_width[cluster_type]); i++) {
-            free((*cluster_list[cluster_type])[i]);
-        }
-        free(pop_per_frame[cluster_type]);
-        free(*raw_list[cluster_type]);
-        free(*cluster_list[cluster_type]);
-
-    }
-
-    free(pop_per_frame);
-    free(num_gross_particles);
-    free(total_clusters);
 }
 
 void analyse_cluster_dependencies() {

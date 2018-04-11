@@ -80,8 +80,7 @@ void count_frame_cluster_population(int f) {
 
 void count_mean_pop_per_frame(int frames_analysed) {
 
-    for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
-        mean_pop_per_frame[cluster_type] = 0;
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         for (int frame_number = 0; frame_number < frames_analysed; frame_number++) {
             mean_pop_per_frame[cluster_type] += pop_per_frame[cluster_type][frame_number];
         }
