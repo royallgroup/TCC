@@ -51,9 +51,7 @@ int do13AcenXyz; // write centres of 13A
 int doWritePopPerFrame; // write pop_per_frame file
 int doWriteXYZ; // Write clusters as XYZ file
 
-int initNoStatic;   // initial size of static cluster arrays
 int incrStatic; // when full, increment static cluster arrays by this amount
-int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
 
 // Lists of particle population of each cluster type in each frame, index i is the frame number,
