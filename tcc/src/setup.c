@@ -11,7 +11,7 @@ void Setup_Output_Files() {
     if(do11AcenXyz == 1) {
         make_directory("centers_output");
         sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
-                fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[21]);
+                fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[eleven_A_number]);
         file_pointer = open_file(output_file, "w");
         fclose(file_pointer);
     }
@@ -19,7 +19,7 @@ void Setup_Output_Files() {
     if(do13AcenXyz == 1) {
         make_directory("centers_output");
         sprintf(output_file, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
-                fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[32]);
+                fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[thirteen_A_number]);
         file_pointer = open_file(output_file, "w");
         fclose(file_pointer);
     }
@@ -36,13 +36,13 @@ void Setup_Output_Files() {
     }
 
     if(doWriteBonds == 1) {
-        sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+        sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,use_voronoi_bonds,fc,PBCs);
         file_pointer=fopen(output_file, "w");
         fclose(file_pointer);
     }
 
     if(doWritePopPerFrame == 1) {
-        sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+        sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame",fXmolName,rcutAA,rcutAB,rcutBB,use_voronoi_bonds,fc,PBCs);
         file_pointer=fopen(output_file, "w");
         fclose(file_pointer);
     }
@@ -52,7 +52,7 @@ void Setup_Output_Files() {
         for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
             if (*do_cluster_list[cluster_number] == 1) {
                 sprintf(output_file, "raw_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s",
-                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+                        fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[cluster_number]);
                 file_pointer = open_file(output_file, "w");
                 fclose(file_pointer);
             }
@@ -64,7 +64,7 @@ void Setup_Output_Files() {
         for(cluster_number=0; cluster_number < num_cluster_types; cluster_number++) {
             if (*do_cluster_list[cluster_number] == 1) {
                 sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
-                        fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_number]);
+                        fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[cluster_number]);
                 file_pointer = open_file(output_file, "w");
                 fclose(file_pointer);
             }
@@ -94,10 +94,10 @@ void Initialise_Global_Variables() {
     squared_bondlengths = malloc(max_particle_number*sizeof(double *));   if (squared_bondlengths==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
 
     for (int particle_number = 0; particle_number < max_particle_number; particle_number++) {
-        bNums[particle_number] = malloc(nB*sizeof(int));
+        bNums[particle_number] = malloc(max_num_bonds*sizeof(int));
         check_null_pointer((void *) bNums[particle_number], "bnums[][]");
 
-        squared_bondlengths[particle_number] = malloc(nB*sizeof(double));
+        squared_bondlengths[particle_number] = malloc(max_num_bonds*sizeof(double));
         check_null_pointer((void *) squared_bondlengths[particle_number], "squared_bondlengths[][]");
     }
 

@@ -32,11 +32,11 @@ void read_ini_file() {
     min_cutAA = iniparser_getdouble(ini, "simulation:min_cutAA", 0);
     rcutAB = iniparser_getdouble(ini, "simulation:rcutAB", 1.8);
     rcutBB = iniparser_getdouble(ini, "simulation:rcutBB", 1.8);
-    Vor = iniparser_getboolean(ini, "simulation:bond_type", 1);
+    use_voronoi_bonds = iniparser_getboolean(ini, "simulation:bond_type", 1);
     PBCs = iniparser_getboolean(ini, "simulation:pbcs", 1);
     fc = iniparser_getdouble(ini, "simulation:voronoi_parameter", 1);
-    nB = iniparser_getint(ini, "simulation:num_bonds", 50);
-    USELIST = iniparser_getboolean(ini, "simulation:cell_list", 0);
+    max_num_bonds = iniparser_getint(ini, "simulation:num_bonds", 50);
+    use_cell_list = iniparser_getboolean(ini, "simulation:cell_list", 0);
     analyse_all_clusters = iniparser_getboolean(ini, "simulation:analyse_all_clusters", 1);
 
     //output
@@ -53,7 +53,7 @@ void read_ini_file() {
     rcutAB2 = rcutAB * rcutAB;
     rcutBB2 = rcutBB * rcutBB;
     min_cutAA2 = min_cutAA * min_cutAA;
-    if (Vor==1) {   // if using modified Voronoi method can't have different cut off lengths for the bonds
+    if (use_voronoi_bonds==1) {   // if using modified Voronoi method can't have different cut off lengths for the bonds
         rcutAB = rcutAA;
         rcutBB = rcutAA;
         rcutAB2 = rcutAA2;
@@ -65,7 +65,7 @@ void read_ini_file() {
     printf("Box type %d\n",box_type);
     printf("Number of frames to analyse %d Sample frequency %d\n",frames_to_analyse, SAMPLEFREQ);
     printf("A-A bond cut-off length %lg A-B bond cut-off length %lg B-B bond cut-off length %lg\n", rcutAA, rcutAB, rcutBB);
-    printf("Voronoi bond detection %d Periodic boundary conditions %d Voronoi fc parameter %lg maximum number of bonds per particle %d Use cell list for bond detection%d\n", Vor, PBCs, fc, nB, USELIST);
+    printf("Voronoi bond detection %d Periodic boundary conditions %d Voronoi fc parameter %lg maximum number of bonds per particle %d Use cell list for bond detection%d\n", use_voronoi_bonds, PBCs, fc, max_num_bonds, use_cell_list);
     printf("Write bonds file %d Write cluster files %d Write raw files %d Write PopPerFrame %d\n", doWriteBonds, doWriteClus, doWriteRaw, doWritePopPerFrame);
 
     iniparser_freedict(ini);

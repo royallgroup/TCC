@@ -14,7 +14,7 @@ void Stats_Report() {
     FILE *output_file;
 
     sprintf(output_name, "%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust", fXmolName, rcutAA, rcutAB,
-            rcutBB, Vor, fc, PBCs);
+            rcutBB, use_voronoi_bonds, fc, PBCs);
 
     output_file = open_stats_report_file(output_name);
 

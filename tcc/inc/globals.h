@@ -6,21 +6,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int particles_in_current_frame;  // number of particles
-int box_type; //if the system in non-cubic or NPT, get box size info from a datafile
-int frames_to_analyse; // frames to read from input xmol file
-int SAMPLEFREQ; // frequency at which to take frames from the xmol file
-int max_particle_number; // The number of particles in the largest XYZ frame
-int num_cluster_types;  // The number of items in the cluster names array
+int box_type;                    //if the system in non-cubic or NPT, get box size info from a datafile
+int frames_to_analyse;           // frames to read from input xmol file
+int SAMPLEFREQ;                  // frequency at which to take frames from the xmol file
+int max_particle_number;         // The number of particles in the largest XYZ frame
+int num_cluster_types;           // The number of items in the cluster names array
 
-extern int cluster_size[]; // A list of the number of particles in each cluster type
-extern char* cluster_names[];  // A list of strings of cluster names
-extern int* do_cluster_list[];  // A list of pointers to the do_clusts variables
-extern int* num_cluster_list[];  // A list of pointers to the nclusts variables
-extern char** raw_list[];  // A list of pointers to the "s" raw storage variables
-extern int*** cluster_list[];  // A list of pointers to the "hc" cluster storage variables
+extern int cluster_size[];        // A list of the number of particles in each cluster type
+extern char* cluster_names[];     // A list of strings of cluster names
+extern int* do_cluster_list[];    // A list of pointers to the do_clusts variables
+extern int* num_cluster_list[];   // A list of pointers to the nclusts variables
+extern char** raw_list[];         // A list of pointers to the "s" raw storage variables
+extern int*** cluster_list[];     // A list of pointers to the "hc" cluster storage variables
 extern int* cluster_list_width[]; // A list of pointers to the "m" storage width variables
-
+extern int eleven_A_number;
+extern int thirteen_A_number;
 
 struct xyz_info {
     int total_frames;
@@ -30,21 +30,18 @@ struct xyz_info {
 };
 
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
-int box_offsets[1000];    // Offsets of each line in the box file
-double *x, *y, *z;  // positions in x y and z directions of N particles
-int *particle_type; // particle type
-double sidex, sidey, sidez, half_sidex, half_sidey, half_sidez;
-double tiltxy,tiltxz,tiltyz;
-
+int box_offsets[1000];          // Offsets of each line in the box file
+double *x, *y, *z;              // positions in x y and z directions of N particles
+int *particle_type;             // species of particle, index is particle number
 
 double rcutAA,rcutAA2,rcutAB,rcutAB2,rcutBB,rcutBB2;    // diameters of AB and BB interactions for binary interactions
 double min_cutAA, min_cutAA2;
-double fc;  // Voronoi adjustment parameter
-int Vor;    // 0 use simple bond length method build_bond_network(), 1 use Voronoi method Get_Bonds_With_Voronoi()
-int PBCs;   // 0 do not impliment periodic boundary conditions, 1 implement periodic boundary conditions
-int nB; // max number of bonds per particle
-int USELIST;    // 0  do not use cell list, 1 use cell list
-int analyse_all_clusters; // 0 Read clusters to analyse from file, 1 analyse all clusters
+double fc;                  // Voronoi adjustment parameter
+int use_voronoi_bonds;      // 0 use simple bond length method build_bond_network(), 1 use Voronoi method Get_Bonds_With_Voronoi()
+int PBCs;                   // 0 do not impliment periodic boundary conditions, 1 implement periodic boundary conditions
+int max_num_bonds;          // max number of bonds per particle
+int use_cell_list;          // 0  do not use cell list, 1 use cell list
+int analyse_all_clusters;   // 0 Read clusters to analyse from file, 1 analyse all clusters
 
 int doWriteBonds;   // write bonds files out
 int doWriteClus;    // write out indices of each detected cluster
@@ -59,19 +56,41 @@ int incrStatic; // when full, increment static cluster arrays by this amount
 int initNoClustPerPart; // initial size of clusters per part arrays
 int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
 
+// Lists of particle population of each cluster type in each frame, index i is the frame number,
+// index j is the cluster type
+double **pop_per_frame;
 
-int *num_bonds; // Current Number of Bonds for particles {1,...,N}
-int **bNums;    // list of particles (indices j) bonded to particle at index i
-double **squared_bondlengths;   // length of bonds in the bond network and squared
-int maxnb; // max number of bonds to one particle
-int correctedBonds; // max number of bonds to one particle
+// The average population of each cluster type over all frames, index i is cluster type
+double *mean_pop_per_frame;
 
-int num_sort_columns; // Number of columns to iterate over with quicksort
+// Gross number of particles in the specified cluster type accumulated over all frames
+int *num_gross_particles;
+
+// Total number of clusters of the specified type accumulated over all frames
+int *total_clusters;
+
+// Per frame variables
+
+// Box and bond variables
+
+double sidex, sidey, sidez, half_sidex, half_sidey, half_sidez;
+double tiltxy,tiltxz,tiltyz;
+int particles_in_current_frame;
+
+int *num_bonds;                                       // Current Number of Bonds for particles {1,...,N}
+int **bNums;                                          // list of particles (indices j) bonded to particle at index i
+double **squared_bondlengths;                         // length of bonds in the bond network and squared
+int maxnb;                                            // max number of bonds to one particle
+int correctedBonds;                                   // bonds adjusted due to voronoi assymetry
+
+int num_sort_columns;                                 // Number of columns to iterate over with quicksort
 
 int n_cells_x, n_cells_y, n_cells_z, n_cells_total;   // number of cells per box length, total number of cells
-int *head;   // head of cell array
-int *linked_list; // linked list array
+int *head;                                            // head of cell array
+int *linked_list;                                     // linked list array
 double cell_len_x, cell_len_y, cell_len_z;
+
+// Cluster variables
 
 // Whether to perform analysis of this type of cluster
 int dosp3, dosp3a, dosp3b, dosp3c;
@@ -147,18 +166,5 @@ int **mem_sp4b, *nmem_sp4b, mmem_sp4b;
 int **mem_sp4c, *nmem_sp4c, mmem_sp4c;
 int **mem_sp5b, *nmem_sp5b, mmem_sp5b;
 int **mem_sp5c, *nmem_sp5c, mmem_sp5c;
-
-// Lists of particle population of each cluster type in each frame, index i is the frame number,
-// index j is the cluster type
-double **pop_per_frame;
-
-// The average population of each cluster type over all frames, index i is cluster type
-double *mean_pop_per_frame;
-
-// Gross number of particles in the specified cluster type accumulated over all frames
-int *num_gross_particles;
-
-// Total number of clusters of the specified type accumulated over all frames
-int *total_clusters;
 
 #endif

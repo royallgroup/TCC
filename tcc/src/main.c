@@ -37,8 +37,8 @@
 #include "BCC9.h"
 
 // Cluster numbers
-static const int eleven_A_number = 23;
-static const int thirteen_A_number = 34;
+int eleven_A_number = 23;
+int thirteen_A_number = 34;
 
 char* cluster_names[] = {"sp3a", "sp3b", "sp3c", "sp4a", "sp4b", "sp4c", "sp5a", "sp5b", "sp5c",
                          "6A", "6Z", "7K", "7T_a", "7T_s", "8A", "8B", "8K", "9A", "9B", "9K", "10A", "10B",
