@@ -6,13 +6,14 @@ int count_common_spindles_between_5As(const int *first_5A_cluster, const int *se
 
 void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int scom, int *sother);
 
+int is_particle_in_5A(const int *five_A_cluster, int particle_id);
+
 void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
     int first_5A_id, second_5A_pointer, first_5A_spindle_pointer, k, l, m;
     int second_5A_id;
     int *first_5A_cluster, *second_5A_cluster;
     int scom, sother[2], sp3_com[2], sp3c_i_other, sp3c_j_other;
     int clusSize=7;
-    int common_spindles;
 
     scom=sother[0]=sother[1]=sp3_com[0]=sp3_com[1]=sp3c_i_other=sp3c_j_other=-1;
 
@@ -28,114 +29,110 @@ void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
 
                         get_other_spindle_ids(first_5A_cluster, second_5A_cluster, scom, sother);
 
-                        m = 0;
-                        for (k = 0; k < 5; k++) {
-                            if (sother[0] == second_5A_cluster[k]) {
-                                m++;
-                                break;
-                            }
-                        }
-                        if (m != 0 && k != 5) continue; // other spindle of 5A_i distinct from whole 5A_j
+                        if (is_particle_in_5A(second_5A_cluster, sother[0]) == 0) {
+                            if (is_particle_in_5A(first_5A_cluster, sother[1]) == 0) {
 
-                        m = 0;
-                        for (k = 0; k < 5; k++) {
-                            if (sother[1] == first_5A_cluster[k]) {
-                                m++;
-                                break;
-                            }
-                        }
-                        if (m != 0 && k != 5) continue; // other spindle of 5A_j distinct from whole 5A_i
+                                m = 0;
+                                for (k = 0; k < 3; k++) {
+                                    for (l = 0; l < 3; l++) {
+                                        if (first_5A_cluster[k] == second_5A_cluster[l]) {
+                                            if (m >= 2) {
+                                                m++;
+                                                break;
+                                            }
+                                            sp3_com[m] = first_5A_cluster[k];
+                                            m++;
+                                        }
+                                    }
+                                    if (m >= 3) break;
+                                }
+                                if (m != 2) continue; // exactly two common particles in SP3 rings of 5A_i and 5A_j
 
-                        m = 0;
-                        for (k = 0; k < 3; k++) {
-                            for (l = 0; l < 3; l++) {
-                                if (first_5A_cluster[k] == second_5A_cluster[l]) {
-                                    if (m >= 2) {
+                                m = 0;
+                                for (k = 0; k < 3; k++) {
+                                    for (l = 0; l < 2; l++) {
+                                        if (first_5A_cluster[k] == sp3_com[l]) break;
+                                    }
+                                    if (l == 2) {
+                                        if (m >= 1) {
+                                            m++;
+                                            break;
+                                        }
+                                        sp3c_i_other = first_5A_cluster[k];
+                                        m++;
+                                    }
+                                }
+                                if (m != 1) continue; // found other uncommon particle from SP3 ring of 5A_i
+
+                                m = 0;
+                                for (k = 0; k < 3; k++) {
+                                    for (l = 0; l < 2; l++) {
+                                        if (second_5A_cluster[k] == sp3_com[l]) break;
+                                    }
+                                    if (l == 2) {
+                                        if (m >= 1) {
+                                            m++;
+                                            break;
+                                        }
+                                        sp3c_j_other = second_5A_cluster[k];
+                                        m++;
+                                    }
+                                }
+                                if (m != 1) continue; // found other uncommon particle from SP3 ring of 5A_i
+
+                                m = 0;
+                                for (k = 0; k < 5; k++) {
+                                    if (sp3c_i_other == second_5A_cluster[k]) {
                                         m++;
                                         break;
                                     }
-                                    sp3_com[m] = first_5A_cluster[k];
-                                    m++;
                                 }
-                            }
-                            if (m >= 3) break;
-                        }
-                        if (m != 2) continue; // exactly two common particles in SP3 rings of 5A_i and 5A_j
+                                if (m != 0 && k != 5) continue; // other ring of 5A_i distinct from whole 5A_j
 
-                        m = 0;
-                        for (k = 0; k < 3; k++) {
-                            for (l = 0; l < 2; l++) {
-                                if (first_5A_cluster[k] == sp3_com[l]) break;
-                            }
-                            if (l == 2) {
-                                if (m >= 1) {
-                                    m++;
-                                    break;
+                                m = 0;
+                                for (k = 0; k < 5; k++) {
+                                    if (sp3c_j_other == first_5A_cluster[k]) {
+                                        m++;
+                                        break;
+                                    }
                                 }
-                                sp3c_i_other = first_5A_cluster[k];
-                                m++;
-                            }
-                        }
-                        if (m != 1) continue; // found other uncommon particle from SP3 ring of 5A_i
+                                if (m != 0 && k != 5) continue; // other ring of 5A_j distinct from whole 5A_i
 
-                        m = 0;
-                        for (k = 0; k < 3; k++) {
-                            for (l = 0; l < 2; l++) {
-                                if (second_5A_cluster[k] == sp3_com[l]) break;
-                            }
-                            if (l == 2) {
-                                if (m >= 1) {
-                                    m++;
-                                    break;
+                                if (n7K == m7K) {
+                                    hc7K = resize_2D_int(hc7K, m7K, m7K + incrStatic, clusSize, -1);
+                                    m7K = m7K + incrStatic;
                                 }
-                                sp3c_j_other = second_5A_cluster[k];
-                                m++;
+                                // Now we have found the 7K cluster
+
+                                hc7K[n7K][0] = scom;
+                                hc7K[n7K][1] = sother[0];
+                                hc7K[n7K][2] = sother[1];
+                                hc7K[n7K][3] = sp3_com[0];
+                                hc7K[n7K][4] = sp3_com[1];
+                                hc7K[n7K][5] = sp3c_i_other;
+                                hc7K[n7K][6] = sp3c_j_other;
+
+                                quickSort(&hc7K[n7K][1], 2);
+                                quickSort(&hc7K[n7K][3], 2);
+                                quickSort(&hc7K[n7K][5], 2);
+
+                                Cluster_Write_7K();
                             }
                         }
-                        if (m != 1) continue; // found other uncommon particle from SP3 ring of 5A_i
-
-                        m = 0;
-                        for (k = 0; k < 5; k++) {
-                            if (sp3c_i_other == second_5A_cluster[k]) {
-                                m++;
-                                break;
-                            }
-                        }
-                        if (m != 0 && k != 5) continue; // other ring of 5A_i distinct from whole 5A_j
-
-                        m = 0;
-                        for (k = 0; k < 5; k++) {
-                            if (sp3c_j_other == first_5A_cluster[k]) {
-                                m++;
-                                break;
-                            }
-                        }
-                        if (m != 0 && k != 5) continue; // other ring of 5A_j distinct from whole 5A_i
-
-                        if (n7K == m7K) {
-                            hc7K = resize_2D_int(hc7K, m7K, m7K + incrStatic, clusSize, -1);
-                            m7K = m7K + incrStatic;
-                        }
-                        // Now we have found the 7K cluster
-
-                        hc7K[n7K][0] = scom;
-                        hc7K[n7K][1] = sother[0];
-                        hc7K[n7K][2] = sother[1];
-                        hc7K[n7K][3] = sp3_com[0];
-                        hc7K[n7K][4] = sp3_com[1];
-                        hc7K[n7K][5] = sp3c_i_other;
-                        hc7K[n7K][6] = sp3c_j_other;
-
-                        quickSort(&hc7K[n7K][1], 2);
-                        quickSort(&hc7K[n7K][3], 2);
-                        quickSort(&hc7K[n7K][5], 2);
-
-                        Cluster_Write_7K();
                     }
                 }
             }
         }
     }
+}
+
+int is_particle_in_5A(const int *five_A_cluster, int particle_id) {
+    for (int five_A_pointer = 0; five_A_pointer < 5; five_A_pointer++) {
+        if (particle_id == five_A_cluster[five_A_pointer]) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int scom, int *sother) {
