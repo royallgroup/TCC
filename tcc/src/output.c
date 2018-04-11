@@ -37,8 +37,8 @@ void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
         }
         else if (sarr[i] == 'C') {
             if (particle_type[i]==1){
-                fprintf(thefile,"A\n");   
-            } 
+                fprintf(thefile,"A\n");
+            }
             else {
                 fprintf(thefile,"B\n");
             }
@@ -141,7 +141,7 @@ void Write_Cluster_XYZ(int f) {
 void Write_Cluster(int f) {
     int cluster_type;
 
-    for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         if (*do_cluster_list[cluster_type] == 1) {
             Write_Cluster_Compostions(f, cluster_type);
         }
