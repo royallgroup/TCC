@@ -5,6 +5,8 @@ void Setup_Output_Files();
 
 void Initialise_Global_Variables();
 
+void initialise_frame_variables();
+
 void check_null_pointer(void *pointer, char *pointer_name);
 
 void Reset_Frame_Variables();

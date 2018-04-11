@@ -92,6 +92,7 @@ int main(int argc, char **argv) {
     max_particle_number = get_max_particle_number(input_xyz_info);
 
     Initialise_Global_Variables();
+    initialise_frame_variables();
     Setup_Output_Files();
 
     if(frames_to_analyse > input_xyz_info.total_frames) {

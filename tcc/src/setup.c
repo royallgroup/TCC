@@ -73,25 +73,41 @@ void Setup_Output_Files() {
 }
 
 void Initialise_Global_Variables() {
-    int cluster_type, j;
-    char errMsg[1000];
+    int cluster_type;
 
     initNoStatic=incrStatic=1000;
     initNoClustPerPart=incrClustPerPart=1;
 
     mean_pop_per_frame = malloc(num_cluster_types*sizeof(double));
 
+    x = malloc(max_particle_number*sizeof(double));   if (x==NULL) Error_no_free("Initialise_Global_Variables(): x[] malloc out of memory\n");    // positions of particles in a configuration
+    y = malloc(max_particle_number*sizeof(double));   if (y==NULL) Error_no_free("Initialise_Global_Variables(): y[] malloc out of memory\n");
+    z = malloc(max_particle_number*sizeof(double));   if (z==NULL) Error_no_free("Initialise_Global_Variables(): z[] malloc out of memory\n");
+    particle_type=malloc(max_particle_number*sizeof(int)); if (particle_type==NULL) { Error_no_free("Initialise_Global_Variables(): particle_type[] malloc out of memory\n"); }    // type of species
+
+    num_gross_particles = malloc(num_cluster_types*sizeof(int));
+    total_clusters = malloc(num_cluster_types*sizeof(int));
+    pop_per_frame = malloc(num_cluster_types*sizeof(double *));
+
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+
+        // particle fraction of particles in each cluster in each frame
+        pop_per_frame[cluster_type] = malloc(frames_to_analyse * sizeof(double));
+        check_null_pointer((void *) pop_per_frame[cluster_type], "pop_per_frame");
+
+        num_gross_particles[cluster_type] = 0;
+        total_clusters[cluster_type] = 0;
+    }
+}
+
+void initialise_frame_variables() {
+
     tiltxy = tiltxz = tiltyz = 0;
-    x = malloc(max_particle_number*sizeof(double));   if (x==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): x[] malloc out of memory\n");    Error_no_free(errMsg); }    // positions of particles in a configuration
-    y = malloc(max_particle_number*sizeof(double));   if (y==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): y[] malloc out of memory\n");    Error_no_free(errMsg); }
-    z = malloc(max_particle_number*sizeof(double));   if (z==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): z[] malloc out of memory\n");    Error_no_free(errMsg); }
-    particle_type=malloc(max_particle_number*sizeof(int)); if (particle_type==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): particle_type[] malloc out of memory\n");   Error_no_free(errMsg); }    // type of species
 
-    num_bonds = malloc(max_particle_number*sizeof(int));    if (num_bonds==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): num_bonds[] malloc out of memory\n");    Error_no_free(errMsg); }    // number of "bonded" neighbours of a particle
+    num_bonds = malloc(max_particle_number * sizeof(int));  if (num_bonds==NULL) Error_no_free("Initialise_Global_Variables(): num_bonds[] malloc out of memory\n");    // number of "bonded" neighbours of a particle
+    bNums = malloc(max_particle_number * sizeof(int *));    if (bNums==NULL) Error_no_free("Initialise_Global_Variables(): bNums[] malloc out of memory\n");    // list of bonded particles to each particle
+    squared_bondlengths = malloc(max_particle_number * sizeof(double *));   if (squared_bondlengths==NULL) Error_no_free("Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    // array of bond lengths
 
-
-    bNums = malloc(max_particle_number*sizeof(int *));    if (bNums==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): bNums[] malloc out of memory\n");    Error_no_free(errMsg); }    // list of bonded particles to each particle
-    squared_bondlengths = malloc(max_particle_number*sizeof(double *));   if (squared_bondlengths==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): squared_bondlengths[] malloc out of memory\n");    Error_no_free(errMsg); }    // array of bond lengths
 
     for (int particle_number = 0; particle_number < max_particle_number; particle_number++) {
         bNums[particle_number] = malloc(max_num_bonds*sizeof(int));
@@ -104,30 +120,97 @@ void Initialise_Global_Variables() {
     mmem_sp3b=mmem_sp3c=mmem_sp4b=mmem_sp4c=mmem_sp5b=mmem_sp5c=initNoClustPerPart;
 
     // arrays for the number of clusters of each type bonded to each particle
-    mem_sp3b = malloc(max_particle_number*sizeof(int *)); if (mem_sp3b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp3b[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j = 0; j < max_particle_number; j++) { mem_sp3b[j] = malloc(mmem_sp3b*sizeof(int));  if (mem_sp3b[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp3b[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    nmem_sp3b = malloc(max_particle_number*sizeof(int));  if (nmem_sp3b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): nmem_sp3b[] malloc out of memory\n");    Error_no_free(errMsg); }
-    mem_sp3c = malloc(max_particle_number*sizeof(int *)); if (mem_sp3c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp3c[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j = 0; j < max_particle_number; j++) { mem_sp3c[j] = malloc(mmem_sp3c*sizeof(int));  if (mem_sp3c[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp3c[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    nmem_sp3c = malloc(max_particle_number*sizeof(int));  if (nmem_sp3c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): nmem_sp3c[] malloc out of memory\n");    Error_no_free(errMsg); }
-    mem_sp4b = malloc(max_particle_number*sizeof(int *)); if (mem_sp4b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp4b[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j = 0; j < max_particle_number; j++) { mem_sp4b[j] = malloc(mmem_sp4b*sizeof(int));  if (mem_sp4b[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp4b[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    nmem_sp4b = malloc(max_particle_number*sizeof(int));  if (nmem_sp4b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): nmem_sp4b[] malloc out of memory\n");    Error_no_free(errMsg); }
-    mem_sp4c = malloc(max_particle_number*sizeof(int *)); if (mem_sp4c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp4c[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j = 0; j < max_particle_number; j++) { mem_sp4c[j] = malloc(mmem_sp4c*sizeof(int));  if (mem_sp4c[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp4c[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    nmem_sp4c = malloc(max_particle_number*sizeof(int));  if (nmem_sp4c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): nmem_sp4c[] malloc out of memory\n");    Error_no_free(errMsg); }
-    mem_sp5b = malloc(max_particle_number*sizeof(int *)); if (mem_sp5b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp5b[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j = 0; j < max_particle_number; j++) { mem_sp5b[j] = malloc(mmem_sp5b*sizeof(int));  if (mem_sp5b[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp5b[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    nmem_sp5b = malloc(max_particle_number*sizeof(int));  if (nmem_sp5b==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): nmem_sp5b[] malloc out of memory\n");    Error_no_free(errMsg); }
-    mem_sp5c = malloc(max_particle_number*sizeof(int *)); if (mem_sp5c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp5c[] malloc out of memory\n");  Error_no_free(errMsg); }
-    for (j = 0; j < max_particle_number; j++) { mem_sp5c[j] = malloc(mmem_sp5c*sizeof(int));  if (mem_sp5c[j]==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): mem_sp5c[][] malloc out of memory\n"); Error_no_free(errMsg); } }
-    nmem_sp5c = malloc(max_particle_number*sizeof(int));  if (nmem_sp5c==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): nmem_sp5c[] malloc out of memory\n");    Error_no_free(errMsg); }
+    mem_sp3b = malloc(max_particle_number * sizeof(int *));
+    if (mem_sp3b == NULL) {
+        Error_no_free("Initialise_Global_Variables(): mem_sp3b[] malloc out of memory\n");
+    }
+    for (int i = 0; i < max_particle_number; i++) {
+        mem_sp3b[i] = malloc(mmem_sp3b * sizeof(int));
+        if (mem_sp3b[i]==NULL) {
+            Error_no_free("Initialise_Global_Variables(): mem_sp3b[][] malloc out of memory\n");
+        }
+    }
+    nmem_sp3b = malloc(max_particle_number * sizeof(int));
+    if (nmem_sp3b == NULL) {
+        Error_no_free("Initialise_Global_Variables(): nmem_sp3b[] malloc out of memory\n");
+    }
 
-    num_gross_particles = malloc(num_cluster_types*sizeof(int));
-    total_clusters = malloc(num_cluster_types*sizeof(int));
-    pop_per_frame = malloc(num_cluster_types*sizeof(double *));
+    mem_sp3c = malloc(max_particle_number*sizeof(int *));
+    if (mem_sp3c == NULL) {
+        Error_no_free("Initialise_Global_Variables(): mem_sp3c[] malloc out of memory\n");
+    }
+    for (int i = 0; i < max_particle_number; i++) {
+        mem_sp3c[i] = malloc(mmem_sp3c * sizeof(int));
+        if (mem_sp3c[i] == NULL) {
+            Error_no_free("Initialise_Global_Variables(): mem_sp3c[][] malloc out of memory\n");
+        }
+    }
+    nmem_sp3c = malloc(max_particle_number * sizeof(int));
+    if (nmem_sp3c == NULL) {
+        Error_no_free("Initialise_Global_Variables(): nmem_sp3c[] malloc out of memory\n");
+    }
 
-    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+    mem_sp4b = malloc(max_particle_number*sizeof(int *));
+    if (mem_sp4b == NULL) {
+        Error_no_free("Initialise_Global_Variables(): mem_sp4b[] malloc out of memory\n");
+    }
+    for (int i = 0; i < max_particle_number; i++) {
+        mem_sp4b[i] = malloc(mmem_sp4b*sizeof(int));
+        if (mem_sp4b[i]==NULL) {
+            Error_no_free("Initialise_Global_Variables(): mem_sp4b[][] malloc out of memory\n");
+        }
+    }
+    nmem_sp4b = malloc(max_particle_number*sizeof(int));
+    if (nmem_sp4b==NULL) {
+        Error_no_free("Initialise_Global_Variables(): nmem_sp4b[] malloc out of memory\n");
+    }
+
+    mem_sp4c = malloc(max_particle_number*sizeof(int *));
+    if (mem_sp4c==NULL) {
+        Error_no_free("Initialise_Global_Variables(): mem_sp4c[] malloc out of memory\n");
+    }
+    for (int i = 0; i < max_particle_number; i++) {
+        mem_sp4c[i] = malloc(mmem_sp4c * sizeof(int));
+        if (mem_sp4c[i] == NULL) {
+            Error_no_free("Initialise_Global_Variables(): mem_sp4c[][] malloc out of memory\n");
+        }
+    }
+    nmem_sp4c = malloc(max_particle_number * sizeof(int));
+    if (nmem_sp4c == NULL) {
+        Error_no_free("Initialise_Global_Variables(): nmem_sp4c[] malloc out of memory\n");
+    }
+
+    mem_sp5b = malloc(max_particle_number*sizeof(int *));
+    if (mem_sp5b==NULL) {
+        Error_no_free("Initialise_Global_Variables(): mem_sp5b[] malloc out of memory\n");
+    }
+    for (int i = 0; i < max_particle_number; i++) {
+        mem_sp5b[i] = malloc(mmem_sp5b*sizeof(int));
+        if (mem_sp5b[i]==NULL) {
+            Error_no_free("Initialise_Global_Variables(): mem_sp5b[][] malloc out of memory\n");
+        }
+    }
+    nmem_sp5b = malloc(max_particle_number*sizeof(int));
+    if (nmem_sp5b==NULL) {
+        Error_no_free("Initialise_Global_Variables(): nmem_sp5b[] malloc out of memory\n");
+    }
+
+    mem_sp5c = malloc(max_particle_number * sizeof(int *));
+    if (mem_sp5c==NULL) {
+        Error_no_free("Initialise_Global_Variables(): mem_sp5c[] malloc out of memory\n");
+    }
+    for (int i = 0; i < max_particle_number; i++) {
+        mem_sp5c[i] = malloc(mmem_sp5c*sizeof(int));
+        if (mem_sp5c[i] == NULL) {
+            Error_no_free("Initialise_Global_Variables(): mem_sp5c[][] malloc out of memory\n");
+        }
+    }
+    nmem_sp5c = malloc(max_particle_number*sizeof(int));
+    if (nmem_sp5c==NULL) {
+        Error_no_free("Initialise_Global_Variables(): nmem_sp5c[] malloc out of memory\n");
+    }
+
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
 
         *(cluster_list_width[cluster_type]) = initNoStatic;
 
@@ -135,21 +218,14 @@ void Initialise_Global_Variables() {
         *(cluster_list[cluster_type]) = malloc(*(cluster_list_width[cluster_type]) * sizeof(int *));
         check_null_pointer((void *) *(cluster_list[cluster_type]), cluster_names[cluster_type]);
 
-        for (j = 0; j < *(cluster_list_width[cluster_type]); ++j) {
-            (*(cluster_list[cluster_type]))[j] = malloc(cluster_size[cluster_type] * sizeof(int));
-            check_null_pointer((void *) (*(cluster_list[cluster_type]))[j], cluster_names[cluster_type]);
+        for (int i = 0; i < *(cluster_list_width[cluster_type]); ++i) {
+            (*(cluster_list[cluster_type]))[i] = malloc(cluster_size[cluster_type] * sizeof(int));
+            check_null_pointer((void *) (*(cluster_list[cluster_type]))[i], cluster_names[cluster_type]);
         }
 
         // character arrays listing what type each particle is when found in a cluster
         *(raw_list[cluster_type]) = malloc(max_particle_number * sizeof(char));
         check_null_pointer((void *) *(raw_list[cluster_type]), cluster_names[cluster_type]);
-
-        // particle fraction of particles in each cluster in each frame
-        pop_per_frame[cluster_type] = malloc(frames_to_analyse * sizeof(double));
-        check_null_pointer((void *) pop_per_frame[cluster_type], "pop_per_frame");
-
-        num_gross_particles[cluster_type] = 0;
-        total_clusters[cluster_type] = 0;
     }
 }
 
@@ -162,7 +238,7 @@ void check_null_pointer(void *pointer, char *pointer_name) {
 }
 
 void Reset_Frame_Variables() { // Reset static variables in each frame
-    int i, cluster_type;
+    int cluster_type;
 
     for(cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
         *num_cluster_list[cluster_type] = 0;
