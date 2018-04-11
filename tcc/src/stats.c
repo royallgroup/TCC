@@ -3,7 +3,7 @@
 #include "tools.h"
 
 void count_number_of_clusters() {
-    for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         total_clusters[cluster_type] += *num_cluster_list[cluster_type];
     }
 }
