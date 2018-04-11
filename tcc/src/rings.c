@@ -495,7 +495,7 @@ void add_mem_sp3b(int particle_ID) {
     mem_sp3b[particle_ID][nmem_sp3b[particle_ID]]=nsp3b;
     nmem_sp3b[particle_ID]++;
     if (nmem_sp3b[particle_ID] >= mmem_sp3b) {
-        for (binAcnt=0; binAcnt<max_particle_number; binAcnt++) {
+        for (binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
             mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
         }
         mmem_sp3b=mmem_sp3b+incrClustPerPart;
@@ -508,7 +508,7 @@ void add_mem_sp3c(int particle_ID) {
     mem_sp3c[particle_ID][nmem_sp3c[particle_ID]]=nsp3c;
     nmem_sp3c[particle_ID]++;
     if (nmem_sp3c[particle_ID] >= mmem_sp3c) {
-        for (binAcnt=0; binAcnt<max_particle_number; binAcnt++) {
+        for (binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
             mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
         }
         mmem_sp3c=mmem_sp3c+incrClustPerPart;
@@ -521,7 +521,7 @@ void add_mem_sp4b(int particle_ID) {
     mem_sp4b[particle_ID][nmem_sp4b[particle_ID]] = nsp4b;
     nmem_sp4b[particle_ID]++;
     if (nmem_sp4b[particle_ID] >= mmem_sp4b) {
-        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
             mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrClustPerPart);
         }
         mmem_sp4b = mmem_sp4b + incrClustPerPart;
@@ -534,7 +534,7 @@ void add_mem_sp4c(int particle_ID) {
     mem_sp4c[particle_ID][nmem_sp4c[particle_ID]] = nsp4c;
     nmem_sp4c[particle_ID]++;
     if (nmem_sp4c[particle_ID] >= mmem_sp4c) {
-        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
             mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrClustPerPart);
         }
         mmem_sp4c = mmem_sp4c + incrClustPerPart;
@@ -547,7 +547,7 @@ void add_mem_sp5b(int particle_ID) {
     mem_sp5b[particle_ID][nmem_sp5b[particle_ID]] = nsp5b;
     nmem_sp5b[particle_ID]++;
     if (nmem_sp5b[particle_ID] >= mmem_sp5b) {
-        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
             mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrClustPerPart);
         }
         mmem_sp5b = mmem_sp5b + incrClustPerPart;
@@ -560,7 +560,7 @@ void add_mem_sp5c(int particle_ID) {
     mem_sp5c[particle_ID][nmem_sp5c[particle_ID]] = nsp5c;
     nmem_sp5c[particle_ID]++;
     if (nmem_sp5c[particle_ID] >= mmem_sp5c) {
-        for (binAcnt = 0; binAcnt < max_particle_number; binAcnt++) {
+        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
             mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrClustPerPart);
         }
         mmem_sp5c = mmem_sp5c + incrClustPerPart;

@@ -5,15 +5,13 @@ void Setup_Output_Files();
 
 void initialise_run_variables();
 
-void initialise_frame_variables(int num_particles);
+void initialise_frame_variables();
 
 void check_null_pointer(void *pointer, char *pointer_name);
 
-void Reset_Frame_Variables();
-
 void free_run_variables();
 
-void free_frame_variables(int num_particles);
+void free_frame_variables();
 
 void analyse_cluster_dependencies();
 

@@ -113,10 +113,10 @@ void Get_Simple_Bonds() {
     int particle_1, particle_2;
     double squared_distance;
 
-    printf("Calculating simple bond network for %d particles.\n", particles_in_current_frame);
+    printf("Calculating simple bond network for %ld particles.\n", particles_in_current_frame);
 
-    for (particle_1=0; particle_1<particles_in_current_frame; ++particle_1) {
-        for(particle_2=particle_1+1; particle_2<particles_in_current_frame; ++particle_2) {
+    for (particle_1 = 0; particle_1 < particles_in_current_frame; ++particle_1) {
+        for(particle_2 = particle_1 + 1; particle_2 < particles_in_current_frame; ++particle_2) {
 
             squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
 

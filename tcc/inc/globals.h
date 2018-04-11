@@ -9,7 +9,6 @@
 int box_type;                    //if the system in non-cubic or NPT, get box size info from a datafile
 int frames_to_analyse;           // frames to read from input xmol file
 int SAMPLEFREQ;                  // frequency at which to take frames from the xmol file
-int max_particle_number;         // The number of particles in the largest XYZ frame
 int num_cluster_types;           // The number of items in the cluster names array
 
 extern int cluster_size[];        // A list of the number of particles in each cluster type
@@ -30,7 +29,7 @@ struct xyz_info {
 };
 
 char *fXmolName, *fBoxSizeName; //Name of xyz file, name of file which contains info on box
-int box_offsets[1000];          // Offsets of each line in the box file
+long box_offsets[1000];          // Offsets of each line in the box file
 double *x, *y, *z;              // positions in x y and z directions of N particles
 int *particle_type;             // species of particle, index is particle number
 
@@ -73,7 +72,7 @@ int *total_clusters;
 
 double sidex, sidey, sidez, half_sidex, half_sidey, half_sidez;
 double tiltxy,tiltxz,tiltyz;
-int particles_in_current_frame;
+long particles_in_current_frame;
 
 int *num_bonds;                                       // Current Number of Bonds for particles {1,...,N}
 int **bNums;                                          // list of particles (indices j) bonded to particle at index i

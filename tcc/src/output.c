@@ -25,15 +25,23 @@ void Write_Raw(int f) {
 void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
     int i;
 
-    fprintf(thefile,"%d\nframe %d\n",particles_in_current_frame,f+1);
-    for(i=0; i<particles_in_current_frame; i++) {
-        if (sarr[i]!='C') {
-            if (particle_type[i]==1) fprintf(thefile,"C\n");
-            else fprintf(thefile,"D\n");
+    fprintf(thefile,"%ld\nframe %d\n", particles_in_current_frame, f + 1);
+    for(i = 0; i < particles_in_current_frame; i++) {
+        if (sarr[i] != 'C') {
+            if (particle_type[i] == 1) {
+                fprintf(thefile,"C\n");
+            }
+            else {
+                fprintf(thefile,"D\n");
+            }
         }
-        else if (sarr[i]=='C') {
-            if (particle_type[i]==1) fprintf(thefile,"A\n");
-            else fprintf(thefile,"B\n");
+        else if (sarr[i] == 'C') {
+            if (particle_type[i]==1){
+                fprintf(thefile,"A\n");   
+            } 
+            else {
+                fprintf(thefile,"B\n");
+            }
         }
     }
 }
@@ -155,7 +163,7 @@ void Write_Cluster_Compostions(int f, int cluster_type) {
             fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[cluster_type]);
     file_pointer = open_file(output_file, "a");
     num_sort_columns = *num_cluster_list[cluster_type];
-    qsort(*cluster_list[cluster_type], num_sort_columns, sizeof(int *), sort_list_of_lists_of_ints);
+    qsort(*cluster_list[cluster_type], (size_t)num_sort_columns, sizeof(int *), sort_list_of_lists_of_ints);
     fprintf(file_pointer,"Frame Number %d\n",f);
     for (i = 0; i < num_clusters; i++) {
         for (j = 0; j < clusSize - 1; j++) {

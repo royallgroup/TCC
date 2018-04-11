@@ -89,10 +89,7 @@ int main(int argc, char **argv) {
 
     parse_box_file(input_xyz_info.total_frames);
 
-    max_particle_number = get_max_particle_number(input_xyz_info);
-
     initialise_run_variables();
-    initialise_frame_variables(max_particle_number);
     Setup_Output_Files();
 
     if(frames_to_analyse > input_xyz_info.total_frames) {
@@ -105,7 +102,8 @@ int main(int argc, char **argv) {
         if (remainder == 0) {
             printf("Processing frame %d.\n", current_frame_number);
             particles_in_current_frame = input_xyz_info.num_particles[current_frame_number];
-            Reset_Frame_Variables();
+            initialise_frame_variables();
+
             get_box_size(current_frame_number);
             get_frame_coordinates_from_xyz(&input_xyz_info, current_frame_number);
 
@@ -142,6 +140,8 @@ int main(int argc, char **argv) {
 
             write_output_files(current_frame_number, eleven_A_number, thirteen_A_number);
 
+            free_frame_variables();
+
             printf("Cluster analysis for frame%d complete\n\n", current_frame_number);
         }
     }
@@ -152,7 +152,6 @@ int main(int argc, char **argv) {
     Write_Pop_Per_Frame(frames_to_analyse);
 
     free_xyz_info(&input_xyz_info);
-    free_frame_variables(max_particle_number);
     free_run_variables();
 
     printf("\n\nTCC completed successfully.\n\n");

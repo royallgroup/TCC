@@ -9,8 +9,14 @@ void read_ini_file() {
     dictionary  *   ini ;
     const char *inputfilename = "inputparameters.ini";
 
-    fXmolName = malloc(500*sizeof(char)); if (fXmolName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");   Error_no_free(errMsg); }
-    fBoxSizeName = malloc(500*sizeof(char)); if (fBoxSizeName==NULL) { sprintf(errMsg,"Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n");   Error_no_free(errMsg); }
+    fXmolName = malloc(500 * sizeof(char)); 
+    if (fXmolName==NULL) {
+        Error_no_free("Initialise_Global_Variables(): fXmolName[] malloc out of memory\n");
+    }
+    fBoxSizeName = malloc(500 * sizeof(char)); 
+    if (fBoxSizeName==NULL) { 
+        Error_no_free("Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n"); 
+    }
 
     ini = iniparser_load(inputfilename);
     if (ini==NULL) {
@@ -65,7 +71,7 @@ void read_ini_file() {
     printf("Box type %d\n",box_type);
     printf("Number of frames to analyse %d Sample frequency %d\n",frames_to_analyse, SAMPLEFREQ);
     printf("A-A bond cut-off length %lg A-B bond cut-off length %lg B-B bond cut-off length %lg\n", rcutAA, rcutAB, rcutBB);
-    printf("Voronoi bond detection %d Periodic boundary conditions %d Voronoi fc parameter %lg maximum number of bonds per particle %d Use cell list for bond detection%d\n", use_voronoi_bonds, PBCs, fc, max_num_bonds, use_cell_list);
+    printf("Voronoi bond detection %d Periodic boundary conditions %d Voronoi fc parameter %lg maximum number of bonds per particle %d Use cell list for bond detection %d\n", use_voronoi_bonds, PBCs, fc, max_num_bonds, use_cell_list);
     printf("Write bonds file %d Write cluster files %d Write raw files %d Write PopPerFrame %d\n", doWriteBonds, doWriteClus, doWriteRaw, doWritePopPerFrame);
 
     iniparser_freedict(ini);
@@ -73,14 +79,12 @@ void read_ini_file() {
 
 void read_clusters_to_analyse() {
     dictionary  *   ini ;
-    char errMsg[1000];
     char cluster_name[100];
 
     if (analyse_all_clusters == 0) {
         ini = iniparser_load("clusters_to_analyse.ini");
         if (ini == NULL) {
-            sprintf(errMsg, "read_ini_file(): Error opening file clusters_to_analyse.ini");
-            Error_no_free(errMsg);
+            Error_no_free("read_ini_file(): Error opening file clusters_to_analyse.ini");
         }
         printf("Clusters being analysed\n");
         for (int cluster_number = 0; cluster_number < num_cluster_types; cluster_number++) {
@@ -119,13 +123,15 @@ void parse_box_file(int total_frames) {
 }
 
 void get_NVT_box(FILE *read_box_file) {
-    char line[100], error_message[100];
+    char line[100];
     char * word;
     int dimension;
     int valid_double = 0;
     double tmp[3];
 
-    if (feof(read_box_file)) Error("Setup_ReadBox(): end of input file reached\n");
+    if (feof(read_box_file)) {
+        Error("Setup_ReadBox(): end of input file reached\n");
+    }
 
     fgets(line, 1000, read_box_file);
     strtok (line," \t");
@@ -134,8 +140,7 @@ void get_NVT_box(FILE *read_box_file) {
         word = strtok(NULL, " \t");
         tmp[dimension] = get_double_from_string(word, &valid_double);
         if (valid_double != 1) {
-            sprintf(error_message, "Unable to read box file. Expected box size on line 2");
-            Error_no_free(error_message);
+            Error_no_free("Unable to read box file. Expected box size on line 2");
         }
     }
     sidex = tmp[0];
@@ -153,7 +158,9 @@ void get_box_file_offsets(FILE *read_box_file, int total_frames) {
     int valid_double = 0;
     double tmp[6];
 
-    if (feof(read_box_file)) Error("Setup_ReadBox(): end of input file reached\n");
+    if (feof(read_box_file)) {
+        Error("Setup_ReadBox(): end of input file reached\n");
+    }
 
     // Read 3 numbers in for NPT, 6 for triclinic
     if(box_type==2) num_items=3;
@@ -252,8 +259,7 @@ struct xyz_info parse_xyz_file() {
     while(feof(xyzfile) == 0) {
         // Read in num particles
         if(input_xyz_info.total_frames > 1000) {
-            sprintf(error_message, "XYZ file has over 1000 frames, cannot process XYZ file");
-            Error_no_free(error_message);
+            Error_no_free("XYZ file has over 1000 frames, cannot process XYZ file");
         }
         line[0] = '\n';
         fgets(line, 1000, xyzfile);
