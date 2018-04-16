@@ -17,7 +17,7 @@ class AtomSnapshot(Snapshot):
     Interface defined in parent class Snapshot. Further documentation can be found there.
     """
 
-    def read(self, f):
+    def read(self, path_or_file):
         """Read a snapshot from a file, overwriting any existing data.
 
         Args:
@@ -101,7 +101,7 @@ class AtomSnapshot(Snapshot):
         for i,(name,x) in enumerate(zip(self.species,self.x)):
             f.write('\n')
             f.write('%r %s' % (i,name))
-            for coord in x: f.write(' %.4f' % coord)
+            for coord in x: f.write(' %.8f' % coord)
         return f.getvalue()
 
 def read(*args, **kwargs):
