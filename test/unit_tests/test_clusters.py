@@ -5,7 +5,7 @@ import sys
 import os
 
 sys.path += [os.path.abspath('../../lib')]
-print(sys.path)
+
 import numpy, pandas
 from glob import glob
 from tcc import structures, xyz, wrapper
@@ -23,7 +23,7 @@ def run_unit_test(cluster_path, bond_type):
         bond_type: the type of bond to be used by the TCC
     """
 
-    particle_coordinates = xyz.read(cluster_path)
+    particle_coordinates = xyz.read(cluster_path).x
     cluster_name = os.path.split(cluster_path)[1].rstrip(".xyz")
 
     TCC = wrapper.TCCWrapper()

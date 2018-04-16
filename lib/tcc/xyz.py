@@ -6,6 +6,7 @@ The module defines:
   - XYZSnapshot: the class the defining the file interface to this file format
   - read: shorthand for XYZSnapshot.read_single
   - read_trajectory: shorthand for XYZSnapshot.read_trajectory
+  - write: create a snapshot from coordinates to write to disk
 """
 
 import sys, io, numpy, pandas
@@ -73,3 +74,8 @@ def read(*args, **kwargs):
 def read_trajectory(*args, **kwargs):
     """Read a trajectory (i.e. multiple snapshots) from the disk."""
     return XYZSnapshot.read_trajectory(*args, **kwargs)
+
+def write(x, out, species):
+    """ Wrtie a single configuration to the disk."""
+    snapshot = XYZSnapshot(x, species=species)
+    snapshot.write(out)

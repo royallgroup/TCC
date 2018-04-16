@@ -233,7 +233,7 @@ class TCCWrapper:
 
         # Create the box and configuration files.
         self.serialise_box([box], '%s/box.txt' % self.working_directory)
-        xyz.write(x, '%s/run.xyz' % self.working_directory, atoms=atoms)
+        xyz.write(x, '%s/run.xyz' % self.working_directory, species=atoms)
 
         # Run the TCC executable.
         if silent:
