@@ -60,6 +60,7 @@ int try_read_line_from_file(FILE *file_name) {
 
     if (fgets(line, 1000, file_name) == NULL) {
         printf("EOF reached.");
+        return 0;
     }
     else {
         line_length = strlen(line);
@@ -104,6 +105,7 @@ int make_directory(const char* name) {
     else {
         sprintf(errMsg,"Error creating directory %s.\n",name);
         Error(errMsg);
+        return 1;
     }
 }
 

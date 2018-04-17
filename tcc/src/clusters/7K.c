@@ -88,6 +88,8 @@ int get_uncommon_ring_particle(const int *first_5A_cluster, const int *sp3_com) 
             return (first_5A_cluster[first_5A_pointer]);
         }
     }
+    Error("uncommon ring particle not found.");
+    return 0;
 }
 
 void Cluster_Write_7K(int scom, int *sother, int *sp3_com, int *uncommon_ring_particles) {
