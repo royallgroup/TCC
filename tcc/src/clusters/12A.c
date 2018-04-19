@@ -3,7 +3,7 @@
 #include "bonds.h"
 #include "tools.h"
 
-int Clusters_Get12A() {
+void Clusters_Get12A() {
     // A 12A is an 11C with an extra particle bonded to only 2 other specific outer shell particles in the 11C.
 
     int id_11C;
@@ -37,6 +37,8 @@ int get_12A_extra_particle(int id_11C) {
             return bNums[hc11C[id_11C][0]][i]; // The extra particle
         }
     }
+    Error("12A extra particle not found.");
+    return 0;
 }
 
 int bond_check_12A_extra_particle(int id_11C, int extra_particle) {

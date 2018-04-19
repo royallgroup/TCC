@@ -4,8 +4,6 @@
 #include "stdio.h"
 #include "globals.h"
 
-long get_max_particle_number(struct xyz_info);
-
 long get_long_from_string(const char *buff, int *validLong);
 
 double get_double_from_string(const char *buff, int *validDouble);

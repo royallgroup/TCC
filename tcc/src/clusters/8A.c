@@ -12,12 +12,14 @@ void Clusters_Get8A() { // Detect 8A D2d clusters
     int flg;
     int break_out;
     int trial[8];
-    char errMsg[1000];
     int clusSize=8;
     int *used_sp5b;
 
 
-    used_sp5b=malloc(nsp5b*sizeof(int)); if (used_sp5b==NULL) { sprintf(errMsg,"Clusters_Get8A(): used_sp5b[] malloc out of memory\n");  Error(errMsg); }
+    used_sp5b = malloc(nsp5b * sizeof(int));
+    if (used_sp5b==NULL) {
+        Error("Clusters_Get8A(): used_sp5b[] malloc out of memory\n");
+    }
 
     for (i=0; i<nsp5b-1; ++i) {  // loop over all sp5b_i
         memset(used_sp5b, 0, nsp5b*sizeof(*used_sp5b));

@@ -5,12 +5,16 @@
 
 void Clusters_Get10A() { // Detect 10A D4d clusters
     int i, j, j2, k, l, m;
-    char errMsg[1000];
     int clusSize=10;
     int *used_sp4b;
 
-    used_sp4b= malloc(nsp4b * sizeof(int)); if (used_sp4b == NULL) { sprintf(errMsg, "Clusters_Get10A(): used_sp4b[] malloc out of memory\n"); Error(errMsg); }
-    for (i=0; i < nsp4b; ++i) used_sp4b[i] = 0;
+    used_sp4b = malloc(nsp4b * sizeof(int));
+    if (used_sp4b == NULL) { 
+        Error("Clusters_Get10A(): used_sp4b[] malloc out of memory\n");
+    }
+    for (i=0; i < nsp4b; ++i) {
+        used_sp4b[i] = 0;
+    }
 
     for (i=0; i < nsp4b - 1; ++i) {  // loop over all sp4b_i
         for (j2=0; j2 < nsp4b; ++j2) used_sp4b[j2] = 0;

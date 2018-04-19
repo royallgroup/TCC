@@ -3,7 +3,7 @@
 #include "tools.h"
 
 void count_number_of_clusters() {
-    for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         total_clusters[cluster_type] += *num_cluster_list[cluster_type];
     }
 }
@@ -14,7 +14,7 @@ void Stats_Report() {
     FILE *output_file;
 
     sprintf(output_name, "%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.static_clust", fXmolName, rcutAA, rcutAB,
-            rcutBB, Vor, fc, PBCs);
+            rcutBB, use_voronoi_bonds, fc, PBCs);
 
     output_file = open_stats_report_file(output_name);
 
@@ -80,8 +80,7 @@ void count_frame_cluster_population(int f) {
 
 void count_mean_pop_per_frame(int frames_analysed) {
 
-    for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
-        mean_pop_per_frame[cluster_type] = 0;
+    for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         for (int frame_number = 0; frame_number < frames_analysed; frame_number++) {
             mean_pop_per_frame[cluster_type] += pop_per_frame[cluster_type][frame_number];
         }

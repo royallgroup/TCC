@@ -72,17 +72,16 @@ void Are_All_Bonds_Symmetric() {
 }
 
 void build_bond_network(int frame_number) {
-    char buffer[300];
 
-    if (USELIST == 1) {
+    if (use_cell_list == 1) {
         set_up_cell_list();
     }
-    if (Vor==1) {
+    if (use_voronoi_bonds==1) {
         Get_Bonds_With_Voronoi();
         Are_All_Bonds_Symmetric();
     }
     else {
-        if(USELIST == 1) {
+        if(use_cell_list == 1) {
             //fill_cell_list();
             //get_all_particle_neighbours();
             printf("Cell list not currently implemented for simple bonds. Turning off cell list.");
@@ -114,10 +113,10 @@ void Get_Simple_Bonds() {
     int particle_1, particle_2;
     double squared_distance;
 
-    printf("Calculating simple bond network for %d particles.\n", particles_in_current_frame);
+    printf("Calculating simple bond network for %ld particles.\n", particles_in_current_frame);
 
-    for (particle_1=0; particle_1<particles_in_current_frame; ++particle_1) {
-        for(particle_2=particle_1+1; particle_2<particles_in_current_frame; ++particle_2) {
+    for (particle_1 = 0; particle_1 < particles_in_current_frame; ++particle_1) {
+        for(particle_2 = particle_1 + 1; particle_2 < particles_in_current_frame; ++particle_2) {
 
             squared_distance = Get_Interparticle_Distance(particle_1, particle_2);
 
@@ -139,7 +138,7 @@ void Check_For_Valid_Bond(int particle_1, int particle_2, double squared_distanc
 }
 
 void Check_Num_Bonds(int particle_1, int particle_2, double squared_distance) {
-    if (num_bonds[particle_1] < nB && num_bonds[particle_2] < nB){
+    if (num_bonds[particle_1] < max_num_bonds && num_bonds[particle_2] < max_num_bonds){
         Add_New_Bond(particle_1, particle_2, squared_distance);
         Add_New_Bond(particle_2, particle_1, squared_distance);
     }

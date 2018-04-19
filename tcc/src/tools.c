@@ -13,18 +13,6 @@
     #include "direct.h"
 #endif
 
-long get_max_particle_number(struct xyz_info input_xyz_info) {
-    int i;
-    long max_particle_number = 0;
-
-    for(i=0; i < input_xyz_info.total_frames; i++) {
-        if(input_xyz_info.num_particles[i] > max_particle_number) {
-            max_particle_number = input_xyz_info.num_particles[i];
-        }
-    }
-    return max_particle_number;
-}
-
 long get_long_from_string(const char *buff, int *validLong) {
     char *end;
     errno = 0;
@@ -72,6 +60,7 @@ int try_read_line_from_file(FILE *file_name) {
 
     if (fgets(line, 1000, file_name) == NULL) {
         printf("EOF reached.");
+        return 0;
     }
     else {
         line_length = strlen(line);
@@ -116,6 +105,7 @@ int make_directory(const char* name) {
     else {
         sprintf(errMsg,"Error creating directory %s.\n",name);
         Error(errMsg);
+        return 1;
     }
 }
 
@@ -127,7 +117,7 @@ void Error_no_free(char *msg) { // Exit program printing error message but don't
 void Error(char *msg) { // Exit program printing error message and trying to free any allocated memory
     printf("\n%s\n",msg);
 
-    Free_All_Variables();
+    free_run_variables();
     exit(1);
 }
 
@@ -136,14 +126,19 @@ int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new
     char errMsg[1000];
     
     the_array=realloc(the_array,new_row_size*sizeof(int *));
-    if (the_array == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[] out of memory old_row_size %d new_row_size %d new_col_size %d\n",old_row_size,new_row_size,new_col_size); Error_no_free(errMsg); }
-    for (i=old_row_size; i<new_row_size; i++) {
-        the_array[i] = malloc(new_col_size*sizeof(int));
-        if (the_array[i] == NULL) { sprintf(errMsg,"resize_2D_int(): the_array[][] out of memory\n"); Error_no_free(errMsg); }
+    if (the_array == NULL) {
+        sprintf(errMsg,"resize_2D_int(): the_array[] out of memory old_row_size %d new_row_size %d new_col_size %d\n",old_row_size,new_row_size,new_col_size);
+        Error_no_free(errMsg);
     }
-    for (i=old_row_size; i<new_row_size; i++) {
-        for (j=0; j<new_col_size; j++) {
-            the_array[i][j]=value;
+    for (i = old_row_size; i < new_row_size; i++) {
+        the_array[i] = malloc(new_col_size * sizeof(int));
+        if (the_array[i] == NULL) {
+            Error_no_free("resize_2D_int(): the_array[][] out of memory\n");
+        }
+    }
+    for (i = old_row_size; i < new_row_size; i++) {
+        for (j = 0; j < new_col_size; j++) {
+            the_array[i][j] = value;
         }
     }
     
@@ -154,9 +149,14 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
     int i;
     char errMsg[1000];
     
-    the_array=realloc(the_array,new_col_size*sizeof(int));
-    if (the_array == NULL) { sprintf(errMsg,"resize_1D_int(): the_array[] out of memory old_col_size %d new_col_size %d\n",old_col_size,new_col_size); Error_no_free(errMsg); }
-    for (i=old_col_size; i<new_col_size; i++) the_array[i]=-1;
+    the_array = realloc(the_array, new_col_size * sizeof(int));
+    if (the_array == NULL) {
+        sprintf(errMsg, "resize_1D_int(): the_array[] out of memory old_col_size %d new_col_size %d\n", old_col_size, new_col_size);
+        Error_no_free(errMsg);
+    }
+    for (i = old_col_size; i < new_col_size; i++) {
+        the_array[i] = -1;
+    }
     
     return the_array;
 }

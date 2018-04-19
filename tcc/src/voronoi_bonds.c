@@ -6,7 +6,7 @@
 
 void Get_Bonds_With_Voronoi() {
     int i, particle_1;
-    const int max_allowed_bonds = 4 * nB;
+    const int max_allowed_bonds = 4 * max_num_bonds;
 
     int num_particle_1_neighbours;
     int *particle_1_neighbours;
@@ -20,19 +20,19 @@ void Get_Bonds_With_Voronoi() {
     particle_1_bond_lengths = malloc(max_allowed_bonds*sizeof(double));
     store_dr2 = malloc(particles_in_current_frame*sizeof(double));
 
-    printf("Calculating Voronoi bond network for %d particles.\n",particles_in_current_frame);
+    printf("Calculating Voronoi bond network for %ld particles.\n",particles_in_current_frame);
 
     for (i=0; i<particles_in_current_frame; i++) {
         num_bonds[i] = 0;
     }
 
-    if (USELIST == 1) {
+    if (use_cell_list == 1) {
         fill_cell_list();
         get_all_particle_neighbours();
     }
 
     for (particle_1 = 0; particle_1 < particles_in_current_frame; particle_1++) {
-        if(USELIST == 1) {
+        if(use_cell_list == 1) {
 
             num_particle_1_neighbours = cell_list_get_particle_1_neighbours(particle_1, particle_1_neighbours,
                                                                             particle_1_bonds, particle_1_bond_lengths,
@@ -70,7 +70,7 @@ void add_new_voronoi_bond(int particle_1, int num_particle_1_neighbours, const i
     for (particle_2_pointer = 0; particle_2_pointer < num_particle_1_neighbours; ++particle_2_pointer) {
         if (particle_1_bonds[particle_2_pointer] == 1) {
             particle_2 = sorted_particle_1_neighbours[particle_2_pointer];
-            if (num_bonds[particle_1] < nB) {
+            if (num_bonds[particle_1] < max_num_bonds) {
                 Add_New_Bond(particle_1, particle_2, store_dr2[particle_2]);
             }
             else {

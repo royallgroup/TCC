@@ -14,7 +14,7 @@ void Write_Raw(int f) {
     for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
         if (*do_cluster_list[cluster_type] == 1) {
             sprintf(file_name, "raw_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.raw_%s",
-                    fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_type]);
+                    fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[cluster_type]);
             file_pointer = fopen(file_name, "a");
             Write_Raw_Particle_Types(f, file_pointer, raw_list[cluster_type][0]);
             fclose(file_pointer);
@@ -25,15 +25,23 @@ void Write_Raw(int f) {
 void Write_Raw_Particle_Types(int f, FILE *thefile, const char *sarr) {
     int i;
 
-    fprintf(thefile,"%d\nframe %d\n",particles_in_current_frame,f+1);
-    for(i=0; i<particles_in_current_frame; i++) {
-        if (sarr[i]!='C') {
-            if (particle_type[i]==1) fprintf(thefile,"C\n");
-            else fprintf(thefile,"D\n");
+    fprintf(thefile,"%ld\nframe %d\n", particles_in_current_frame, f + 1);
+    for(i = 0; i < particles_in_current_frame; i++) {
+        if (sarr[i] != 'C') {
+            if (particle_type[i] == 1) {
+                fprintf(thefile,"C\n");
+            }
+            else {
+                fprintf(thefile,"D\n");
+            }
         }
-        else if (sarr[i]=='C') {
-            if (particle_type[i]==1) fprintf(thefile,"A\n");
-            else fprintf(thefile,"B\n");
+        else if (sarr[i] == 'C') {
+            if (particle_type[i]==1){
+                fprintf(thefile,"A\n");
+            }
+            else {
+                fprintf(thefile,"B\n");
+            }
         }
     }
 }
@@ -55,7 +63,7 @@ void Write_Bonds_File(int f) {
         exit(1);
     }
 
-    sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs);
+    sprintf(output_file,"%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.bonds",fXmolName,rcutAA,rcutAB,rcutBB,use_voronoi_bonds,fc,PBCs);
     bondsout=fopen(output_file, "a");
 
     fprintf(bondsout,"frame %d  total bonds %d\n",f,sum/2);
@@ -78,7 +86,7 @@ void Write_Cluster_Centers_xyz(int f, int cluster_type) {
     char file_name[200];
 
     sprintf(file_name, "centers_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.%s_cen.xyz",
-            fXmolName,rcutAA,rcutAB,rcutBB,Vor,fc,PBCs, cluster_names[cluster_type]);
+            fXmolName,rcutAA,rcutAB,rcutBB,use_voronoi_bonds,fc,PBCs, cluster_names[cluster_type]);
 
     output_file = fopen(file_name, "a");
 
@@ -133,7 +141,7 @@ void Write_Cluster_XYZ(int f) {
 void Write_Cluster(int f) {
     int cluster_type;
 
-    for(cluster_type=0; cluster_type<num_cluster_types; cluster_type++) {
+    for(cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         if (*do_cluster_list[cluster_type] == 1) {
             Write_Cluster_Compostions(f, cluster_type);
         }
@@ -152,10 +160,10 @@ void Write_Cluster_Compostions(int f, int cluster_type) {
     clusSize = cluster_size[cluster_type];
 
     sprintf(output_file, "cluster_output/%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.clusts_%s",
-            fXmolName, rcutAA, rcutAB, rcutBB, Vor, fc, PBCs, cluster_names[cluster_type]);
+            fXmolName, rcutAA, rcutAB, rcutBB, use_voronoi_bonds, fc, PBCs, cluster_names[cluster_type]);
     file_pointer = open_file(output_file, "a");
     num_sort_columns = *num_cluster_list[cluster_type];
-    qsort(*cluster_list[cluster_type], num_sort_columns, sizeof(int *), sort_list_of_lists_of_ints);
+    qsort(*cluster_list[cluster_type], (size_t)num_sort_columns, sizeof(int *), sort_list_of_lists_of_ints);
     fprintf(file_pointer,"Frame Number %d\n",f);
     for (i = 0; i < num_clusters; i++) {
         for (j = 0; j < clusSize - 1; j++) {
@@ -176,7 +184,7 @@ void Write_Pop_Per_Frame(int f) {
     if (doWritePopPerFrame==1) {
 
         sprintf(output, "%s.rcAA%lg.rcAB%lg.rcBB%lg.Vor%d.fc%lg.PBCs%d.pop_per_frame", fXmolName, rcutAA, rcutAB,
-                rcutBB, Vor, fc, PBCs);
+                rcutBB, use_voronoi_bonds, fc, PBCs);
         file_pointer = open_file(output, "a");
 
         if (file_pointer == NULL) {

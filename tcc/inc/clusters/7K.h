@@ -3,6 +3,14 @@
 
 void Clusters_Get7K();
 
-void Cluster_Write_7K();
+void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int scom, int *sother);
+
+int is_particle_in_5A(const int *five_A_cluster, int particle_id);
+
+int count_common_ring_particles(const int *first_5A_cluster, const int *second_5A_cluster, int *sp3_com);
+
+int get_uncommon_ring_particle(const int *first_5A_cluster, const int *sp3_com);
+
+void Cluster_Write_7K(int scom, int *sother, int *sp3_com, int *uncommon_ring_particles);
 
 #endif

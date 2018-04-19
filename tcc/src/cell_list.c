@@ -116,7 +116,7 @@ void set_up_cell_list() {
 }
 
 void free_cell_list() {
-    if (USELIST == 1) {
+    if (use_cell_list == 1) {
         free(head);
         free(linked_list);
     }
