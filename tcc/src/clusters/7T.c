@@ -46,9 +46,16 @@ int check_spindle_is_new_5A_spindle(int spindle_id, const int *new_5A_cluster) {
 }
 
 int get_new_particle(const int *new_5A_cluster, int spindle_id) {
-    if (new_5A_cluster[3] == spindle_id) return new_5A_cluster[4];
-    else if (new_5A_cluster[4] == spindle_id) return new_5A_cluster[3];
-    else Error("New spindle not found.");
+    if (new_5A_cluster[3] == spindle_id) {
+        return new_5A_cluster[4];
+    }
+    else if (new_5A_cluster[4] == spindle_id) {
+        return new_5A_cluster[3];
+    }
+    else {
+        Error("New spindle not found.");
+        return 0;
+    }
 }
 
 int check_ring_bonds(const int *new_5A_cluster, const int *old_6Z_cluster) {

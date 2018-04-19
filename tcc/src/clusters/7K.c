@@ -1,6 +1,7 @@
 #include "7K.h"
 #include "globals.h"
 #include "tools.h"
+#include "simple_cluster_methods.h"
 
 void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
     int first_5A_id, first_5A_spindle_pointer;
@@ -38,19 +39,6 @@ void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
             }
         }
     }
-}
-
-int count_common_spindles_between_5As(const int *first_5A_cluster, const int *second_5A_cluster, int *scom) {
-    int num_common_spindles = 0;
-    for (int ring_1_pointer = 3; ring_1_pointer < 5; ring_1_pointer++) {
-        for (int ring_2_pointer = 3; ring_2_pointer < 5; ring_2_pointer++) {
-            if (first_5A_cluster[ring_1_pointer] == second_5A_cluster[ring_2_pointer]) {
-                *scom = first_5A_cluster[ring_1_pointer];
-                num_common_spindles++;
-            }
-        }
-    }
-    return num_common_spindles;
 }
 
 void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int scom, int *sother) {
@@ -100,6 +88,8 @@ int get_uncommon_ring_particle(const int *first_5A_cluster, const int *sp3_com) 
             return (first_5A_cluster[first_5A_pointer]);
         }
     }
+    Error("uncommon ring particle not found.");
+    return 0;
 }
 
 void Cluster_Write_7K(int scom, int *sother, int *sp3_com, int *uncommon_ring_particles) {

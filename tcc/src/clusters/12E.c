@@ -61,6 +61,8 @@ int get_uncommon_5A_ring_particle(const int *common, const int *new_5A_cluster) 
             return(new_5A_cluster[i]);
         }
     }
+    Error("No uncommon ring particle found.");
+    return 0;
 }
 
 void Raw_Write_12E(const int *parent11F, int uncommon_sp3_ring_particle) {// now we have found the 12E

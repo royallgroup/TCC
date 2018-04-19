@@ -1,7 +1,7 @@
 #ifndef TCC_12A_H
 #define TCC_12A_H
 
-int Clusters_Get12A();
+void Clusters_Get12A();
 
 int get_12A_extra_particle(int id_11C);
 

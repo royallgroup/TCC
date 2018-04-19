@@ -62,6 +62,8 @@ int get_11W_extra_particle(int id_10B, int spindle_10B) {
             return bNums[spindle_10B][i];
         }
     }
+    Error("11W extra particle not found");
+    return 0;
 }
 
 int is_particle_in_10B(int particle_id, int id_10B) {
