@@ -3,6 +3,7 @@ import filecmp
 import os
 import subprocess
 import platform
+import math
 import pandas as pd
 
 
@@ -44,9 +45,9 @@ class FileOperations:
     def run_tcc():
         try:
             if platform.system() == "Windows":
-                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0])
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
-                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0])
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return tcc_call_result.returncode
         except Exception as e:
             print(e)
@@ -63,7 +64,33 @@ class FileOperations:
 class FileChecks:
     @staticmethod
     def check_static_clust():
-        return filecmp.cmp("sample.static_clust", glob("sample.xyz*static_clust")[0], shallow=False)
+        measured_results = pd.read_table(glob('sample.xyz*.static_clust')[0], index_col='Cluster type', skiprows=1)
+        measured_results.fillna(0., inplace=True)
+        known_results = pd.read_table('sample.static_clust', index_col='Cluster type', skiprows=1)
+        known_results.fillna(0., inplace=True)
+
+        for measured_particle_type in measured_results['Number of clusters'].items():
+            for known_particle_type in known_results['Number of clusters'].items():
+                if measured_particle_type[0] == known_particle_type[0]:
+                    if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
+                        print("\nNumber of particle type {0}, does not match known particle quantity.".format(measured_particle_type[0]))
+                        return False
+
+        for measured_particle_type in measured_results['Gross particles'].items():
+            for known_particle_type in known_results['Gross particles'].items():
+                if measured_particle_type[0] == known_particle_type[0]:
+                    if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
+                        print("\nGross number of particle type {0}, does not match known particle quantity.".format(measured_particle_type[0]))
+                        return False
+
+        for measured_particle_type in measured_results['Mean Pop Per Frame'].items():
+            for known_particle_type in known_results['Mean Pop Per Frame'].items():
+                if measured_particle_type[0] == known_particle_type[0]:
+                    if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
+                        print("\nMean Pop Per Frame of particle type {0}, does not match known particle quantity.".format(measured_particle_type[0]))
+                        return False
+
+        return True
 
     @staticmethod
     def check_bonds():
