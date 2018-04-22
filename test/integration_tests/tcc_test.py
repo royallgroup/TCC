@@ -69,26 +69,19 @@ class FileChecks:
         known_results = pd.read_table('sample.static_clust', index_col='Cluster type', skiprows=1)
         known_results.fillna(0., inplace=True)
 
-        for measured_particle_type in measured_results['Number of clusters'].items():
-            for known_particle_type in known_results['Number of clusters'].items():
-                if measured_particle_type[0] == known_particle_type[0]:
-                    if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
-                        print("\nNumber of particle type {0}, does not match known particle quantity.".format(measured_particle_type[0]))
-                        return False
-
-        for measured_particle_type in measured_results['Gross particles'].items():
-            for known_particle_type in known_results['Gross particles'].items():
-                if measured_particle_type[0] == known_particle_type[0]:
-                    if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
-                        print("\nGross number of particle type {0}, does not match known particle quantity.".format(measured_particle_type[0]))
-                        return False
-
-        for measured_particle_type in measured_results['Mean Pop Per Frame'].items():
-            for known_particle_type in known_results['Mean Pop Per Frame'].items():
-                if measured_particle_type[0] == known_particle_type[0]:
-                    if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
-                        print("\nMean Pop Per Frame of particle type {0}, does not match known particle quantity.".format(measured_particle_type[0]))
-                        return False
+        for column_name in measured_results:
+            for measured_particle_type in measured_results[column_name].items():
+                particle_type_found = 0
+                for known_particle_type in known_results[column_name].items():
+                    if measured_particle_type[0] == known_particle_type[0]:
+                        particle_type_found = 1
+                        if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
+                            print("\n{0} {1}, does not match known quantity.".format(column_name, measured_particle_type[0]))
+                            return False
+                        break
+                if particle_type_found == 0:
+                    print("\nParticle type {0} not found in TCC output".format(measured_particle_type[0]))
+                    return False
 
         return True
 
