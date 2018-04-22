@@ -191,28 +191,22 @@ void Write_Pop_Per_Frame(int f) {
             sprintf(errMsg, "main() : Error opening file %s", output);    // Always test file open
             Error(errMsg);
         }
-        fprintf(file_pointer, "frame	");
-        for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-            fprintf(file_pointer, "%s	", cluster_names[cluster_type]);
-        }
-        fprintf(file_pointer, "\n");
 
-        fprintf(file_pointer, "mean	");
-        for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
-            if (*do_cluster_list[cluster_type] == 1) {
-                fprintf(file_pointer, "%.15lg	", mean_pop_per_frame[cluster_type]);
-            } else {
-                fprintf(file_pointer, "NA	");
-            }
-        }
-        fprintf(file_pointer, "\n");
-
+        // Print column headings
+        fprintf(file_pointer, "frame\t");
         for (frame = 0; frame < f; frame++) {
-            fprintf(file_pointer, "%d	", frame);
-            for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+            fprintf(file_pointer, "%d\t", frame);
+        }
+        fprintf(file_pointer, "\n");
+
+        // Print populations of each cluster type, one cluster per line
+        for (cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
+            fprintf(file_pointer, "%s\t", cluster_names[cluster_type]);
+            for (frame = 0; frame < f; frame++) {
                 if (*do_cluster_list[cluster_type] == 1) {
                     fprintf(file_pointer, "%.15lg	", pop_per_frame[cluster_type][frame]);
-                } else {
+                }
+                else {
                     fprintf(file_pointer, "NA	");
                 }
             }

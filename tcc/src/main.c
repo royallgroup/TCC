@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
 
             free_frame_variables();
 
-            printf("Cluster analysis for frame%d complete\n\n", current_frame_number);
+            printf("Cluster analysis for frame %d complete\n\n", current_frame_number);
         }
     }
 
