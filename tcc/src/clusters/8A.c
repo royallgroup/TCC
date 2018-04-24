@@ -140,7 +140,7 @@ void method_2() {
                     if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, com) == 4) {
 
                         if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, spindle_ids) == 2) {
-                            
+
                             for (k = 0; k < 5; ++k) {
                                 m = 0;
                                 for (l = 0; l < 4; ++l) {

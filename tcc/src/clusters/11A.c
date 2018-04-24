@@ -1,3 +1,4 @@
+#include "simple_cluster_methods.h"
 #include "11A.h"
 #include "globals.h"
 #include "tools.h"
@@ -7,12 +8,10 @@ void Clusters_Get11A() {
 
     int first_6A_id, second_6A_id;
     int *first_6A, *second6A;
-    int scom, sother[2];
+    int scom[2], sother[2];
     int first_6A_spindle_pointer;
     int first_6A_spindle_ID;
     int mem_pointer;
-
-    scom = sother[0] = sother[1] = -1;
 
     for (first_6A_id = 0; first_6A_id < nsp4c; first_6A_id++) {
         first_6A = hcsp4c[first_6A_id];
@@ -22,11 +21,11 @@ void Clusters_Get11A() {
                 second_6A_id = mem_sp4c[first_6A_spindle_ID][mem_pointer];
                 if (second_6A_id > first_6A_id) {
                     second6A = hcsp4c[second_6A_id];
-                    if (count_common_spindle_particles_11A(first_6A, second6A, &scom) == 1) {
-                        get_non_common_spindles(first_6A, second6A, scom, sother);
+                    if (count_common_spindle_particles(first_6A, second6A, 6, 6, scom) == 1) {
+                        get_non_common_spindles(first_6A, second6A, scom[0], sother);
                         if (Check_unique_6A_rings(first_6A, second6A) == 0) {
                             if (Check_6A_rings_bonded(first_6A, second6A) == 1) {
-                                Cluster_Write_11A(first_6A, second6A, sother, scom);
+                                Cluster_Write_11A(first_6A, second6A, sother, scom[0]);
                             }
                         }
                     }
@@ -49,21 +48,6 @@ void get_non_common_spindles(const int *first6A, const int *second6A, int scom, 
     else {
         sother[1] = second6A[4];
     }
-}
-
-int count_common_spindle_particles_11A(const int *first6A, const int *second6A, int *scom) {
-
-    int num_common_spindles = 0;
-
-    for (int first_spindle_pointer = 4; first_spindle_pointer < 6; first_spindle_pointer++) {
-        for (int second_spindle_pointer = 4; second_spindle_pointer < 6; second_spindle_pointer++) {
-            if (first6A[first_spindle_pointer] == second6A[second_spindle_pointer]) {
-                (*scom) = first6A[first_spindle_pointer];
-                num_common_spindles++;
-            }
-        }
-    }
-    return num_common_spindles;
 }
 
 int Check_6A_rings_bonded(const int *first_6A, const int *second_6A) {

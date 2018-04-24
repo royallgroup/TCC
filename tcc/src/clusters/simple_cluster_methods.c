@@ -1,20 +1,7 @@
 #include "simple_cluster_methods.h"
 
-int count_common_spindles_between_5As(const int *first_5A_cluster, const int *second_5A_cluster, int *scom) {
-    int num_common_spindles = 0;
-    for (int ring_1_pointer = 3; ring_1_pointer < 5; ring_1_pointer++) {
-        for (int ring_2_pointer = 3; ring_2_pointer < 5; ring_2_pointer++) {
-            if (first_5A_cluster[ring_1_pointer] == second_5A_cluster[ring_2_pointer]) {
-                *scom = first_5A_cluster[ring_1_pointer];
-                num_common_spindles++;
-            }
-        }
-    }
-    return num_common_spindles;
-}
-
 int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int num_particles_in_ring, int* common_particle_ids) {
-    //!  Function to count number of common ring particles between two clusters and get thier ids
+    //!  Count number of common ring particles between two clusters and get thier ids
     /*!
    *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
    *  \param cluster_2 - a pointer to a cluster stored in an hc memory array
@@ -39,7 +26,7 @@ int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int 
 
 int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, int num_in_ring_1, int num_in_ring_2,
                                   int *common_particle_ids) {
-    //!  Function to count number of uncommon particles between two clusters and get their ids
+    //!  Count number of uncommon particles between two clusters and get their ids
     /*!
    *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
    *  \param cluster_2 - a pointer to a cluster stored in an hc memory array
@@ -83,7 +70,7 @@ int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, in
 }
 
 int count_common_spindle_particles(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size, int *common_spindle_ids) {
-    //!  Function to count number of common spindle particles between two clusters and get thier ids
+    //!  Count number of common spindle particles between two clusters and get thier ids
     /*!
    *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
    *  \param cluster_2 - a pointer to a cluster stored in an hc memory array
@@ -108,3 +95,19 @@ int count_common_spindle_particles(const int *cluster_1, const int *cluster_2, i
     return num_common_spindles;
 }
 
+int is_particle_in_cluster(const int *cluster, int cluster_size, int particle_id) {
+    //!  Function to determine if a particle id exists within a cluster
+    /*!
+   *  \param cluster - a pointer to a cluster stored in an hc memory array
+   *  \param cluster_size - the number of particles in cluster
+   *  \param particle_id - the id of the particle to check
+   *  \return 1 if particle_id is in cluster, 0 if particle_id is not in cluster
+   */
+
+    for (int i = 0; i < cluster_size; i++) {
+        if (cluster[i] == particle_id) {
+            return 1;
+        }
+    }
+    return 0;
+}
