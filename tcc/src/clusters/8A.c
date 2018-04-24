@@ -60,7 +60,7 @@ void method_1() {
                         used_sp5b[second_sp5b_id] = 1;
 
                         // Check rings share 4 particles
-                        if (count_common_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, com) == 4) {
+                        if (count_common_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, com) == 4) {
 
                             // Check for distinct spindles
                             if (first_sp5b_cluster[5] != second_sp5b_cluster[5]) {
@@ -117,13 +117,11 @@ void method_1() {
 
 void method_2() {
 
-    int unc[2];
+    int uncommon_ring_particle_ids[2];
     int spindle_ids[2];
     int com[5];
-    int first_7A_id, second_7A_pointer, first_7A_spindle_pointer, k, l, m;
-    int cnt;
+    int first_7A_id, second_7A_pointer, first_7A_spindle_pointer, k, l;
     int flg;
-    int break_out;
     int trial[8];
     int clusSize = 8;
 
@@ -137,66 +135,23 @@ void method_2() {
                 if (second_7A_id <= first_7A_id) {
 
                     // exactly four members of the SP5 rings of 7A_i and 7A_j in common
-                    if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, com) == 4) {
+                    if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, com) == 4) {
 
                         if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, spindle_ids) == 2) {
 
-                            for (k = 0; k < 5; ++k) {
-                                m = 0;
-                                for (l = 0; l < 4; ++l) {
-                                    if (first_7A_cluster[k] == com[l]) m++;
-                                }
-                                if (m == 0) unc[0] = first_7A_cluster[k];
-                            }
-                            for (k = 0; k < 5; ++k) {
-                                m = 0;
-                                for (l = 0; l < 4; ++l) {
-                                    if (second_7A_cluster[k] == com[l]) m++;
-                                }
-                                if (m == 0) unc[1] = second_7A_cluster[k];
-                            }
+                            count_uncommon_ring_particles(first_7A_cluster, second_7A_cluster, 7, 7, uncommon_ring_particle_ids);
 
-                            // Now we have found the 8A D2d cluster
-                            if (n8A == m8A) {
-                                hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
-                                m8A = m8A + incrStatic;
-                            }
                             trial[0] = first_7A_cluster[5];    // build up trial cluster
                             trial[1] = first_7A_cluster[6];
-                            trial[4] = unc[0];
-                            trial[5] = unc[1];
+                            trial[2] = uncommon_ring_particle_ids[0];
+                            trial[3] = uncommon_ring_particle_ids[1];
+                            trial[4] = com[0];
+                            trial[5] = com[1];
+                            trial[6] = com[2];
+                            trial[7] = com[3];
 
-                            cnt = 2;
-                            break_out = 0;
-                            for (k = 0; k < 5; ++k) {
-                                if (Bonds_BondCheck(first_7A_cluster[k], trial[4]) == 1 &&
-                                    first_7A_cluster[k] != trial[4] &&
-                                    first_7A_cluster[k] != trial[5]) {
-                                    if (cnt == 4) {
-                                        break_out = 1;
-                                        break;
-                                    }
-                                    trial[cnt] = first_7A_cluster[k];
-                                    cnt++;
-                                }
-                            }
-                            if (break_out == 1 || cnt < 4) continue;
+                            quickSort(&trial[0], 8);
 
-                            for (k = 0; k < 5; ++k) {
-                                if (Bonds_BondCheck(first_7A_cluster[k], trial[2]) == 1 &&
-                                    first_7A_cluster[k] != trial[2] &&
-                                    first_7A_cluster[k] != trial[4] && first_7A_cluster[k] != trial[5]) {
-                                    trial[6] = first_7A_cluster[k];
-                                }
-                                if (Bonds_BondCheck(first_7A_cluster[k], trial[3]) == 1 &&
-                                    first_7A_cluster[k] != trial[3] &&
-                                    first_7A_cluster[k] != trial[4] && first_7A_cluster[k] != trial[5]) {
-                                    trial[7] = first_7A_cluster[k];
-                                }
-                            }
-
-                            quickSort(&trial[0], 4);
-                            quickSort(&trial[4], 4);
                             flg = 0;  // check trial cluster not already found
                             for (k = 0; k < n8A; ++k) {
                                 for (l = 0; l < 8; ++l) {
@@ -205,7 +160,16 @@ void method_2() {
                                 if (l == 8) flg = 1;
                             }
                             if (flg == 0) {
-                                for (k = 0; k < 8; ++k) hc8A[n8A][k] = trial[k];
+
+                                // Now we have found the 8A D2d cluster
+                                if (n8A == m8A) {
+                                    hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
+                                    m8A = m8A + incrStatic;
+                                }
+
+                                for (k = 0; k < 8; ++k) {
+                                    hc8A[n8A][k] = trial[k];
+                                }
 
                                 Cluster_Write_8A();
                             }
@@ -221,90 +185,101 @@ void method_3() {
 
     int unc[2];
     int com[4];
-    int i, j, j2, k, l, m;
+    int first_sp5b_id, first_7A_id, first_sp5b_spindle_pointer, k, l, m;
     int cnt;
     int flg;
     int break_out;
     int trial[8];
     int clusSize = 8;
 
-    for (i=0; i < nsp5b; ++i) {    // loop over all sp5b_i
-        for (j2=5; j2<6; ++j2) {
-            for (j=0; j<nmem_sp5c[hcsp5b[i][j2]]; ++j) {  // loop over all 7A_j
+    for (first_sp5b_id = 0; first_sp5b_id < nsp5b; ++first_sp5b_id) {
+        int *first_sp5b_cluster = hcsp5b[first_sp5b_id];
+        for (first_sp5b_spindle_pointer = 5; first_sp5b_spindle_pointer < 6; ++first_sp5b_spindle_pointer) {
+            for (first_7A_id = 0; first_7A_id < nmem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]]; ++first_7A_id) {  // loop over all 7A_j
+                int *first_7A_cluster = hcsp5c[mem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]][first_7A_id]];
+
                 m = 0;
-                for (k=0; k<5; ++k) {
-                    for (l=0; l<5; ++l) {
-                        if (hcsp5b[i][k] == hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][l]) {
-                            if (m<5) com[m]=hcsp5b[i][k];
+                for (k = 0; k < 5; ++k) {
+                    for (l = 0; l < 5; ++l) {
+                        if (first_sp5b_cluster[k] == first_7A_cluster[l]) {
+                            if (m < 5) com[m] = first_sp5b_cluster[k];
                             ++m;
                         }
                     }
                 }
-                if (m!=4) continue; // exactly four members of the SP5 rings of sp5b_i and 7A_j in common
+                if (count_common_ring_particles(first_sp5b_cluster, first_7A_cluster, 5, 5, com) == 4) {
 
-                flg = hcsp5b[i][5] == hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][5] || hcsp5b[i][5] == hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][6];
-                if (flg!=1) continue;   // sp5b_i spindle common with one of 7A_j spindles
 
-                for (k=0; k<5; ++k) {
-                    m=0;
-                    for (l=0; l<4; ++l) {
-                        if (hcsp5b[i][k]==com[l]) m++;
-                    }
-                    if (m==0) unc[0]=hcsp5b[i][k];
-                }
-                for (k=0; k<5; ++k) {
-                    m=0;
-                    for (l=0; l<4; ++l) {
-                        if (hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][k]==com[l]) m++;
-                    }
-                    if (m==0) unc[1]=hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][k];
-                }
+                    flg = first_sp5b_cluster[5] == first_7A_cluster[5] || first_sp5b_cluster[5] == first_7A_cluster[6];
+                    if (flg != 1) continue;   // sp5b_i spindle common with one of 7A_j spindles
 
-                // Now we have found the 8A D2d cluster
-                if (n8A==m8A) {
-                    hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
-                    m8A=m8A+incrStatic;
-                }
-                trial[0]=hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][5]; // build up trial cluster
-                trial[1]=hcsp5c[mem_sp5c[hcsp5b[i][j2]][j]][6];
-                trial[4]=unc[0];
-                trial[5]=unc[1];
-
-                cnt=2;
-                break_out=0;
-                for (k=0; k<5; ++k) {
-                    if (Bonds_BondCheck(hcsp5b[i][k],trial[4])==1 && hcsp5b[i][k]!=trial[4] && hcsp5b[i][k]!=trial[5]) {
-                        if (cnt==4) {
-                            break_out=1;
-                            break;
+                    for (k = 0; k < 5; ++k) {
+                        m = 0;
+                        for (l = 0; l < 4; ++l) {
+                            if (first_sp5b_cluster[k] == com[l]) m++;
                         }
-                        trial[cnt]=hcsp5b[i][k];
-                        cnt++;
+                        if (m == 0) unc[0] = first_sp5b_cluster[k];
                     }
-                }
-                if (break_out==1 || cnt<4) continue;
+                    for (k = 0; k < 5; ++k) {
+                        m = 0;
+                        for (l = 0; l < 4; ++l) {
+                            if (first_7A_cluster[k] == com[l]) m++;
+                        }
+                        if (m == 0) unc[1] = first_7A_cluster[k];
+                    }
 
-                for (k=0; k<5; ++k) {
-                    if (Bonds_BondCheck(hcsp5b[i][k],trial[2])==1 && hcsp5b[i][k]!=trial[2] && hcsp5b[i][k]!=trial[4] && hcsp5b[i][k]!=trial[5]) {
-                        trial[6]=hcsp5b[i][k];
+                    // Now we have found the 8A D2d cluster
+                    if (n8A == m8A) {
+                        hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
+                        m8A = m8A + incrStatic;
                     }
-                    if (Bonds_BondCheck(hcsp5b[i][k],trial[3])==1 && hcsp5b[i][k]!=trial[3] && hcsp5b[i][k]!=trial[4] && hcsp5b[i][k]!=trial[5]) {
-                        trial[7]=hcsp5b[i][k];
-                    }
-                }
+                    trial[0] = first_7A_cluster[5]; // build up trial cluster
+                    trial[1] = first_7A_cluster[6];
+                    trial[4] = unc[0];
+                    trial[5] = unc[1];
 
-                quickSort(&trial[0],4);
-                quickSort(&trial[4],4);
-                flg=0;  // check trial cluster not already found
-                for (k=0; k<n8A; ++k) {
-                    for (l=0; l<8; ++l) {
-                        if (trial[l]!=hc8A[k][l]) break;
+                    cnt = 2;
+                    break_out = 0;
+                    for (k = 0; k < 5; ++k) {
+                        if (Bonds_BondCheck(first_sp5b_cluster[k], trial[4]) == 1 &&
+                            first_sp5b_cluster[k] != trial[4] &&
+                            first_sp5b_cluster[k] != trial[5]) {
+                            if (cnt == 4) {
+                                break_out = 1;
+                                break;
+                            }
+                            trial[cnt] = first_sp5b_cluster[k];
+                            cnt++;
+                        }
                     }
-                    if (l==8) flg=1;
-                }
-                if (flg==0) {
-                    for (k=0; k<8; ++k) hc8A[n8A][k]=trial[k];
-                    Cluster_Write_8A();
+                    if (break_out == 1 || cnt < 4) continue;
+
+                    for (k = 0; k < 5; ++k) {
+                        if (Bonds_BondCheck(first_sp5b_cluster[k], trial[2]) == 1 &&
+                            first_sp5b_cluster[k] != trial[2] &&
+                            first_sp5b_cluster[k] != trial[4] && first_sp5b_cluster[k] != trial[5]) {
+                            trial[6] = first_sp5b_cluster[k];
+                        }
+                        if (Bonds_BondCheck(first_sp5b_cluster[k], trial[3]) == 1 &&
+                            first_sp5b_cluster[k] != trial[3] &&
+                            first_sp5b_cluster[k] != trial[4] && first_sp5b_cluster[k] != trial[5]) {
+                            trial[7] = first_sp5b_cluster[k];
+                        }
+                    }
+
+                    quickSort(&trial[0], 4);
+                    quickSort(&trial[4], 4);
+                    flg = 0;  // check trial cluster not already found
+                    for (k = 0; k < n8A; ++k) {
+                        for (l = 0; l < 8; ++l) {
+                            if (trial[l] != hc8A[k][l]) break;
+                        }
+                        if (l == 8) flg = 1;
+                    }
+                    if (flg == 0) {
+                        for (k = 0; k < 8; ++k) hc8A[n8A][k] = trial[k];
+                        Cluster_Write_8A();
+                    }
                 }
             }
         }
