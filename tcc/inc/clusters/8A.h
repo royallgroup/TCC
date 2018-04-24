@@ -3,6 +3,12 @@
 
 void Clusters_Get8A();
 
+void method_1();
+
+void method_2();
+
+void method_3();
+
 void Cluster_Write_8A();
 
 #endif

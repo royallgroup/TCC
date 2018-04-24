@@ -5,18 +5,18 @@
 
 void Clusters_Get7K() {
 
-       //!  A 7K is made of two overlapping 5A clusters which have one common spindle.
-       /*!
-      *  Find 7K clusters
-      *  7K is made from two overlapping 5A particles where:
-      *  - 5Ai and 5Aj have one common spindle.
-      *  - The other spindle of 5Ai is distinct from all the particles in 5Aj.
-      *  - The other spindle of 5Aj is distinct from all the particles in 5Ai.
-      *  - There are two common particles between the sp3 rings of 5Ai and 5Aj.
-      *
-      *  Cluster output: OOOOBBB
-      *  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
-      */
+    //!  A 7K is made of two overlapping 5A clusters which have one common spindle.
+    /*!
+    *  Find 7K clusters
+    *  7K is made from two overlapping 5A particles where:
+    *  - 5Ai and 5Aj have one common spindle.
+    *  - The other spindle of 5Ai is distinct from all the particles in 5Aj.
+    *  - The other spindle of 5Aj is distinct from all the particles in 5Ai.
+    *  - There are two common particles between the sp3 rings of 5Ai and 5Aj.
+    *
+    *  Cluster output: OOOOBBB
+    *  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
+    */
 
     int first_5A_id, first_5A_spindle_pointer;
     int second_5A_id, second_5A_pointer;

@@ -4,57 +4,86 @@
 #include "tools.h"
 #include "string.h"
 
-void Clusters_Get8A() { // Detect 8A D2d clusters
+void Clusters_Get8A() {
+
+    //!  An 8A cluster is one of 3 possible topological combinations of sp5b/c clusters.
+    /*!
+   *  Find 8A clusters
+   *  There are 3 methods used for 8A detection
+   *  - A pair of sp5b where the spindles are distinct and share 4 ring particles
+   *  - A pair of 7A clusters where
+   *      - Both 7Ai spindle particles are common with the 7Aj spindles.
+   *      - There are four common particles between sp5 rings of 7Ai and 7Aj .
+   *  - A sp5b cluster and a 7A cluster where:
+   *      - One 7A spindle is common with the sp5b spindle.
+   *      - The other 7A spindle is distinct from all the sp5b particles.
+   *      - There are four common particles between sp5 rings of sp5b and 7A.
+   *
+   *  Cluster output: BBBBBBOO
+   *  Storage order: spindles x 4, not spindles x 4)
+   */
+
+    method_1();
+    method_2();
+    method_3();
+}
+
+void method_1() {
+
     int unc[2];
     int com[4];
-    int i, j, j2, k, l, m;
+    int second_sp5b_pointer, first_sp5b_ring_pointer, k, l, m;
     int cnt;
     int flg;
     int break_out;
     int trial[8];
-    int clusSize=8;
+    int clusSize = 8;
     int *used_sp5b;
-
 
     used_sp5b = malloc(nsp5b * sizeof(int));
     if (used_sp5b==NULL) {
         Error("Clusters_Get8A(): used_sp5b[] malloc out of memory\n");
     }
 
-    for (i=0; i<nsp5b-1; ++i) {  // loop over all sp5b_i
-        memset(used_sp5b, 0, nsp5b*sizeof(*used_sp5b));
-        used_sp5b[i]=1;
-        for (j2=0; j2<5; ++j2) {
-            for (j=0; j<nmem_sp5b[hcsp5b[i][j2]]; ++j) {  // loop over all sp5b_j
-                if (mem_sp5b[hcsp5b[i][j2]][j]<=i) continue;
-                if (used_sp5b[mem_sp5b[hcsp5b[i][j2]][j]]==1) continue;
-                used_sp5b[mem_sp5b[hcsp5b[i][j2]][j]]=1;
+    for (int first_sp5b_id = 0; first_sp5b_id < nsp5b - 1; ++first_sp5b_id) {  // loop over all sp5b_i
+        int *first_sp5b_cluster = hcsp5b[first_sp5b_id];
+        memset(used_sp5b, 0, nsp5b * sizeof(*used_sp5b));
+        used_sp5b[first_sp5b_id] = 1;
+        for (first_sp5b_ring_pointer = 0; first_sp5b_ring_pointer < 5; ++first_sp5b_ring_pointer) {
+            for (second_sp5b_pointer=0; second_sp5b_pointer < nmem_sp5b[first_sp5b_cluster[first_sp5b_ring_pointer]]; ++second_sp5b_pointer) {  // loop over all sp5b_j
+                int second_sp5b_id = mem_sp5b[first_sp5b_cluster[first_sp5b_ring_pointer]][second_sp5b_pointer];
+                int *second_sp5b_cluster = hcsp5b[second_sp5b_id];
+                if (second_sp5b_id <= first_sp5b_id) continue;
+                if (used_sp5b[second_sp5b_id] == 1) continue;
+                used_sp5b[second_sp5b_id] = 1;
                 m = 0;
-                for (k=0; k<5; ++k) {
-                    for (l=0; l<5; ++l) {
-                        if(hcsp5b[i][k] == hcsp5b[mem_sp5b[hcsp5b[i][j2]][j]][l]) {
-                            if (m<5) com[m]=hcsp5b[i][k];
+                for (k = 0; k < 5; ++k) {
+                    for (l = 0; l < 5; ++l) {
+                        if(first_sp5b_cluster[k] == second_sp5b_cluster[l]) {
+                            if (m<5) {
+                                com[m] = first_sp5b_cluster[k];
+                            }
                             ++m;
                         }
                     }
                 }
                 if (m!=4) continue; // exactly four members of the SP5 rings of sp5b_i and sp5b_j in common
 
-                if (hcsp5b[i][5] == hcsp5b[mem_sp5b[hcsp5b[i][j2]][j]][5]) continue;  // distinct spindles
+                if (first_sp5b_cluster[5] == second_sp5b_cluster[5]) continue;  // distinct spindles
 
                 for (k=0; k<5; ++k) {
                     m=0;
                     for (l=0; l<4; ++l) {
-                        if (hcsp5b[i][k]==com[l]) m++;
+                        if (first_sp5b_cluster[k]==com[l]) m++;
                     }
-                    if (m==0) unc[0]=hcsp5b[i][k];
+                    if (m==0) unc[0]=first_sp5b_cluster[k];
                 }
                 for (k=0; k<5; ++k) {
                     m=0;
                     for (l=0; l<4; ++l) {
-                        if (hcsp5b[mem_sp5b[hcsp5b[i][j2]][j]][k]==com[l]) m++;
+                        if (second_sp5b_cluster[k]==com[l]) m++;
                     }
-                    if (m==0) unc[1]=hcsp5b[mem_sp5b[hcsp5b[i][j2]][j]][k];
+                    if (m==0) unc[1]=second_sp5b_cluster[k];
                 }
 
                 // Now we have found the 8A D2d cluster
@@ -62,31 +91,31 @@ void Clusters_Get8A() { // Detect 8A D2d clusters
                     hc8A=resize_2D_int(hc8A,m8A,m8A+incrStatic,clusSize,-1);
                     m8A=m8A+incrStatic;
                 }
-                trial[0]=hcsp5b[i][5];    // build up trial cluster
-                trial[1]=hcsp5b[mem_sp5b[hcsp5b[i][j2]][j]][5];
+                trial[0]=first_sp5b_cluster[5];    // build up trial cluster
+                trial[1]=second_sp5b_cluster[5];
                 trial[4]=unc[0];
                 trial[5]=unc[1];
 
                 cnt=2;
                 break_out=0;
                 for (k=0; k<5; ++k) {
-                    if (Bonds_BondCheck(hcsp5b[i][k],trial[4])==1 && hcsp5b[i][k]!=trial[4] && hcsp5b[i][k]!=trial[5]) {
+                    if (Bonds_BondCheck(first_sp5b_cluster[k],trial[4])==1 && first_sp5b_cluster[k]!=trial[4] && first_sp5b_cluster[k]!=trial[5]) {
                         if (cnt==4) {
                             break_out=1;
                             break;
                         }
-                        trial[cnt]=hcsp5b[i][k];
+                        trial[cnt]=first_sp5b_cluster[k];
                         cnt++;
                     }
                 }
                 if (break_out==1 || cnt<4) continue;
 
                 for (k=0; k<5; ++k) {
-                    if (Bonds_BondCheck(hcsp5b[i][k],trial[2])==1 && hcsp5b[i][k]!=trial[2] && hcsp5b[i][k]!=trial[4] && hcsp5b[i][k]!=trial[5]) {
-                        trial[6]=hcsp5b[i][k];
+                    if (Bonds_BondCheck(first_sp5b_cluster[k],trial[2])==1 && first_sp5b_cluster[k]!=trial[2] && first_sp5b_cluster[k]!=trial[4] && first_sp5b_cluster[k]!=trial[5]) {
+                        trial[6]=first_sp5b_cluster[k];
                     }
-                    if (Bonds_BondCheck(hcsp5b[i][k],trial[3])==1 && hcsp5b[i][k]!=trial[3] && hcsp5b[i][k]!=trial[4] && hcsp5b[i][k]!=trial[5]) {
-                        trial[7]=hcsp5b[i][k];
+                    if (Bonds_BondCheck(first_sp5b_cluster[k],trial[3])==1 && first_sp5b_cluster[k]!=trial[3] && first_sp5b_cluster[k]!=trial[4] && first_sp5b_cluster[k]!=trial[5]) {
+                        trial[7]=first_sp5b_cluster[k];
                     }
                 }
 
@@ -107,7 +136,21 @@ void Clusters_Get8A() { // Detect 8A D2d clusters
             }
         }
     }
-    for (i=0; i<nsp5c - 1; ++i) {    // loop over all 7A_i
+    free(used_sp5b);
+}
+
+void method_2() {
+
+    int unc[2];
+    int com[4];
+    int i, j, j2, k, l, m;
+    int cnt;
+    int flg;
+    int break_out;
+    int trial[8];
+    int clusSize = 8;
+
+    for (i=0; i < nsp5c - 1; ++i) {    // loop over all 7A_i
         for (j2=5; j2<6; ++j2) {
             for (j=0; j<nmem_sp5c[hcsp5c[i][j2]]; ++j) {  // loop over all 7A_j
                 if (mem_sp5c[hcsp5c[i][j2]][j]<=i) continue;
@@ -191,7 +234,20 @@ void Clusters_Get8A() { // Detect 8A D2d clusters
             }
         }
     }
-    for (i=0; i<nsp5b; ++i) {    // loop over all sp5b_i
+}
+
+void method_3() {
+
+    int unc[2];
+    int com[4];
+    int i, j, j2, k, l, m;
+    int cnt;
+    int flg;
+    int break_out;
+    int trial[8];
+    int clusSize = 8;
+
+    for (i=0; i < nsp5b; ++i) {    // loop over all sp5b_i
         for (j2=5; j2<6; ++j2) {
             for (j=0; j<nmem_sp5c[hcsp5b[i][j2]]; ++j) {  // loop over all 7A_j
                 m = 0;
@@ -272,8 +328,6 @@ void Clusters_Get8A() { // Detect 8A D2d clusters
             }
         }
     }
-
-    free(used_sp5b);
 }
 
 void Cluster_Write_8A() {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
