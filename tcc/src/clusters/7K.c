@@ -21,7 +21,7 @@ void Clusters_Get7K() {
     int first_5A_id, first_5A_spindle_pointer;
     int second_5A_id, second_5A_pointer;
     int *first_5A_cluster, *second_5A_cluster;
-    int common_spindle_id, other_spindle_ids[2], common_ring_ids[2], uncommon_ring_particles[2];
+    int common_spindle_id, other_spindle_ids[2], common_ring_ids[5], uncommon_ring_particles[2];
 
     for (first_5A_id = 0; first_5A_id < nsp3c; ++first_5A_id) {  // loop over all 5A_i
         first_5A_cluster = hcsp3c[first_5A_id];
@@ -39,7 +39,7 @@ void Clusters_Get7K() {
                         if (is_particle_in_5A(second_5A_cluster, other_spindle_ids[0]) == 0) {
                             if (is_particle_in_5A(first_5A_cluster, other_spindle_ids[1]) == 0) {
 
-                                if (count_common_ring_particles(first_5A_cluster, second_5A_cluster, common_ring_ids) == 2) {
+                                if (count_common_ring_particles_7K(first_5A_cluster, second_5A_cluster, common_ring_ids) == 2) {
 
                                     uncommon_ring_particles[0] = get_uncommon_ring_particle(first_5A_cluster, common_ring_ids);
                                     uncommon_ring_particles[1] = get_uncommon_ring_particle(second_5A_cluster, common_ring_ids);
@@ -77,7 +77,7 @@ int is_particle_in_5A(const int *five_A_cluster, int particle_id) {
     return 0;
 }
 
-int count_common_ring_particles(const int *first_5A_cluster, const int *second_5A_cluster, int *common_ring_ids) {
+int count_common_ring_particles_7K(const int *first_5A_cluster, const int *second_5A_cluster, int *common_ring_ids) {
     int num_common_ring_particles = 0;
     int common_particle_ids[3];
 

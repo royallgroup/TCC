@@ -7,7 +7,7 @@ void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_clu
 
 int is_particle_in_5A(const int *five_A_cluster, int particle_id);
 
-int count_common_ring_particles(const int *first_5A_cluster, const int *second_5A_cluster, int *common_ring_ids);
+int count_common_ring_particles_7K(const int *first_5A_cluster, const int *second_5A_cluster, int *common_ring_ids);
 
 int get_uncommon_ring_particle(const int *first_5A_cluster, const int *common_ring_ids);
 
