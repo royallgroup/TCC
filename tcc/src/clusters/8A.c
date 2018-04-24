@@ -31,7 +31,7 @@ void Clusters_Get8A() {
 
 void method_1() {
 
-    int unc[2];
+    int unc[10];
     int com[4];
     int second_sp5b_pointer, first_sp5b_ring_pointer, k, l, m;
     int cnt;
@@ -66,27 +66,10 @@ void method_1() {
                             // Check for distinct spindles
                             if (first_sp5b_cluster[5] != second_sp5b_cluster[5]) {
 
-                                for (k = 0; k < 5; ++k) {
-                                    m = 0;
-                                    for (l = 0; l < 4; ++l) {
-                                        if (first_sp5b_cluster[k] == com[l]) m++;
-                                    }
-                                    if (m == 0) unc[0] = first_sp5b_cluster[k];
-                                }
-                                for (k = 0; k < 5; ++k) {
-                                    m = 0;
-                                    for (l = 0; l < 4; ++l) {
-                                        if (second_sp5b_cluster[k] == com[l]) m++;
-                                    }
-                                    if (m == 0) unc[1] = second_sp5b_cluster[k];
-                                }
+                                count_uncommon_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, unc);
 
-                                // Now we have found the 8A D2d cluster
-                                if (n8A == m8A) {
-                                    hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
-                                    m8A = m8A + incrStatic;
-                                }
-                                trial[0] = first_sp5b_cluster[5];    // build up trial cluster
+                                // build up trial cluster
+                                trial[0] = first_sp5b_cluster[5];
                                 trial[1] = second_sp5b_cluster[5];
                                 trial[4] = unc[0];
                                 trial[5] = unc[1];
@@ -117,6 +100,12 @@ void method_1() {
                                         first_sp5b_cluster[k] != trial[5]) {
                                         trial[7] = first_sp5b_cluster[k];
                                     }
+                                }
+
+                                // Now we have found the 8A D2d cluster
+                                if (n8A == m8A) {
+                                    hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
+                                    m8A = m8A + incrStatic;
                                 }
 
                                 quickSort(&trial[0], 4);
