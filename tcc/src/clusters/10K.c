@@ -5,20 +5,20 @@
 void Clusters_Get10K() { // Detect 10K clusters
     // A 10K is a 9K with a SINGLE particle bonded to the common spindle of 9K.
     int bonded_to_spindle_id, num_extra_particles, extra_particle = 0;
-    int id_9K, id_9K_common;
+    int parent_9K_id, id_9K_common;
 
-    for (id_9K=0; id_9K < n9K; id_9K++) {
-        id_9K_common = hc9K[id_9K][8];
+    for (parent_9K_id=0; parent_9K_id < n9K; parent_9K_id++) {
+        id_9K_common = hc9K[parent_9K_id][8];
         if (num_bonds[id_9K_common] < 10) {
             num_extra_particles = 0;
             for (bonded_to_spindle_id = 0; bonded_to_spindle_id < num_bonds[id_9K_common]; bonded_to_spindle_id++) {
-                if (is_particle_in_9K(id_9K, bNums[id_9K_common][bonded_to_spindle_id])) {
+                if (is_particle_in_9K(parent_9K_id, bNums[id_9K_common][bonded_to_spindle_id])) {
                     num_extra_particles++;
                     extra_particle = bNums[id_9K_common][bonded_to_spindle_id];
                 }
             }
             if (num_extra_particles == 1) {
-                Cluster_Write_10K(id_9K, extra_particle);
+                Cluster_Write_10K(parent_9K_id, extra_particle);
             }
         }
     }
