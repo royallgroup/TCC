@@ -81,3 +81,30 @@ int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, in
     return num_uncommon_particles;
 
 }
+
+int count_common_spindle_particles(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size, int *common_spindle_ids) {
+    //!  Function to count number of common spindle particles between two clusters and get thier ids
+    /*!
+   *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
+   *  \param cluster_2 - a pointer to a cluster stored in an hc memory array
+   *  \param cluster_1_size - the number of particles in cluster_1
+   *  \param cluster_2_size - the number of particles in cluster_2
+   *  \param common_spindle_ids - a pointer to an array of length 2 where common spindle ids will be written
+   *  \return an integer giving the number of common ring particles between the clusters
+   *
+   *  This function assumes that the spindle particles are the final two particles in the cluster, this is true for
+   *  all of the basic clusters but may not be true for larger clusters.
+   */
+    int num_common_spindles = 0;
+
+    for (int i = cluster_1_size - 2; i < cluster_1_size; i++) {
+        for (int j = cluster_2_size - 2; j < cluster_2_size; j++) {
+            if (cluster_1[i] == cluster_2[j]) {
+                common_spindle_ids[num_common_spindles] = cluster_1[i];
+                num_common_spindles++;
+            }
+        }
+    }
+    return num_common_spindles;
+}
+

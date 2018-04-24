@@ -22,7 +22,7 @@ void Clusters_Get11A() {
                 second_6A_id = mem_sp4c[first_6A_spindle_ID][mem_pointer];
                 if (second_6A_id > first_6A_id) {
                     second6A = hcsp4c[second_6A_id];
-                    if (count_common_spindle_particles(first_6A, second6A, &scom) == 1) {
+                    if (count_common_spindle_particles_11A(first_6A, second6A, &scom) == 1) {
                         get_non_common_spindles(first_6A, second6A, scom, sother);
                         if (Check_unique_6A_rings(first_6A, second6A) == 0) {
                             if (Check_6A_rings_bonded(first_6A, second6A) == 1) {
@@ -51,13 +51,12 @@ void get_non_common_spindles(const int *first6A, const int *second6A, int scom, 
     }
 }
 
-int count_common_spindle_particles(const int *first6A, const int *second6A, int *scom) {
-    int first_spindle_pointer, second_spindle_pointer, num_common_spindles;
+int count_common_spindle_particles_11A(const int *first6A, const int *second6A, int *scom) {
 
-    num_common_spindles = 0;
+    int num_common_spindles = 0;
 
-    for (first_spindle_pointer = 4; first_spindle_pointer < 6; first_spindle_pointer++) {
-        for (second_spindle_pointer = 4; second_spindle_pointer < 6; second_spindle_pointer++) {
+    for (int first_spindle_pointer = 4; first_spindle_pointer < 6; first_spindle_pointer++) {
+        for (int second_spindle_pointer = 4; second_spindle_pointer < 6; second_spindle_pointer++) {
             if (first6A[first_spindle_pointer] == second6A[second_spindle_pointer]) {
                 (*scom) = first6A[first_spindle_pointer];
                 num_common_spindles++;
