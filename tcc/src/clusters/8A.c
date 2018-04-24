@@ -5,6 +5,8 @@
 #include "tools.h"
 #include "string.h"
 
+int check_unique_cluster(const int *trial);
+
 void Clusters_Get8A() {
 
     //!  An 8A cluster is one of 3 possible topological combinations of sp5b/c clusters.
@@ -41,7 +43,7 @@ void method_1() {
     int *used_sp5b;
 
     used_sp5b = malloc(nsp5b * sizeof(int));
-    if (used_sp5b==NULL) {
+    if (used_sp5b == NULL) {
         Error("Clusters_Get8A(): used_sp5b[] malloc out of memory\n");
     }
 
@@ -50,7 +52,8 @@ void method_1() {
         memset(used_sp5b, 0, nsp5b * sizeof(*used_sp5b));
         used_sp5b[first_sp5b_id] = 1;
         for (first_sp5b_ring_pointer = 0; first_sp5b_ring_pointer < 5; ++first_sp5b_ring_pointer) {
-            for (second_sp5b_pointer=0; second_sp5b_pointer < nmem_sp5b[first_sp5b_cluster[first_sp5b_ring_pointer]]; ++second_sp5b_pointer) {  // loop over all sp5b_j
+            for (second_sp5b_pointer = 0; second_sp5b_pointer <
+                                          nmem_sp5b[first_sp5b_cluster[first_sp5b_ring_pointer]]; ++second_sp5b_pointer) {  // loop over all sp5b_j
                 int second_sp5b_id = mem_sp5b[first_sp5b_cluster[first_sp5b_ring_pointer]][second_sp5b_pointer];
                 int *second_sp5b_cluster = hcsp5b[second_sp5b_id];
 
@@ -65,7 +68,8 @@ void method_1() {
                             // Check for distinct spindles
                             if (first_sp5b_cluster[5] != second_sp5b_cluster[5]) {
 
-                                count_uncommon_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, uncommon_ring_particle_ids);
+                                count_uncommon_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5,
+                                                              uncommon_ring_particle_ids);
 
                                 // build up trial cluster
                                 trial[0] = first_sp5b_cluster[5];
@@ -81,6 +85,7 @@ void method_1() {
 
 
                                 quickSort(&trial[0], 8);
+
                                 flg = 0;  // check trial cluster not already found
                                 for (k = 0; k < n8A; ++k) {
                                     for (l = 0; l < 8; ++l) {
@@ -91,19 +96,7 @@ void method_1() {
                                     }
                                 }
                                 if (flg == 0) {
-
-                                    // Now we have found the 8A D2d cluster
-                                    if (n8A == m8A) {
-                                        hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
-                                        m8A = m8A + incrStatic;
-                                    }
-
-                                    for (k = 0; k < 8; ++k) {
-                                        hc8A[n8A][k] = trial[k];
-                                    }
-
-                                    Cluster_Write_8A();
-
+                                    Cluster_Write_8A(trial);
                                 }
                             }
                         }
@@ -128,7 +121,8 @@ void method_2() {
     for (first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id) {
         int *first_7A_cluster = hcsp5c[first_7A_id];
         for (first_7A_spindle_pointer = 5; first_7A_spindle_pointer < 6; ++first_7A_spindle_pointer) {
-            for (second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[first_7A_cluster[first_7A_spindle_pointer]]; ++second_7A_pointer) {  // loop over all 7A_j
+            for (second_7A_pointer = 0; second_7A_pointer <
+                                        nmem_sp5c[first_7A_cluster[first_7A_spindle_pointer]]; ++second_7A_pointer) {  // loop over all 7A_j
                 int second_7A_id = mem_sp5c[first_7A_cluster[first_7A_spindle_pointer]][second_7A_pointer];
                 int *second_7A_cluster = hcsp5c[second_7A_id];
 
@@ -137,9 +131,11 @@ void method_2() {
                     // exactly four members of the SP5 rings of 7A_i and 7A_j in common
                     if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, com) == 4) {
 
-                        if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, spindle_ids) == 2) {
+                        if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, spindle_ids) ==
+                            2) {
 
-                            count_uncommon_ring_particles(first_7A_cluster, second_7A_cluster, 7, 7, uncommon_ring_particle_ids);
+                            count_uncommon_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5,
+                                                          uncommon_ring_particle_ids);
 
                             trial[0] = first_7A_cluster[5];    // build up trial cluster
                             trial[1] = first_7A_cluster[6];
@@ -160,18 +156,7 @@ void method_2() {
                                 if (l == 8) flg = 1;
                             }
                             if (flg == 0) {
-
-                                // Now we have found the 8A D2d cluster
-                                if (n8A == m8A) {
-                                    hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
-                                    m8A = m8A + incrStatic;
-                                }
-
-                                for (k = 0; k < 8; ++k) {
-                                    hc8A[n8A][k] = trial[k];
-                                }
-
-                                Cluster_Write_8A();
+                                Cluster_Write_8A(trial);
                             }
                         }
                     }
@@ -183,102 +168,46 @@ void method_2() {
 
 void method_3() {
 
-    int unc[2];
+    int uncommon_ring_particle_ids[2];
     int com[4];
-    int first_sp5b_id, first_7A_id, first_sp5b_spindle_pointer, k, l, m;
-    int cnt;
+    int first_sp5b_id, first_7A_id, first_sp5b_spindle_pointer, k, l;
+
     int flg;
-    int break_out;
+
     int trial[8];
     int clusSize = 8;
 
     for (first_sp5b_id = 0; first_sp5b_id < nsp5b; ++first_sp5b_id) {
         int *first_sp5b_cluster = hcsp5b[first_sp5b_id];
         for (first_sp5b_spindle_pointer = 5; first_sp5b_spindle_pointer < 6; ++first_sp5b_spindle_pointer) {
-            for (first_7A_id = 0; first_7A_id < nmem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]]; ++first_7A_id) {  // loop over all 7A_j
+            for (first_7A_id = 0; first_7A_id <
+                                  nmem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]]; ++first_7A_id) {  // loop over all 7A_j
                 int *first_7A_cluster = hcsp5c[mem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]][first_7A_id]];
 
-                m = 0;
-                for (k = 0; k < 5; ++k) {
-                    for (l = 0; l < 5; ++l) {
-                        if (first_sp5b_cluster[k] == first_7A_cluster[l]) {
-                            if (m < 5) com[m] = first_sp5b_cluster[k];
-                            ++m;
-                        }
-                    }
-                }
                 if (count_common_ring_particles(first_sp5b_cluster, first_7A_cluster, 5, 5, com) == 4) {
 
+                    // sp5b_i spindle common with one of 7A_j spindles
+                    if (first_sp5b_cluster[5] == first_7A_cluster[5] || first_sp5b_cluster[5] == first_7A_cluster[6]) {
 
-                    flg = first_sp5b_cluster[5] == first_7A_cluster[5] || first_sp5b_cluster[5] == first_7A_cluster[6];
-                    if (flg != 1) continue;   // sp5b_i spindle common with one of 7A_j spindles
 
-                    for (k = 0; k < 5; ++k) {
-                        m = 0;
-                        for (l = 0; l < 4; ++l) {
-                            if (first_sp5b_cluster[k] == com[l]) m++;
-                        }
-                        if (m == 0) unc[0] = first_sp5b_cluster[k];
-                    }
-                    for (k = 0; k < 5; ++k) {
-                        m = 0;
-                        for (l = 0; l < 4; ++l) {
-                            if (first_7A_cluster[k] == com[l]) m++;
-                        }
-                        if (m == 0) unc[1] = first_7A_cluster[k];
-                    }
+                        count_uncommon_ring_particles(first_sp5b_cluster, first_7A_cluster, 5, 5,
+                                                      uncommon_ring_particle_ids);
 
-                    // Now we have found the 8A D2d cluster
-                    if (n8A == m8A) {
-                        hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
-                        m8A = m8A + incrStatic;
-                    }
-                    trial[0] = first_7A_cluster[5]; // build up trial cluster
-                    trial[1] = first_7A_cluster[6];
-                    trial[4] = unc[0];
-                    trial[5] = unc[1];
 
-                    cnt = 2;
-                    break_out = 0;
-                    for (k = 0; k < 5; ++k) {
-                        if (Bonds_BondCheck(first_sp5b_cluster[k], trial[4]) == 1 &&
-                            first_sp5b_cluster[k] != trial[4] &&
-                            first_sp5b_cluster[k] != trial[5]) {
-                            if (cnt == 4) {
-                                break_out = 1;
-                                break;
-                            }
-                            trial[cnt] = first_sp5b_cluster[k];
-                            cnt++;
-                        }
-                    }
-                    if (break_out == 1 || cnt < 4) continue;
+                        trial[0] = first_7A_cluster[5]; // build up trial cluster
+                        trial[1] = first_7A_cluster[6];
+                        trial[2] = uncommon_ring_particle_ids[0];
+                        trial[3] = uncommon_ring_particle_ids[1];
+                        trial[4] = com[0];
+                        trial[5] = com[1];
+                        trial[6] = com[2];
+                        trial[7] = com[3];
 
-                    for (k = 0; k < 5; ++k) {
-                        if (Bonds_BondCheck(first_sp5b_cluster[k], trial[2]) == 1 &&
-                            first_sp5b_cluster[k] != trial[2] &&
-                            first_sp5b_cluster[k] != trial[4] && first_sp5b_cluster[k] != trial[5]) {
-                            trial[6] = first_sp5b_cluster[k];
-                        }
-                        if (Bonds_BondCheck(first_sp5b_cluster[k], trial[3]) == 1 &&
-                            first_sp5b_cluster[k] != trial[3] &&
-                            first_sp5b_cluster[k] != trial[4] && first_sp5b_cluster[k] != trial[5]) {
-                            trial[7] = first_sp5b_cluster[k];
-                        }
-                    }
+                        quickSort(&trial[0], 8);
 
-                    quickSort(&trial[0], 4);
-                    quickSort(&trial[4], 4);
-                    flg = 0;  // check trial cluster not already found
-                    for (k = 0; k < n8A; ++k) {
-                        for (l = 0; l < 8; ++l) {
-                            if (trial[l] != hc8A[k][l]) break;
+                        if (check_unique_cluster(trial) == 0) {
+                            Cluster_Write_8A(trial);
                         }
-                        if (l == 8) flg = 1;
-                    }
-                    if (flg == 0) {
-                        for (k = 0; k < 8; ++k) hc8A[n8A][k] = trial[k];
-                        Cluster_Write_8A();
                     }
                 }
             }
@@ -286,7 +215,37 @@ void method_3() {
     }
 }
 
-void Cluster_Write_8A() {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+int check_unique_cluster(const int *trial) {
+    // Check that cluster has not already been found
+    // Return 0 if cluster is unique, else return 1
+
+    for (int existing_8A_cluster_pointer = 0; existing_8A_cluster_pointer < n8A; ++existing_8A_cluster_pointer) {
+        int common_particles = 0;
+        for (int i = 0; i < 8; ++i) {
+            if (trial[i] != hc8A[existing_8A_cluster_pointer][i]) {
+                common_particles += 1;
+                break;
+            }
+        }
+        if (common_particles == 8) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void Cluster_Write_8A(const int *trial) {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
+    int clusSize = 8;
+
+    if (n8A == m8A) {
+        hc8A = resize_2D_int(hc8A, m8A, m8A + incrStatic, clusSize, -1);
+        m8A = m8A + incrStatic;
+    }
+
+    for (int i = 0; i < 8; ++i) {
+        hc8A[n8A][i] = trial[i];
+    }
+
     if (s8A[hc8A[n8A][0]] == 'C') s8A[hc8A[n8A][0]] = 'B';
     if (s8A[hc8A[n8A][1]] == 'C') s8A[hc8A[n8A][1]] = 'B';
     if (s8A[hc8A[n8A][2]] == 'C') s8A[hc8A[n8A][2]] = 'B';

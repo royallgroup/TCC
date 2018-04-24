@@ -9,6 +9,6 @@ void method_2();
 
 void method_3();
 
-void Cluster_Write_8A();
+void Cluster_Write_8A(const int *trial);
 
 #endif
