@@ -3,6 +3,7 @@ import filecmp
 import os
 import subprocess
 import platform
+import math
 import pandas as pd
 
 
@@ -44,9 +45,9 @@ class FileOperations:
     def run_tcc():
         try:
             if platform.system() == "Windows":
-                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0])
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             else:
-                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0])
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return tcc_call_result.returncode
         except Exception as e:
             print(e)
@@ -62,16 +63,44 @@ class FileOperations:
 
 class FileChecks:
     @staticmethod
-    def check_static_clust():
-        return filecmp.cmp("sample.static_clust", glob("sample.xyz*static_clust")[0], shallow=False)
-
-    @staticmethod
     def check_bonds():
         return filecmp.cmp("sample.bonds", glob("sample.xyz*bonds")[0], shallow=False)
 
     @staticmethod
+    def check_static_clust():
+        measured_results = pd.read_table(glob('sample.xyz*.static_clust')[0], index_col='Cluster type', skiprows=1)
+        measured_results.fillna(0., inplace=True)
+        known_results = pd.read_table('sample.static_clust', index_col='Cluster type', skiprows=1)
+        known_results.fillna(0., inplace=True)
+
+        return FileChecks.compare_files_by_row(measured_results, known_results)
+
+    @staticmethod
     def check_pop_per_frame():
-        return filecmp.cmp("sample.pop_per_frame", glob("sample.xyz*pop_per_frame")[0], shallow=False)
+        measured_results = pd.read_table(glob("sample.xyz*pop_per_frame")[0], index_col='frame')
+        measured_results.fillna(0., inplace=True)
+        known_results = pd.read_table('sample.pop_per_frame', index_col='frame')
+        known_results.fillna(0., inplace=True)
+
+        return FileChecks.compare_files_by_row(measured_results, known_results)
+
+    @staticmethod
+    def compare_files_by_row(measured_results, known_results):
+        for column_name in measured_results:
+            for measured_particle_type in measured_results[column_name].items():
+                particle_type_found = 0
+                for known_particle_type in known_results[column_name].items():
+                    if measured_particle_type[0] == known_particle_type[0]:
+                        particle_type_found = 1
+                        if math.isclose(measured_particle_type[1], known_particle_type[1], abs_tol=0.00001) == False:
+                            print("\nColumn: \"{0}\" Particle type: \"{1}\", does not match known quantity."
+                                  .format(column_name, measured_particle_type[0]))
+                            return False
+                        break
+                if particle_type_found == 0:
+                    print("\nParticle type {0} not found in TCC output".format(measured_particle_type[0]))
+                    return False
+        return True
 
 
 def test_build():
