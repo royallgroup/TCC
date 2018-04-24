@@ -2,11 +2,22 @@
 #include <tools.h>
 #include "7T.h"
 
-int get_new_particle(const int *new_5A_cluster, int spindle_id);
-
-int check_spindle_is_new_5A_spindle(int spindle_id, const int *new_5A_cluster);
-
 void Clusters_Get7T() {
+
+     //!  A 7T is made of a 6Z cluster with an additional particle.
+     /*!
+    *  Find 7Ta and 7Ts clusters
+    *  7T is made made of a 6Z cluster and a 5A. Depending on where the location of the new 5A spindle,
+    *  the cluster is either asymmetric (7Ta) or symmetric (7Ts)
+    *  7T:
+    *  - The 5A has one spindle common with the common ring particles of the 6A
+    *  - For 7Ts the other 5A spindle is bonded to both 6Z bonded spindles
+    *  - For 7TA the other 5A spindle is bonded to one bonded 6Z spindle and one unbonded 6Z spindle
+    *
+    *  Cluster output: BBBBBBB
+    *  Storage order: original 6Z particles x 6, new 5A spindle)
+    */
+
     int old_6Z_id, new_5A_id;
     int *old_6Z_cluster, *new_5A_cluster;
     int spindle_id, new_particle_id;
@@ -21,7 +32,7 @@ void Clusters_Get7T() {
                 new_5A_id = mem_sp3c[spindle_id][new_5A_pointer];
                 new_5A_cluster = hcsp3c[new_5A_id];
 
-                if (check_spindle_is_new_5A_spindle(spindle_id, new_5A_cluster) == 1 ) {
+                if (is_particle_spindle_of_5A(spindle_id, new_5A_cluster) == 1) {
                     bond_counter = check_ring_bonds(new_5A_cluster, old_6Z_cluster);
                     if (bond_counter == 21 || bond_counter == 22 || bond_counter == 25) {
                         new_particle_id = get_new_particle(new_5A_cluster, spindle_id);
@@ -33,14 +44,10 @@ void Clusters_Get7T() {
     }
 }
 
-int check_spindle_is_new_5A_spindle(int spindle_id, const int *new_5A_cluster) {
-    if (new_5A_cluster[3] == spindle_id) {
+int is_particle_spindle_of_5A(int particle_id, const int *new_5A_cluster) {
+    if (new_5A_cluster[3] == particle_id ||  new_5A_cluster[4] == particle_id) {
         return 1;
-    }
-    else if (new_5A_cluster[4] == spindle_id) {
-        return 1;
-    }
-    else {
+    } else {
         return 0;
     }
 }

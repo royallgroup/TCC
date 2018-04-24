@@ -3,7 +3,21 @@
 #include "tools.h"
 #include "simple_cluster_methods.h"
 
-void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
+void Clusters_Get7K() {
+
+       //!  A 7K is made of two overlapping 5A clusters which have one common spindle.
+       /*!
+      *  Find 7K clusters
+      *  7K is made from two overlapping 5A particles where:
+      *  - 5Ai and 5Aj have one common spindle.
+      *  - The other spindle of 5Ai is distinct from all the particles in 5Aj.
+      *  - The other spindle of 5Aj is distinct from all the particles in 5Ai.
+      *  - There are two common particles between the sp3 rings of 5Ai and 5Aj.
+      *
+      *  Cluster output: OOOOBBB
+      *  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
+      */
+
     int first_5A_id, first_5A_spindle_pointer;
     int second_5A_id, second_5A_pointer;
     int *first_5A_cluster, *second_5A_cluster;
@@ -41,16 +55,16 @@ void Clusters_Get7K() {    // Detect 7K clusters from 2 5A clusters
     }
 }
 
-void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int scom, int *sother) {
-    if (first_5A_cluster[3] == scom) {
-        sother[0] = first_5A_cluster[4];
+void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int common_spindle_id, int *other_spindle_ids) {
+    if (first_5A_cluster[3] == common_spindle_id) {
+        other_spindle_ids[0] = first_5A_cluster[4];
     } else {
-        sother[0] = first_5A_cluster[3];
+        other_spindle_ids[0] = first_5A_cluster[3];
     }
-    if (second_5A_cluster[3] == scom) {
-        sother[1] = second_5A_cluster[4];
+    if (second_5A_cluster[3] == common_spindle_id) {
+        other_spindle_ids[1] = second_5A_cluster[4];
     } else {
-        sother[1] = second_5A_cluster[3];
+        other_spindle_ids[1] = second_5A_cluster[3];
     }
 }
 
@@ -63,7 +77,7 @@ int is_particle_in_5A(const int *five_A_cluster, int particle_id) {
     return 0;
 }
 
-int count_common_ring_particles(const int *first_5A_cluster, const int *second_5A_cluster, int *sp3_com) {
+int count_common_ring_particles(const int *first_5A_cluster, const int *second_5A_cluster, int *common_ring_ids) {
     int num_common_ring_particles = 0;
     int common_particle_ids[3];
 
@@ -76,15 +90,16 @@ int count_common_ring_particles(const int *first_5A_cluster, const int *second_5
         }
     }
     if (num_common_ring_particles == 2) {
-        sp3_com[0] = common_particle_ids[0];
-        sp3_com[1] = common_particle_ids[1];
+        common_ring_ids[0] = common_particle_ids[0];
+        common_ring_ids[1] = common_particle_ids[1];
     }
     return num_common_ring_particles;
 }
 
-int get_uncommon_ring_particle(const int *first_5A_cluster, const int *sp3_com) {
+int get_uncommon_ring_particle(const int *first_5A_cluster, const int *common_ring_ids) {
     for (int first_5A_pointer = 0; first_5A_pointer < 3; first_5A_pointer++) {
-        if (first_5A_cluster[first_5A_pointer] != sp3_com[0] && first_5A_cluster[first_5A_pointer] != sp3_com[1]) {
+        if (first_5A_cluster[first_5A_pointer] != common_ring_ids[0] &&
+            first_5A_cluster[first_5A_pointer] != common_ring_ids[1]) {
             return (first_5A_cluster[first_5A_pointer]);
         }
     }

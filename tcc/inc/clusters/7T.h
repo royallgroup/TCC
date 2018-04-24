@@ -3,6 +3,10 @@
 
 void Clusters_Get7T();
 
+int is_particle_spindle_of_5A(int particle_id, const int *new_5A_cluster);
+
+int get_new_particle(const int *new_5A_cluster, int spindle_id);
+
 int check_ring_bonds(const int *new_5A_cluster, const int *old_6Z_cluster);
 
 void check_7T_type(int bond_counter, const int *old_6Z, int new_particle);

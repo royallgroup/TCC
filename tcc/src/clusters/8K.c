@@ -3,8 +3,6 @@
 #include "globals.h"
 #include "tools.h"
 
-int is_particle_in_5A_ring(const int *second_5A_cluster, int first_5A_ring_particle, int *cp);
-
 void Clusters_Get8K() {
     int k, l, m, n;
     int cp[2], unc[3], scom, sother[2];
