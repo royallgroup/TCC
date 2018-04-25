@@ -5,10 +5,8 @@
 
 void Clusters_Get8K() {
     int k, l, m, n;
-    int cp[2], unc[3], scom, sother[2];
+    int cp[2], unc[3], scom[2], sother[2];
     int clusSize = 8;
-
-    cp[0] = cp[1] = unc[0] = unc[1] = unc[2] = scom = sother[0] = sother[1] = -1;
 
     for (int first_5A_id = 0; first_5A_id < nsp3c; ++first_5A_id) {
         int *first_5A_cluster = hcsp3c[first_5A_id];
@@ -22,7 +20,7 @@ void Clusters_Get8K() {
 
                 if (is_particle_in_5A_ring(second_5A_cluster, first_5A_ring_particle, cp) == 1) {
 
-                    if (count_common_spindles_between_5As(first_5A_cluster, second_5A_cluster, &scom) == 1) {
+                    if (count_common_spindle_particles(first_5A_cluster, second_5A_cluster, 5, 5, scom) == 1) {
 
                         m = 0;
                         for (k = 0; k < 3; ++k) {
@@ -39,12 +37,12 @@ void Clusters_Get8K() {
                         }
                         if (m != 1) continue;
 
-                        if (first_5A_cluster[3] == scom) {
+                        if (first_5A_cluster[3] == scom[0]) {
                             sother[0] = first_5A_cluster[4];
                         } else {
                             sother[0] = first_5A_cluster[3];
                         }
-                        if (second_5A_cluster[3] == scom) {
+                        if (second_5A_cluster[3] == scom[0]) {
                             sother[1] = second_5A_cluster[4];
                         } else {
                             sother[1] = second_5A_cluster[3];
@@ -143,7 +141,7 @@ void Clusters_Get8K() {
                                 // hc8K key: (SP3_common_1, SP3_common_2, spindle_1, spindle_2, spindle_3, other_SP3_1, other_SP3_2, other_SP3_3)
                                 hc8K[n8K][0] = cp[0];
                                 hc8K[n8K][1] = cp[1];
-                                hc8K[n8K][2] = scom;
+                                hc8K[n8K][2] = scom[0];
                                 hc8K[n8K][3] = sother[0];
                                 hc8K[n8K][4] = sother[1];
                                 hc8K[n8K][5] = unc[0];

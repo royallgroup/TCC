@@ -1,3 +1,4 @@
+#include "simple_cluster_methods.h"
 #include "8B.h"
 #include "globals.h"
 #include "bonds.h"
@@ -19,7 +20,7 @@ void Clusters_Get8B() {
             for (new_particle_pointer = 0; new_particle_pointer < num_bonds[primary_spindle]; ++new_particle_pointer) {
                 new_particle_id = bNums[primary_spindle][new_particle_pointer];
 
-                if(is_particle_in_7A(first_7A_id, new_particle_id) == 0) {
+                if(is_particle_in_cluster(first_7A_cluster, 7, new_particle_id) == 0) {
 
                     if (count_bonds_to_7A_ring(first_7A_id, new_particle_id) == 2) {
 
@@ -29,17 +30,6 @@ void Clusters_Get8B() {
             }
         }
     }
-}
-
-int is_particle_in_7A(int first_7A_id, int new_particle_id) {
-    int is_in_7A = 0;
-    for (int first_7A_pointer = 0; first_7A_pointer < 7; ++first_7A_pointer) {
-        if (new_particle_id == hcsp5c[first_7A_id][first_7A_pointer]) {
-            is_in_7A = 1;
-            break;
-        }
-    }
-    return is_in_7A;
 }
 
 int count_bonds_to_7A_ring(int first_7A_id, int new_particle_id) {

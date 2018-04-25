@@ -3,8 +3,6 @@
 
 void Clusters_Get11A();
 
-int count_common_spindle_particles(const int *first6A, const int *second6A, int *scom);
-
 void get_non_common_spindles(const int *first6A, const int *second6A, int scom, int *sother);
 
 int Check_unique_6A_rings(const int *first_6A, const int *second_6A);

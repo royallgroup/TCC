@@ -5,19 +5,19 @@
 
 void Clusters_Get6Z() {
 
-     //!  A 6Z is made of two overlapping 5A clusters.
-     /*!
-     *  Find 6Z clusters
-     *  6Z is made from two overlapping 5A particles where:
-     *  - The are no common spindles between the two 5A clusters.
-     *  - One spindle of 5Ai is common with a sp3 ring particle of 5Aj.
-     *  - One spindle of 5Aj is common with a sp3 ring particle of 5Ai.
-     *  - The spindles in the two sp3 rings are bonded.
-     *  - Two particles are common between the sp3 rings of 5Ai and 5Aj.
-     *
-     *  Cluster output: OOOBBB
-     *  Storage order:  bonded spindle i, non-bonded spindle i, bonded spindle j, non-bonded spindle j, common ring x 2
-     */
+    //!  A 6Z is made of two overlapping 5A clusters.
+    /*!
+    *  Find 6Z clusters
+    *  6Z is made from two overlapping 5A particles where:
+    *  - The are no common spindles between the two 5A clusters.
+    *  - One spindle of 5Ai is common with a sp3 ring particle of 5Aj.
+    *  - One spindle of 5Aj is common with a sp3 ring particle of 5Ai.
+    *  - The spindles in the two sp3 rings are bonded.
+    *  - Two particles are common between the sp3 rings of 5Ai and 5Aj.
+    *
+    *  Cluster output: OOOBBB
+    *  Storage order:  bonded spindle i, non-bonded spindle i, bonded spindle j, non-bonded spindle j, common ring x 2
+    */
 
     int first_spindles[2], second_spindles[2], common_ring_particles[2];
     int *first_5A_cluster, *second_5A_cluster;
