@@ -3,11 +3,13 @@
 
 void Clusters_Get8A();
 
-void method_1();
+void get_first_8A_type();
 
-void method_2();
+void get_second_8A_type();
 
-void method_3();
+void get_third_8A_type();
+
+int check_unique_cluster(const int *trial);
 
 void Cluster_Write_8A(const int *trial);
 
