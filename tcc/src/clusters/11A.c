@@ -8,10 +8,11 @@ void Clusters_Get11A() {
 
     int first_6A_id, second_6A_id;
     int *first_6A, *second6A;
-    int scom[2], sother[2];
+    int common_spindle_ids[2], uncommon_spindle_ids[2];
     int first_6A_spindle_pointer;
     int first_6A_spindle_ID;
     int mem_pointer;
+    int common_ring_particles[2];
 
     for (first_6A_id = 0; first_6A_id < nsp4c; first_6A_id++) {
         first_6A = hcsp4c[first_6A_id];
@@ -21,11 +22,11 @@ void Clusters_Get11A() {
                 second_6A_id = mem_sp4c[first_6A_spindle_ID][mem_pointer];
                 if (second_6A_id > first_6A_id) {
                     second6A = hcsp4c[second_6A_id];
-                    if (count_common_spindle_particles(first_6A, second6A, 6, 6, scom) == 1) {
-                        get_non_common_spindles(first_6A, second6A, scom[0], sother);
-                        if (Check_unique_6A_rings(first_6A, second6A) == 0) {
+                    if (count_common_spindle_particles(first_6A, second6A, 6, 6, common_spindle_ids) == 1) {
+                        get_non_common_spindles(first_6A, second6A, common_spindle_ids[0], uncommon_spindle_ids);
+                        if (count_common_ring_particles(first_6A, second6A, 4, 4, common_ring_particles) == 0) {
                             if (Check_6A_rings_bonded(first_6A, second6A) == 1) {
-                                Cluster_Write_11A(first_6A, second6A, sother, scom[0]);
+                                Cluster_Write_11A(first_6A, second6A, uncommon_spindle_ids, common_spindle_ids[0]);
                             }
                         }
                     }
@@ -67,21 +68,6 @@ int Check_6A_rings_bonded(const int *first_6A, const int *second_6A) {
         }
     }
     return 1;
-}
-
-int Check_unique_6A_rings(const int *first_6A, const int *second_6A) {
-    // Check that there are no common ring particles between two 6As.
-    // Return 1 if the two 6A rings share a particle, else return 0
-    int first_ring, second_ring;
-
-    for(first_ring=0; first_ring<4; ++first_ring) {
-        for(second_ring=0; second_ring<4; ++second_ring) {
-            if(first_6A[first_ring] == second_6A[second_ring]) {
-                return 1;
-            }
-        }
-    }
-    return 0;
 }
 
 void Cluster_Write_11A(const int *first_6A, const int *second_6A, const int *sother, const int scom) {
