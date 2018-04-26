@@ -18,8 +18,7 @@ extern int* num_cluster_list[];   // A list of pointers to the nclusts variables
 extern char** raw_list[];         // A list of pointers to the "s" raw storage variables
 extern int*** cluster_list[];     // A list of pointers to the "hc" cluster storage variables
 extern int* cluster_list_width[]; // A list of pointers to the "m" storage width variables
-extern int eleven_A_number;
-extern int thirteen_A_number;
+
 
 struct xyz_info {
     int total_frames;
@@ -47,6 +46,8 @@ int doWriteClus;    // write out indices of each detected cluster
 int doWriteRaw; // write raw_*** cluster xmol files out
 int do11AcenXyz; // write centres of 11A
 int do13AcenXyz; // write centres of 13A
+int eleven_A_number; // The location of the 11A cluster in the cluster list
+int thirteen_A_number;
 int doWritePopPerFrame; // write pop_per_frame file
 int doWriteXYZ; // Write clusters as XYZ file
 

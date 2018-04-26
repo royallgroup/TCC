@@ -216,7 +216,7 @@ void Write_Pop_Per_Frame(int f) {
     }
 }
 
-void write_output_files(int current_frame_number, int eleven_A_number, int thirteen_A_number) {
+void write_output_files(int current_frame_number) {
     count_number_of_clusters();
     count_frame_cluster_population(current_frame_number);
 

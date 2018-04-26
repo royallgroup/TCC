@@ -296,6 +296,12 @@ void setup_cluster_lists() {
     num_cluster_types = 0;
 
     while(strcmp(cluster_names[num_cluster_types], "-1") != 0) {
+        if (strcmp(cluster_names[num_cluster_types], "11A") == 0) {
+            eleven_A_number = num_cluster_types;
+        }
+        else if (strcmp(cluster_names[num_cluster_types], "11A") == 0) {
+            thirteen_A_number = num_cluster_types;
+        }
         num_cluster_types += 1;
     }
 
