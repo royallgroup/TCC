@@ -1,13 +1,13 @@
 #include "simple_cluster_methods.h"
 
-int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size,
+int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int cluster_1_ring_particles, int cluster_2_ring_particles,
                                 int *common_particle_ids) {
     //!  Count number of common ring particles between two clusters and get thier ids
     /*!
    *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
    *  \param cluster_2 - a pointer to a cluster stored in an hc memory array
-   *  \param cluster_1_size - the number of ring particles in cluster 1
-   *  \param cluster_2_size - the number of ring particles in cluster 2
+   *  \param cluster_1_ring_particles - the number of ring particles in cluster 1
+   *  \param cluster_2_ring_particles - the number of ring particles in cluster 2
    *  \param common_particle_ids - a pointer to an array of length num_particles_in_ring, ids of common particles will be written to this array
    *  \return an integer giving the number of common ring particles between the clusters
    *
@@ -16,8 +16,8 @@ int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int 
    */
 
     int num_common_particles = 0;
-    for (int first_ring_pointer = 0; first_ring_pointer < cluster_1_size; ++first_ring_pointer) {
-        for (int second_ring_pointer = 0; second_ring_pointer < cluster_2_size; ++second_ring_pointer) {
+    for (int first_ring_pointer = 0; first_ring_pointer < cluster_1_ring_particles; ++first_ring_pointer) {
+        for (int second_ring_pointer = 0; second_ring_pointer < cluster_2_ring_particles; ++second_ring_pointer) {
             if (cluster_1[first_ring_pointer] == cluster_2[second_ring_pointer]) {
                 common_particle_ids[num_common_particles] = cluster_1[first_ring_pointer];
                 num_common_particles++;
