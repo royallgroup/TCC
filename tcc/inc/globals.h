@@ -100,7 +100,7 @@ int do10A, do10B, do10K, do10W;
 int do11A, do11B, do11C, do11E, do11F, do11W;
 int do12A, do12B, do12D, do12E, do12K;
 int do13A, do13B, do13K;
-int doFCC, doHCP, doBCC9, doBCC15;
+int doFCC, doHCP, doBCC9;
 
 // number of clusters of particlar type in current frame
 int nsp3a, nsp3b, nsp3c;
@@ -113,7 +113,7 @@ int n10A, n10B, n10K, n10W;
 int n11A, n11B, n11C, n11E, n11F, n11W;
 int n12A, n12B, n12D, n12E, n12K;
 int n13A, n13B, n13K;
-int nFCC, nHCP, nBCC_9, nBCC_15;
+int nFCC, nHCP, nBCC_9;
 
 // max size of cluster storage arrays in dimension i
 int msp3a, msp3b, msp3c;
@@ -126,7 +126,7 @@ int m10A, m10B, m10K, m10W;
 int m11A, m11B, m11C, m11E, m11F, m11W;
 int m12A, m12B, m12D, m12E, m12K;
 int m13A, m13B, m13K;
-int mFCC, mHCP, mBCC_9, mBCC_15;
+int mFCC, mHCP, mBCC_9;
 
 // cluster storage arrays (index i denotes number/identifier of cluster, j lists particles in cluster)
 int **hcsp3a, **hcsp3b, **hcsp3c;
@@ -139,7 +139,7 @@ int **hc10A, **hc10B, **hc10K, **hc10W;
 int **hc11A, **hc11B, **hc11C, **hc11E, **hc11F, **hc11W;
 int **hc12A, **hc12B, **hc12D, **hc12E, **hc12K;
 int **hc13A, **hc13B, **hc13K;
-int **hcFCC, **hcHCP, **hcBCC_9, **hcBCC_15;
+int **hcFCC, **hcHCP, **hcBCC_9;
 
 // Raw lists of particle identity, output to RAW_clust files and reset each frame
 char *ssp3a, *ssp3b, *ssp3c;
@@ -152,7 +152,7 @@ char *s10A, *s10B, *s10K, *s10W;
 char *s11A, *s11B, *s11C, *s11E, *s11F, *s11W;
 char *s12A, *s12B, *s12D, *s12E, *s12K;
 char *s13A, *s13B, *s13K;
-char *sFCC, *sHCP, *sBCC_9, *sBCC_15;
+char *sFCC, *sHCP, *sBCC_9;
 
 // mem lists the clusters of that type each particle is in, index i is the particle index, j is the cluster id
 // nmem lists the number of clusters of that type each particle is in, index i is the number of particles

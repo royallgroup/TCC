@@ -247,7 +247,6 @@ void check_null_pointer(void *pointer, char *pointer_name) {
 
 void analyse_cluster_dependencies() {
 
-    if(doBCC15 == 1) dosp4c = 1;
     if(doBCC9 == 1) dosp4b = dosp4c = 1;
     if(doFCC == 1) dosp3b = dosp3c = 1;
     if(doHCP == 1) dosp3c = 1;
