@@ -46,7 +46,6 @@ void Clusters_Get11C() {
                                 // two bonds between non-common SP5 ring particles
                                 if (count_bonded_ring_particles_11C(common_ring_particles, first_7A_cluster, second_7A_cluster) == 2) {
 
-
                                     int clusSize = 11;
 
                                     if (n11C == m11C) {
@@ -65,8 +64,7 @@ void Clusters_Get11C() {
                                     m = 7;
                                     break_out = 0;
                                     for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(first_7A_cluster[k], common_ring_particles[0]) &&
-                                            first_7A_cluster[k] != common_ring_particles[1]) {
+                                        if (Bonds_BondCheck(first_7A_cluster[k], common_ring_particles[0]) && first_7A_cluster[k] != common_ring_particles[1]) {
                                             if (l == 7) {
                                                 break_out = 1;
                                                 break;
@@ -76,8 +74,7 @@ void Clusters_Get11C() {
                                         }
                                     }
                                     for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(first_7A_cluster[k], common_ring_particles[1]) &&
-                                            first_7A_cluster[k] != common_ring_particles[0]) {
+                                        if (Bonds_BondCheck(first_7A_cluster[k], common_ring_particles[1]) && first_7A_cluster[k] != common_ring_particles[0]) {
                                             if (l == 7) {
                                                 break_out = 1;
                                                 break;
@@ -87,8 +84,7 @@ void Clusters_Get11C() {
                                         }
                                     }
                                     for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(second_7A_cluster[k], common_ring_particles[0]) &&
-                                            second_7A_cluster[k] != common_ring_particles[1]) {
+                                        if (Bonds_BondCheck(second_7A_cluster[k], common_ring_particles[0]) && second_7A_cluster[k] != common_ring_particles[1]) {
                                             if (m == 9) {
                                                 break_out = 1;
                                                 break;
@@ -98,8 +94,7 @@ void Clusters_Get11C() {
                                         }
                                     }
                                     for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(second_7A_cluster[k], common_ring_particles[1]) &&
-                                            second_7A_cluster[k] != common_ring_particles[0]) {
+                                        if (Bonds_BondCheck(second_7A_cluster[k], common_ring_particles[1]) && second_7A_cluster[k] != common_ring_particles[0]) {
                                             if (m == 9) {
                                                 break_out = 1;
                                                 break;
