@@ -5,6 +5,7 @@
 #include "tools.h"
 
 void Clusters_Get12A() {
+
     //!  A 12A is an 11C with an extra particle bonded to only 3 specific particles in the 11C.
     /*!
    *  Find 12A clusters
@@ -17,6 +18,7 @@ void Clusters_Get12A() {
    *  Storage order: as_for_11C x 11, extra_particle
    *
    */
+
     int first_11C_id;
     int extra_particle;
 

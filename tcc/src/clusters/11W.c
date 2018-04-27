@@ -13,8 +13,8 @@ void Clusters_Get11W() {
    *      - The additional particle is not bonded to any of the distinct spindles of the 7A clusters
    *        constituting the 10B cluster.
    *
-   *  Cluster output: BOOOOOOBBBB
-   *  Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4)
+   *  Cluster output: BBBBBBBBBBO
+   *  Storage order: as_for_10B x 10, extra_particle
    *
    */
 
