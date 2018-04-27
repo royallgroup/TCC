@@ -100,8 +100,25 @@ int count_common_spindle_particles(const int *cluster_1, const int *cluster_2, i
     return num_common_spindles;
 }
 
+int get_uncommon_spindle(const int *cluster, int cluster_size, int common_spindle_id) {
+    //!  Get the id of the uncommon spindle in an sp3c, sp4c or sp5c cluster
+    /*!
+   *  \param cluster - a pointer to a cluster stored in an hc memory array
+   *  \param cluster_size - the number of particles in cluster
+   *  \param common_spindle_id - the id of the common particle
+   *  \return the id_of the uncommon spindle
+   */
+
+    if (common_spindle_id == cluster[cluster_size - 2]) {
+        return cluster[cluster_size - 1];
+    }
+    else {
+        return cluster[cluster_size - 2];
+    }
+}
+
 int is_particle_in_cluster(const int *cluster, int cluster_size, int particle_id) {
-    //!  Function to determine if a particle id exists within a cluster
+    //!  Determine if a particle id exists within a cluster
     /*!
    *  \param cluster - a pointer to a cluster stored in an hc memory array
    *  \param cluster_size - the number of particles in cluster
