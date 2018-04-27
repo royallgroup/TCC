@@ -21,30 +21,27 @@ void Clusters_Get9A() {
 
     for (int first_sp4b_id = 0; first_sp4b_id < nsp4b; ++first_sp4b_id) {
         int *first_sp4b_cluster = hcsp4b[first_sp4b_id];
+
         for (int second_sp4b_pointer = 0; second_sp4b_pointer < nmem_sp4b[first_sp4b_cluster[0]]; ++second_sp4b_pointer) {
             int second_sp4b_id = mem_sp4b[first_sp4b_cluster[0]][second_sp4b_pointer];
             int *second_sp4b_cluster = hcsp4b[second_sp4b_id];
+
             if (second_sp4b_id > first_sp4b_id) {
-                // Spindles should not be common
-                if (first_sp4b_cluster[4] != second_sp4b_cluster[4]) {
-                    // Spindles should not be bonded
-                    if (Bonds_BondCheck(first_sp4b_cluster[4], second_sp4b_cluster[4]) == 0) {
+                if(check_spindles_are_uncommon_and_unbonded(first_sp4b_cluster, second_sp4b_cluster)) {
+                    if (count_common_ring_particles(first_sp4b_cluster, second_sp4b_cluster, 4, 4, i_j_common_ring_particles) == 2) {
+                        if (count_bonded_ring_particles(first_sp4b_cluster, second_sp4b_cluster, i_j_common_ring_particles, i_j_uncommon_ring_particles) == 4) {
 
-                        // Check there are two common particles between the rings of the two clusters
-                        if (count_common_ring_particles(first_sp4b_cluster, second_sp4b_cluster, 4, 4, i_j_common_ring_particles) == 2) {
+                            for (int third_sp4b_pointer = 0; third_sp4b_pointer < nmem_sp4b[i_j_uncommon_ring_particles[0]]; ++third_sp4b_pointer) {
+                                int third_sp4b_id = mem_sp4b[i_j_uncommon_ring_particles[0]][third_sp4b_pointer];
+                                int *third_sp4b_cluster = hcsp4b[third_sp4b_id];
 
-                            if (count_bonded_ring_particles(first_sp4b_cluster, second_sp4b_cluster, i_j_common_ring_particles, i_j_uncommon_ring_particles) == 4) {
-
-                                // POSSIBLE IMPROVEMENT!! could make detection faster here by looping over sp4b clusters bonded to uncommon particles to sp4b_i
-                                for (int third_sp4b_id = second_sp4b_id + 1; third_sp4b_id < nsp4b; third_sp4b_id++) {
-                                    int *third_sp4b_cluster = hcsp4b[third_sp4b_id];
-                                    // ERROR!! need to check spindle of sp4b_k distinct from spindles of sp4b_i and sp4b_j and no bonds between these three particles
-
-                                    int tmp[4];
-                                    if (count_common_ring_particles(third_sp4b_cluster, i_j_uncommon_ring_particles, 4, 4, tmp) == 4) {
-
-                                        Cluster_Write_9A(first_sp4b_cluster, second_sp4b_cluster, third_sp4b_cluster, i_j_common_ring_particles, i_j_uncommon_ring_particles);
-                                        break;
+                                if (check_spindles_are_uncommon_and_unbonded(first_sp4b_cluster, second_sp4b_cluster)) {
+                                    if (check_spindles_are_uncommon_and_unbonded(first_sp4b_cluster, second_sp4b_cluster)) {
+                                        int tmp[4];
+                                        if (count_common_ring_particles(third_sp4b_cluster, i_j_uncommon_ring_particles, 4, 4, tmp) == 4) {
+                                            Cluster_Write_9A(first_sp4b_cluster, second_sp4b_cluster, third_sp4b_cluster, i_j_common_ring_particles, i_j_uncommon_ring_particles);
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -53,6 +50,18 @@ void Clusters_Get9A() {
                 }
             }
         }
+    }
+}
+
+int check_spindles_are_uncommon_and_unbonded(int *cluster_1, int *cluster_2) {
+    // Returns 1 if spindles of sp4b have different particle ids and they are not bonded.
+
+    if (cluster_1[4] == cluster_2[4]) {
+        return 0;
+    } else if (Bonds_BondCheck(cluster_1[4], cluster_2[4])) {
+        return 0;
+    } else {
+        return 1;
     }
 }
 
