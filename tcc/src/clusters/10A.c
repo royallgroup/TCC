@@ -3,7 +3,19 @@
 #include <bonds.h>
 #include "10A.h"
 
-void Clusters_Get10A() { // Detect 10A D4d clusters
+void Clusters_Get10A() {
+    //!  An 10A cluster is the two bonded sp4b clusters with no common particles.
+    /*!
+   *  Find 10A clusters
+   *  An 10A is 2 sp4b clusters where:
+   *      - There are no common particles.
+   *      - The spindles are not bonded.
+   *      - Each particle in each sp4 ring is bonded to exactly two particles in the other sp4 ring
+   *
+   *  Cluster output: BBBBBBOOO
+   *  Storage order: ring particles x 8, spindles x 2
+   */
+
     int i, j, j2, k, l, m;
     int clusSize=10;
     int *used_sp4b;

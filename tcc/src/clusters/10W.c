@@ -2,7 +2,18 @@
 #include "globals.h"
 #include "tools.h"
 
-void Clusters_Get10W() { // Detect 10W clusters
+void Clusters_Get10W() {
+    //!  An 10W cluster is the intersection six sp5b which all share one spindle.
+    /*!
+   *  Find 10W clusters
+   *  An 10W is six sp5b clusters where:
+   *      - All clusters share the same spindle
+   *      - The coordination number of this common spindle is 9.
+   *
+   *  Cluster output: BBBBBBBBBS
+   *  Storage order: central_spindle_particle, shell_particles x 9
+   */
+
     int i, j, k, l, m;
     int sp5b_clusts[5], shell_parts[9];
     int clusSize=10;
@@ -53,7 +64,6 @@ void Clusters_Get10W() { // Detect 10W clusters
             hc10W= resize_2D_int(hc10W, m10W, m10W + incrStatic, clusSize, -1);
             m10W= m10W + incrStatic;
         }
-        // hc10W key: (sp5bs_common_central_spindle_particle, sp5bs_SP5_ring_shell_particles)
         hc10W[n10W][0] = hcsp5b[i][5];
         for (j=0; j<9; j++) hc10W[n10W][j + 1]=shell_parts[j];
         quickSort(&hc10W[n10W][1], 9);
