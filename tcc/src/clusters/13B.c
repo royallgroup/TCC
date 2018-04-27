@@ -10,21 +10,28 @@ void Clusters_Get13B() {
 
     for(int first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id){
         int *first_7A_cluster = hcsp5c[first_7A_id];
-        for(int second_7A_id = first_7A_id + 1; second_7A_id < nsp5c; ++second_7A_id){
-            int *second_7A_cluster = hcsp5c[second_7A_id];
 
-            if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, common_spindle_id) == 1) {
-                get_uncommon_spindle_particles(first_7A_cluster, second_7A_cluster, common_spindle_id[0], uncommon_spindle_ids);
+        for (int spindle_pointer = 0; spindle_pointer < 2; ++spindle_pointer) {
+            int spindle_id = first_7A_cluster[5 + spindle_pointer];
+            for (int second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[spindle_id]; second_7A_pointer++) {
+                int second_7A_id = mem_sp5c[spindle_id][second_7A_pointer];
+                if (first_7A_id > second_7A_id) {
+                    int *second_7A_cluster = hcsp5c[second_7A_id];
 
-                if(Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
+                    if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, common_spindle_id) == 1) {
+                        get_uncommon_spindle_particles(first_7A_cluster, second_7A_cluster, common_spindle_id[0], uncommon_spindle_ids);
 
-                    if (check_rings_are_uncommon(first_7A_cluster, second_7A_cluster) == 1) {
+                        if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
 
-                        if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 1) {
+                            if (check_rings_are_uncommon(first_7A_cluster, second_7A_cluster) == 1) {
 
-                            if (check_rings_are_bonded(second_7A_cluster, first_7A_cluster) == 1) {
+                                if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 1) {
 
-                                Cluster_Write_13B(first_7A_cluster, second_7A_cluster, common_spindle_id[0], uncommon_spindle_ids);
+                                    if (check_rings_are_bonded(second_7A_cluster, first_7A_cluster) == 1) {
+
+                                        Cluster_Write_13B(first_7A_cluster, second_7A_cluster, common_spindle_id[0], uncommon_spindle_ids);
+                                    }
+                                }
                             }
                         }
                     }
