@@ -5,6 +5,7 @@
 #include "tools.h"
 
 void Clusters_Get8B() {
+
     //!  An 8B cluster is an 7A cluster with an extra particle attached.
     /*!
    *  Find 8B clusters

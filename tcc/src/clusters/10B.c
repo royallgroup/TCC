@@ -4,6 +4,7 @@
 #include "10B.h"
 
 void Clusters_Get10B(int i, int j) {        // Return 1 if 9B is also 10B cluster
+
     //!  An 10B cluster is the intersection of a 9B and a 7A cluster.
     /*!
    *  Find 10B clusters

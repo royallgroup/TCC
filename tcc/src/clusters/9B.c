@@ -7,6 +7,7 @@
 #include "9B.h"
 
 void Clusters_Get9B_10B_11B_11E_12D() {
+
     //!  An 9B cluster is the intersection of 7A clusters shraing a spindle and two ring particles.
     /*!
    *  Find 9B clusters

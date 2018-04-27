@@ -4,6 +4,7 @@
 #include "tools.h"
 
 int Clusters_Get11B() {
+
     //!  An 11B cluster is 9B with two additional particles.
     /*!
    *  Find 11B clusters
@@ -18,6 +19,7 @@ int Clusters_Get11B() {
    *  Cluster output: BBBBBBOOSBB
    *  Storage order: as_for_9B x 9, extra_particles x 2
    */
+
     int k, l, m;
     int b1[2], b2[2], nb1, nb2;
     int ep[2]; // The two extra particles

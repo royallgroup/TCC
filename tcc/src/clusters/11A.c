@@ -5,6 +5,7 @@
 #include "bonds.h"
 
 void Clusters_Get11A() {
+
     //!  An 11A cluster is the intersection two 6A clusters with a common spindle
     /*!
    *  Find 11A clusters

@@ -4,6 +4,7 @@
 #include "tools.h"
 
 void Clusters_Get8K() {
+
     //!  An 8K cluster is the intersection of 3 5A clusters.
     /*!
    *  Find 8K clusters
@@ -15,7 +16,6 @@ void Clusters_Get8K() {
    *  Cluster output: OOBBBBBB
    *  Storage order: common_ring_particles x2, spindles x 3, uncommon_ring_particles x 3
    */
-
 
     int k, l, m, n;
     int common_ring_particle_ids[2], uncommon_ring_particle_ids[3], common_spindle_ids[2], other_spindle_ids[2];

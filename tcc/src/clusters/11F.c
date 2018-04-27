@@ -5,7 +5,23 @@
 #include "12E.h"
 #include "13K.h"
 
-void Clusters_Get11F_12E_13K() {   // Detect 11F C2v & 12E 3h
+void Clusters_Get11F_12E_13K() {
+
+    //!  An 11F cluster is the intersection of two 5A and two 6A clusters
+    /*!
+   *  Find 11F clusters
+   *  An 11E is constructed from two 5A two 6A clusters where:
+   *      - Each spindle of 5Ai is bonded to a spindle of 5Aj.
+   *      - There is one common ring particle between the 5A clusters.
+   *      - There is one bonded pair of ring particle between the 5A clusters.
+   *      - Both 6As have one distinct spindle and one spindle which is the common ring particle of the 5As.
+   *      - Each 6A has two bonded 5A spindles and two bonded 5A ring particles as its ring.
+   *
+   *  Cluster output: BOOOOOOBBBB
+   *  Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4)
+   *
+   */
+
     int first_5A_ring_pointer;
 
     int first_5A_id, second_5A_id, second_5A_pointer;
@@ -198,8 +214,6 @@ void write_11F(int common_particle, int ep1, int ep2, const int *first_5A, const
         hc11F = resize_2D_int(hc11F, m11F, m11F + incrStatic, clusSize, -1);
         m11F = m11F + incrStatic;
     }
-
-    // hc11F key: (com, ep1(6A extra spindle), ep2(6A extra spindle), 5A_i_s1, 5A_i_s2, 5A_j_s1, 5A_j_s2, 4 ring particles)
 
     hc11F[n11F][0] = common_particle;
     hc11F[n11F][1] = ep1;
