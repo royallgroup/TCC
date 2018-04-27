@@ -3,7 +3,7 @@
 
 void Clusters_Get12E();
 
-int get_uncommon_5A_ring_particle(const int *common, const int *new_5A_cluster);
+int get_uncommon_5A_ring_particle(const int *common_particle_ids, const int *new_5A_cluster);
 
 void Raw_Write_12E(const int* parent11F, int uncommon_sp3_ring_particle);
 

@@ -3,13 +3,21 @@
 #include "bonds.h"
 #include "tools.h"
 
-int Clusters_Get11B() { // Detect 11B C2v clusters
-    //  11B is very similar to 11C & 11D
-    // Call from 9B, the central particle must have 11 particles bonded to it.
-    // The 10th & 11th particles are bonded to each other. They are both bonded
-    // to 2 other shell particles which aren't bonded to each other. These
-    // bonded shell particles are distict i.e. there are 4 of
-    // them. The extra 2 particles form 4 sp4 rings in the shell.
+int Clusters_Get11B() {
+    //!  An 11B cluster is 9B with two additional particles.
+    /*!
+   *  Find 11B clusters
+   *  An 11A is a 9B and two extra particles where:
+   *      - The common spindle particle from the 9B cluster has coordination number 10.
+   *      - The two additional particles are bonded to each other and to the common spindle particle of 9B.
+   *      - Each additional particle is bonded to two more particles in the shell of the 9B cluster,
+   *        leading to a total of four bonds between the additional particles and 9B.
+   *      - For each additional particle, the two shell particles to which they are bonded are not themselves bonded.
+   *      - The four shell particles of the 9B cluster that are bonded to the two additional particles form two pairs that are neighbours.
+   *
+   *  Cluster output: BBBBBBOOSBB
+   *  Storage order: as_for_9B x 9, extra_particles x 2
+   */
     int k, l, m;
     int b1[2], b2[2], nb1, nb2;
     int ep[2]; // The two extra particles
@@ -91,7 +99,7 @@ int Clusters_Get11B() { // Detect 11B C2v clusters
 }
 
 void Cluster_Write_11B() {
-    // hc11B key: (as 9B, ep_1_to_9B_0, ep_2_to_9B_1)
+
     int i;
     for(i=0; i<6; i++) {
         if (s11B[hc11B[n11B][i]] == 'C') s11B[hc11B[n11B][i]] = 'B';
