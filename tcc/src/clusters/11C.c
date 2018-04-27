@@ -16,10 +16,10 @@ void Clusters_Get11C() {
    *  Storage order: common_spindle x 1, uncommon_spindles x 2, common_ring_particles x 2,
    */
 
-    int common_ring_particles[5],uncommon_spindle[2];
-    int k, l, m;
+    int common_ring_particles[5];
+    int uncommon_spindle[2];
     int common_spindle[2];
-    int break_out;
+
 
     int second_7A_pointer;
 
@@ -46,51 +46,45 @@ void Clusters_Get11C() {
                                 // two bonds between non-common SP5 ring particles
                                 if (count_bonded_ring_particles_11C(common_ring_particles, first_7A_cluster, second_7A_cluster) == 2) {
 
-                                    int clusSize = 11;
-
-                                    if (n11C == m11C) {
-                                        hc11C = resize_2D_int(hc11C, m11C, m11C + incrStatic, clusSize, -1);
-                                        m11C = m11C + incrStatic;
-                                    }
-
+                                    int trial[11];
                                     // hc11C key: (s_com, s_i, s_j, r_ca, r_cb, d_i, d_i, d_j, d_j, unc_i, unc_j)
-                                    hc11C[n11C][0] = common_spindle[0];
-                                    hc11C[n11C][1] = uncommon_spindle[0];
-                                    hc11C[n11C][2] = uncommon_spindle[1];
-                                    hc11C[n11C][3] = common_ring_particles[0];
-                                    hc11C[n11C][4] = common_ring_particles[1];
+                                    trial[0] = common_spindle[0];
+                                    trial[1] = uncommon_spindle[0];
+                                    trial[2] = uncommon_spindle[1];
+                                    trial[3] = common_ring_particles[0];
+                                    trial[4] = common_ring_particles[1];
 
                                     int first_bonded_particles[3];
                                     int second_bonded_particles[3];
                                     if (count_particles_bonded_to_common(first_7A_cluster, common_ring_particles, first_bonded_particles) == 2) {
                                         if (count_particles_bonded_to_common(second_7A_cluster, common_ring_particles, second_bonded_particles) == 2) {
 
-                                            hc11C[n11C][5] = first_bonded_particles[0];
-                                            hc11C[n11C][6] = first_bonded_particles[1];
-                                            hc11C[n11C][7] = second_bonded_particles[0];
-                                            hc11C[n11C][8] = second_bonded_particles[1];
+                                            trial[5] = first_bonded_particles[0];
+                                            trial[6] = first_bonded_particles[1];
+                                            trial[7] = second_bonded_particles[0];
+                                            trial[8] = second_bonded_particles[1];
 
                                             // Check that the bonded non-common particles are bonded
-                                            if (Bonds_BondCheck(hc11C[n11C][5], hc11C[n11C][7]) == 0) continue;
-                                            if (Bonds_BondCheck(hc11C[n11C][6], hc11C[n11C][8]) == 0) continue;
+                                            if (Bonds_BondCheck(trial[5], trial[7]) == 0) continue;
+                                            if (Bonds_BondCheck(trial[6], trial[8]) == 0) continue;
 
                                             // Get the ID's of the non-common particles
-                                            for (k = 0; k < 5; ++k) {
-                                                if (Bonds_BondCheck(first_7A_cluster[k], hc11C[n11C][5]) &&
-                                                    Bonds_BondCheck(first_7A_cluster[k], hc11C[n11C][6])) {
-                                                    hc11C[n11C][9] = first_7A_cluster[k];
+                                            for (int k = 0; k < 5; ++k) {
+                                                if (Bonds_BondCheck(first_7A_cluster[k], trial[5]) &&
+                                                    Bonds_BondCheck(first_7A_cluster[k], trial[6])) {
+                                                    trial[9] = first_7A_cluster[k];
                                                 }
-                                                if (Bonds_BondCheck(second_7A_cluster[k], hc11C[n11C][7]) &&
-                                                    Bonds_BondCheck(second_7A_cluster[k], hc11C[n11C][8])) {
-                                                    hc11C[n11C][10] = second_7A_cluster[k];
+                                                if (Bonds_BondCheck(second_7A_cluster[k], trial[7]) &&
+                                                    Bonds_BondCheck(second_7A_cluster[k], trial[8])) {
+                                                    trial[10] = second_7A_cluster[k];
                                                 }
                                             }
-                                            quickSort(&hc11C[n11C][1], 2);
-                                            quickSort(&hc11C[n11C][3], 2);
-                                            quickSort(&hc11C[n11C][5], 4);
-                                            quickSort(&hc11C[n11C][9], 2);
+                                            quickSort(&trial[1], 2);
+                                            quickSort(&trial[3], 2);
+                                            quickSort(&trial[5], 4);
+                                            quickSort(&trial[9], 2);
 
-                                            Cluster_Write_11C();
+                                            Cluster_Write_11C(trial);
 
                                             ++n11C;
                                         }
@@ -143,13 +137,22 @@ int count_bonded_ring_particles_11C(const int *common_ring_particles, const int 
     return num_bonded_ring_particles;
 }
 
-void Cluster_Write_11C() {
-    int i;
+void Cluster_Write_11C(int *trial) {
+    int clusSize = 11;
+
+    if (n11C == m11C) {
+        hc11C = resize_2D_int(hc11C, m11C, m11C + incrStatic, clusSize, -1);
+        m11C = m11C + incrStatic;
+    }
+
+    for (int i = 0; i < 11; ++i) {
+        hc11C[n11C][i] = trial[i];
+    }
 
     s11C[hc11C[n11C][0]] = 'S';
     if(s11C[hc11C[n11C][1]] != 'S') s11C[hc11C[n11C][1]] = 'O';
     if(s11C[hc11C[n11C][2]] != 'S') s11C[hc11C[n11C][2]] = 'O';
-    for(i=3; i< 11; i++) {
+    for(int i = 3; i < 11; i++) {
         if (s11C[hc11C[n11C][i]] == 'C') s11C[hc11C[n11C][i]] = 'B';
     }
 }
