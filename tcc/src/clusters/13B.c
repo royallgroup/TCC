@@ -19,7 +19,8 @@ void Clusters_Get13B() {
                     int *second_7A_cluster = hcsp5c[second_7A_id];
 
                     if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, common_spindle_id) == 1) {
-                        get_uncommon_spindle_particles(first_7A_cluster, second_7A_cluster, common_spindle_id[0], uncommon_spindle_ids);
+                        uncommon_spindle_ids[0] = get_uncommon_spindle(first_7A_cluster, 7, common_spindle_id[0]);
+                        uncommon_spindle_ids[1] = get_uncommon_spindle(second_7A_cluster, 7, common_spindle_id[0]);
 
                         if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
 
@@ -81,19 +82,6 @@ int check_rings_are_uncommon(const int *first_7A_cluster, const int *second_7A_c
         }
     }
     return 1;
-}
-
-void get_uncommon_spindle_particles(const int *first_7A_cluster, const int *second_7A_cluster, int common_spindle_id, int *uncommon_spindle_ids) {
-    if (first_7A_cluster[5] == common_spindle_id) {
-        uncommon_spindle_ids[0] = first_7A_cluster[6];
-    } else {
-        uncommon_spindle_ids[0] = first_7A_cluster[5];
-    }
-    if (second_7A_cluster[5] == common_spindle_id) {
-        uncommon_spindle_ids[1] = second_7A_cluster[6];
-    } else {
-        uncommon_spindle_ids[1] = second_7A_cluster[5];
-    }
 }
 
 void Cluster_Write_13B(const int *first_7A_cluster, const int *second_7A_cluster, int common_spindle_id, const int *uncommon_spindle_ids) {

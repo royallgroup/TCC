@@ -16,7 +16,7 @@ void Clusters_Get11A() {
    *  Cluster output: BBBBBBBBOOS
    *  Storage order: sp4_i x 4, sp4_j x 4, uncommon_spindles x 2, common_spindle
    */
-    int common_spindle_ids[2], uncommon_spindle_ids[2];
+    int common_spindle_id[2], uncommon_spindle_ids[2];
     int common_ring_particles[2];
 
     for (int first_6A_id = 0; first_6A_id < nsp4c; first_6A_id++) {
@@ -27,32 +27,18 @@ void Clusters_Get11A() {
                 int second_6A_id = mem_sp4c[first_6A_spindle_ID][mem_pointer];
                 if (second_6A_id > first_6A_id) {
                     int *second_6A_cluster = hcsp4c[second_6A_id];
-                    if (count_common_spindle_particles(first_6A_cluster, second_6A_cluster, 6, 6, common_spindle_ids) == 1) {
-                        get_uncommon_spindles(first_6A_cluster, second_6A_cluster, common_spindle_ids[0], uncommon_spindle_ids);
+                    if (count_common_spindle_particles(first_6A_cluster, second_6A_cluster, 6, 6, common_spindle_id) == 1) {
+                        uncommon_spindle_ids[0] = get_uncommon_spindle(first_6A_cluster, 6, common_spindle_id[0]);
+                        uncommon_spindle_ids[1] = get_uncommon_spindle(second_6A_cluster, 6, common_spindle_id[0]);
                         if (count_common_ring_particles(first_6A_cluster, second_6A_cluster, 4, 4, common_ring_particles) == 0) {
                             if (Check_6A_rings_bonded(first_6A_cluster, second_6A_cluster) == 1) {
-                                Cluster_Write_11A(first_6A_cluster, second_6A_cluster, uncommon_spindle_ids, common_spindle_ids[0]);
+                                Cluster_Write_11A(first_6A_cluster, second_6A_cluster, uncommon_spindle_ids, common_spindle_id[0]);
                             }
                         }
                     }
                 }
             }
         }
-    }
-}
-
-void get_uncommon_spindles(const int *first6A, const int *second6A, int scom, int *sother) {
-    if (scom == first6A[4]) {
-        sother[0] = first6A[5];
-    }
-    else {
-        sother[0] = first6A[4];
-    }
-    if (scom == second6A[4]) {
-        sother[1] = second6A[5];
-    }
-    else {
-        sother[1] = second6A[4];
     }
 }
 

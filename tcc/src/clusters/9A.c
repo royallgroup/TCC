@@ -65,20 +65,20 @@ int check_spindles_are_uncommon_and_unbonded(int *cluster_1, int *cluster_2) {
     }
 }
 
-int count_bonded_ring_particles(const int *first_sp4b_cluster, const int *second_sp4b_cluster, const int *db, int *ob) {
+int count_bonded_ring_particles(const int *first_sp4b_cluster, const int *second_sp4b_cluster, const int *common_ring_particles, int *uncommon_ring_particles) {
 
     int num_bonded_ring_particles = 0;
     for (int first_cluster_pointer = 0; first_cluster_pointer < 4; ++first_cluster_pointer) {
-        // find particles in SP4 ring of sp4b_i not common to SP4 ring of sp4b_j
-        if (first_sp4b_cluster[first_cluster_pointer] != db[0] && first_sp4b_cluster[first_cluster_pointer] != db[1]) {
+        int first_particle_id = first_sp4b_cluster[first_cluster_pointer];
+        if (is_particle_in_cluster(common_ring_particles, 2, first_particle_id) == 0) {
             for (int second_cluster_pointer = 0; second_cluster_pointer < 4; ++second_cluster_pointer) {
-                // find particles in SP4 ring of sp4b_j not common to SP4 ring of sp4b_i
-                if (second_sp4b_cluster[second_cluster_pointer] != db[0] && second_sp4b_cluster[second_cluster_pointer] != db[1]) {
-                    // check non-common SP4 ring particles from sp4b_i and sp4b_j are bonded
-                    if (Bonds_BondCheck(first_sp4b_cluster[first_cluster_pointer], second_sp4b_cluster[second_cluster_pointer])) {
-                        ob[num_bonded_ring_particles] = first_sp4b_cluster[first_cluster_pointer];
+                int second_particle_id = second_sp4b_cluster[second_cluster_pointer];
+                if (is_particle_in_cluster(common_ring_particles, 2, second_particle_id) == 0) {
+
+                    if (Bonds_BondCheck(first_particle_id, second_particle_id)) {
+                        uncommon_ring_particles[num_bonded_ring_particles] = first_particle_id;
                         num_bonded_ring_particles++;
-                        ob[num_bonded_ring_particles] = second_sp4b_cluster[second_cluster_pointer];
+                        uncommon_ring_particles[num_bonded_ring_particles] = second_particle_id;
                         num_bonded_ring_particles++;
                     }
                 }
@@ -88,8 +88,7 @@ int count_bonded_ring_particles(const int *first_sp4b_cluster, const int *second
     return num_bonded_ring_particles;
 }
 
-void Cluster_Write_9A(int *first_sp4b_cluster, int *second_sp4b_cluster, int *third_sp4b_cluster,
-                      int *i_j_common_ring_particles, int *i_j_uncommon_ring_particles) {
+void Cluster_Write_9A(int *first_sp4b_cluster, int *second_sp4b_cluster, int *third_sp4b_cluster, int *i_j_common_ring_particles, int *i_j_uncommon_ring_particles) {
 
     int clusSize = 9;
 
