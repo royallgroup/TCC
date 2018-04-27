@@ -3,6 +3,16 @@
 
 void Clusters_Get13B();
 
-void Cluster_Write_13B();
+int check_rings_are_bonded(const int *first_7A_cluster, const int *second_7A_cluster);
+
+int count_bonds_to_ring(int particle_id, const int *first_7A_cluster);
+
+int check_rings_are_uncommon(const int *first_7A_cluster, const int *second_7A_cluster);
+
+void get_uncommon_spindle_particles(const int *first_7A_cluster, const int *second_7A_cluster, int common_spindle_id,
+                                    int *uncommon_spindle_ids);
+
+void Cluster_Write_13B(const int *first_7A_cluster, const int *second_7A_cluster, int common_spindle_id,
+                       const int *uncommon_spindle_ids);
 
 #endif
