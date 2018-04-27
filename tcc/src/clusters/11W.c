@@ -1,4 +1,4 @@
-#include <clusters/simple_cluster_methods.h>
+#include "simple_cluster_methods.h"
 #include "11W.h"
 #include "globals.h"
 #include "bonds.h"

@@ -1,4 +1,4 @@
-#include <clusters/simple_cluster_methods.h>
+#include "simple_cluster_methods.h"
 #include "globals.h"
 #include "bonds.h"
 #include "tools.h"
@@ -13,7 +13,9 @@ void Clusters_Get11C() {
    *      - There are two more bonds between two pairs of distinct particles in the sp5 ring.
    *
    *  Cluster output: SOOBBBBBBBB
-   *  Storage order: common_spindle x 1, uncommon_spindles x 2, common_ring_particles x 2,
+   *  Storage order: common_spindle x 1, uncommon_spindles x 2, common_ring_1, common_ring_2,
+   *  uncommon_bonded_ring_1_i, uncommon_bonded_ring_2_i, uncommon_bonded_ring_1_j, uncommon_bonded_ring_2_j, uncommon_unbonded x 2
+   *
    */
 
     int common_ring_particles[5];
@@ -47,7 +49,6 @@ void Clusters_Get11C() {
                                 if (count_bonded_ring_particles_11C(common_ring_particles, first_7A_cluster, second_7A_cluster) == 2) {
 
                                     int trial[11];
-                                    // hc11C key: (s_com, s_i, s_j, r_ca, r_cb, d_i, d_i, d_j, d_j, unc_i, unc_j)
                                     trial[0] = common_spindle[0];
                                     trial[1] = uncommon_spindle[0];
                                     trial[2] = uncommon_spindle[1];
@@ -65,28 +66,30 @@ void Clusters_Get11C() {
                                             trial[8] = second_bonded_particles[1];
 
                                             // Check that the bonded non-common particles are bonded
-                                            if (Bonds_BondCheck(trial[5], trial[7]) == 0) continue;
-                                            if (Bonds_BondCheck(trial[6], trial[8]) == 0) continue;
+                                            if (Bonds_BondCheck(trial[5], trial[7]) == 1) {
+                                                if (Bonds_BondCheck(trial[6], trial[8]) == 1) {
 
-                                            // Get the ID's of the non-common particles
-                                            for (int k = 0; k < 5; ++k) {
-                                                if (Bonds_BondCheck(first_7A_cluster[k], trial[5]) &&
-                                                    Bonds_BondCheck(first_7A_cluster[k], trial[6])) {
-                                                    trial[9] = first_7A_cluster[k];
-                                                }
-                                                if (Bonds_BondCheck(second_7A_cluster[k], trial[7]) &&
-                                                    Bonds_BondCheck(second_7A_cluster[k], trial[8])) {
-                                                    trial[10] = second_7A_cluster[k];
+                                                    // Get the ID's of the non-common non-bonded particles
+                                                    for (int k = 0; k < 5; ++k) {
+                                                        if (Bonds_BondCheck(first_7A_cluster[k], trial[5]) &&
+                                                            Bonds_BondCheck(first_7A_cluster[k], trial[6])) {
+                                                            trial[9] = first_7A_cluster[k];
+                                                        }
+                                                        if (Bonds_BondCheck(second_7A_cluster[k], trial[7]) &&
+                                                            Bonds_BondCheck(second_7A_cluster[k], trial[8])) {
+                                                            trial[10] = second_7A_cluster[k];
+                                                        }
+                                                    }
+                                                    quickSort(&trial[1], 2);
+                                                    quickSort(&trial[3], 2);
+                                                    quickSort(&trial[5], 4);
+                                                    quickSort(&trial[9], 2);
+
+                                                    Cluster_Write_11C(trial);
+
+                                                    ++n11C;
                                                 }
                                             }
-                                            quickSort(&trial[1], 2);
-                                            quickSort(&trial[3], 2);
-                                            quickSort(&trial[5], 4);
-                                            quickSort(&trial[9], 2);
-
-                                            Cluster_Write_11C(trial);
-
-                                            ++n11C;
                                         }
                                     }
                                 }
