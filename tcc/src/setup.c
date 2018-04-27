@@ -247,7 +247,6 @@ void check_null_pointer(void *pointer, char *pointer_name) {
 
 void analyse_cluster_dependencies() {
 
-    if(doBCC15 == 1) dosp4c = 1;
     if(doBCC9 == 1) dosp4b = dosp4c = 1;
     if(doFCC == 1) dosp3b = dosp3c = 1;
     if(doHCP == 1) dosp3c = 1;
@@ -297,6 +296,12 @@ void setup_cluster_lists() {
     num_cluster_types = 0;
 
     while(strcmp(cluster_names[num_cluster_types], "-1") != 0) {
+        if (strcmp(cluster_names[num_cluster_types], "11A") == 0) {
+            eleven_A_number = num_cluster_types;
+        }
+        else if (strcmp(cluster_names[num_cluster_types], "11A") == 0) {
+            thirteen_A_number = num_cluster_types;
+        }
         num_cluster_types += 1;
     }
 

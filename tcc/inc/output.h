@@ -18,6 +18,6 @@ void Write_Cluster_Compostions(int f, int cluster_type);
 
 void Write_Pop_Per_Frame(int f);
 
-void write_output_files(int current_frame_number, int eleven_A_number, int thirteen_A_number);
+void write_output_files(int current_frame_number);
 
 #endif //TCC_OUTPUT_H
