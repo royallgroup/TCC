@@ -5,7 +5,7 @@ void Clusters_Get11F_12E_13K();
 
 int do_5As_have_distinct_spindles(const int *first_5A, const int *second_5A);
 
-void check_common_particle(int first_5A_cluster_id, int second_5A_pointer, int first_5A_ring_particle, const int *bonded_pairs);
+void check_common_particle(int first_5A_cluster_id, int second_5A_pointer, const int *bonded_pairs);
 
 int get_common_particle_between_5As(const int *first_5A, const int *second_5A);
 
@@ -17,8 +17,6 @@ int get_first_6A(const int *first_6A, int bpi, int bpj, int common_particle, int
 
 int get_second_6A(const int *first_6A, int bpi, int bpj, int common_particle, int *ep2, const int *bonded_pairs);
 
-void raw_write_11F(int common_particle, int ep1, int ep2, const int *first_5A, const int *second_5A);
-
-void cluster_write_11F();
+void write_11F(int common_particle, int ep1, int ep2, const int *first_5A, const int *second_5A);
 
 #endif
