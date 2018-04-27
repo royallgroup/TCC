@@ -60,74 +60,41 @@ void Clusters_Get11C() {
                                     hc11C[n11C][3] = common_ring_particles[0];
                                     hc11C[n11C][4] = common_ring_particles[1];
 
-                                    l = 5;
-                                    m = 7;
-                                    break_out = 0;
-                                    for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(first_7A_cluster[k], common_ring_particles[0]) && first_7A_cluster[k] != common_ring_particles[1]) {
-                                            if (l == 7) {
-                                                break_out = 1;
-                                                break;
-                                            }
-                                            hc11C[n11C][l] = first_7A_cluster[k];
-                                            l++;
-                                        }
-                                    }
-                                    for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(first_7A_cluster[k], common_ring_particles[1]) && first_7A_cluster[k] != common_ring_particles[0]) {
-                                            if (l == 7) {
-                                                break_out = 1;
-                                                break;
-                                            }
-                                            hc11C[n11C][l] = first_7A_cluster[k];
-                                            l++;
-                                        }
-                                    }
-                                    for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(second_7A_cluster[k], common_ring_particles[0]) && second_7A_cluster[k] != common_ring_particles[1]) {
-                                            if (m == 9) {
-                                                break_out = 1;
-                                                break;
-                                            }
-                                            hc11C[n11C][m] = second_7A_cluster[k];
-                                            m++;
-                                        }
-                                    }
-                                    for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(second_7A_cluster[k], common_ring_particles[1]) && second_7A_cluster[k] != common_ring_particles[0]) {
-                                            if (m == 9) {
-                                                break_out = 1;
-                                                break;
-                                            }
-                                            hc11C[n11C][m] = second_7A_cluster[k];
-                                            m++;
-                                        }
-                                    }
-                                    if (break_out == 1 || l < 7 || m < 9) continue;
+                                    int first_bonded_particles[3];
+                                    int second_bonded_particles[3];
+                                    if (count_particles_bonded_to_common(first_7A_cluster, common_ring_particles, first_bonded_particles) == 2) {
+                                        if (count_particles_bonded_to_common(second_7A_cluster, common_ring_particles, second_bonded_particles) == 2) {
 
-                                    // Check that the bonded non-common particles are bonded
-                                    if (Bonds_BondCheck(hc11C[n11C][5], hc11C[n11C][7]) == 0) continue;
-                                    if (Bonds_BondCheck(hc11C[n11C][6], hc11C[n11C][8]) == 0) continue;
+                                            hc11C[n11C][5] = first_bonded_particles[0];
+                                            hc11C[n11C][6] = first_bonded_particles[1];
+                                            hc11C[n11C][7] = second_bonded_particles[0];
+                                            hc11C[n11C][8] = second_bonded_particles[1];
 
-                                    // Get the ID's of the non-common particles
-                                    for (k = 0; k < 5; ++k) {
-                                        if (Bonds_BondCheck(first_7A_cluster[k], hc11C[n11C][5]) &&
-                                            Bonds_BondCheck(first_7A_cluster[k], hc11C[n11C][6])) {
-                                            hc11C[n11C][9] = first_7A_cluster[k];
-                                        }
-                                        if (Bonds_BondCheck(second_7A_cluster[k], hc11C[n11C][7]) &&
-                                            Bonds_BondCheck(second_7A_cluster[k], hc11C[n11C][8])) {
-                                            hc11C[n11C][10] = second_7A_cluster[k];
+                                            // Check that the bonded non-common particles are bonded
+                                            if (Bonds_BondCheck(hc11C[n11C][5], hc11C[n11C][7]) == 0) continue;
+                                            if (Bonds_BondCheck(hc11C[n11C][6], hc11C[n11C][8]) == 0) continue;
+
+                                            // Get the ID's of the non-common particles
+                                            for (k = 0; k < 5; ++k) {
+                                                if (Bonds_BondCheck(first_7A_cluster[k], hc11C[n11C][5]) &&
+                                                    Bonds_BondCheck(first_7A_cluster[k], hc11C[n11C][6])) {
+                                                    hc11C[n11C][9] = first_7A_cluster[k];
+                                                }
+                                                if (Bonds_BondCheck(second_7A_cluster[k], hc11C[n11C][7]) &&
+                                                    Bonds_BondCheck(second_7A_cluster[k], hc11C[n11C][8])) {
+                                                    hc11C[n11C][10] = second_7A_cluster[k];
+                                                }
+                                            }
+                                            quickSort(&hc11C[n11C][1], 2);
+                                            quickSort(&hc11C[n11C][3], 2);
+                                            quickSort(&hc11C[n11C][5], 4);
+                                            quickSort(&hc11C[n11C][9], 2);
+
+                                            Cluster_Write_11C();
+
+                                            ++n11C;
                                         }
                                     }
-                                    quickSort(&hc11C[n11C][1], 2);
-                                    quickSort(&hc11C[n11C][3], 2);
-                                    quickSort(&hc11C[n11C][5], 4);
-                                    quickSort(&hc11C[n11C][9], 2);
-
-                                    Cluster_Write_11C();
-
-                                    ++n11C;
                                 }
                             }
                         }
@@ -136,6 +103,24 @@ void Clusters_Get11C() {
             }
         }
     }
+}
+
+int count_particles_bonded_to_common(const int *cluster, const int *common_particles, int *bonded_particles) {
+
+    int num_bonds = 0;
+    for (int ring_pointer = 0; ring_pointer < 5; ++ring_pointer) {
+        int ring_particle_id = cluster[ring_pointer];
+        if (is_particle_in_cluster(common_particles, 2, ring_particle_id) == 0) {
+            if (Bonds_BondCheck(ring_particle_id, common_particles[0]) == 1) {
+                bonded_particles[0] = ring_particle_id;
+                num_bonds++;
+            } else if (Bonds_BondCheck(ring_particle_id, common_particles[1]) == 1) {
+                bonded_particles[1] = ring_particle_id;
+                num_bonds++;
+            }
+        }
+    }
+    return num_bonds;
 }
 
 int count_bonded_ring_particles_11C(const int *common_ring_particles, const int *first_7A_cluster, const int *second_7A_cluster) {
