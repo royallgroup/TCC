@@ -7,53 +7,52 @@
 void Clusters_Get12A() {
     // A 12A is an 11C with an extra particle bonded to only 2 other specific outer shell particles in the 11C.
 
-    int parent_11C_id;
-    int ep;
+    int first_11C_id;
+    int extra_particle;
 
-    for(parent_11C_id = 0; parent_11C_id < n11C; parent_11C_id++) {
-        int *parent_11C_cluster = hc11C[parent_11C_id];
-        if (num_bonds[parent_11C_cluster[0]] == 11) {
+    for(first_11C_id = 0; first_11C_id < n11C; first_11C_id++) {
+        int *first_11C_cluster = hc11C[first_11C_id];
+        if (num_bonds[first_11C_cluster[0]] == 11) {
 
-            ep = get_12A_extra_particle(parent_11C_cluster);
+            extra_particle = get_12A_extra_particle(first_11C_cluster);
 
             // Extra particle must be bonded to a specific two particles in the 11C
-            if (Bonds_BondCheck(ep, parent_11C_cluster[9]) == 0 || Bonds_BondCheck(ep, parent_11C_cluster[10]) == 0) continue;
+            if (Bonds_BondCheck(extra_particle, first_11C_cluster[9]) == 1 && Bonds_BondCheck(extra_particle, first_11C_cluster[10]) == 1) {
 
-            // The extra particle should not be bonded to particles 2-8 of the 11C
-            if (bond_check_12A_extra_particle(parent_11C_id, ep) == 1) continue;
+                // The extra particle should not be bonded to particles 2-8 of the 11C
+                if (bond_check_12A_extra_particle(first_11C_cluster, extra_particle) == 0) {
 
-            Write_12A(parent_11C_id, ep);
+                    Write_12A(first_11C_cluster, extra_particle);
+                }
+            }
         }
     }
 }
 
 int get_12A_extra_particle(int *parent_11C_cluster) {
-    int i;
     // Returns id of extra particle
     // The extra particle is the one bonded to the 11C center that is not in the 11C,
-    for (i = 0; i < num_bonds[parent_11C_cluster[0]]; ++i) {
+    for (int i = 0; i < num_bonds[parent_11C_cluster[0]]; ++i) {
         int extra_particle = bNums[parent_11C_cluster[0]][i];
         if (is_particle_in_cluster(parent_11C_cluster, 11, extra_particle) == 0) {
-            return extra_particle; // The extra particle
+            return extra_particle;
         }
     }
     Error("12A extra particle not found.");
     return 0;
 }
 
-int bond_check_12A_extra_particle(int id_11C, int extra_particle) {
+int bond_check_12A_extra_particle(int *first_11C_cluster, int extra_particle) {
     // Return 1 if particle is bonded to particles 1-8 of the 11C, else return 0
-    int i;
-
-    for (i = 1; i < 9; ++i) {
-        if (Bonds_BondCheck(extra_particle, hc11C[id_11C][i])){
+    for (int i = 1; i < 9; ++i) {
+        if (Bonds_BondCheck(extra_particle, first_11C_cluster[i])){
             return 1;
         }
     }
     return 0;
 }
 
-void Write_12A(int id_11C, int ep) {
+void Write_12A(const int *first_11C_cluster, int ep) {
     int clusSize=12;
 
     if (n12A == m12A) {
@@ -62,7 +61,7 @@ void Write_12A(int id_11C, int ep) {
     }
 
     for (int i = 0; i < 11; i++) {
-        hc12A[n12A][i] = hc11C[id_11C][i];
+        hc12A[n12A][i] = first_11C_cluster[i];
     }
     hc12A[n12A][11] = ep;
 
