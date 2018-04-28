@@ -3,17 +3,21 @@
 #include "tools.h"
 
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i) {
-    /* Function Clusters_Get13K - Take an 11F particle and determine if it meets the criteria for the presence of a 13K
-     *
-     * f: Frame number currently being analysed
-     * sp3c_i: The id of a relevant 5A cluster
-     * sp3c_i: The id of a different relevant 5A cluster
-     * the6A_i: The id of a relevant 6A ring
-     *
-     * Returns 1 if a 13K is successfully detected
-     * Returns 0 if no 13K is detected
-     * 13K arrays are edited in place to add new 13K
-     */
+
+    //!  A 13K cluster is the intersection an 11F and two 5A clusters
+    /*!
+   *  Find 13K clusters
+   *  A 13K is constructed from an 11F and two 5A clusters where:
+   *      -
+   *      -
+   *      -
+   *      -
+   *
+   *  Cluster output: SBBBBBBBBBBOO
+   *  Storage order: as_for_11F, extra_particles x 2
+   *
+   */
+
     int i, j, k, l;
     int sp3c_i_unc, sp3c_j_unc, ep[2], eclus5A[2], tmp;
     int clusSize=13;
@@ -146,7 +150,6 @@ int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i) {
         hc13K= resize_2D_int(hc13K, m13K, m13K + incrStatic, clusSize, -1);
         m13K= m13K + incrStatic;
     }
-    // hc13K key: (11F, extra SP3 ring particle to make 5A #1, extra SP3 ring particle to make 5A #2)
 
     for (i=0; i<11; i++) hc13K[n13K][i] = hc11F[n11F][i];
     hc13K[n13K][11]=ep[0];

@@ -5,8 +5,24 @@
 #include "tools.h"
 
 void Clusters_Get13B() {
+
+    //!  A 13B cluster is the intersection of two 7A clusters.
+    /*!
+   *  Find 13B clusters
+   *  A 13K is constructed from two 7A clusters where:
+   *      - There is one common spindle between the two 7As
+   *      - Other spindle particles are distinct and unbonded.
+   *      - The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.
+   *      - Each particle from each ring is bonded to one particle of the other ring
+   *
+   *  Cluster output: SOOBBBBBBBBBB
+   *  Storage order: common_spindle, uncommon_spindle x 2, first_7A_ring_particles x 5, second_7A_ring_particles x 5
+   *
+   */
+
     int common_spindle_id[2];
     int uncommon_spindle_ids[2];
+    int common_ring_particles[5];
 
     for(int first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id){
         int *first_7A_cluster = hcsp5c[first_7A_id];
@@ -24,7 +40,7 @@ void Clusters_Get13B() {
 
                         if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
 
-                            if (check_rings_are_uncommon(first_7A_cluster, second_7A_cluster) == 1) {
+                            if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 0) {
 
                                 if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 1) {
 
@@ -53,7 +69,7 @@ int check_rings_are_bonded(const int *first_7A_cluster, const int *second_7A_clu
             break;
         }
     }
-    if(first_ring_pointer == 5) {
+    if (first_ring_pointer == 5) {
         return 1;
     } else {
         return 0;
@@ -69,19 +85,6 @@ int count_bonds_to_ring(int particle_id, const int *first_7A_cluster) {
         }
     }
     return num_bonds;
-}
-
-int check_rings_are_uncommon(const int *first_7A_cluster, const int *second_7A_cluster) {
-    // Return 1 if all ring particles in first 7A are distinct from all ring particles in second 7A
-
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 5; ++j) {
-            if (first_7A_cluster[i] == second_7A_cluster[j]) {
-            return 0;
-            }
-        }
-    }
-    return 1;
 }
 
 void Cluster_Write_13B(const int *first_7A_cluster, const int *second_7A_cluster, int common_spindle_id, const int *uncommon_spindle_ids) {

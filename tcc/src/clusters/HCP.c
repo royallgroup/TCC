@@ -3,7 +3,22 @@
 #include "bonds.h"
 #include "tools.h"
 
-void Clusters_GetHCP() {   // Detect 13 particle HCP clusters
+void Clusters_GetHCP() {
+
+    //!  An HCP cluster is a 13 particle cluster of the HCP lattice, it is made from three 5A clusters
+    /*!
+   *  Find HCP clusters
+   *  An HCP cluster is made from three 5A clusters where:
+   *      - There is one common ring particle the three 5A clusters.
+   *      - The spindles are all distinct and form two sp3 rings above and below the plane created by the ring particles.
+   *      - Within the three 5A clusters, the spindle atoms are only bonded to the particles from the cluster’s own sp3 ring.
+   *      - The uncommon ring particles form a six-membered ring around the common ring particle
+   *
+   *  Cluster output: unknown
+   *  Storage order: unknown
+   *
+   */
+
     int i, j, j2, k, l, m, n;
     int ia[2], ja[2], ka[2];
     int cp, x;
@@ -211,14 +226,13 @@ void Clusters_GetHCP() {   // Detect 13 particle HCP clusters
 }
 
 void Cluster_Write_HCP(int i, int j, int j2, int k) {
-    int counter;
 
-    for (counter=0; counter<3; counter++){
+    for (int counter = 0; counter < 3; counter++){
         if (sHCP[hcsp3c[i][counter]] == 'C') sHCP[hcsp3c[i][counter]] = 'B';
         if (sHCP[hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][counter]] == 'C') sHCP[hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][counter]] = 'B';
         if (sHCP[hcsp3c[mem_sp3c[hcsp3c[i][j2]][k]][counter]] == 'C') sHCP[hcsp3c[mem_sp3c[hcsp3c[i][j2]][k]][counter]] = 'B';
     }
-    for (counter=3; counter<5; counter++) {
+    for (int counter = 3; counter < 5; counter++) {
         sHCP[hcsp3c[i][counter]] = 'O';
         sHCP[hcsp3c[mem_sp3c[hcsp3c[i][j2]][j]][counter]] = 'F';
         sHCP[hcsp3c[mem_sp3c[hcsp3c[i][j2]][k]][counter]] = 'H';

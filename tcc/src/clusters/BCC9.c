@@ -4,6 +4,21 @@
 #include "BCC9.h"
 
 void Clusters_GetBCC_9() {
+
+    //!  A BCC_9 cluster is the intersection of sp4b and sp4c clusters
+    /*!
+   *  Find BCC_9 clusters
+   *  A BCC_9 is constructed from some combination of sp4b and sp4c clusters
+   *      -
+   *      -
+   *      -
+   *      -
+   *
+   *  Cluster output: SBBBBBBBB
+   *  Storage order: unknown
+   *
+   */
+
     int i, j, j2, k, l, m;
     int flg;
     int s_com=-1;

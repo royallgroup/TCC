@@ -5,10 +5,11 @@
 #include "tools.h"
 
 void Clusters_Get11W() {
+
     //!  An 11W cluster is a 10B with an extra particle
     /*!
    *  Find 11W clusters
-   *  An 11W is constructed 10B and an extra particle where:
+   *  An 11W is constructed from a 10B and an extra particle where:
    *      - The common spindle of the 10B cluster has coordination number 10.
    *      - The additional particle is not bonded to any of the distinct spindles of the 7A clusters
    *        constituting the 10B cluster.

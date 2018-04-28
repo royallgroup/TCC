@@ -3,7 +3,19 @@
 #include <tools.h>
 #include "FCC.h"
 
-void Clusters_GetFCC() {   // Detect 13 particle FCC clusters
+void Clusters_GetFCC() {
+
+    //!  An FCC cluster is a 13 particle cluster of the FCC lattice, it is made from either four sp3b clusters or three sp3b clusters and a 5A cluster
+    /*!
+   *  Find FCC clusters
+   *  Method 1: An FCC cluster is constructed from four sp3b clusters
+   *  Method 2: An FCC cluster is constructed from three sp3b clusters and a 5A cluster
+   *
+   *  Cluster output: SBBOOBBOBBOOO
+   *  Storage order: unknown
+   *
+   */
+
     int i, j, j2, k, l, m, n;
     int i1, i2, i3;
     int cp, bpi, bpj, nbpi, nbpj;
