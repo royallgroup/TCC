@@ -7,3 +7,5 @@ file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/tcc/src/*.c")
 add_executable(tcc ${SOURCES})
 target_link_libraries(tcc iniparser)
 target_link_libraries(tcc m)
+
+install(TARGETS tcc DESTINATION ${CMAKE_INSTALL_PREFIX})
