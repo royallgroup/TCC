@@ -23,142 +23,157 @@ void Clusters_Get9B_10B_11B_11E_12D() {
 
     int sp1, sp2i, sp2j;
     int sp5com[2];
-    int i, j, k, l, m;
+    int k, l, m;
     int flg, fb1, fb2;
     int clusSize=9;
 
     sp1=sp2i=sp2j=-1;
 
-    for (i=0; i < nsp5c - 1; ++i) {  // loop over all 7A_i
-        // POSSIBLE IMPROVEMENT!! - 2 loops: over all 7A clusters which each spindle is in
-        for (j=i+1; j < nsp5c; ++j) {  // loop over all 7A_j
-            flg = 0;
-            if (hcsp5c[i][5] == hcsp5c[j][5] && hcsp5c[i][6] != hcsp5c[j][6]) {
-                if (Bonds_BondCheck(hcsp5c[i][6], hcsp5c[j][6])) { // spindle particles arranged
-                    flg = 1;
-                    sp1 = hcsp5c[i][5];   // s_com common spindle
-                    sp2i = hcsp5c[i][6];  // 2nd spindle particle of cluster 7A_i
-                    sp2j = hcsp5c[j][6];  // 2nd spindle particle of cluster 7A_j
-                }
-            }
-            if (hcsp5c[i][6] == hcsp5c[j][6] && hcsp5c[i][5] != hcsp5c[j][5]) {
-                if (Bonds_BondCheck(hcsp5c[i][5], hcsp5c[j][5])) {
-                    flg = 1;
-                    sp1 = hcsp5c[i][6];   // s_com common spindle
-                    sp2i = hcsp5c[i][5];  // 2nd spindle particle of cluster 7A_i
-                    sp2j = hcsp5c[j][5];  // 2nd spindle particle of cluster 7A_j
-                }
-            }
-            if (hcsp5c[i][5] == hcsp5c[j][6] && hcsp5c[i][6] != hcsp5c[j][5]) {
-                if (Bonds_BondCheck(hcsp5c[i][6], hcsp5c[j][5])) {
-                    flg = 1;
-                    sp1 = hcsp5c[i][5];   // s_com common spindle
-                    sp2i = hcsp5c[i][6];  // 2nd spindle particle of cluster 7A_i
-                    sp2j = hcsp5c[j][5];  // 2nd spindle particle of cluster 7A_j
-                }
-            }
-            if (hcsp5c[i][6] == hcsp5c[j][5] && hcsp5c[i][5] != hcsp5c[j][6]) {
-                if (Bonds_BondCheck(hcsp5c[i][5], hcsp5c[j][6])) {
-                    flg = 1;
-                    sp1 = hcsp5c[i][6];   // s_com common spindle
-                    sp2i = hcsp5c[i][5];  // 2nd spindle particle of cluster 7A_i
-                    sp2j = hcsp5c[j][6];  // 2nd spindle particle of cluster 7A_j
-                }
-            }
-            if (flg==0) continue;
+    for (int first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id) {
+        int *first_7A_cluster = hcsp5c[first_7A_id];
+        for (int spindle_pointer = 0; spindle_pointer < 2; ++spindle_pointer) {
+            int spindle_particle_id = first_7A_cluster[spindle_pointer + 5];
+            for (int second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[spindle_particle_id]; ++second_7A_pointer) {
+                int second_7A_id = mem_sp5c[spindle_particle_id][second_7A_pointer];
+                int *second_7A_cluster = hcsp5c[second_7A_id];
 
-            fb1 = fb2 = 1;  // ensure the two distinct spindle particles are part of the other SP5 ring
-            for (k=0; k<5; ++k) {
-                if (sp2i == hcsp5c[j][k]) fb1 = 0;
-                if (sp2j == hcsp5c[i][k]) fb2 = 0;
-            }
-            if (fb1 || fb2) continue;
-
-            m = 0;  // check for two common SP5 particles
-            for (k=0; k<5; ++k) {
-                for (l=0; l<5; ++l) {
-                    if (hcsp5c[i][k] == hcsp5c[j][l]) {
-                        if (m==2) {m++; break; }
-                        sp5com[m]= hcsp5c[i][k];
-                        ++m;
+                flg = 0;
+                if (first_7A_cluster[5] == second_7A_cluster[5] && first_7A_cluster[6] != second_7A_cluster[6]) {
+                    if (Bonds_BondCheck(first_7A_cluster[6], second_7A_cluster[6])) { // spindle particles arranged
+                        flg = 1;
+                        sp1 = first_7A_cluster[5];   // s_com common spindle
+                        sp2i = first_7A_cluster[6];  // 2nd spindle particle of cluster 7A_i
+                        sp2j = second_7A_cluster[6];  // 2nd spindle particle of cluster 7A_j
                     }
                 }
-            }
-            if (m!=2) continue;
-
-            // Now we have found the 9B C2v cluster
-            if (n9B == m9B) {
-                hc9B= resize_2D_int(hc9B, m9B, m9B + incrStatic, clusSize, -1);
-                m9B= m9B + incrStatic;
-            }
-            if (sp5com[0]<sp5com[1]) {
-                hc9B[n9B][4]=sp5com[0];
-                hc9B[n9B][5]=sp5com[1];
-            }
-            else {
-                hc9B[n9B][4]=sp5com[1];
-                hc9B[n9B][5]=sp5com[0];
-            }
-
-            if (sp2i<sp2j) {
-                hc9B[n9B][6]=sp2i;
-                hc9B[n9B][7]=sp2j;
-
-                for (k=0; k<5; ++k) {
-                    if (Bonds_BondCheck(hcsp5c[i][k], hc9B[n9B][4]) && hcsp5c[i][k] != hc9B[n9B][7] && hcsp5c[i][k] !=
-                                                                                                       hc9B[n9B][4]) {
-                        hc9B[n9B][0]= hcsp5c[i][k];
-                    }
-                    if (Bonds_BondCheck(hcsp5c[i][k], hc9B[n9B][5]) && hcsp5c[i][k] != hc9B[n9B][7] && hcsp5c[i][k] !=
-                                                                                                       hc9B[n9B][5]) {
-                        hc9B[n9B][1]= hcsp5c[i][k];
-                    }
-                    if (Bonds_BondCheck(hcsp5c[j][k], hc9B[n9B][4]) && hcsp5c[j][k] != hc9B[n9B][6] && hcsp5c[j][k] !=
-                                                                                                       hc9B[n9B][4]) {
-                        hc9B[n9B][2]= hcsp5c[j][k];
-                    }
-                    if (Bonds_BondCheck(hcsp5c[j][k], hc9B[n9B][5]) && hcsp5c[j][k] != hc9B[n9B][6] && hcsp5c[j][k] !=
-                                                                                                       hc9B[n9B][5]) {
-                        hc9B[n9B][3]= hcsp5c[j][k];
+                if (first_7A_cluster[6] == second_7A_cluster[6] && first_7A_cluster[5] != second_7A_cluster[5]) {
+                    if (Bonds_BondCheck(first_7A_cluster[5], second_7A_cluster[5])) {
+                        flg = 1;
+                        sp1 = first_7A_cluster[6];   // s_com common spindle
+                        sp2i = first_7A_cluster[5];  // 2nd spindle particle of cluster 7A_i
+                        sp2j = second_7A_cluster[5];  // 2nd spindle particle of cluster 7A_j
                     }
                 }
-            }
-            else {
-                hc9B[n9B][6]=sp2j;
-                hc9B[n9B][7]=sp2i;
-
-                for (k=0; k<5; ++k) {
-                    if (Bonds_BondCheck(hcsp5c[j][k], hc9B[n9B][4]) && hcsp5c[j][k] != hc9B[n9B][7] && hcsp5c[j][k] !=
-                                                                                                       hc9B[n9B][4]) {
-                        hc9B[n9B][0]= hcsp5c[j][k];
-                    }
-                    if (Bonds_BondCheck(hcsp5c[j][k], hc9B[n9B][5]) && hcsp5c[j][k] != hc9B[n9B][7] && hcsp5c[j][k] !=
-                                                                                                       hc9B[n9B][5]) {
-                        hc9B[n9B][1]= hcsp5c[j][k];
-                    }
-                    if (Bonds_BondCheck(hcsp5c[i][k], hc9B[n9B][4]) && hcsp5c[i][k] != hc9B[n9B][6] && hcsp5c[i][k] !=
-                                                                                                       hc9B[n9B][4]) {
-                        hc9B[n9B][2]= hcsp5c[i][k];
-                    }
-                    if (Bonds_BondCheck(hcsp5c[i][k], hc9B[n9B][5]) && hcsp5c[i][k] != hc9B[n9B][6] && hcsp5c[i][k] !=
-                                                                                                       hc9B[n9B][5]) {
-                        hc9B[n9B][3]= hcsp5c[i][k];
+                if (first_7A_cluster[5] == second_7A_cluster[6] && first_7A_cluster[6] != second_7A_cluster[5]) {
+                    if (Bonds_BondCheck(first_7A_cluster[6], second_7A_cluster[5])) {
+                        flg = 1;
+                        sp1 = first_7A_cluster[5];   // s_com common spindle
+                        sp2i = first_7A_cluster[6];  // 2nd spindle particle of cluster 7A_i
+                        sp2j = second_7A_cluster[5];  // 2nd spindle particle of cluster 7A_j
                     }
                 }
-            }
-            hc9B[n9B][8]=sp1;
-            Cluster_Write_9B();
-
-            if (do10B == 1) Clusters_Get10B(i, j);
-            if (do11B == 1) {
-                if (Clusters_Get11B()) {
-                    s11B[hc9B[n9B][8]] = 'S';
-                    ++n11B;
+                if (first_7A_cluster[6] == second_7A_cluster[5] && first_7A_cluster[5] != second_7A_cluster[6]) {
+                    if (Bonds_BondCheck(first_7A_cluster[5], second_7A_cluster[6])) {
+                        flg = 1;
+                        sp1 = first_7A_cluster[6];   // s_com common spindle
+                        sp2i = first_7A_cluster[5];  // 2nd spindle particle of cluster 7A_i
+                        sp2j = second_7A_cluster[6];  // 2nd spindle particle of cluster 7A_j
+                    }
                 }
-            }
-            if (do11E == 1) Clusters_Get11E_12D(i, j, sp1, sp2i, sp2j);
+                if (flg == 0) continue;
 
-            ++n9B;
+                fb1 = fb2 = 1;  // ensure the two distinct spindle particles are part of the other SP5 ring
+                for (k = 0; k < 5; ++k) {
+                    if (sp2i == second_7A_cluster[k]) fb1 = 0;
+                    if (sp2j == first_7A_cluster[k]) fb2 = 0;
+                }
+                if (fb1 || fb2) continue;
+
+                m = 0;  // check for two common SP5 particles
+                for (k = 0; k < 5; ++k) {
+                    for (l = 0; l < 5; ++l) {
+                        if (first_7A_cluster[k] == second_7A_cluster[l]) {
+                            if (m == 2) {
+                                m++;
+                                break;
+                            }
+                            sp5com[m] = first_7A_cluster[k];
+                            ++m;
+                        }
+                    }
+                }
+                if (m != 2) continue;
+
+                // Now we have found the 9B C2v cluster
+                if (n9B == m9B) {
+                    hc9B = resize_2D_int(hc9B, m9B, m9B + incrStatic, clusSize, -1);
+                    m9B = m9B + incrStatic;
+                }
+                if (sp5com[0] < sp5com[1]) {
+                    hc9B[n9B][4] = sp5com[0];
+                    hc9B[n9B][5] = sp5com[1];
+                } else {
+                    hc9B[n9B][4] = sp5com[1];
+                    hc9B[n9B][5] = sp5com[0];
+                }
+
+                if (sp2i < sp2j) {
+                    hc9B[n9B][6] = sp2i;
+                    hc9B[n9B][7] = sp2j;
+
+                    for (k = 0; k < 5; ++k) {
+                        if (Bonds_BondCheck(first_7A_cluster[k], hc9B[n9B][4]) && first_7A_cluster[k] != hc9B[n9B][7] &&
+                            first_7A_cluster[k] !=
+                            hc9B[n9B][4]) {
+                            hc9B[n9B][0] = first_7A_cluster[k];
+                        }
+                        if (Bonds_BondCheck(first_7A_cluster[k], hc9B[n9B][5]) && first_7A_cluster[k] != hc9B[n9B][7] &&
+                            first_7A_cluster[k] !=
+                            hc9B[n9B][5]) {
+                            hc9B[n9B][1] = first_7A_cluster[k];
+                        }
+                        if (Bonds_BondCheck(second_7A_cluster[k], hc9B[n9B][4]) &&
+                            second_7A_cluster[k] != hc9B[n9B][6] && second_7A_cluster[k] !=
+                                                                    hc9B[n9B][4]) {
+                            hc9B[n9B][2] = second_7A_cluster[k];
+                        }
+                        if (Bonds_BondCheck(second_7A_cluster[k], hc9B[n9B][5]) &&
+                            second_7A_cluster[k] != hc9B[n9B][6] && second_7A_cluster[k] !=
+                                                                    hc9B[n9B][5]) {
+                            hc9B[n9B][3] = second_7A_cluster[k];
+                        }
+                    }
+                } else {
+                    hc9B[n9B][6] = sp2j;
+                    hc9B[n9B][7] = sp2i;
+
+                    for (k = 0; k < 5; ++k) {
+                        if (Bonds_BondCheck(second_7A_cluster[k], hc9B[n9B][4]) &&
+                            second_7A_cluster[k] != hc9B[n9B][7] && second_7A_cluster[k] !=
+                                                                    hc9B[n9B][4]) {
+                            hc9B[n9B][0] = second_7A_cluster[k];
+                        }
+                        if (Bonds_BondCheck(second_7A_cluster[k], hc9B[n9B][5]) &&
+                            second_7A_cluster[k] != hc9B[n9B][7] && second_7A_cluster[k] !=
+                                                                    hc9B[n9B][5]) {
+                            hc9B[n9B][1] = second_7A_cluster[k];
+                        }
+                        if (Bonds_BondCheck(first_7A_cluster[k], hc9B[n9B][4]) && first_7A_cluster[k] != hc9B[n9B][6] &&
+                            first_7A_cluster[k] !=
+                            hc9B[n9B][4]) {
+                            hc9B[n9B][2] = first_7A_cluster[k];
+                        }
+                        if (Bonds_BondCheck(first_7A_cluster[k], hc9B[n9B][5]) && first_7A_cluster[k] != hc9B[n9B][6] &&
+                            first_7A_cluster[k] !=
+                            hc9B[n9B][5]) {
+                            hc9B[n9B][3] = first_7A_cluster[k];
+                        }
+                    }
+                }
+                hc9B[n9B][8] = sp1;
+                Cluster_Write_9B();
+
+                if (do10B == 1) Clusters_Get10B(first_7A_id, second_7A_id);
+                if (do11B == 1) {
+                    if (Clusters_Get11B()) {
+                        s11B[hc9B[n9B][8]] = 'S';
+                        ++n11B;
+                    }
+                }
+                if (do11E == 1) Clusters_Get11E_12D(first_7A_id, second_7A_id, sp1, sp2i, sp2j);
+
+                ++n9B;
+            }
         }
     }
 }
