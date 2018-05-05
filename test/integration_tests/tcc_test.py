@@ -25,15 +25,17 @@ class FileOperations:
     def build_tcc():
         try:
             if platform.system() == "Windows":
-                make = subprocess.run(['cmake', '..', '-G', 'MinGW Makefiles'])
+                make = subprocess.run(['cmake', '..', '-G', 'MinGW Makefiles', '-DCMAKE_INSTALL_PREFIX:PATH=../bin'])
                 build = subprocess.run(['mingw32-make.exe'])
+                install = subprocess.run(['mingw32-make.exe', 'install'])
             elif platform.system() == "Linux" or platform.system() == 'Darwin':
-                make = subprocess.run(['cmake', '..'])
+                make = subprocess.run(['cmake', '..', '-DCMAKE_INSTALL_PREFIX:PATH=../bin'])
                 build = subprocess.run(['make'])
+                install = subprocess.run(['make', 'install'])
             else:
                 print("I dont know how to build for your system:%s", platform.system())
                 return 1
-            if make.returncode == 0 and build.returncode == 0:
+            if make.returncode == 0 and build.returncode == 0 and install.returncode == 0:
                 return 0
             else:
                 return 1
@@ -45,9 +47,11 @@ class FileOperations:
     def run_tcc():
         try:
             if platform.system() == "Windows":
-                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc.exe")[0], stdout=subprocess.DEVNULL,
+                                                 stderr=subprocess.DEVNULL)
             else:
-                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                tcc_call_result = subprocess.run(glob("../../../bin/tcc")[0], stdout=subprocess.DEVNULL,
+                                                 stderr=subprocess.DEVNULL)
             return tcc_call_result.returncode
         except Exception as e:
             print(e)
