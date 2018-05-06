@@ -76,7 +76,7 @@ double tiltxy,tiltxz,tiltyz;
 long particles_in_current_frame;
 
 int *num_bonds;                                       // Current Number of Bonds for particles {1,...,N}
-int **bNums;                                          // list of particles (indices j) bonded to particle at index i
+int **bond_list;                                      // list of particles (indices j) bonded to particle at index i
 double **squared_bondlengths;                         // length of bonds in the bond network and squared
 int maxnb;                                            // max number of bonds to one particle
 int correctedBonds;                                   // bonds adjusted due to voronoi assymetry

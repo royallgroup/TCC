@@ -11,10 +11,10 @@ void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
 
     for (n0 = 0; n0 < particles_in_current_frame; n0++) {
         for (n1_pointer = 0; n1_pointer < num_bonds[n0]; n1_pointer++) {
-            n1 = bNums[n0][n1_pointer];
+            n1 = bond_list[n0][n1_pointer];
             if (n1 > n0) {
                 for (n2_pointer = n1_pointer + 1; n2_pointer < num_bonds[n0]; n2_pointer++) {
-                    n2 = bNums[n0][n2_pointer];
+                    n2 = bond_list[n0][n2_pointer];
                     if (n2 > n0) {
                         if (Bonds_BondCheck(n1, n2)) {
                             // SP3 found, check type and store
@@ -44,7 +44,7 @@ void get_basic_sp4_rings(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP
     }
 
     for (i=0; i<num_bonds[n1]; ++i) {
-        n3 = bNums[n1][i];
+        n3 = bond_list[n1][i];
         if (n3 > n0){
             if (Bonds_BondCheck(n0, n3) == 0) {  // n1 not bonded to n2 & n0 not bonded to n3
                 if (Bonds_BondCheck(n2, n3)) { // 4 membered ring found
@@ -67,13 +67,13 @@ void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {    // {n0,n1,n3,n2} i
 
     // Loop through all neighbours of n3
     for (i = 0; i < num_bonds[n3]; ++i){
-        n4 = bNums[n3][i];
+        n4 = bond_list[n3][i];
         if(n4 > n0) {
             if (n4 != n2) {
                 bond4_1 = 0;
                 // loop through neighbours of n4
                 for (j = 0; j < num_bonds[n4]; ++j) {
-                    n5 = bNums[n4][j];
+                    n5 = bond_list[n4][j];
                     // if n4 is bonded to n0 or n1 then it isn't an sp5
                     if (n5 == n1 || n5 == n0) {
                         break;
@@ -105,7 +105,7 @@ void get_sp3_clusters(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3
 
     cp[0]=cp[1]=-1;
     for (i=0; i<num_bonds[n0]; ++i) {
-        j = bNums[n0][i];
+        j = bond_list[n0][i];
         if (j != n1 && j != n2) {
             if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
                 if (type < 2) {
@@ -211,7 +211,7 @@ void get_sp4_clusters(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n3,n2}
 
     cp[0]=cp[1]=-1;
     for (i=0; i<num_bonds[n0]; ++i) {
-        j = bNums[n0][i];
+        j = bond_list[n0][i];
         if (j != n1 && j != n2) {
             if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n3, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
                 if (type < 2) {
@@ -369,7 +369,7 @@ void get_sp5_clusters(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n
 
     // Loop through all neighbours of n0
     for (i=0; i<num_bonds[n0]; ++i) {
-        j = bNums[n0][i];
+        j = bond_list[n0][i];
         // If the n0 neighbour is not n1 or n4
         if (j != n1 || j != n4) {
             // If the neighbour is bonded to all other ring particles

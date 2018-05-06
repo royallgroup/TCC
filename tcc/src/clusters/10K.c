@@ -34,7 +34,7 @@ int count_extra_particles(const int *first_9K_cluster, int first_9K_common_id, i
     int num_extra_particles = 0;
 
     for (int bonded_particle_pointer = 0; bonded_particle_pointer < num_bonds[first_9K_common_id]; bonded_particle_pointer++) {
-        int bonded_particle_id = bNums[first_9K_common_id][bonded_particle_pointer];
+        int bonded_particle_id = bond_list[first_9K_common_id][bonded_particle_pointer];
         if (is_particle_in_cluster(first_9K_cluster, 9, bonded_particle_id) == 0) {
             num_extra_particles++;
             (*extra_particle_id) = bonded_particle_id;

@@ -47,7 +47,7 @@ int is_particle_bonded_to_7As(int id_10B, int extra_particle) {
 int get_11W_extra_particle(int *parent_10B_cluster, int spindle_10B) {
 
     for (int i = 0; i < num_bonds[spindle_10B]; ++i) {
-        int extra_particle = bNums[spindle_10B][i];
+        int extra_particle = bond_list[spindle_10B][i];
         if (is_particle_in_cluster(parent_10B_cluster, 10, extra_particle) == 0) {
             return extra_particle;
         }

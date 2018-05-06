@@ -1,9 +1,8 @@
 #include <globals.h>
 #include <tools.h>
 #include <bonds.h>
+#include <clusters/simple_cluster_methods.h>
 #include "10A.h"
-
-void zero_used_array(int *used_sp4b);
 
 void Clusters_Get10A() {
 
@@ -32,33 +31,30 @@ void Clusters_Get10A() {
         zero_used_array(used_sp4b);
         used_sp4b[first_sp4b_id] = 1;
         for (neighbour_pointer = 0; neighbour_pointer < num_bonds[first_sp4b_cluster[0]]; ++neighbour_pointer) {
-            for (int neighbour_id = 0; neighbour_id < nmem_sp4b[bNums[first_sp4b_cluster[0]][neighbour_pointer]]; ++neighbour_id) {
-                int second_sp4b_id = mem_sp4b[bNums[first_sp4b_cluster[0]][neighbour_pointer]][neighbour_id];
+            for (int neighbour_id = 0; neighbour_id < nmem_sp4b[bond_list[first_sp4b_cluster[0]][neighbour_pointer]]; ++neighbour_id) {
+                int second_sp4b_id = mem_sp4b[bond_list[first_sp4b_cluster[0]][neighbour_pointer]][neighbour_id];
                 if (second_sp4b_id > first_sp4b_id) {
                     int *second_sp4b_cluster = hcsp4b[second_sp4b_id];
-                    if (used_sp4b[second_sp4b_id] == 1) continue;
-                    used_sp4b[second_sp4b_id] = 1;
+                    if (used_sp4b[second_sp4b_id] == 0) {
+                        used_sp4b[second_sp4b_id] = 1;
 
-                    if (Bonds_BondCheck(first_sp4b_cluster[4], second_sp4b_cluster[4])) continue;
+                        if (Bonds_BondCheck(first_sp4b_cluster[4], second_sp4b_cluster[4]) == 0) {
 
-                    // check the two clusters have no common particles
-                    for (k = 0; k < 5; ++k) {
-                        for (l = 0; l < 5; ++l) {
-                            if (first_sp4b_cluster[k] == second_sp4b_cluster[l]) break;
+                            if (are_clusters_distinct(first_sp4b_cluster, second_sp4b_cluster, 5, 5) == 1) {
+
+                                //check each ring particle is bonded to two others
+                                for (k = 0; k < 4; ++k) {
+                                    m = 0;
+                                    for (l = 0; l < 4; ++l)
+                                        if (Bonds_BondCheck(first_sp4b_cluster[k], second_sp4b_cluster[l]))++m;
+                                    if (m != 2) break;
+                                }
+                                // ERROR: Need to check converse, i. e. each SP4 ring particle from sp4b_j bonded to to exactly two particles from sp4b_i
+                                if (k == 4) {
+                                    Cluster_Write_10A(first_sp4b_cluster, second_sp4b_cluster);
+                                }
+                            }
                         }
-                        if (l < 5) break;
-                    }
-                    if (k < 5) continue;
-
-                    //check each ring particle is bonded to two others
-                    for (k = 0; k < 4; ++k) {
-                        m = 0;
-                        for (l = 0; l < 4; ++l) if (Bonds_BondCheck(first_sp4b_cluster[k], second_sp4b_cluster[l])) ++m;
-                        if (m != 2) break;
-                    }
-                    // ERROR: Need to check converse, i. e. each SP4 ring particle from sp4b_j bonded to to exactly two particles from sp4b_i
-                    if (k == 4) {
-                        Cluster_Write_10A(first_sp4b_cluster, second_sp4b_cluster);
                     }
                 }
             }

@@ -133,3 +133,21 @@ int is_particle_in_cluster(const int *cluster, int cluster_size, int particle_id
     }
     return 0;
 }
+
+int are_clusters_distinct(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size) {
+    //!  Determine if there are any shared particles between two clusters
+    /*!
+   *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
+   *  \param cluster_2 - a pointer to a cluster stored in an hc memory array
+   *  \param cluster_1_size - the number of particles in cluster_1
+   *  \param cluster_2_size - the number of particles in cluster_2
+   *  \return 1 if there are no common particles, 0 if there is at least 1 common particle
+   */
+
+    for (int i = 0; i < cluster_1_size; i++) {
+        if (is_particle_in_cluster(cluster_2, cluster_2_size, cluster_1[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}

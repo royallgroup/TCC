@@ -33,14 +33,14 @@ int Clusters_Get11B() {
     break_out=0;
     for(k=0; k<10; ++k) {
         for(l=0; l<8; ++l) {
-            if(bNums[hc9B[n9B][8]][k] == hc9B[n9B][l]) break;
+            if(bond_list[hc9B[n9B][8]][k] == hc9B[n9B][l]) break;
         }
         if(l==8){
             if(m==2) {
                 break_out=1;
                 break;
             }
-            ep[m++] = bNums[hc9B[n9B][8]][k];    // two extra particles
+            ep[m++] = bond_list[hc9B[n9B][8]][k];    // two extra particles
         }
     }
     if(break_out==1 || m<2) return 0;

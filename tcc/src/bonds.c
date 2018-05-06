@@ -58,13 +58,13 @@ void Are_All_Bonds_Symmetric() {
 
     for (i=0; i<particles_in_current_frame; ++i) {
         for (j=0; j<num_bonds[i]; ++j) {
-            for (k=0; k<num_bonds[bNums[i][j]]; k++) {
-                if (i==bNums[bNums[i][j]][k]) break;
+            for (k=0; k<num_bonds[bond_list[i][j]]; k++) {
+                if (i==bond_list[bond_list[i][j]][k]) break;
             }
-            if (k==num_bonds[bNums[i][j]]) {
-                bNums[bNums[i][j]][k]=i;
-                num_bonds[bNums[i][j]]++;
-                squared_bondlengths[bNums[i][j]][k]=squared_bondlengths[i][j];
+            if (k==num_bonds[bond_list[i][j]]) {
+                bond_list[bond_list[i][j]][k]=i;
+                num_bonds[bond_list[i][j]]++;
+                squared_bondlengths[bond_list[i][j]][k]=squared_bondlengths[i][j];
                 correctedBonds++;
             }
         }
@@ -156,7 +156,7 @@ void too_many_bonds(int particle_1, int particle_2, const char *method_name) {
 }
 
 void Add_New_Bond(int particle_1, int particle_2, double squared_distance) {
-    bNums[particle_1][num_bonds[particle_1]] = particle_2;
+    bond_list[particle_1][num_bonds[particle_1]] = particle_2;
     squared_bondlengths[particle_1][num_bonds[particle_1]] = squared_distance;
     num_bonds[particle_1]++;
 }
@@ -165,7 +165,7 @@ int Bonds_BondCheck(int i, int j) { // Returns 1 if i & j are bonded; 0 otherwis
     int k;
 
     for (k=0; k<num_bonds[i]; ++k) {
-        if (bNums[i][k] == j) return 1;
+        if (bond_list[i][k] == j) return 1;
     } 
     return 0;
 }

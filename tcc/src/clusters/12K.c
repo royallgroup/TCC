@@ -45,7 +45,7 @@ void find_12K_cluster(int *parent_11A_cluster, const int *sp3_ring) {
     int num_attached_particles = 0;
     // loop through all particles bonded to the first sp3 ring particle
     for (int i = 0; i < num_bonds[sp3_ring[0]]; i++) {
-        int particle_id = bNums[sp3_ring[0]][i];
+        int particle_id = bond_list[sp3_ring[0]][i];
         if (Bonds_BondCheck(sp3_ring[1], particle_id) == 1) {
             if (Bonds_BondCheck(sp3_ring[2], particle_id) == 1) {
                 if (is_particle_in_cluster(parent_11A_cluster, 11, particle_id) == 0) {

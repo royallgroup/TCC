@@ -10,7 +10,7 @@ int cell_list_get_particle_1_neighbours(int i, int *particle_1_neighbours, int *
     double squared_distance;
 
     for (neighbour_pointer = 0; neighbour_pointer < num_bonds[i]; ++neighbour_pointer) {
-        neighbour_ID = bNums[i][neighbour_pointer];
+        neighbour_ID = bond_list[i][neighbour_pointer];
         squared_distance = squared_bondlengths[i][neighbour_pointer];
         particle_1_neighbours[neighbour_pointer] = neighbour_ID;
         particle_1_bonds[neighbour_pointer] = 1;

@@ -45,7 +45,7 @@ int get_12A_extra_particle(int *parent_11C_cluster) {
     // Returns id of extra particle
     // The extra particle is the one bonded to the 11C center that is not in the 11C,
     for (int i = 0; i < num_bonds[parent_11C_cluster[0]]; ++i) {
-        int extra_particle = bNums[parent_11C_cluster[0]][i];
+        int extra_particle = bond_list[parent_11C_cluster[0]][i];
         if (is_particle_in_cluster(parent_11C_cluster, 11, extra_particle) == 0) {
             return extra_particle;
         }

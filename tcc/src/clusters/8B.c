@@ -28,7 +28,7 @@ void Clusters_Get8B() {
             primary_spindle = first_7A_cluster[5 + spindle_pointer];
 
             for (new_particle_pointer = 0; new_particle_pointer < num_bonds[primary_spindle]; ++new_particle_pointer) {
-                new_particle_id = bNums[primary_spindle][new_particle_pointer];
+                new_particle_id = bond_list[primary_spindle][new_particle_pointer];
 
                 if(is_particle_in_cluster(first_7A_cluster, 7, new_particle_id) == 0) {
 

@@ -123,13 +123,13 @@ void initialise_frame_variables() {
     particle_type=malloc(particles_in_current_frame * sizeof(int)); if (particle_type==NULL) { Error_no_free("initialise_frame_variables(): particle_type[] malloc out of memory\n"); }    // type of species
 
     num_bonds = malloc(particles_in_current_frame * sizeof(int));  if (num_bonds==NULL) Error_no_free("initialise_frame_variables(): num_bonds[] malloc out of memory\n");    // number of "bonded" neighbours of a particle
-    bNums = malloc(particles_in_current_frame * sizeof(int *));    if (bNums==NULL) Error_no_free("initialise_frame_variables(): bNums[] malloc out of memory\n");    // list of bonded particles to each particle
+    bond_list = malloc(particles_in_current_frame * sizeof(int *));    if (bond_list==NULL) Error_no_free("initialise_frame_variables(): bNums[] malloc out of memory\n");    // list of bonded particles to each particle
     squared_bondlengths = malloc(particles_in_current_frame * sizeof(double *));   if (squared_bondlengths==NULL) Error_no_free("initialise_frame_variables(): squared_bondlengths[] malloc out of memory\n");    // array of bond lengths
 
 
     for (int particle_number = 0; particle_number < particles_in_current_frame; particle_number++) {
-        bNums[particle_number] = malloc(max_num_bonds*sizeof(int));
-        check_null_pointer((void *) bNums[particle_number], "bnums[][]");
+        bond_list[particle_number] = malloc(max_num_bonds*sizeof(int));
+        check_null_pointer((void *) bond_list[particle_number], "bnums[][]");
 
         squared_bondlengths[particle_number] = malloc(max_num_bonds*sizeof(double));
         check_null_pointer((void *) squared_bondlengths[particle_number], "squared_bondlengths[][]");
@@ -206,7 +206,7 @@ void free_frame_variables() {
     }
 
     for (int particle_number = 0; particle_number < particles_in_current_frame; particle_number++) {
-        free(bNums[particle_number]);
+        free(bond_list[particle_number]);
         free(squared_bondlengths[particle_number]);
 
         free(mem_sp3b[particle_number]);
@@ -216,7 +216,7 @@ void free_frame_variables() {
         free(mem_sp5b[particle_number]);
         free(mem_sp5c[particle_number]);
     }
-    free(bNums);
+    free(bond_list);
     free(squared_bondlengths);
     free(num_bonds);
 
