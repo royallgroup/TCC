@@ -3,6 +3,6 @@
 
 int Clusters_Get11B();
 
-void Cluster_Write_11B();
+void Cluster_Write_11B(int *extra_particles);
 
 #endif

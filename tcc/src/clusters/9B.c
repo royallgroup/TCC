@@ -53,6 +53,7 @@ void Clusters_Get9B_10B_11B_11E_12D() {
 
                                 hc9B[n9B][4] = sp5com[0];
                                 hc9B[n9B][5] = sp5com[1];
+                                hc9B[n9B][8] = common_spindle_particle_ids[0];
 
                                 if (sp2i < sp2j) {
                                     hc9B[n9B][6] = sp2i;
@@ -111,10 +112,9 @@ void Clusters_Get9B_10B_11B_11E_12D() {
                                         }
                                     }
                                 }
-                                hc9B[n9B][8] = common_spindle_particle_ids[0];
                                 Cluster_Write_9B();
 
-                                if (do10B == 1) Clusters_Get10B(first_7A_id, second_7A_id);
+                                if (do10B == 1) Clusters_Get10B(second_7A_id);
                                 if (do11B == 1) {
                                     if (Clusters_Get11B()) {
                                         s11B[hc9B[n9B][8]] = 'S';

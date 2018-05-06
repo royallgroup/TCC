@@ -25,7 +25,6 @@ int Clusters_Get11B() {
     int ep[2]; // The two extra particles
     int flg11, flg12, flg21, flg22;
     int break_out;
-    int clusSize=11;
 
     if(num_bonds[hc9B[n9B][8]]!= 10) return 0; // s_com has 10 bonds in total (all forming the shell)
 
@@ -43,7 +42,7 @@ int Clusters_Get11B() {
             ep[m++] = bond_list[hc9B[n9B][8]][k];    // two extra particles
         }
     }
-    if(break_out==1 || m<2) return 0;
+    if(break_out == 1 || m < 2) return 0;
 
     if(Bonds_BondCheck(ep[0], ep[1])==0) return 0;  // extra particles must be bonded
     nb1 = nb2 = 0;
@@ -74,36 +73,26 @@ int Clusters_Get11B() {
     if(!((flg11 && !flg12) || (!flg11 && flg12))) return 0;
     if(!((flg21 && !flg22) || (!flg21 && flg22))) return 0;
 
-    if(n11B == m11B) {
-        hc11B=resize_2D_int(hc11B,m11B,m11B+incrStatic,clusSize,-1);
-        m11B=m11B+incrStatic;
-    }
-    hc11B[n11B][0] = hc9B[n9B][0];
-    hc11B[n11B][1] = hc9B[n9B][1];
-    hc11B[n11B][2] = hc9B[n9B][2];
-    hc11B[n11B][3] = hc9B[n9B][3];
-    hc11B[n11B][4] = hc9B[n9B][4];
-    hc11B[n11B][5] = hc9B[n9B][5];
-    hc11B[n11B][6] = hc9B[n9B][6];
-    hc11B[n11B][7] = hc9B[n9B][7];
-    hc11B[n11B][8] = hc9B[n9B][8];
-    if (b1[0]==1) {
-        hc11B[n11B][9] = ep[0];
-        hc11B[n11B][10] = ep[1];
-    }
-    else {
-        hc11B[n11B][9] = ep[1];
-        hc11B[n11B][10] = ep[0];
-    }
-    Cluster_Write_11B();
+    Cluster_Write_11B(ep);
 
     return 1;
 }
 
-void Cluster_Write_11B() {
+void Cluster_Write_11B(int *extra_particles) {
+    int clusSize=11;
 
-    int i;
-    for(i=0; i<6; i++) {
+    if(n11B == m11B) {
+        hc11B=resize_2D_int(hc11B,m11B,m11B+incrStatic,clusSize,-1);
+        m11B=m11B+incrStatic;
+    }
+    for (int i = 0; i < 9; ++i) {
+        hc11B[n11B][i] = hc9B[n9B][i];
+    }
+
+    hc11B[n11B][9] = extra_particles[0];
+    hc11B[n11B][10] = extra_particles[1];
+
+    for(int i = 0; i < 6; i++) {
         if (s11B[hc11B[n11B][i]] == 'C') s11B[hc11B[n11B][i]] = 'B';
     }
     if(s11B[hc11B[n11B][6]] != 'S') s11B[hc11B[n11B][6]] = 'O';
