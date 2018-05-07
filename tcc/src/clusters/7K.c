@@ -34,15 +34,15 @@ void Clusters_Get7K() {
                     // exactly one common spindle between 5A_i and 5A_j
                     if (count_common_spindle_particles(first_5A_cluster, second_5A_cluster, 5, 5, common_spindle_id) == 1) {
 
-                        get_other_spindle_ids(first_5A_cluster, second_5A_cluster, common_spindle_id[0], other_spindle_ids);
+                        other_spindle_ids[0] = get_uncommon_spindle(first_5A_cluster, 5, common_spindle_id[0]);
+                        other_spindle_ids[1] = get_uncommon_spindle(second_5A_cluster, 5, common_spindle_id[0]);
 
                         if (is_particle_in_cluster(second_5A_cluster, 5, other_spindle_ids[0]) == 0) {
                             if (is_particle_in_cluster(first_5A_cluster, 5, other_spindle_ids[1]) == 0) {
 
                                 if (count_common_ring_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_ring_ids) == 2) {
 
-                                    uncommon_ring_particles[0] = get_uncommon_ring_particle(first_5A_cluster, common_ring_ids);
-                                    uncommon_ring_particles[1] = get_uncommon_ring_particle(second_5A_cluster, common_ring_ids);
+                                    count_uncommon_ring_particles(first_5A_cluster, second_5A_cluster, 3, 3, uncommon_ring_particles);
 
                                     Cluster_Write_7K(common_spindle_id[0], other_spindle_ids, common_ring_ids, uncommon_ring_particles);
                                 }
@@ -55,31 +55,7 @@ void Clusters_Get7K() {
     }
 }
 
-void get_other_spindle_ids(const int *first_5A_cluster, const int *second_5A_cluster, int common_spindle_id, int *other_spindle_ids) {
-    if (first_5A_cluster[3] == common_spindle_id) {
-        other_spindle_ids[0] = first_5A_cluster[4];
-    } else {
-        other_spindle_ids[0] = first_5A_cluster[3];
-    }
-    if (second_5A_cluster[3] == common_spindle_id) {
-        other_spindle_ids[1] = second_5A_cluster[4];
-    } else {
-        other_spindle_ids[1] = second_5A_cluster[3];
-    }
-}
-
-int get_uncommon_ring_particle(const int *first_5A_cluster, const int *common_ring_ids) {
-    for (int first_5A_pointer = 0; first_5A_pointer < 3; first_5A_pointer++) {
-        if (first_5A_cluster[first_5A_pointer] != common_ring_ids[0] &&
-            first_5A_cluster[first_5A_pointer] != common_ring_ids[1]) {
-            return (first_5A_cluster[first_5A_pointer]);
-        }
-    }
-    Error("uncommon ring particle not found.");
-    return 0;
-}
-
-void Cluster_Write_7K(int scom, int *sother, int *sp3_com, int *uncommon_ring_particles) {
+void Cluster_Write_7K(int scom, int *sother, int *common_ring_particles, int *uncommon_ring_particles) {
     int clusSize = 7;
 
     if (n7K == m7K) {
@@ -91,15 +67,10 @@ void Cluster_Write_7K(int scom, int *sother, int *sp3_com, int *uncommon_ring_pa
     hc7K[n7K][0] = scom;
     hc7K[n7K][1] = sother[0];
     hc7K[n7K][2] = sother[1];
-    hc7K[n7K][3] = sp3_com[0];
-    hc7K[n7K][4] = sp3_com[1];
+    hc7K[n7K][3] = common_ring_particles[0];
+    hc7K[n7K][4] = common_ring_particles[1];
     hc7K[n7K][5] = uncommon_ring_particles[0];
     hc7K[n7K][6] = uncommon_ring_particles[1];
-
-    quickSort(&hc7K[n7K][1], 2);
-    quickSort(&hc7K[n7K][3], 2);
-    quickSort(&hc7K[n7K][5], 2);
-
 
     // hc7K key: (scom, sother, ring_com, ring_other)
     s7K[hc7K[n7K][0]] = 'O';

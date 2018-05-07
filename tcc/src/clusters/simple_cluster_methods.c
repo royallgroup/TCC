@@ -30,7 +30,7 @@ int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int 
 }
 
 int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, int num_in_ring_1, int num_in_ring_2,
-                                  int *common_particle_ids) {
+                                  int *uncommon_particle_ids) {
     //!  Count number of uncommon particles between two clusters and get their ids
     /*!
    *  \param cluster_1 - a pointer to a cluster stored in an hc memory array
@@ -51,7 +51,7 @@ int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, in
             }
         }
         if(is_uncommon_particle == 0) {
-            common_particle_ids[num_uncommon_particles] = cluster_1[first_ring_pointer];
+            uncommon_particle_ids[num_uncommon_particles] = cluster_1[first_ring_pointer];
             num_uncommon_particles++;
         }
     }
@@ -65,7 +65,7 @@ int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, in
             }
         }
         if(is_uncommon_particle == 0) {
-            common_particle_ids[num_uncommon_particles] = cluster_2[first_ring_pointer];
+            uncommon_particle_ids[num_uncommon_particles] = cluster_2[first_ring_pointer];
             num_uncommon_particles++;
         }
     }

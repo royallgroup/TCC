@@ -15,20 +15,14 @@ void Clusters_Get8B() {
    *  Storage order: as for 7A x 7, extra_particle)
    */
 
-    int first_7A_id;
-    int* first_7A_cluster;
-    int primary_spindle;
 
-    int new_particle_pointer;
-    int new_particle_id;
-
-    for (first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id) {
-        first_7A_cluster = hcsp5c[first_7A_id];
+    for (int first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id) {
+        int *first_7A_cluster = hcsp5c[first_7A_id];
         for (int spindle_pointer = 0; spindle_pointer < 2; ++spindle_pointer) {
-            primary_spindle = first_7A_cluster[5 + spindle_pointer];
+            int primary_spindle = first_7A_cluster[5 + spindle_pointer];
 
-            for (new_particle_pointer = 0; new_particle_pointer < num_bonds[primary_spindle]; ++new_particle_pointer) {
-                new_particle_id = bond_list[primary_spindle][new_particle_pointer];
+            for (int new_particle_pointer = 0; new_particle_pointer < num_bonds[primary_spindle]; ++new_particle_pointer) {
+                int new_particle_id = bond_list[primary_spindle][new_particle_pointer];
 
                 if(is_particle_in_cluster(first_7A_cluster, 7, new_particle_id) == 0) {
 

@@ -18,24 +18,18 @@ void Clusters_Get7T() {
     *  Storage order: original 6Z particles x 6, new 5A spindle)
     */
 
-    int old_6Z_id, new_5A_id;
-    int *old_6Z_cluster, *new_5A_cluster;
-    int spindle_id, new_particle_id;
-    int new_5A_pointer;
-    int bond_counter;
-
-    for (old_6Z_id = 0; old_6Z_id < n6Z; ++old_6Z_id) {
-        old_6Z_cluster = hc6Z[old_6Z_id];
+    for (int old_6Z_id = 0; old_6Z_id < n6Z; ++old_6Z_id) {
+        int *old_6Z_cluster = hc6Z[old_6Z_id];
         for (int spindle_pointer = 4; spindle_pointer < 6; ++spindle_pointer) {
-            spindle_id = old_6Z_cluster[spindle_pointer];
-            for (new_5A_pointer = 0; new_5A_pointer < nmem_sp3c[spindle_id]; ++new_5A_pointer) {
-                new_5A_id = mem_sp3c[spindle_id][new_5A_pointer];
-                new_5A_cluster = hcsp3c[new_5A_id];
+            int spindle_id = old_6Z_cluster[spindle_pointer];
+            for (int new_5A_pointer = 0; new_5A_pointer < nmem_sp3c[spindle_id]; ++new_5A_pointer) {
+                int new_5A_id = mem_sp3c[spindle_id][new_5A_pointer];
+                int *new_5A_cluster = hcsp3c[new_5A_id];
 
                 if (is_particle_spindle_of_5A(spindle_id, new_5A_cluster) == 1) {
-                    bond_counter = check_ring_bonds(new_5A_cluster, old_6Z_cluster);
+                    int bond_counter = check_ring_bonds(new_5A_cluster, old_6Z_cluster);
                     if (bond_counter == 21 || bond_counter == 22 || bond_counter == 25) {
-                        new_particle_id = get_new_particle(new_5A_cluster, spindle_id);
+                        int new_particle_id = get_new_particle(new_5A_cluster, spindle_id);
                         check_7T_type(bond_counter, old_6Z_cluster, new_particle_id);
                     }
                 }

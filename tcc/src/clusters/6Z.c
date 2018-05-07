@@ -1,3 +1,4 @@
+#include "simple_cluster_methods.h"
 #include "6Z.h"
 #include "globals.h"
 #include "bonds.h"
@@ -20,17 +21,15 @@ void Clusters_Get6Z() {
     */
 
     int first_spindles[2], second_spindles[2], common_ring_particles[2];
-    int *first_5A_cluster, *second_5A_cluster;
-    int first_5A_id, second_5A_id;
-    int first_5A_neighbours;
+    int tmp[2];
 
-    for (first_5A_id = 0; first_5A_id < nsp3c; first_5A_id++) {
-        first_5A_cluster = hcsp3c[first_5A_id];
-        for (first_5A_neighbours = 0; first_5A_neighbours < nmem_sp3c[first_5A_cluster[0]]; first_5A_neighbours++) {
-            second_5A_id = mem_sp3c[first_5A_cluster[0]][first_5A_neighbours];
-            second_5A_cluster = hcsp3c[second_5A_id];
+    for (int first_5A_id = 0; first_5A_id < nsp3c; first_5A_id++) {
+        int *first_5A_cluster = hcsp3c[first_5A_id];
+        for (int first_5A_neighbours = 0; first_5A_neighbours < nmem_sp3c[first_5A_cluster[0]]; first_5A_neighbours++) {
+            int second_5A_id = mem_sp3c[first_5A_cluster[0]][first_5A_neighbours];
+            int *second_5A_cluster = hcsp3c[second_5A_id];
             if (second_5A_id > first_5A_id) {
-                if (check_for_common_spindle_particles(first_5A_cluster, second_5A_cluster) == 0) {
+                if (count_common_spindle_particles(first_5A_cluster, second_5A_cluster, 5, 5, tmp) == 0) {
                     if (count_spindles_in_ring(first_5A_cluster, second_5A_cluster, first_spindles) == 1) {
                         if (count_spindles_in_ring(second_5A_cluster, first_5A_cluster, second_spindles) == 1) {
                             if (Bonds_BondCheck(first_spindles[0], second_spindles[0]) == 1) {
@@ -44,14 +43,6 @@ void Clusters_Get6Z() {
             }
         }
     }
-}
-
-int check_for_common_spindle_particles(const int *first_5A_cluster, const int *second_5A_cluster) {
-    if (first_5A_cluster[3] == second_5A_cluster[3]) return 1;
-    else if (first_5A_cluster[3] == second_5A_cluster[4]) return 1;
-    else if (first_5A_cluster[4] == second_5A_cluster[3]) return 1;
-    else if (first_5A_cluster[4] == second_5A_cluster[4]) return 1;
-    else return 0;
 }
 
 int count_spindles_in_ring(const int *first_5A_cluster, const int *second_5A_cluster, int *spindles) {
