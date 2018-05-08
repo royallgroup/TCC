@@ -132,6 +132,7 @@ void Write_Cluster_XYZ(int f) {
                     fprintf(file_pointer, "%c\t%f\t%f\t%f\n", (*raw_list[cluster_type])[i], x[i], y[i], z[i]);
                 }
             }
+            fclose(file_pointer);
         }
     }
 }
