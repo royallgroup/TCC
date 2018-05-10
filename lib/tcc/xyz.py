@@ -75,7 +75,7 @@ def read_trajectory(*args, **kwargs):
     """Read a trajectory (i.e. multiple snapshots) from the disk."""
     return XYZSnapshot.read_trajectory(*args, **kwargs)
 
-def write(x, out, species):
+def write(x, out=sys.stdout, species=None):
     """ Wrtie a single configuration to the disk."""
     snapshot = XYZSnapshot(x, species=species)
     snapshot.write(out)

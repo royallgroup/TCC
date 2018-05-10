@@ -56,7 +56,8 @@ class Snapshot:
         """
         self.x = x
         self.box = box
-        self.species = species
+        if species is None: self.species = ['A']*self.n
+        else: self.species = species
         self.time = time
 
     def copy(self):
