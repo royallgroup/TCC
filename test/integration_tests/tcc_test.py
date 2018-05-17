@@ -68,7 +68,16 @@ class FileOperations:
 class FileChecks:
     @staticmethod
     def check_bonds():
-        return filecmp.cmp("sample.bonds", glob("sample.xyz*bonds")[0], shallow=False)
+        measured_results = pd.read_table(glob('sample.xyz*.bonds')[0], skiprows=1, header=None)
+        measured_results.fillna(0., inplace=True)
+        known_results = pd.read_table('sample.bonds', skiprows=1, header=None)
+        known_results.fillna(0., inplace=True)
+
+        for measured_row in measured_results.iterrows():
+            if not pd.Series.equals(known_results.iloc[measured_row[0]], measured_row[1]):
+                return False
+
+        return True
 
     @staticmethod
     def check_static_clust():
@@ -77,7 +86,7 @@ class FileChecks:
         known_results = pd.read_table('sample.static_clust', index_col='Cluster type', skiprows=1)
         known_results.fillna(0., inplace=True)
 
-        return FileChecks.compare_files_by_row(measured_results, known_results)
+        return FileChecks.compare_cluster_files_by_row(measured_results, known_results)
 
     @staticmethod
     def check_pop_per_frame():
@@ -86,10 +95,10 @@ class FileChecks:
         known_results = pd.read_table('sample.pop_per_frame', index_col='frame')
         known_results.fillna(0., inplace=True)
 
-        return FileChecks.compare_files_by_row(measured_results, known_results)
+        return FileChecks.compare_cluster_files_by_row(measured_results, known_results)
 
     @staticmethod
-    def compare_files_by_row(measured_results, known_results):
+    def compare_cluster_files_by_row(measured_results, known_results):
         for column_name in measured_results:
             for measured_particle_type in measured_results[column_name].items():
                 particle_type_found = 0
