@@ -9,7 +9,7 @@ The module defines:
 """
 
 import numpy
-from .snapshot import stream_safe_open, Snapshot
+from snapshot import stream_safe_open, Snapshot
 
 from lxml import etree as ElementTree
 
@@ -28,7 +28,8 @@ class DynamoSnapshot(Snapshot):
         """Standard interface for reading trajectories should throw error because dynamo trajectories are not stored in the usual simple format."""
         raise NotImplementedError
 
-    def is_hard_sphere(self, interaction):
+    @staticmethod
+    def is_hard_sphere(interaction):
         """Determine whether an interaction encoded in the dynamo XML tree is a hard sphere
         interaction or not.
 
@@ -147,14 +148,14 @@ class DynamoSnapshot(Snapshot):
             self.xml['interactions'] = self.xml['simulation'].find('Interactions')
 
             # Particle coordinates
-            self.x = numpy.array([p.find('P').attrib.values() for p in self.xml['particles']], dtype=numpy.longdouble)
-            if self.n != len(self.xml['particles'].getchildren()):
+            self.particle_coordinates = numpy.array([p.find('P').attrib.values() for p in self.xml['particles']], dtype=numpy.longdouble)
+            if self.num_particles != len(self.xml['particles'].getchildren()):
                 raise RuntimeError('inconsistent file!')
 
             # Particle species
             self.xml['genus'] = self.xml['simulation'].find('Genus')
             species = numpy.array([species.attrib['Name'] for species in self.xml['genus']])
-            self.species = numpy.empty(self.n, species.dtype)
+            self.species = numpy.empty(self.num_particles, species.dtype)
             for species in self.xml['genus']:
                 id_range = species.find('IDRange').attrib
                 start = int(id_range['Start'])
@@ -166,13 +167,13 @@ class DynamoSnapshot(Snapshot):
             box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in ['x', 'y', 'z']])
             self.box = numpy.array([[0., length] for length in box_lengths])
             self.volume = numpy.product(box_lengths)
-            self.density = self.n / self.volume
+            self.density = self.num_particles / self.volume
 
             # Find the diameters of the particles, assuming additive interactions.
 
             # Initialise diameters to NaN: if any are still NaN at the end we know some were
             # uninitialised and the data file is incomplete
-            self.diameters = numpy.full(self.n, numpy.nan)
+            self.diameters = numpy.full(self.num_particles, numpy.nan)
 
             # Assign diameters
             definitely_additive = True

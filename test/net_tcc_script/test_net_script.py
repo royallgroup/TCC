@@ -4,10 +4,10 @@ import filecmp
 import os
 import sys
 
-sys.path += [os.path.abspath('../../lib/net_clusters')]
+sys.path += [os.path.abspath('../../python_scripts/net_clusters')]
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-from net import net_cluster_calculation
+import net
 
 class cd:
     """Context manager for changing the current working directory"""
@@ -26,7 +26,7 @@ class FileOperations:
     @staticmethod
     def run_net():
         try:
-            net_cluster_calculation("./raw_output",  "(FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)")
+            net.net_cluster_calculation("./raw_output",  "(FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)")
             return 0
         except Exception as e:
             print(e)

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-Module defining interface for reading and writing snapshots in various file formats.
+Module defining interface for reading and writing snapshots in various file formats. A snapshot is an object which
+holds data about a configuration of particles at a single point in time. A series of snapshots can be used to describe
+a trajectory in time.
 
 The module defines:
   - stream_safe_open: a context manager to facilitate parsing both open file streams and paths with the same interface
@@ -11,6 +13,7 @@ The module defines:
 import sys
 import numpy
 import contextlib
+import abc
 
 
 @contextlib.contextmanager
@@ -23,13 +26,13 @@ def stream_safe_open(path_or_file, mode='r'):
         mode: mode to open file in
     """
     if isinstance(path_or_file, str):
-        f = file_to_close = open(path_or_file, mode)
+        file_object = file_to_close = open(path_or_file, mode)
     else:
-        f = path_or_file
+        file_object = path_or_file
         file_to_close = None
 
     try:
-        yield f
+        yield file_object
     finally:
         if file_to_close:
             file_to_close.close()
@@ -40,7 +43,7 @@ class NoSnapshotError(RuntimeError):
 
 
 class Snapshot:
-    """Snapshot of a system of particles.
+    """Snapshot of a system of particles. A snapshot is a single configuration of particles at a point in time.
 
     Variables:
         n: number of particles
@@ -51,43 +54,43 @@ class Snapshot:
         time: time or frame of the snapshot within a trajectory
     """
 
-    def __init__(self, x=numpy.empty((0, 0)), box=None, species=None, time=0):
+    def __init__(self, particle_coordinates=numpy.empty((0, 0)), box=None, species=None, time=0):
         """Create a new snapshot.
 
         Args:
-            x: particle coordinates
+            particle_coordinates: particle coordinates
             box: box dimensions containing the particles
             species: labels of the particle species
             time: time or frame of the snapshot within a trajectory
         """
-        self.x = x
+        self.particle_coordinates = particle_coordinates
         self.box = box
         if species is None:
-            self.species = ['A']*self.n
+            self.species = ['A'] * self.num_particles
         else:
             self.species = species
         self.time = time
 
     def copy(self):
         """Return a deep copy of the snapshot."""
-        return snapshot(self.x.copy(), self.box.copy(), self.species.copy(), self.time)
+        return Snapshot(self.particle_coordinates.copy(), self.box.copy(), self.species.copy(), self.time)
 
     @property
-    def n(self):
+    def num_particles(self):
         """Number of particles in snapshot."""
-        return len(self.x)
+        return len(self.particle_coordinates)
 
     @property
-    def d(self):
+    def dimensionality(self):
         """Dimensionality of configuration space."""
-        return self.x.shape[1]
+        return self.particle_coordinates.shape[1]
 
     @classmethod
     def read_single(cls, path_or_file):
         """Read a single snapshot from the disk.
 
         Example:
-        >>> snapshot.read('snapshot.atom')
+        >>> Snapshot.read_single('snapshot.atom')
         <snapshot n=10976 t=0>
 
         Args:
@@ -109,7 +112,7 @@ class Snapshot:
         """Read a trajectory (i.e. multiple snapshots) from the disk.
 
         Example where trajectory.atom is an atom file containing two snapshots:
-        >>> list(read('trajectory.atom', 2))
+        >>> list(Snapshot.read_trajectory('trajectory.atom', 2))
         [<snapshot n=10976 t=0>, <snapshot n=10976 t=1>]
 
         Args:
@@ -141,14 +144,20 @@ class Snapshot:
         Args:
             out: file or path to write the snapshot to
         """
-        with stream_safe_open(out, 'w') as f:
-            f.write(str(self))
-            f.write('\n')
+        with stream_safe_open(out, 'w') as output_file:
+            output_file.write(str(self))
+            output_file.write('\n')
 
     def __repr__(self):
         """Internal representation of the object for printing to debugger."""
-        return '<snapshot n=%r t=%r>' % (self.n, self.time)
+        return '<snapshot n=%r t=%r>' % (self.num_particles, self.time)
 
+    @abc.abstractmethod
     def __str__(self):
         """String representation of the snapshot in the chosen format not implemented in the base class, and must be written for specific formats."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def read(self, file_or_stream):
+        """Function to read a snapshot from a file. Not implemented in base class and must be written for specific file formats."""
         raise NotImplementedError

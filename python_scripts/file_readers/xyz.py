@@ -13,7 +13,7 @@ import sys
 import io
 import numpy
 import pandas
-from .snapshot import stream_safe_open, NoSnapshotError, Snapshot
+from snapshot import stream_safe_open, NoSnapshotError, Snapshot
 
 
 class XYZSnapshot(Snapshot):
@@ -40,16 +40,17 @@ class XYZSnapshot(Snapshot):
             number_of_atoms = int(line)
             if not number_of_atoms > 0:
                 raise NoSnapshotError
-            comment = f.readline()
+            # Read and ingor comment line
+            f.readline()
 
             # Use pandas to read the main table.
-            c = io.StringIO()
+            string_buffer = io.StringIO()
             for i in range(number_of_atoms):
-                c.write(f.readline())
-            c.seek(0)
-            table = pandas.read_table(c, sep='\s+', names=('atom', 'x', 'y', 'z'), nrows=number_of_atoms)
+                string_buffer.write(f.readline())
+            string_buffer.seek(0)
+            table = pandas.read_table(string_buffer, sep='\s+', names=('atom', 'x', 'y', 'z'), nrows=number_of_atoms)
 
-            self.x = table[['x', 'y', 'z']].values.copy('c').astype(numpy.longdouble)
+            self.particle_coordinates = table[['x', 'y', 'z']].values.copy('c').astype(numpy.longdouble)
             self.species = table['atom'].tolist()
             self.time = self.box = None
 
@@ -58,20 +59,20 @@ class XYZSnapshot(Snapshot):
         f = io.StringIO()
 
         # Header states number of particles (we have ignored comment line)
-        f.write('%d\n' % self.n)
+        f.write('%d\n' % self.num_particles)
 
         # Single component system
         if type(self.species) is str:
-            for i in range(self.n):
+            for i in range(self.num_particles):
                 f.write('\n')
                 f.write('%s ' % self.species)
-                f.write(' '.join(map(str, self.x[i, :])))
+                f.write(' '.join(map(str, self.particle_coordinates[i, :])))
         # Handle particle species separately
         else:
-            for i in range(self.n):
+            for i in range(self.num_particles):
                 f.write('\n')
                 f.write('%s ' % self.species[i])
-                f.write(' '.join(map(str, self.x[i, :])))
+                f.write(' '.join(map(str, self.particle_coordinates[i, :])))
 
         return f.getvalue()
 

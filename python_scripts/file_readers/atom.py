@@ -12,7 +12,7 @@ The module defines:
 import io
 import numpy
 import pandas
-from .snapshot import stream_safe_open, NoSnapshotError, Snapshot
+from snapshot import stream_safe_open, NoSnapshotError, Snapshot
 
 
 class AtomSnapshot(Snapshot):
@@ -31,7 +31,7 @@ class AtomSnapshot(Snapshot):
             RuntimeException: if did not recognise file format
         """
         with stream_safe_open(path_or_file) as f:
-            self.x = numpy.empty((0, 0))
+            self.particle_coordinates = numpy.empty((0, 0))
             self.time = self.box = None
 
             while True:
@@ -47,12 +47,12 @@ class AtomSnapshot(Snapshot):
                 # Number of atoms in the header
                 elif ' '.join(item[1:4]) == 'NUMBER OF ATOMS':
                     n = int(f.readline())
-                    self.x = numpy.empty((n, self.d))
+                    self.particle_coordinates = numpy.empty((n, self.dimensionality))
 
                 # Item containing the bounding box.
                 elif ' '.join(item[1:3]) == 'BOX BOUNDS':
                     d = len(item[3:])
-                    self.x = numpy.empty((self.n, d))
+                    self.particle_coordinates = numpy.empty((self.num_particles, d))
                     self.box = numpy.zeros((d, 2), dtype=numpy.longdouble)
 
                     for c in range(d):
@@ -61,8 +61,8 @@ class AtomSnapshot(Snapshot):
 
                 # Main table contains the per-atom data. Should come at the end.
                 elif item[1] == 'ATOMS':
-                    assert self.n > 0
-                    assert 1 <= self.d <= 3
+                    assert self.num_particles > 0
+                    assert 1 <= self.dimensionality <= 3
                     assert self.box is not None
 
                     headings = item[2:]
@@ -78,13 +78,13 @@ class AtomSnapshot(Snapshot):
                     #except: table = table.sort('id')
 
                     if 'xs' in headings:
-                        cols = ['xs', 'ys', 'zs'][:self.d]
-                        self.x = table[cols].values.copy('c').astype(numpy.longdouble)
+                        cols = ['xs', 'ys', 'zs'][:self.dimensionality]
+                        self.particle_coordinates = table[cols].values.copy('c').astype(numpy.longdouble)
                         for c in range(d):
-                            self.x[:, c] *= self.box[c]
+                            self.particle_coordinates[:, c] *= self.box[c]
                     else:
-                        cols = ['x', 'y', 'z'][:self.d]
-                        self.x = table[cols].values.copy('c').astype(numpy.longdouble)
+                        cols = ['x', 'y', 'z'][:self.dimensionality]
+                        self.particle_coordinates = table[cols].values.copy('c').astype(numpy.longdouble)
 
                     self.species = numpy.array(table['type'])
                     return
@@ -94,25 +94,25 @@ class AtomSnapshot(Snapshot):
 
     def __str__(self):
         """String representation of the snapshot in LAMMPS (.atom) format"""
-        f = io.StringIO()
-        f.write('ITEM: TIMESTEP\n%r\n' % self.time)
-        f.write('ITEM: NUMBER OF ATOMS\n%r\n' % self.n)
-        f.write('ITEM: BOX BOUNDS')
+        string_buffer = io.StringIO()
+        string_buffer.write('ITEM: TIMESTEP\n%r\n' % self.time)
+        string_buffer.write('ITEM: NUMBER OF ATOMS\n%r\n' % self.num_particles)
+        string_buffer.write('ITEM: BOX BOUNDS')
         for _ in self.box:
-            f.write(' pp')
-        f.write('\n')
+            string_buffer.write(' pp')
+        string_buffer.write('\n')
         for dim in self.box:
             if len(dim) == 2:
-                f.write('%.8f %.8f\n' % tuple(dim))
+                string_buffer.write('%.8f %.8f\n' % tuple(dim))
             else:
-                f.write('0 %.8f\n' % dim)
-        f.write('ITEM: ATOMS id type x y z')
-        for i, (name, x) in enumerate(zip(self.species, self.x)):
-            f.write('\n')
-            f.write('%r %s' % (i, name))
+                string_buffer.write('0 %.8f\n' % dim)
+        string_buffer.write('ITEM: ATOMS id type x y z')
+        for i, (name, x) in enumerate(zip(self.species, self.particle_coordinates)):
+            string_buffer.write('\n')
+            string_buffer.write('%r %s' % (i, name))
             for coord in x:
-                f.write(' %.8f' % coord)
-        return f.getvalue()
+                string_buffer.write(' %.8f' % coord)
+        return string_buffer.getvalue()
 
 
 def read(*args, **kwargs):
