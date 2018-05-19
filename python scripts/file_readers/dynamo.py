@@ -8,13 +8,15 @@ The module defines:
   - read_trajectory: shorthand for DynamoSnapshot.read_trajectory
 """
 
-import sys, io, numpy
-from .snapshot import stream_safe_open, NoSnapshotError, Snapshot
+import numpy
+from .snapshot import stream_safe_open, Snapshot
 
 from lxml import etree as ElementTree
-from lxml.etree import Element
 
-class NonadditiveError(RuntimeError): pass
+
+class NonadditiveError(RuntimeError):
+    pass
+
 
 class DynamoSnapshot(Snapshot):
     """Snapshot of a system of particles in DynamO (.xml) file format.
@@ -39,7 +41,8 @@ class DynamoSnapshot(Snapshot):
         Returns:
             boolean stating whether the interaction is a hard sphere
         """
-        if interaction.attrib['Type'] == 'HardSphere': return True
+        if interaction.attrib['Type'] == 'HardSphere':
+            return True
         return interaction.attrib['Type'] == 'SquareWell' and interaction.attrib['WellDepth'] == '0'
 
     def assign_diameters(self, uij_range, diameter):
@@ -61,16 +64,16 @@ class DynamoSnapshot(Snapshot):
         if range_type == 'All':
             self.diameters[:] = diameter
 
-        elif range_type  == 'Single':
+        elif range_type == 'Single':
             uij_range = uij_range.getchildren()[0].attrib
             start = int(uij_range['Start'])
             end = int(uij_range['End'])
             self.diameters[start:end+1] = diameter
 
         elif range_type == 'Pair':
-            range0,range1 = uij_range.getchildren()
-            start0,start1 = [int(r.attrib['Start']) for r in [range0,range1]]
-            end0,end1 = [int(r.attrib['End']) for r in [range0,range1]]
+            range0, range1 = uij_range.getchildren()
+            start0, start1 = [int(r.attrib['Start']) for r in [range0, range1]]
+            end0, end1 = [int(r.attrib['End']) for r in [range0, range1]]
 
             if start0 == start1 and end0 == end1:
                 assigning_diameters = self.diameters[start0:end0+1]
@@ -101,13 +104,15 @@ class DynamoSnapshot(Snapshot):
             NonadditiveError: if the interaction is not additive
         """
 
-        if uij_range.attrib['Type'] != 'Pair': return
+        if uij_range.attrib['Type'] != 'Pair':
+            return
 
-        range0,range1 = uij_range.getchildren()
-        start0,start1 = [int(r.attrib['Start']) for r in [range0,range1]]
-        end0,end1 = [int(r.attrib['End']) for r in [range0,range1]]
+        range0, range1 = uij_range.getchildren()
+        start0, start1 = [int(r.attrib['Start']) for r in [range0, range1]]
+        end0, end1 = [int(r.attrib['End']) for r in [range0, range1]]
 
-        if start0 == start1 and end0 == end1: return
+        if start0 == start1 and end0 == end1:
+            return
 
         diameters0 = self.diameters[start0:end0+1]
         diameters1 = self.diameters[start1:end1+1]
@@ -116,9 +121,10 @@ class DynamoSnapshot(Snapshot):
             diameters1 = diameters1[0]
             additive_diameter = 0.5*(diameters0 + diameters1)
 
-            if abs(additive_diameter - diameter) < eps: return
+            if abs(additive_diameter - diameter) < eps:
+                return
 
-        raise NonadditiveError('cross interaction between ranges (%d,%d) and (%d,%d) is non additive!' % (start0,end0,start1,end1))
+        raise NonadditiveError('cross interaction between ranges (%d,%d) and (%d,%d) is non additive!' % (start0, end0, start1, end1))
 
     def read(self, path_or_file):
         """Read a snapshot from a file, overwriting any existing data.
@@ -157,12 +163,12 @@ class DynamoSnapshot(Snapshot):
 
             # System size information
             self.box = self.xml['simulation'].find('SimulationSize')
-            box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in ['x','y','z']])
-            self.box = numpy.array([[0.,length] for length in box_lengths])
+            box_lengths = numpy.array([float(self.box.attrib[dim]) for dim in ['x', 'y', 'z']])
+            self.box = numpy.array([[0., length] for length in box_lengths])
             self.volume = numpy.product(box_lengths)
             self.density = self.n / self.volume
 
-            ## Find the diameters of the particles, assuming additive interactions.
+            # Find the diameters of the particles, assuming additive interactions.
 
             # Initialise diameters to NaN: if any are still NaN at the end we know some were
             # uninitialised and the data file is incomplete
@@ -176,8 +182,10 @@ class DynamoSnapshot(Snapshot):
 
                 uij_range = uij.find('IDPairRange')
                 diameter = float(uij.attrib['Diameter'])
-                try: self.assign_diameters(uij_range, diameter)
-                except NonadditiveError: definitely_additive = False
+                try:
+                    self.assign_diameters(uij_range, diameter)
+                except NonadditiveError:
+                    definitely_additive = False
 
             # Check that all diameters were assigned above
             uninitialised = numpy.isnan(self.diameters)
@@ -191,7 +199,7 @@ class DynamoSnapshot(Snapshot):
                     diameter = float(uij.attrib['Diameter'])
                     self.verify_cross_species_interactions(uij_range, diameter)
 
-            ## Compute exact volume fraction.
+            # Compute exact volume fraction.
             intrinsic_volumes = numpy.pi * self.diameters**3 / 6
             self.volume_fraction = numpy.sum(intrinsic_volumes) / self.volume
 
@@ -201,9 +209,12 @@ class DynamoSnapshot(Snapshot):
         """To be implemented."""
         raise NotImplementedError
 
+
 def read(*args, **kwargs):
     """Read a single snapshot from the disk."""
     return DynamoSnapshot.read_single(*args, **kwargs)
+
+
 def read_trajectory(*args, **kwargs):
     """Read a trajectory (i.e. multiple snapshots) from the disk."""
     return DynamoSnapshot.read_trajectory(*args, **kwargs)

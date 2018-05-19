@@ -8,14 +8,18 @@ The module defines:
   - snapshot: the class containing the general snapshot interface
 """
 
-import sys, numpy, contextlib
+import sys
+import numpy
+import contextlib
+
 
 @contextlib.contextmanager
 def stream_safe_open(path_or_file, mode='r'):
     """Context manager for parsers which accept an open file stream or a file path to open.
 
     Args:
-        path_or_file: either an open file stream (in which case the context manager does nothing and returns it) or a path (in which case the context manager will open this, return a stream and then clean up)
+        path_or_file: either an open file stream (in which case the context manager does nothing and returns it)
+        or a path (in which case the context manager will open this, return a stream and then clean up)
         mode: mode to open file in
     """
     if isinstance(path_or_file, str):
@@ -30,8 +34,10 @@ def stream_safe_open(path_or_file, mode='r'):
         if file_to_close:
             file_to_close.close()
 
+
 class NoSnapshotError(RuntimeError):
     """Exception raised when not able to read a snapshot from a file."""
+
 
 class Snapshot:
     """Snapshot of a system of particles.
@@ -45,7 +51,7 @@ class Snapshot:
         time: time or frame of the snapshot within a trajectory
     """
 
-    def __init__(self, x=numpy.empty((0,0)), box=None, species=None, time=0):
+    def __init__(self, x=numpy.empty((0, 0)), box=None, species=None, time=0):
         """Create a new snapshot.
 
         Args:
@@ -56,8 +62,10 @@ class Snapshot:
         """
         self.x = x
         self.box = box
-        if species is None: self.species = ['A']*self.n
-        else: self.species = species
+        if species is None:
+            self.species = ['A']*self.n
+        else:
+            self.species = species
         self.time = time
 
     def copy(self):
@@ -107,6 +115,7 @@ class Snapshot:
         Args:
             cls: derived class defining specific file format
             path_or_file: file stream or path to read trajectory from
+            max_frames: Will read at most this many frames from the trajectory
         Returns:
             trajectory (generator): generator iterating through the snapshots in the trajectory
         Raises:
@@ -116,12 +125,15 @@ class Snapshot:
         with stream_safe_open(path_or_file) as f:
             frames = 0
             while True:
-                try: snap = cls.read_single(f)
-                except NoSnapshotError: break
+                try:
+                    snap = cls.read_single(f)
+                except NoSnapshotError:
+                    break
 
                 yield snap
                 frames += 1
-                if max_frames is not None and frames is max_frames: break
+                if max_frames is not None and frames is max_frames:
+                    break
 
     def write(self, out=sys.stdout):
         """Dump the snapshot to a file in LAMMPS (.atom) format.

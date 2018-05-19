@@ -49,8 +49,7 @@ cluster_index = {
     '13K':  '13K',
     'FCC':  'FCC',
     'HCP':  'HCP',
-    'BCC_9': 'BCC_9'#,
-    #'BCC_15': 'BCC_15'
+    'BCC_9': 'BCC_9'
 }
 
 clusters = sorted(list(set(cluster_index.values())))
