@@ -1,5 +1,4 @@
 from glob import glob
-import filecmp
 import os
 import subprocess
 import platform
@@ -118,7 +117,7 @@ class FileChecks:
 
 def test_build():
     # Build the binary before executing tests
-    build_directory = "../../build"
+    build_directory = "build"
     if not os.path.exists(build_directory):
         os.makedirs(build_directory)
     with cd(build_directory):
@@ -127,7 +126,7 @@ def test_build():
 
 def test_simple_bonds():
     # Test a relatively large file with simple bonds that finds most clusters
-    with cd("./simple_bonds"):
+    with cd("./test/integration_tests/simple_bonds"):
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_static_clust() is True
@@ -136,7 +135,7 @@ def test_simple_bonds():
 
 def test_basic_voronoi():
     # Test a small file with multiple frames
-    with cd("./basic_voronoi"):
+    with cd("./test/integration_tests/basic_voronoi"):
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_pop_per_frame() is True
@@ -146,7 +145,7 @@ def test_basic_voronoi():
 
 def test_cubic_voronoi_with_cell_list():
     # Test a medium file with cubic boundaries and cell list turned on
-    with cd("./voronoi_cells_cubic"):
+    with cd("./test/integration_tests/voronoi_cells_cubic"):
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_pop_per_frame() is True
@@ -156,7 +155,7 @@ def test_cubic_voronoi_with_cell_list():
 
 def test_non_cubic_voronoi_with_cell_list():
     # Test a medium file with cubic boundaries and cell list turned on
-    with cd("./voronoi_cells_non_cubic"):
+    with cd("./test/integration_tests/voronoi_cells_non_cubic"):
         assert FileOperations.run_tcc() == 0
         assert FileChecks.check_bonds() is True
         assert FileChecks.check_pop_per_frame() is True

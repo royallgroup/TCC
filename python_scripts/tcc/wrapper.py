@@ -11,7 +11,9 @@ import pandas
 import subprocess
 import platform
 from glob import glob
-from . import xyz, structures
+
+from python_scripts.file_readers import xyz
+from python_scripts.tcc import structures
 
 
 class BoxType:
