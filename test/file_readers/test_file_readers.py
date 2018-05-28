@@ -1,10 +1,6 @@
 import sys
-sys.path.append('../../python_scripts/file_readers')
-
-import snapshot
-import atom
-import dynamo
-import xyz
+print(sys.path)
+from python_scripts.file_readers import snapshot, atom, dynamo, xyz
 
 
 class TestXYZ:

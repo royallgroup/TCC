@@ -9,7 +9,7 @@ The module defines:
 """
 
 import numpy
-from snapshot import stream_safe_open, Snapshot
+from python_scripts.file_readers.snapshot import stream_safe_open, Snapshot
 
 from lxml import etree as ElementTree
 

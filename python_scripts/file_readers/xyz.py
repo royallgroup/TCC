@@ -13,7 +13,7 @@ import sys
 import io
 import numpy
 import pandas
-from snapshot import stream_safe_open, NoSnapshotError, Snapshot
+from python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, Snapshot
 
 
 class XYZSnapshot(Snapshot):

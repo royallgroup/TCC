@@ -1,16 +1,15 @@
 """Unit tests for detecting individual clusters."""
 
 import pytest
-import sys
 import os
-
-sys.path += [os.path.abspath('../../lib')]
-
-import numpy, pandas
+import numpy
+import pandas
 from glob import glob
-from tcc import structures, xyz, wrapper
 
-structures_to_test = glob('clusters/*.xyz')
+from python_scripts.file_readers import xyz
+from python_scripts.tcc import wrapper, structures
+
+structures_to_test = glob('test/unit_tests/clusters/*.xyz')
 
 
 def run_unit_test(cluster_path, bond_type):
@@ -23,7 +22,7 @@ def run_unit_test(cluster_path, bond_type):
         bond_type: the type of bond to be used by the TCC
     """
 
-    particle_coordinates = xyz.read(cluster_path).x
+    particle_coordinates = xyz.read(cluster_path).particle_coordinates
     cluster_name = os.path.split(cluster_path)[1].rstrip(".xyz")
 
     TCC = wrapper.TCCWrapper()

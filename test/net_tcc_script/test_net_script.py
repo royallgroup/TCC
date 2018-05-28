@@ -4,10 +4,7 @@ import filecmp
 import os
 import sys
 
-sys.path += [os.path.abspath('../../python_scripts/net_clusters')]
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
-import net
+from python_scripts.net_clusters import net
 
 class cd:
     """Context manager for changing the current working directory"""
@@ -46,7 +43,7 @@ class FileChecks:
 
 
 def test_basic_configuration():
-    with cd("./basic_configuration"):
+    with cd("./test/net_tcc_script/basic_configuration"):
         assert FileOperations.run_net() == 0
         assert FileChecks.check_net() is True
         assert FileOperations.tidy() == 0
