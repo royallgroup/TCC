@@ -9,16 +9,15 @@ The module defines:
 """
 
 import numpy
-from python_scripts.file_readers.snapshot import stream_safe_open, Snapshot
-
-from lxml import etree as ElementTree
+import python_scripts.file_readers.snapshot as snapshot
+import lxml.etree
 
 
 class NonadditiveError(RuntimeError):
     pass
 
 
-class DynamoSnapshot(Snapshot):
+class DynamoSnapshot(snapshot.Snapshot):
     """Snapshot of a system of particles in DynamO (.xml) file format.
 
     Interface defined in parent class Snapshot. Further documentation can be found there.
@@ -137,10 +136,14 @@ class DynamoSnapshot(Snapshot):
             RuntimeException: if did not recognise file format or the data does not describe an
                               additive hard sphere system
         """
-        with stream_safe_open(path_or_file) as f:
-            parser = ElementTree.XMLParser(remove_blank_text=True)
+        with snapshot.stream_safe_open(path_or_file) as f:
+            parser = lxml.etree.XMLParser(remove_blank_text=True)
             self.xml = {}
-            self.xml['tree'] = ElementTree.parse(f, parser)
+            try:
+                self.xml['tree'] = lxml.etree.parse(f, parser)
+            except lxml.etree.XMLSyntaxError:
+                print("Unable to read dynamo file.")
+                raise snapshot.NoSnapshotError
 
             self.xml['root'] = self.xml['tree'].getroot()
             self.xml['particles'] = self.xml['root'].find("ParticleData")
