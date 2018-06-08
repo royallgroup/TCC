@@ -13,7 +13,7 @@ import sys
 import io
 import numpy
 import pandas
-from python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, Snapshot
+from python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
 
 
 class XYZSnapshot(Snapshot):
@@ -30,29 +30,42 @@ class XYZSnapshot(Snapshot):
         Raises:
             NoSnapshotError: if could not read from file
         """
-        with stream_safe_open(path_or_file) as f:
+        with stream_safe_open(path_or_file) as input_file:
             # Read the header - check for EOF.
-            line = f.readline()
-            if not line:
-                raise NoSnapshotError
+            number_of_particles = self.process_number_of_particles(input_file)
 
-            # Process the rest of the header rows.
-            number_of_atoms = int(line)
-            if not number_of_atoms > 0:
-                raise NoSnapshotError
-            # Read and ingor comment line
-            f.readline()
+            # Read and igore the comment line
+            input_file.readline()
 
             # Use pandas to read the main table.
             string_buffer = io.StringIO()
-            for i in range(number_of_atoms):
-                string_buffer.write(f.readline())
+            for line_number in range(number_of_particles):
+                line = (input_file.readline())
+                if len(line.split()) != 4:
+                    raise SnapshotIncompleteError("Error reading XYZ file on line number {}".format(line_number))
+                string_buffer.write(line)
             string_buffer.seek(0)
-            table = pandas.read_table(string_buffer, sep='\s+', names=('atom', 'x', 'y', 'z'), nrows=number_of_atoms)
-
+            table = pandas.read_table(string_buffer, sep='\s+', names=('atom', 'x', 'y', 'z'), nrows=number_of_particles)
+            if table.shape[0] != number_of_particles:
+                raise SnapshotIncompleteError
             self.particle_coordinates = table[['x', 'y', 'z']].values.copy('c').astype(numpy.longdouble)
             self.species = table['atom'].tolist()
             self.time = self.box = None
+
+    @staticmethod
+    def process_number_of_particles(f):
+        line = f.readline()
+        if not line:
+            raise NoSnapshotError
+        if len(line.split()) > 1:
+            raise SnapshotIncompleteError("Can't read number of particles from XYZ file.")
+        try:
+            number_of_particles = int(line)
+        except ValueError:
+            raise SnapshotIncompleteError("Can't read number of particles from XYZ file.")
+        if not number_of_particles > 0:
+            raise NoSnapshotError
+        return number_of_particles
 
     def __str__(self):
         """String representation of the snapshot in XYZ (.xyz) format"""

@@ -40,6 +40,12 @@ def stream_safe_open(path_or_file, mode='r'):
 
 class NoSnapshotError(RuntimeError):
     """Exception raised when not able to read a snapshot from a file."""
+    pass
+
+
+class SnapshotIncompleteError(RuntimeError):
+    """Exception raised when a frame is read but not all particles are found or the coordinates cannot be read."""
+    pass
 
 
 class Snapshot:

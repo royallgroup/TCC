@@ -8,6 +8,16 @@ class TestXYZ:
         with pytest.raises(snapshot.NoSnapshotError):
             xyz.read("test/file_readers/test_files/empty_file.xyz")
 
+    @staticmethod
+    def test_partial_frame():
+        with pytest.raises(snapshot.SnapshotIncompleteError):
+            xyz.read("test/file_readers/test_files/partial_frame.xyz")
+
+    @staticmethod
+    def test_partial_multiple_frames():
+        with pytest.raises(snapshot.SnapshotIncompleteError):
+            xyz.read("test/file_readers/test_files/partial_multiple_frames.xyz")
+
 
 class TestAtom:
     @staticmethod
