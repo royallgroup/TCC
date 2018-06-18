@@ -53,47 +53,36 @@ cluster_index = {
 }
 
 clusters = sorted(list(set(cluster_index.values())))
-symmetry_number = {cluster: 1 for cluster in clusters}
-symmetry_number['sp3b'] = 4
-symmetry_number['sp4c'] = 3
+# Each cluster should normally be detected as a single instance of itself however, some clusters are
+# found more than once due to symmetry axes and some are not detected using different bond types.
+simple_bond_clusters = {cluster: 1 for cluster in clusters}
+simple_bond_clusters['sp3b'] = 4
+simple_bond_clusters['sp4c'] = 3
+simple_bond_clusters['7T_a'] = 2
+simple_bond_clusters['7T_s'] = 3
 
-# Components of each cluster in terms of elementary structures (and itself) for e.g. unit testing.
-# Each cluster 'contains' at least one of itself by virtue of equality, though may find more it has symmetry axes.
-composition = {cluster: {cluster: symmetry_number[cluster]} for cluster in clusters}
+# Whether clusters are detected by the Voronoi bond method depends on the fc parameter which changes the bond detection.
+# The detection of clusters is defined for two different values of the fc parameter, 0.82 and 1.
+# An fc parameter of 1 allows for a wider range of bond lengths including longer bonds so we call this voronoi_long.
+# An fc parameter of 0.82 favours with a narrower range of lengths so we call this voronoi_short.
+voronoi_short_clusters = {cluster: 1 for cluster in clusters}
+voronoi_short_clusters['sp3b'] = 4
+voronoi_short_clusters['sp4c'] = 3
+voronoi_short_clusters['7T_a'] = 2
+voronoi_short_clusters['7T_s'] = 3
+voronoi_short_clusters['7K'] = 0
+voronoi_short_clusters['8K'] = 0
+voronoi_short_clusters['11A'] = 0
 
-# The double tetrahedron: sp3c
-composition['sp3c']['sp3b'] = 6
-
-# A square pyramid: sp4b
-composition['sp4b']['sp3a'] = 4
-
-# The octahedron: sp4c
-composition['sp4c']['sp3a'] = 8
-composition['sp4c']['6A'] = 1
-
-# A Pentagonal pyramid: sp5b
-composition['sp5b']['sp3a'] = 5
-
-# The pentagonal ring cluster: sp5c (or 7A)
-composition['sp5c']['sp3b'] = 10
-composition['sp5c']['sp3c'] = 5
-composition['sp5c']['6Z'] = 5
-composition['sp5c']['7K'] = 5
-
-# The tritetrahedron: 6Z
-composition['6Z']['sp3b'] = 8
-composition['6Z']['sp3c'] = 2
-
-# More complex polytetrahedra: 7T_a and 7T_s (4 tetrahedra)
-composition['7T_a']['sp3b'] = 10
-composition['7T_a']['sp3c'] = 3
-composition['7T_a']['6Z'] = 2
-composition['7T_a']['7T_a'] = 2
-composition['7T_s']['sp3b'] = 10
-composition['7T_s']['sp3c'] = 3
-composition['7T_s']['6Z'] = 3
-composition['7T_s']['7T_s'] = 3
-
-# Crystal structures
-composition['BCC_9']['sp3a'] = 12
-composition['BCC_9']['sp4b'] = 6
+voronoi_long_clusters = {cluster: 1 for cluster in clusters}
+voronoi_long_clusters['sp3b'] = 4
+voronoi_long_clusters['sp4c'] = 3
+voronoi_long_clusters['7T_a'] = 2
+voronoi_long_clusters['7T_s'] = 3
+voronoi_long_clusters['8A'] = 0
+voronoi_long_clusters['9A'] = 0
+voronoi_long_clusters['10A'] = 0
+voronoi_long_clusters['11B'] = 0
+voronoi_long_clusters['12A'] = 0
+voronoi_long_clusters['FCC'] = 0
+voronoi_long_clusters['HCP'] = 0
