@@ -60,18 +60,19 @@ symmetry_number['sp4c'] = 3
 # Components of each cluster in terms of elementary structures (and itself) for e.g. unit testing.
 # Each cluster 'contains' at least one of itself by virtue of equality, though may find more it has symmetry axes.
 composition = {cluster: {cluster: symmetry_number[cluster]} for cluster in clusters}
-#for cluster in clusters: composition[cluster][cluster] = 1
-
-# A square pyramid: sp4b
-composition['sp4b']['sp3a'] = 4
-# A Pentagonal pyramid: sp5b
-composition['sp5b']['sp3a'] = 5
 
 # The double tetrahedron: sp3c
 composition['sp3c']['sp3b'] = 6
 
+# A square pyramid: sp4b
+composition['sp4b']['sp3a'] = 4
+
 # The octahedron: sp4c
 composition['sp4c']['sp3a'] = 8
+composition['sp4c']['6A'] = 1
+
+# A Pentagonal pyramid: sp5b
+composition['sp5b']['sp3a'] = 5
 
 # The pentagonal ring cluster: sp5c (or 7A)
 composition['sp5c']['sp3b'] = 10
