@@ -46,18 +46,18 @@ class AtomSnapshot(Snapshot):
 
                 # Number of atoms in the header
                 elif ' '.join(item[1:4]) == 'NUMBER OF ATOMS':
-                    n = int(f.readline())
-                    self.particle_coordinates = numpy.empty((n, self.dimensionality))
+                    num_particles = int(f.readline())
+                    self.particle_coordinates = numpy.empty((num_particles, self.dimensionality))
 
                 # Item containing the bounding box.
                 elif ' '.join(item[1:3]) == 'BOX BOUNDS':
-                    d = len(item[3:])
-                    self.particle_coordinates = numpy.empty((self.num_particles, d))
-                    self.box = numpy.zeros((d, 2), dtype=numpy.longdouble)
+                    num_spatial_dimensions = len(item[3:])
+                    self.particle_coordinates = numpy.empty((self.num_particles, num_spatial_dimensions))
+                    self.box = numpy.zeros((num_spatial_dimensions, 2), dtype=numpy.float64)
 
-                    for c in range(d):
+                    for dimension in range(num_spatial_dimensions):
                         boundary = f.readline().split()
-                        self.box[c][:] = [float(b) for b in boundary]
+                        self.box[dimension][:] = [float(b) for b in boundary]
 
                 # Main table contains the per-atom data. Should come at the end.
                 elif item[1] == 'ATOMS':
@@ -69,22 +69,23 @@ class AtomSnapshot(Snapshot):
                     assert 'id' in headings
                     assert 'x' or 'xs' in headings
 
-                    c = io.StringIO()
-                    for i in range(n):
-                        c.write(f.readline())
-                    c.seek(0)
-                    table = pandas.read_table(c, index_col=0, sep='\s+', names=headings, nrows=n)
-                    #try: table = table.sort_values('id')
-                    #except: table = table.sort('id')
+                    particle_buffer = io.StringIO()
+                    for i in range(self.num_particles):
+                        particle_buffer.write(f.readline())
+                    particle_buffer.seek(0)
+                    table = pandas.read_table(particle_buffer, index_col=0, sep='\s+', names=headings,
+                                              nrows=self.num_particles)
 
                     if 'xs' in headings:
                         cols = ['xs', 'ys', 'zs'][:self.dimensionality]
-                        self.particle_coordinates = table[cols].values.copy('c').astype(numpy.longdouble)
-                        for c in range(d):
-                            self.particle_coordinates[:, c] *= self.box[c]
+                        self.particle_coordinates = table[cols].values.copy('c').astype(numpy.float64)
+                        for dimension in range(self.dimensionality):
+                            side_length = self.box[dimension][1] - self.box[dimension][0]
+                            self.particle_coordinates[:, dimension] *= side_length
+                            self.particle_coordinates[:, dimension] += self.box[dimension][0]
                     else:
                         cols = ['x', 'y', 'z'][:self.dimensionality]
-                        self.particle_coordinates = table[cols].values.copy('c').astype(numpy.longdouble)
+                        self.particle_coordinates = table[cols].values.copy('c').astype(numpy.float64)
 
                     self.species = numpy.array(table['type'])
                     return

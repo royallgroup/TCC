@@ -52,9 +52,9 @@ class Snapshot:
     """Snapshot of a system of particles. A snapshot is a single configuration of particles at a point in time.
 
     Variables:
-        n: number of particles
-        d: dimensionality of configuration space
-        x: particle coordinates (n by d container)
+        num_particles: number of particles
+        dimensionality: dimensionality of configuration space
+        particle_coordinates: particle coordinates (num_particles by dimensionality container)
         box: box containing the particles (d by 2 container)
         species: labels of the particle species (string or container of strings)
         time: time or frame of the snapshot within a trajectory
@@ -160,10 +160,16 @@ class Snapshot:
 
     @abc.abstractmethod
     def __str__(self):
-        """String representation of the snapshot in the chosen format not implemented in the base class, and must be written for specific formats."""
+        """
+        String representation of the snapshot in the chosen format not implemented in the base class,
+         and must be written for specific formats.
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def read(self, file_or_stream):
-        """Function to read a snapshot from a file. Not implemented in base class and must be written for specific file formats."""
+        """
+        Function to read a snapshot from a file. Not implemented in base class and must be written
+        for specific file formats.
+        """
         raise NotImplementedError
