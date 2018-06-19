@@ -58,8 +58,3 @@ def test_voronoi_long_clusters(path):
 @pytest.mark.parametrize('path', structures_to_test)
 def test_voronoi_short_clusters(path):
     run_unit_test(path, "voronoi_short")
-
-
-@pytest.mark.parametrize('path', structures_to_test)
-def test_simple_clusters(path):
-    run_unit_test(path, "simple")

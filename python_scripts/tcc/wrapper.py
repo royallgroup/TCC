@@ -195,7 +195,7 @@ class TCCWrapper:
             pandas table giving the static cluster information
         """
         summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
-        table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.clusters))
+        table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.cluster_list))
         table.fillna(0., inplace=True)
         return table
 
