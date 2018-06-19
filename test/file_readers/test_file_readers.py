@@ -1,6 +1,7 @@
 from python_scripts.file_readers import snapshot, atom, dynamo, xyz
 import pytest
 import numpy as np
+import math
 
 
 class TestXYZ:
@@ -41,3 +42,29 @@ class TestDynamo:
     def test_empty_file():
         with pytest.raises(snapshot.NoSnapshotError):
             dynamo.read("test/file_readers/test_files/empty_file.xyz")
+
+    @staticmethod
+    def test_dynamo_snapshot():
+        data = dynamo.read("test/file_readers/test_files/sample_dynamo_snapshot.xml")
+        assert np.allclose(data.box, np.array([[0, 8.71188], [0, 8.71188], [0, 8.71188]]), atol=0.00001)
+        assert math.isclose(data.density, 2.075)
+        assert data.diameters.shape == (1372,)
+        assert data.dimensionality == 3
+        assert data.num_particles == 1372
+        assert data.particle_coordinates.shape == (1372, 3)
+        assert data.species.shape == (1372,)
+        assert math.isclose(data.volume, 661.204, rel_tol=0.001)
+        assert math.isclose(data.volume_fraction, 0.5746, rel_tol=0.0001)
+
+    @staticmethod
+    def test_dynamo_config():
+        data = dynamo.read("test/file_readers/test_files/sample_dynamo_config.end.xml")
+        assert np.allclose(data.box, np.array([[0, 9.68024], [0, 9.68024], [0, 9.68024]]), atol=0.00001)
+        assert math.isclose(data.density, 1.5125)
+        assert data.diameters.shape == (1372,)
+        assert data.dimensionality == 3
+        assert data.num_particles == 1372
+        assert data.particle_coordinates.shape == (1372, 3)
+        assert data.species.shape == (1372,)
+        assert math.isclose(data.volume, 907.107, rel_tol=0.001)
+        assert math.isclose(data.volume_fraction, 0.58617, rel_tol=0.0001)
