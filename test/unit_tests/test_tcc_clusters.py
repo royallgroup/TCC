@@ -31,7 +31,7 @@ def run_unit_test(cluster_path, bond_type):
         tcc_parameters.input_parameters['Simulation']['fc'] = 1
     else:
         print("Unknown bond type.")
-        raise KeyError()
+        raise TypeError()
 
     tcc_result_report = tcc_parameters.run((100., 100., 100.), particle_coordinates)
 
@@ -40,8 +40,11 @@ def run_unit_test(cluster_path, bond_type):
     try:
         if bond_type == "voronoi_short":
             assert report['Number of clusters'][cluster_name] == structures.voronoi_short_clusters[cluster_name]
-        else:
+        elif bond_type == "voronoi_long":
             assert report['Number of clusters'][cluster_name] == structures.voronoi_long_clusters[cluster_name]
+        else:
+            print("Unknown bond type.")
+            raise TypeError()
     except AssertionError:
         print(report)
         raise AssertionError from None

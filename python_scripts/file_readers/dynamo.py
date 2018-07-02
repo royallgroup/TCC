@@ -9,7 +9,7 @@ The module defines:
 
 import numpy
 import python_scripts.file_readers.snapshot as snapshot
-import lxml.etree
+import xml.etree.ElementTree as ET
 
 
 class NonadditiveError(RuntimeError):
@@ -132,11 +132,11 @@ class DynamoSnapshot(snapshot.Snapshot):
                               additive hard sphere system
         """
         with snapshot.stream_safe_open(path_or_file) as f:
-            parser = lxml.etree.XMLParser(remove_blank_text=True)
+            parser = ET.XMLParser()
             self.xml = {}
             try:
-                self.xml['tree'] = lxml.etree.parse(f, parser)
-            except lxml.etree.XMLSyntaxError:
+                self.xml['tree'] = ET.parse(f, parser)
+            except ET.ParseError:
                 print("Unable to read dynamo file.")
                 raise snapshot.NoSnapshotError
 
@@ -146,7 +146,7 @@ class DynamoSnapshot(snapshot.Snapshot):
             self.xml['interactions'] = self.xml['simulation'].find('Interactions')
 
             # Particle coordinates
-            self.particle_coordinates = numpy.array([p.find('P').attrib.values() for p in self.xml['particles']], dtype=numpy.longdouble)
+            self.particle_coordinates = numpy.array([list(p.find('P').attrib.values()) for p in self.xml['particles']], dtype=numpy.longdouble)
             if self.num_particles != len(self.xml['particles'].getchildren()):
                 raise RuntimeError('inconsistent file!')
 
