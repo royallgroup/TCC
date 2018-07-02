@@ -21,14 +21,11 @@ def run_unit_test(cluster_path, bond_type):
         bond_type: the type of bond to be used by the TCC
     """
 
-    particle_coordinates = xyz.read(cluster_path).particle_coordinates
+    particle_coordinates = list(xyz.read(cluster_path, 1))[0].particle_coordinates
     cluster_name = os.path.split(cluster_path)[1].rstrip(".xyz")
 
     tcc_parameters = wrapper.TCCWrapper()
-    if bond_type == "simple":
-        tcc_parameters.input_parameters['Simulation']['bond_type'] = wrapper.BondType.simple
-        tcc_parameters.input_parameters['Simulation']['rcutAA'] = 1.44
-    elif bond_type == "voronoi_short":
+    if bond_type == "voronoi_short":
         tcc_parameters.input_parameters['Simulation']['fc'] = 0.82
     elif bond_type == "voronoi_long":
         tcc_parameters.input_parameters['Simulation']['fc'] = 1
@@ -41,10 +38,10 @@ def run_unit_test(cluster_path, bond_type):
     report = pandas.DataFrame(tcc_result_report['Number of clusters'])
 
     try:
-        if bond_type == "simple":
-            assert report['Number of clusters'][cluster_name] == structures.simple_bond_clusters[cluster_name]
-        else:
+        if bond_type == "voronoi_short":
             assert report['Number of clusters'][cluster_name] == structures.voronoi_short_clusters[cluster_name]
+        else:
+            assert report['Number of clusters'][cluster_name] == structures.voronoi_long_clusters[cluster_name]
     except AssertionError:
         print(report)
         raise AssertionError from None

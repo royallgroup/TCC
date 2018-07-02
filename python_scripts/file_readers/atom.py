@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """
-Module for reading and writing snapshots from and to LAMMPS (.atom) file formats. The main class is AtomSnapshot,
-but some additional functions are defined to provide a simplified interface to this class.
+Module for reading and writing snapshots from and to LAMMPS (.atom) file formats.
 
 The module defines:
   - AtomSnapshot: the class the defining the file interface to this file format
-  - read: shorthand for AtomSnapshot.read_single
-  - read_trajectory: shorthand for AtomSnapshot.read_trajectory
+  - read: shorthand for AtomSnapshot.read_trajectory
 """
 
 import io
@@ -116,11 +114,6 @@ class AtomSnapshot(Snapshot):
         return string_buffer.getvalue()
 
 
-def read(*args, **kwargs):
-    """Read a single snapshot from the disk."""
-    return AtomSnapshot.read_single(*args, **kwargs)
-
-
-def read_trajectory(*args, **kwargs):
-    """Read a trajectory (i.e. multiple snapshots) from the disk."""
-    return AtomSnapshot.read_trajectory(*args, **kwargs)
+def read(file_name, num_frames=1):
+    """Read one or more snapshots from the atom file."""
+    return AtomSnapshot.read_trajectory(file_name, num_frames)

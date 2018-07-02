@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-Module for reading and writing snapshots from and to XYZ (.xyz) file formats. The main class is XYZSnapshot, but some additional functions are defined to provide a simplified interface to this class.
+Module for reading and writing snapshots from and to XYZ (.xyz) file formats.
 
 The module defines:
   - XYZSnapshot: the class the defining the file interface to this file format
-  - read: shorthand for XYZSnapshot.read_single
-  - read_trajectory: shorthand for XYZSnapshot.read_trajectory
+  - read: shorthand for XYZSnapshot.read_trajectory
   - write: create a snapshot from coordinates to write to disk
 """
 
@@ -90,17 +89,12 @@ class XYZSnapshot(Snapshot):
         return f.getvalue()
 
 
-def read(*args, **kwargs):
-    """Read a single snapshot from the disk."""
-    return XYZSnapshot.read_single(*args, **kwargs)
-
-
-def read_trajectory(*args, **kwargs):
-    """Read a trajectory (i.e. multiple snapshots) from the disk."""
-    return XYZSnapshot.read_trajectory(*args, **kwargs)
+def read(file_name, num_frames=1):
+    """Read one or more snapshots from the xyz file."""
+    return XYZSnapshot.read_trajectory(file_name, num_frames)
 
 
 def write(x, out=sys.stdout, species=None):
-    """ Wrtie a single configuration to the disk."""
+    """ Write a single configuration to the disk."""
     snapshot = XYZSnapshot(x, species=species)
     snapshot.write(out)

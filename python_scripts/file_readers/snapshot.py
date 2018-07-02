@@ -52,12 +52,12 @@ class Snapshot:
     """Snapshot of a system of particles. A snapshot is a single configuration of particles at a point in time.
 
     Variables:
-        num_particles: number of particles
-        dimensionality: dimensionality of configuration space
+        num_particles: number of particles (integer)
+        dimensionality: dimensionality of configuration space (integer)
         particle_coordinates: particle coordinates (num_particles by dimensionality container)
         box: box containing the particles (d by 2 container)
         species: labels of the particle species (string or container of strings)
-        time: time or frame of the snapshot within a trajectory
+        time: time or frame of the snapshot within a trajectory (integer or float)
     """
 
     def __init__(self, particle_coordinates=numpy.empty((0, 0)), box=None, species=None, time=0):
@@ -92,39 +92,22 @@ class Snapshot:
         return self.particle_coordinates.shape[1]
 
     @classmethod
-    def read_single(cls, path_or_file):
-        """Read a single snapshot from the disk.
+    def read_trajectory(cls, path_or_file, num_frames=1):
+        """A generator that snapshots from a file.
 
-        Example:
-        >>> Snapshot.read_single('snapshot.atom')
-        <snapshot n=10976 t=0>
-
-        Args:
-            cls: derived class defining specific file format
-            path_or_file: file stream or path to read snapshot from
-        Returns:
-            snapshot: the snapshot read from disk
-        Raises:
-            NoSnapshotError: if could not read from file
-            RuntimeException: if did not recognise file format
-        """
-        with stream_safe_open(path_or_file) as f:
-            snap = cls()
-            snap.read(f)
-            return snap
-
-    @classmethod
-    def read_trajectory(cls, path_or_file, max_frames=None):
-        """Read a trajectory (i.e. multiple snapshots) from the disk.
-
-        Example where trajectory.atom is an atom file containing two snapshots:
+        To return all snapshots at once use the list function:
         >>> list(Snapshot.read_trajectory('trajectory.atom', 2))
         [<snapshot n=10976 t=0>, <snapshot n=10976 t=1>]
+
+        To iterate over snapshots use a for loop
+        >>> data_set = Snapshot.read_trajectory('trajectory.atom', 2)
+        >>> for frame in data_set:
+        >>>     # Do science with frame
 
         Args:
             cls: derived class defining specific file format
             path_or_file: file stream or path to read trajectory from
-            max_frames: Will read at most this many frames from the trajectory
+            num_frames: Will read this many frames from the trajectory
         Returns:
             trajectory (generator): generator iterating through the snapshots in the trajectory
         Raises:
@@ -132,17 +115,13 @@ class Snapshot:
             RuntimeException: if did not recognise file format
         """
         with stream_safe_open(path_or_file) as f:
-            frames = 0
-            while True:
-                try:
-                    snap = cls.read_single(f)
-                except NoSnapshotError:
-                    break
+            frames_read = 0
+            while frames_read < num_frames:
+                snap = cls()
+                snap.read(f)
 
                 yield snap
-                frames += 1
-                if max_frames is not None and frames is max_frames:
-                    break
+                frames_read += 1
 
     def write(self, out=sys.stdout):
         """Dump the snapshot to a file in LAMMPS (.atom) format.

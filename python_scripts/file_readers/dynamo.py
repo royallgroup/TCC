@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-Module for reading and writing snapshots from and to DynamO (.xml) file formats. The main class is DynamoSnapshot, but some additional functions are defined to provide a simplified interface to this class.
+Module for reading and writing snapshots from and to DynamO (.xml) file formats.
 
 The module defines:
   - DynamoSnapshot: the class the defining the file interface to this file format
-  - read: shorthand for DynamoSnapshot.read_single
-  - read_trajectory: shorthand for DynamoSnapshot.read_trajectory
+  - read: shorthand for DynamoSnapshot.read_trajectory
 """
 
 import numpy
@@ -22,10 +21,6 @@ class DynamoSnapshot(snapshot.Snapshot):
 
     Interface defined in parent class Snapshot. Further documentation can be found there.
     """
-
-    def read_trajectory(*args, **kwargs):
-        """Standard interface for reading trajectories should throw error because dynamo trajectories are not stored in the usual simple format."""
-        raise NotImplementedError
 
     @staticmethod
     def is_hard_sphere(interaction):
@@ -214,11 +209,9 @@ class DynamoSnapshot(snapshot.Snapshot):
         raise NotImplementedError
 
 
-def read(*args, **kwargs):
-    """Read a single snapshot from the disk."""
-    return DynamoSnapshot.read_single(*args, **kwargs)
-
-
-def read_trajectory(*args, **kwargs):
-    """Read a trajectory (i.e. multiple snapshots) from the disk."""
-    return DynamoSnapshot.read_trajectory(*args, **kwargs)
+def read(file_name):
+    """
+    Read a snaphshot from the dynamo file.
+    At the moment only a single frame can be read.
+    """
+    return DynamoSnapshot.read_trajectory(file_name, num_frames=1)
