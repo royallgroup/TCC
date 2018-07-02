@@ -26,9 +26,9 @@ def run_unit_test(cluster_path, bond_type):
 
     tcc_parameters = wrapper.TCCWrapper()
     if bond_type == "voronoi_short":
-        tcc_parameters.input_parameters['Simulation']['fc'] = 0.82
+        tcc_parameters.input_parameters['Simulation']['voronoi_parameter'] = 0.82
     elif bond_type == "voronoi_long":
-        tcc_parameters.input_parameters['Simulation']['fc'] = 1
+        tcc_parameters.input_parameters['Simulation']['voronoi_parameter'] = 1
     else:
         print("Unknown bond type.")
         raise TypeError()
