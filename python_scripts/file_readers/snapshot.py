@@ -19,11 +19,9 @@ import abc
 @contextlib.contextmanager
 def stream_safe_open(path_or_file, mode='r'):
     """Context manager for parsers which accept an open file stream or a file path to open.
-
-    Args:
-        path_or_file: either an open file stream (in which case the context manager does nothing and returns it)
+    :param path_or_file: either an open file stream (in which case the context manager does nothing and returns it)
         or a path (in which case the context manager will open this, return a stream and then clean up)
-        mode: mode to open file in
+    :param mode: mode to open file in, 'r' for read, 'w' for write
     """
     if isinstance(path_or_file, str):
         file_object = file_to_close = open(path_or_file, mode)
@@ -44,13 +42,13 @@ class NoSnapshotError(RuntimeError):
 
 
 class SnapshotIncompleteError(RuntimeError):
-    """Exception raised when a frame is read but not all particles are found or the coordinates cannot be read."""
+    """Exception raised when a snapshot is partially read
+    but not all particles are found or the coordinates cannot be read."""
     pass
 
 
 class Snapshot:
     """Snapshot of a system of particles. A snapshot is a single configuration of particles at a point in time.
-
     Variables:
         num_particles: number of particles (integer)
         dimensionality: dimensionality of configuration space (integer)
@@ -62,12 +60,10 @@ class Snapshot:
 
     def __init__(self, particle_coordinates=numpy.empty((0, 0)), box=None, species=None, time=0):
         """Create a new snapshot.
-
-        Args:
-            particle_coordinates: particle coordinates
-            box: box dimensions containing the particles
-            species: labels of the particle species
-            time: time or frame of the snapshot within a trajectory
+        :param particle_coordinates: list of paticle coordinates
+        :param box: list of dimensions of box contatining the particles
+        :param species: labels of the particle species
+        :param time: time or frame number of the snapshot within a trajectory
         """
         self.particle_coordinates = particle_coordinates
         self.box = box
@@ -78,17 +74,23 @@ class Snapshot:
         self.time = time
 
     def copy(self):
-        """Return a deep copy of the snapshot."""
+        """
+        :return: A deep copy of the snapshot.
+        """
         return Snapshot(self.particle_coordinates.copy(), self.box.copy(), self.species.copy(), self.time)
 
     @property
     def num_particles(self):
-        """Number of particles in snapshot."""
+        """
+        :return: Number of particles in snapshot.
+        """
         return len(self.particle_coordinates)
 
     @property
     def dimensionality(self):
-        """Dimensionality of configuration space."""
+        """
+        :return: Dimensionality of configuration space.
+        """
         return self.particle_coordinates.shape[1]
 
     @classmethod
@@ -103,16 +105,10 @@ class Snapshot:
         >>> data_set = Snapshot.read_trajectory('trajectory.atom', 2)
         >>> for frame in data_set:
         >>>     # Do science with frame
-
-        Args:
-            cls: derived class defining specific file format
-            path_or_file: file stream or path to read trajectory from
-            num_frames: Will read this many frames from the trajectory
-        Returns:
-            trajectory (generator): generator iterating through the snapshots in the trajectory
-        Raises:
-            NoSnapshotError: if could not read from file
-            RuntimeException: if did not recognise file format
+        Raises NoSnapshotError if file could not be read.
+        Raises RuntimeException file format is not recognised
+        :param path_or_file: file stream or path to read trajectory from
+        :param num_frames: Will read this many frames from the trajectory
         """
         with stream_safe_open(path_or_file) as f:
             frames_read = 0
@@ -123,13 +119,11 @@ class Snapshot:
                 yield snap
                 frames_read += 1
 
-    def write(self, out=sys.stdout):
+    def write(self, output_file=sys.stdout):
         """Dump the snapshot to a file.
-
-        Args:
-            out: file or path to write the snapshot to
+        :param output_file: file or path to write the snapshot to
         """
-        with stream_safe_open(out, 'w') as output_file:
+        with stream_safe_open(output_file, 'w') as output_file:
             xyz_frame = str(self)
             output_file.write(xyz_frame)
             output_file.write('\n')

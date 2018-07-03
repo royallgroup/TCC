@@ -3,8 +3,8 @@
 Module for reading and writing snapshots from and to XYZ (.xyz) file formats.
 
 The module defines:
-  - XYZSnapshot: the class the defining the file interface to this file format
-  - read: shorthand for XYZSnapshot.read_trajectory
+  - XYZSnapshot: the class defining the file interface to this file format
+  - read: Method to read one or more frames from an xyz file
   - write: create a snapshot from coordinates to write to disk
 """
 
@@ -22,12 +22,10 @@ class XYZSnapshot(Snapshot):
     """
 
     def read(self, path_or_file):
-        """Read a snapshot from a file, overwriting any existing data.
-
-        Args:
-            path_or_file: file stream or path to read snapshot from
-        Raises:
-            NoSnapshotError: if could not read from file
+        """
+        Read a single snapshot from a file. Overwrites any exisiting data in the Snaphsot object.
+        Raises NoSnapshotError if file could not be read.
+        :param path_or_file: file stream or path to read snapshot from
         """
         with stream_safe_open(path_or_file) as input_file:
             # Read the header - check for EOF.
@@ -52,8 +50,14 @@ class XYZSnapshot(Snapshot):
             self.time = self.box = None
 
     @staticmethod
-    def process_number_of_particles(f):
-        line = f.readline()
+    def process_number_of_particles(file):
+        """
+        Method for sanitising the number of particles read from an XYZ file.
+        Raises SnapshotIncompleteError if number of particles cannot be interpreted.
+        :param file: an open file handle to the xyz file
+        :return: an integer number of particles.
+        """
+        line = file.readline()
         if not line:
             raise NoSnapshotError
         if len(line.split()) > 1:
@@ -90,8 +94,13 @@ class XYZSnapshot(Snapshot):
 
 
 def read(file_name, num_frames=1):
-    """Read one or more snapshots from the xyz file."""
+    """Read one or more snapshots from an xyz file.
+    :param file_name: Name of XYZ file to read.
+    :param num_frames: Number of snapshots to read from the xyz file.
+    :return: A list of XYZSnapshot objects.
+    """
     return XYZSnapshot.read_trajectory(file_name, num_frames)
+
 
 def write_snapshot(output_filename, snapshot_list):
     """ Write one or more snapshots to the disk.

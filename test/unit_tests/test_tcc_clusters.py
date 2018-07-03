@@ -1,4 +1,4 @@
-"""Unit tests for detecting individual clusters."""
+"""Unit tests for clusters detected by the TCC."""
 
 import pytest
 import os
@@ -12,13 +12,11 @@ structures_to_test = glob('test/unit_tests/clusters/*.xyz')
 
 
 def run_unit_test(cluster_path, bond_type):
-    """Unit tests for clusters when running TCC.
-
-    Failure if number of detected clusters does not match known composition of given structure.
-
-    Args:
-        cluster_path: path to isolated structure geometry to run TCC on
-        bond_type: the type of bond to be used by the TCC
+    """
+    Run a unit test on a single structure
+    Test will fail if the number of detected clusters does not match known composition of a given structure.
+    :param cluster_path: path to isolated structure geometry to run TCC on
+    :param bond_type: the type of bond to be used by the TCC
     """
 
     particle_coordinates = list(xyz.read(cluster_path, 1))[0].particle_coordinates
