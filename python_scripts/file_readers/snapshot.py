@@ -124,13 +124,14 @@ class Snapshot:
                 frames_read += 1
 
     def write(self, out=sys.stdout):
-        """Dump the snapshot to a file in LAMMPS (.atom) format.
+        """Dump the snapshot to a file.
 
         Args:
             out: file or path to write the snapshot to
         """
         with stream_safe_open(out, 'w') as output_file:
-            output_file.write(str(self))
+            xyz_frame = str(self)
+            output_file.write(xyz_frame)
             output_file.write('\n')
 
     def __repr__(self):

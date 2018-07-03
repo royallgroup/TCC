@@ -13,7 +13,8 @@ from python_scripts.tcc import structures
 
 
 class TCCWrapper:
-    """Python interface to the TCC executable.
+    """Python interface to the TCC executable. Runs the TCC on a
+    single configuration.
 
     The TCC accepts input parameters through a file IO system, so
     this wrapper acts as an intermediate layer to streamline the
@@ -29,7 +30,7 @@ class TCCWrapper:
     def __init__(self):
         """On initialisation we have to create a temporary directory
         where file operations will be performed behind the scenes."""
-        self.working_directory = tempfile.mkdtemp(prefix='TCC_')
+        self.working_directory = None
         self.input_parameters = dict()
         self.input_parameters['Box'] = dict()
         self.input_parameters['Run'] = dict()
@@ -41,12 +42,13 @@ class TCCWrapper:
         to free up disk space."""
         shutil.rmtree(self.working_directory)
 
-    def run(self, box, particle_coordinates, particle_types='A', silent=True):
+    def run(self, box, particle_coordinates, output_directory=None, particle_types='A', silent=True):
         """Run the TCC
 
         Args:
             box: box size for boundary conditions, list of [len_x, len_y, len_z]
-            particle_coordinates: coordinates of atoms
+            particle_coordinates: a list of lists, one list for each frame containing coordinates of atoms
+            output_directory: If you want to save the output of the TCC specify a directory to store the output
             particle_types: species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.
             silent: if set TCC executable console output will be suppressed
         Returns:
@@ -54,13 +56,14 @@ class TCCWrapper:
         """
 
         tcc_path = self.get_tcc_executable_path()
+        self.set_up_working_directory(output_directory)
 
         # Create the INI file.
         self.serialise_input_parameters('{}/inputparameters.ini'.format(self.working_directory))
 
         # Create the box and configuration files.
-        self.write_box_file([box], '{}/box.txt'.format(self.working_directory))
-        xyz.write(particle_coordinates, '{}/run.xyz'.format(self.working_directory), species=particle_types)
+        self.write_box_file(box, '{}/box.txt'.format(self.working_directory))
+        xyz.write('{}/sample.xyz'.format(self.working_directory), particle_coordinates, species=particle_types)
 
         # Run the TCC executable.
         if silent:
@@ -74,6 +77,25 @@ class TCCWrapper:
             self.__del__()
             print("Error: TCC was not able to run.")
             raise Exception
+
+    def set_up_working_directory(self, output_directory):
+        """
+        Work out where to run the TCC. Create a directory if necessary.
+
+        :param output_directory: If None run the TCC in a temporary directory.
+            If a path then run the TCC there
+        """
+        if output_directory is None:
+            self.working_directory = tempfile.mkdtemp(prefix='TCC_')
+        else:
+            if not os.path.exists(output_directory):
+                try:
+                    os.makedirs(output_directory)
+                except os.error:
+                    print("Unable to create output directory: {}. "
+                          "Check location is not write protected.".format(output_directory))
+                    raise os.error
+            self.working_directory = output_directory
 
     @staticmethod
     def get_tcc_executable_path():
@@ -119,14 +141,13 @@ class TCCWrapper:
 
         Args:
             box: Box dimensions are given as a list of the format [len_x, len_y, len_z].
-                If NVT this should be a single set of box dimensions.
-                If NPT this sould be a list of sets of box dimensions, one for each timestep.
             box_filename: file path to write box to
         """
         with open(box_filename, 'w') as output_file:
             output_file.write('#iter Lx Ly Lz\n')
-            for frame, lengths in enumerate(box):
-                output_file.write('{} {}\n'.format(frame, ' '.join(map(str, lengths))))
+            output_file.write('1\t')
+            for dimension in box:
+                output_file.write('{}\t'.format(dimension))
 
     def parse_static_clusters(self):
         """Retrive the static cluster information after running the TCC.

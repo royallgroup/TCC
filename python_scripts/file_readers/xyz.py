@@ -68,8 +68,8 @@ class XYZSnapshot(Snapshot):
 
     def __str__(self):
         """String representation of the snapshot in XYZ (.xyz) format"""
-        f = io.StringIO()
 
+        f = io.StringIO()
         # Header states number of particles (we have ignored comment line)
         f.write('%d\n' % self.num_particles)
 
@@ -93,8 +93,20 @@ def read(file_name, num_frames=1):
     """Read one or more snapshots from the xyz file."""
     return XYZSnapshot.read_trajectory(file_name, num_frames)
 
+def write_snapshot(output_filename, snapshot_list):
+    """ Write one or more snapshots to the disk.
+    :param output_filename: The filename to write the coordinates to.
+    :param snapshot_list: A list of XYZSnapshots.
+    """
+    for snapshot in snapshot_list:
+        snapshot.write(output_filename)
 
-def write(x, out=sys.stdout, species=None):
-    """ Write a single configuration to the disk."""
-    snapshot = XYZSnapshot(x, species=species)
-    snapshot.write(out)
+
+def write(output_filename, particle_coordinates, species=None):
+    """ Write a single configuration to the disk.
+    :param output_filename: The filename to write the coordinates to.
+    :param particle_coordinates: A list of particle coordinates
+    :param species: A list of particle species. Defaults all particles to 'A' if not provided.
+    """
+    snapshot = XYZSnapshot(particle_coordinates, species=species)
+    snapshot.write(output_filename)
