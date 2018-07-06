@@ -1,0 +1,295 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tcc_python_scripts.file_readers.dynamo &#8212; TCC  documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">TCC  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tcc_python_scripts.file_readers.dynamo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Module for reading and writing snapshots from and to DynamO (.xml) file formats.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">tcc_python_scripts.file_readers.snapshot</span> <span class="k">as</span> <span class="nn">snapshot</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+
+
+<div class="viewcode-block" id="NonadditiveError"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.NonadditiveError">[docs]</a><span class="k">class</span> <span class="nc">NonadditiveError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Error rasied if the given interaction range is a cross-species </span>
+<span class="sd">    interaction, so potentially the dynamo file describes a nonadditive potential.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DynamoSnapshot"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot">[docs]</a><span class="k">class</span> <span class="nc">DynamoSnapshot</span><span class="p">(</span><span class="n">snapshot</span><span class="o">.</span><span class="n">Snapshot</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Snapshot of a system of particles in DynamO (.xml) file format.</span>
+
+<span class="sd">    Interface defined in parent class Snapshot. Further documentation can be found there.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DynamoSnapshot.is_hard_sphere"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.is_hard_sphere">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_hard_sphere</span><span class="p">(</span><span class="n">interaction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determine whether an interaction encoded in the dynamo XML tree is a hard sphere</span>
+<span class="sd">        interaction or not.</span>
+
+<span class="sd">        There are two ways to encode hard spheres: either explicitly as a hard sphere, or as</span>
+<span class="sd">        a square well with zero well depth (although the latter should be avoided as it results</span>
+<span class="sd">        in a less efficient simulation). This helper function tests for both eventualities.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            interaction: xml entry for the interaction</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            boolean stating whether the interaction is a hard sphere</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;HardSphere&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SquareWell&#39;</span> <span class="ow">and</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;WellDepth&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span></div>
+
+<div class="viewcode-block" id="DynamoSnapshot.assign_diameters"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.assign_diameters">[docs]</a>    <span class="k">def</span> <span class="nf">assign_diameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assign diameters to the particles across the given ID range.</span>
+
+<span class="sd">        Diameters will only be assigned if the range describes a single-species interaction.</span>
+<span class="sd">        Any other range is potentially a nonadditive interaction so an exception is raised as</span>
+<span class="sd">        a warning.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uij_range: xml entry describing the range of the interaction</span>
+<span class="sd">            diameter: length scale of these hard spheres</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NonadditiveError: if the given range is a cross-species interaction, so potentially</span>
+<span class="sd">                              the dynamo file describes a nonadditive potential.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">range_type</span> <span class="o">=</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">range_type</span> <span class="o">==</span> <span class="s1">&#39;All&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">diameter</span>
+
+        <span class="k">elif</span> <span class="n">range_type</span> <span class="o">==</span> <span class="s1">&#39;Single&#39;</span><span class="p">:</span>
+            <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">uij_range</span><span class="p">[</span><span class="s1">&#39;Start&#39;</span><span class="p">])</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">uij_range</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">diameter</span>
+
+        <span class="k">elif</span> <span class="n">range_type</span> <span class="o">==</span> <span class="s1">&#39;Pair&#39;</span><span class="p">:</span>
+            <span class="n">range0</span><span class="p">,</span> <span class="n">range1</span> <span class="o">=</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
+            <span class="n">start0</span><span class="p">,</span> <span class="n">start1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Start&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">range0</span><span class="p">,</span> <span class="n">range1</span><span class="p">]]</span>
+            <span class="n">end0</span><span class="p">,</span> <span class="n">end1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">range0</span><span class="p">,</span> <span class="n">range1</span><span class="p">]]</span>
+
+            <span class="k">if</span> <span class="n">start0</span> <span class="o">==</span> <span class="n">start1</span> <span class="ow">and</span> <span class="n">end0</span> <span class="o">==</span> <span class="n">end1</span><span class="p">:</span>
+                <span class="n">assigning_diameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[</span><span class="n">start0</span><span class="p">:</span><span class="n">end0</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">assigning_diameters</span><span class="p">)):</span>
+                    <span class="n">assigning_diameters</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">diameter</span>
+                    <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;can only process additive hard spheres!&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NonadditiveError</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unknown range type encounted: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">range_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DynamoSnapshot.verify_cross_species_interactions"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.verify_cross_species_interactions">[docs]</a>    <span class="k">def</span> <span class="nf">verify_cross_species_interactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether a cross-species hard sphere interaction is consistent with the known</span>
+<span class="sd">        diameters of each species, assuming additive interactions.</span>
+
+<span class="sd">        Additive cross-species interactions have size \sigma = 0.5*(\sigma_i + \sigma_j) where</span>
+<span class="sd">        \sigma_{i,j} are the diameters of the individual species. If the diameter does not</span>
+<span class="sd">        match this expectation then the interaction is not additive.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uij_range: xml entry describing the range of the interaction</span>
+<span class="sd">            diameter: length scale of this cross-species hard sphere interaction</span>
+<span class="sd">            eps: machine tolerance for the test of additivity</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NonadditiveError: if the interaction is not additive</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;Pair&#39;</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">range0</span><span class="p">,</span> <span class="n">range1</span> <span class="o">=</span> <span class="n">uij_range</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()</span>
+        <span class="n">start0</span><span class="p">,</span> <span class="n">start1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Start&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">range0</span><span class="p">,</span> <span class="n">range1</span><span class="p">]]</span>
+        <span class="n">end0</span><span class="p">,</span> <span class="n">end1</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">range0</span><span class="p">,</span> <span class="n">range1</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">start0</span> <span class="o">==</span> <span class="n">start1</span> <span class="ow">and</span> <span class="n">end0</span> <span class="o">==</span> <span class="n">end1</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">diameters0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[</span><span class="n">start0</span><span class="p">:</span><span class="n">end0</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">diameters1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">[</span><span class="n">start1</span><span class="p">:</span><span class="n">end1</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">diameters0</span> <span class="o">==</span> <span class="n">diameters0</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="n">numpy</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">diameters1</span> <span class="o">==</span> <span class="n">diameters1</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">diameters0</span> <span class="o">=</span> <span class="n">diameters0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">diameters1</span> <span class="o">=</span> <span class="n">diameters1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">additive_diameter</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">diameters0</span> <span class="o">+</span> <span class="n">diameters1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">additive_diameter</span> <span class="o">-</span> <span class="n">diameter</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
+                <span class="k">return</span>
+
+        <span class="k">raise</span> <span class="n">NonadditiveError</span><span class="p">(</span><span class="s1">&#39;cross interaction between ranges (</span><span class="si">%d</span><span class="s1">,</span><span class="si">%d</span><span class="s1">) and (</span><span class="si">%d</span><span class="s1">,</span><span class="si">%d</span><span class="s1">) is non additive!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start0</span><span class="p">,</span> <span class="n">end0</span><span class="p">,</span> <span class="n">start1</span><span class="p">,</span> <span class="n">end1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="DynamoSnapshot.read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read a snapshot from a file, overwriting any existing data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path_or_file: file stream or path to read snapshot from</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NoSnapshotError: if could not read from file</span>
+<span class="sd">            RuntimeException: if did not recognise file format or the data does not describe an</span>
+<span class="sd">                              additive hard sphere system</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XMLParser</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">parser</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ET</span><span class="o">.</span><span class="n">ParseError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to read dynamo file.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">NoSnapshotError</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;ParticleData&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Interactions&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Particle coordinates</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particle_coordinates</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;P&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">longdouble</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;particles&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;inconsistent file!&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Particle species</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Genus&#39;</span><span class="p">)</span>
+            <span class="n">species</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">species</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">,</span> <span class="n">species</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">species</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;genus&#39;</span><span class="p">]:</span>
+                <span class="n">id_range</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;IDRange&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">attrib</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">id_range</span><span class="p">[</span><span class="s1">&#39;Start&#39;</span><span class="p">])</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">id_range</span><span class="p">[</span><span class="s1">&#39;End&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+
+            <span class="c1"># System size information</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;simulation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;SimulationSize&#39;</span><span class="p">)</span>
+            <span class="n">box_lengths</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">box</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="n">length</span><span class="p">]</span> <span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">box_lengths</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">box_lengths</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
+
+            <span class="c1"># Find the diameters of the particles, assuming additive interactions.</span>
+
+            <span class="c1"># Initialise diameters to NaN: if any are still NaN at the end we know some were</span>
+            <span class="c1"># uninitialised and the data file is incomplete</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+            <span class="c1"># Assign diameters</span>
+            <span class="n">definitely_additive</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">uij</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hard_sphere</span><span class="p">(</span><span class="n">uij</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;can only process additive hard spheres!&#39;</span><span class="p">)</span>
+
+                <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;IDPairRange&#39;</span><span class="p">)</span>
+                <span class="n">diameter</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uij</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">])</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">assign_diameters</span><span class="p">(</span><span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">NonadditiveError</span><span class="p">:</span>
+                    <span class="n">definitely_additive</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># Check that all diameters were assigned above</span>
+            <span class="n">uninitialised</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">uninitialised</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;some diameters were uninitialised! indices=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span>
+                                   <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">uninitialised</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">definitely_additive</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">uij</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]:</span>
+                    <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;IDPairRange&#39;</span><span class="p">)</span>
+                    <span class="n">diameter</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uij</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">verify_cross_species_interactions</span><span class="p">(</span><span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">)</span>
+
+            <span class="c1"># Compute exact volume fraction.</span>
+            <span class="n">intrinsic_volumes</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">6</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">volume_fraction</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intrinsic_volumes</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
+
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;xml&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;To be implemented.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a snaphshot from the dynamo file.</span>
+<span class="sd">    At the moment only a single frame can be read.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">DynamoSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">TCC  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Peter Crowther.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

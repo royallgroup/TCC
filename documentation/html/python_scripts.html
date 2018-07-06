@@ -1,0 +1,234 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Python Scripts &#8212; TCC  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="XYZ file specification" href="xyz_specification.html" />
+    <link rel="prev" title="TCC input parameters" href="tcc_input_parameters.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="xyz_specification.html" title="XYZ file specification"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tcc_input_parameters.html" title="TCC input parameters"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="python-scripts">
+<h1>Python Scripts<a class="headerlink" href="#python-scripts" title="Permalink to this headline">¶</a></h1>
+<p>A number of Python scripts are located in the <code class="docutils literal notranslate"><span class="pre">tcc_python_scripts</span></code> folder in the root directory of the TCC. These are provided for convinience interfacing with the TCC and post processing results. To in order to import these python scripts as modules it is necessary to add the <code class="docutils literal notranslate"><span class="pre">tcc_python_scripts</span></code> folder to your $PYTHONPATH environment variable. This can either be done by permenantly adding the path to the environment variables on your system or by dynamically adding the path each time the scripts are run. An example of the latter is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../../&quot;</span><span class="p">))</span>
+<span class="kn">from</span> <span class="nn">tcc_scripts.file_readers</span> <span class="k">import</span> <span class="n">xyz</span>
+</pre></div>
+</div>
+<p>where you append the path of the main TCC directory.</p>
+<div class="section" id="coordinate-file-readers">
+<h2>Coordinate File Readers<a class="headerlink" href="#coordinate-file-readers" title="Permalink to this headline">¶</a></h2>
+<p>The scripts in the file readers folder are designed to privde a unified interface for reading from different coordinate file types. These allow reading in configurations from XYZ, dynamo and .atom (LAMMPS) files.</p>
+<p><a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snapshot</span></code></a> is the base class from which other file readers are defined. We define a <em>snapshot</em> as a single configuration of particles at one time. Regradless of the file format read, the data is stored in a common <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snapshot</span></code></a> object. Multiple snapshots may be present in an XYZ or atom file and these can be read in and each will be stored in a seperate <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snapshot</span></code></a> object.</p>
+<div class="section" id="example-xyz-file-reader-script">
+<h3>Example XYZ file reader script<a class="headerlink" href="#example-xyz-file-reader-script" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read" title="tcc_python_scripts.file_readers.xyz.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.xyz.read()</span></code></a> method is a generator which returns sequential <a class="reference internal" href="tcc_python_scripts.file_readers.html#module-tcc_python_scripts.file_readers.snapshot" title="tcc_python_scripts.file_readers.snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">snapshot</span></code></a> objects from a file. To retrieve all snapshots at once use the python <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#list" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">file_readers</span> <span class="k">import</span> <span class="n">xyz</span>
+<span class="gp">...</span>
+<span class="gp">... </span><span class="n">particle_coordinates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;../../test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">... </span><span class="nb">print</span><span class="p">(</span><span class="n">particle_coordinates</span><span class="p">)</span>
+<span class="go">[&lt;snapshot n=59 t=None&gt;, &lt;snapshot n=57 t=None&gt;]</span>
+</pre></div>
+</div>
+<p>Alternatively you can use the generator in a for loop and operate on each Snapshot seperately:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
+<span class="go">59</span>
+<span class="go">57</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="python-wrapper">
+<h2>Python Wrapper<a class="headerlink" href="#python-wrapper" title="Permalink to this headline">¶</a></h2>
+<p>The TCC Python wrapper is designed to be a lightweight way of automating simple TCC analyses. It can analyse a single configuration, this is most easily loaded using the above file readers.</p>
+<p>The <a class="reference internal" href="tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="tcc_python_scripts.tcc.wrapper.TCCWrapper.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.tcc.wrapper.TCCWrapper.run()</span></code></a> will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
+directory and deleting it after the run is complete. To save the results, for example raw or cluster xyz files you can provide a directory to the <a class="reference internal" href="tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="tcc_python_scripts.tcc.wrapper.TCCWrapper.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.tcc.wrapper.TCCWrapper.run()</span></code></a>
+method where the results will be saved.</p>
+<p>Input parameters are set to default values unless specified. They can be set by adding values to the releveant input_parameters attribute. For details on in input parameters see: <a class="reference internal" href="tcc_input_parameters.html"><span class="doc">TCC input parameters</span></a>.</p>
+<div class="section" id="example-wrapper-script">
+<h3>Example Wrapper Script<a class="headerlink" href="#example-wrapper-script" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tcc</span> <span class="k">import</span> <span class="n">wrapper</span>
+<span class="kn">from</span> <span class="nn">file_readers</span> <span class="k">import</span> <span class="n">xyz</span>
+
+<span class="c1"># Open a TCCWrapper object - this holds information about the simulation we want to run</span>
+<span class="n">TCC_setup</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">TCCWrapper</span><span class="p">()</span>
+
+<span class="c1"># Get the box size. This can be read from a file or input manually</span>
+<span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+
+<span class="c1"># Get the coordinates. The file_readers scripts are a good way to read in coordinates from a file.</span>
+<span class="n">particle_coordinates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;../../test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">particle_coordinates</span>
+
+<span class="n">TCC_setup</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;Run&#39;</span><span class="p">][</span><span class="s1">&#39;Frames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">TCC_setup</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;Run&#39;</span><span class="p">][</span><span class="s1">&#39;Frames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">TCC_setup</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">particle_coordinates</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Number of clusters&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Mean Pop Per Frame&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="net-tcc">
+<h2>Net TCC<a class="headerlink" href="#net-tcc" title="Permalink to this headline">¶</a></h2>
+<p>Simple python script to post process TCC output to find net TCC clusters. Writteb by Francesco Turci - February 2016, edited by Peter Crowther - March 2018.</p>
+<div class="section" id="description-of-net-clusters">
+<h3>Description of net clusters<a class="headerlink" href="#description-of-net-clusters" title="Permalink to this headline">¶</a></h3>
+<p>The cluster populations output by the TCC are gross populations. This means that every particle in each cluster is reported. Some of these results are not very interesting since we know that the incidence of smaller clusters is much higher than that of larger clusters, e.g. almost everything is always in a 5A, 6A and 7A cluster.</p>
+<p>A different measure of clusters is to consider the largest cluster each particle occurs in. If a particle is in an 11A and a 5A then we report only the 11A. We call these the net cluster populations.</p>
+<p>This definition relies on a hierarchy of cluster types which determines which is the “most important” cluster a particle can appear in. Usually we define this priority list as the lowest energy structure for each number of particles in decreasing order of particle size for the system being considered. We give some examples of such priority lists for common structures below.</p>
+</div>
+<div class="section" id="using-the-net-cluster-script">
+<h3>Using the net cluster script<a class="headerlink" href="#using-the-net-cluster-script" title="Permalink to this headline">¶</a></h3>
+<p>Requires Python 3 and NumPy (Python 2 may be supported but is untested).</p>
+<p>The list of clusters considered is determined by the priority list. The clusters listed first will be those of highest priority in the net calculation, those listed last will be lowest priority.</p>
+<p>The code requires a TCC raw file for each cluster specified in the priority list. The net script can be run directly from the command line or by
+calling the <a class="reference internal" href="tcc_python_scripts.net_clusters.html#tcc_python_scripts.net_clusters.net.net_cluster_calculation" title="tcc_python_scripts.net_clusters.net.net_cluster_calculation"><code class="xref py py-func docutils literal notranslate"><span class="pre">net_cluster_calculation()</span></code></a> function.</p>
+</div>
+<div class="section" id="to-run-from-the-command-line">
+<h3>To run from the command line<a class="headerlink" href="#to-run-from-the-command-line" title="Permalink to this headline">¶</a></h3>
+<p>The required command line argument is the directory containing the raw files and the priority list. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">net</span><span class="o">.</span><span class="n">py</span> <span class="o">./</span><span class="n">raw_output</span>  <span class="p">(</span><span class="n">FCC</span><span class="p">,</span> <span class="mi">13</span><span class="n">A</span><span class="p">,</span> <span class="mi">12</span><span class="n">E</span><span class="p">,</span> <span class="mi">11</span><span class="n">F</span><span class="p">,</span> <span class="mi">10</span><span class="n">B</span><span class="p">,</span> <span class="mi">9</span><span class="n">B</span><span class="p">,</span> <span class="mi">8</span><span class="n">B</span><span class="p">,</span> <span class="n">sp5c</span><span class="p">,</span> <span class="n">sp4c</span><span class="p">,</span> <span class="n">sp3c</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The priority list must have the cluster names spelled exactly as the extensions on the raw files and the list must be in round brackets. The results are averaged over all frames in the input files and are output as a text file.</p>
+</div>
+<div class="section" id="to-run-from-a-python-script">
+<h3>To run from a Python script<a class="headerlink" href="#to-run-from-a-python-script" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">from</span>
+<span class="kn">from</span> <span class="nn">tcc_python_scripts.net_clusters</span> <span class="k">import</span> <span class="n">net</span>
+<span class="n">net</span><span class="o">.</span><span class="n">net_cluster_calculation</span><span class="p">(</span><span class="s2">&quot;./raw_output, [FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cluster-priority-lists-for-common-systems">
+<h3>Cluster priority lists for common systems<a class="headerlink" href="#cluster-priority-lists-for-common-systems" title="Permalink to this headline">¶</a></h3>
+<p>Hard Spheres: (FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)</p>
+<p>Kob-Andersen: (13K, 12K, 11A, 10K, 9K, 8K, 7K, sp4c, sp3c)</p>
+<p>Wahnstrom: (13A, 12B, 11W, 10B, 9B, 8A, sp5c, sp4c, sp3c)</p>
+<p>Lennard-Jones: (13A, 12B, 11C, 10B, 9B, 8B, sp5c, sp4c, sp3c)</p>
+<p>Sticky Spheres: (FCC, HCP, 13B, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Python Scripts</a><ul>
+<li><a class="reference internal" href="#coordinate-file-readers">Coordinate File Readers</a><ul>
+<li><a class="reference internal" href="#example-xyz-file-reader-script">Example XYZ file reader script</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-wrapper">Python Wrapper</a><ul>
+<li><a class="reference internal" href="#example-wrapper-script">Example Wrapper Script</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#net-tcc">Net TCC</a><ul>
+<li><a class="reference internal" href="#description-of-net-clusters">Description of net clusters</a></li>
+<li><a class="reference internal" href="#using-the-net-cluster-script">Using the net cluster script</a></li>
+<li><a class="reference internal" href="#to-run-from-the-command-line">To run from the command line</a></li>
+<li><a class="reference internal" href="#to-run-from-a-python-script">To run from a Python script</a></li>
+<li><a class="reference internal" href="#cluster-priority-lists-for-common-systems">Cluster priority lists for common systems</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tcc_input_parameters.html"
+                        title="previous chapter">TCC input parameters</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="xyz_specification.html"
+                        title="next chapter">XYZ file specification</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/python_scripts.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="xyz_specification.html" title="XYZ file specification"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tcc_input_parameters.html" title="TCC input parameters"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Peter Crowther.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>
