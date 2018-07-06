@@ -86,6 +86,26 @@ class Snapshot:
         return self.particle_coordinates.shape[1]
 
     @classmethod
+    def read_single(cls, path_or_file):
+        """Read a single snapshot from the disk.
+        Example:
+        >>> Snapshot.read_single('snapshot.atom')
+        <snapshot n=10976 t=0>
+        Args:
+            cls: derived class defining specific file format
+            path_or_file: file stream or path to read snapshot from
+        Returns:
+            snapshot: the snapshot read from disk
+        Raises:
+            NoSnapshotError: if could not read from file
+            RuntimeException: if did not recognise file format
+        """
+        with stream_safe_open(path_or_file) as f:
+            snap = cls()
+            snap.read(f)
+        return snap
+
+    @classmethod
     def read_trajectory(cls, path_or_file, num_frames=1):
         """A generator that snapshots from a file.
 
