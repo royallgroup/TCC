@@ -127,7 +127,7 @@ class Snapshot:
             while frames_read < num_frames:
                
                     snap = cls()
-                 try:
+                try:
                     snap.read(f)
                 except NoSnapshotError:
                     break
