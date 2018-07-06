@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = TCC
 SOURCEDIR     = .
-BUILDDIR      = documentation
+BUILDDIR      = ../.
 
 # Put it first so that "make" without argument is like "make help".
 help:

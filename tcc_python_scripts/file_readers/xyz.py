@@ -1,18 +1,9 @@
-#!/usr/bin/env python3
-"""
-Module for reading and writing snapshots from and to XYZ (.xyz) file formats.
+""" Module for reading and writing snapshots from and to XYZ (.xyz) file formats."""
 
-The module defines:
-  - XYZSnapshot: the class defining the file interface to this file format
-  - read: Method to read one or more frames from an xyz file
-  - write: create a snapshot from coordinates to write to disk
-"""
-
-import sys
 import io
 import numpy
 import pandas
-from python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
+from tcc_python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
 
 
 class XYZSnapshot(Snapshot):
@@ -22,14 +13,18 @@ class XYZSnapshot(Snapshot):
     """
 
     def read(self, path_or_file):
-        """
-        Read a single snapshot from a file. Overwrites any exisiting data in the Snaphsot object.
-        Raises NoSnapshotError if file could not be read.
-        :param path_or_file: file stream or path to read snapshot from
+        """ Read a single XYZ snapshot from a file.
+
+        Overwrites any exisiting data in the Snaphsot object.
+
+        Raises:
+            NoSnapshotError if file could not be read.
+        Args:
+            path_or_file: file stream or path to read snapshot from
         """
         with stream_safe_open(path_or_file) as input_file:
             # Read the header - check for EOF.
-            number_of_particles = self.process_number_of_particles(input_file)
+            number_of_particles = self._process_number_of_particles(input_file)
 
             # Read and igore the comment line
             input_file.readline()
@@ -50,12 +45,15 @@ class XYZSnapshot(Snapshot):
             self.time = self.box = None
 
     @staticmethod
-    def process_number_of_particles(file):
-        """
-        Method for sanitising the number of particles read from an XYZ file.
-        Raises SnapshotIncompleteError if number of particles cannot be interpreted.
-        :param file: an open file handle to the xyz file
-        :return: an integer number of particles.
+    def _process_number_of_particles(file):
+        """ Sanitises the number of particles read from an XYZ file.
+
+        Args:
+            an open file handle to the xyz file
+        Raises:
+            SnapshotIncompleteError if number of particles cannot be interpreted
+        Returns:
+            an integer number of particles.
         """
         line = file.readline()
         if not line:
@@ -95,17 +93,22 @@ class XYZSnapshot(Snapshot):
 
 def read(file_name, num_frames=1):
     """Read one or more snapshots from an xyz file.
-    :param file_name: Name of XYZ file to read.
-    :param num_frames: Number of snapshots to read from the xyz file.
-    :return: A list of XYZSnapshot objects.
+
+    Args:
+        file_name: Name of XYZ file to read.
+        num_frames: Number of snapshots to read from the xyz file.
+    Returns:
+         A list of XYZSnapshot objects.
     """
     return XYZSnapshot.read_trajectory(file_name, num_frames)
 
 
 def write_snapshot(output_filename, snapshot_list):
     """ Write one or more snapshots to the disk.
-    :param output_filename: The filename to write the coordinates to.
-    :param snapshot_list: A list of XYZSnapshots.
+
+    Args:
+        output_filename: The filename to write the coordinates to.
+        snapshot_list: A list of XYZSnapshots.
     """
     for snapshot in snapshot_list:
         snapshot.write(output_filename)
@@ -113,9 +116,11 @@ def write_snapshot(output_filename, snapshot_list):
 
 def write(output_filename, particle_coordinates, species=None):
     """ Write a single configuration to the disk.
-    :param output_filename: The filename to write the coordinates to.
-    :param particle_coordinates: A list of particle coordinates
-    :param species: A list of particle species. Defaults all particles to 'A' if not provided.
+
+    Args:
+        output_filename: The filename to write the coordinates to.
+        particle_coordinates: A list of particle coordinates
+        species: A list of particle species. Defaults all particles to 'A' if not provided.
     """
     snapshot = XYZSnapshot(particle_coordinates, species=species)
     snapshot.write(output_filename)

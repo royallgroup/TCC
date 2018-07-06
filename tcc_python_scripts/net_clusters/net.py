@@ -1,20 +1,19 @@
 import numpy as np
-from sys import argv, exit
+from sys import argv
 from glob import glob
-import os
 
 
-def set_up():
+def _set_up():
     # Read XYZ file name from argv
     if len(argv) != 3:
         print("Usage python net.py directory_name priority_list")
-        exit(0)
+        raise IndexError
     dir_name = argv[1]
     pritority_list = argv[2]
     return dir_name, pritority_list
 
 
-def load_cluster_data(num_particles, priority_list, dir_name):
+def _load_cluster_data(num_particles, priority_list, dir_name):
     # Load data from the raw file into a dictionary
     raw_data = {}
 
@@ -32,12 +31,12 @@ def load_cluster_data(num_particles, priority_list, dir_name):
     return raw_data
 
 
-def is_particle_in_cluster(particle_identifier, frame_number):
+def _is_particle_in_cluster(particle_identifier, frame_number):
     # A cluster is found if the particle identifier is the letter C or D.
     return np.logical_or(particle_identifier[frame_number] == 'C', particle_identifier[frame_number] == 'D')
 
 
-def write_output_file(gross_percentage, net_percentage, priority_list, dir_name):
+def _write_output_file(gross_percentage, net_percentage, priority_list, dir_name):
     with open(dir_name + "/net_clusters.txt", 'w') as output_file:
         output_file.write("Species\tGross\tNet\n")
         for species in priority_list:
@@ -45,7 +44,7 @@ def write_output_file(gross_percentage, net_percentage, priority_list, dir_name)
     print("Analysis complete. Output file written.")
 
 
-def get_particles_per_frame(dir_name, priority_list):
+def _get_particles_per_frame(dir_name, priority_list):
     # Returns a list of particle numbers, one for each time frame
     num_particles = []
     filename = glob(dir_name + "/*" + priority_list[0])[0]
@@ -62,11 +61,17 @@ def get_particles_per_frame(dir_name, priority_list):
 
 
 def net_cluster_calculation(dir_name, priority_list):
-    # read number of particles and the data
+    """
+    Take gross TCC cluster population and calculate net cluster population.
+
+    Args:
+        dir_name: Directory containing python RAW output files.
+        priority_list: List of cluster names in order of priority
+    """
     priority_list = priority_list.strip('()').split(", ")
-    frame_particles_list = get_particles_per_frame(dir_name, priority_list)
+    frame_particles_list = _get_particles_per_frame(dir_name, priority_list)
     total_particles = sum(frame_particles_list)
-    raw_data = load_cluster_data(frame_particles_list, priority_list, dir_name)
+    raw_data = _load_cluster_data(frame_particles_list, priority_list, dir_name)
     gross_percentage = {}
     net_percentage = {}
 
@@ -81,15 +86,15 @@ def net_cluster_calculation(dir_name, priority_list):
         gross_list = {}
         net_list = {}
         for species in priority_list:
-            gross_list[species] = is_particle_in_cluster(raw_data[species], frame_number)
+            gross_list[species] = _is_particle_in_cluster(raw_data[species], frame_number)
             net_list[species] = np.logical_and(gross_list[species], np.logical_not(cluster_tracker))
             cluster_tracker += gross_list[species]
             net_percentage[species] += net_list[species].sum(axis=0) / float(total_particles)
             gross_percentage[species] += gross_list[species].sum(axis=0) / float(total_particles)
 
-    write_output_file(gross_percentage, net_percentage, priority_list, dir_name)
+    _write_output_file(gross_percentage, net_percentage, priority_list, dir_name)
 
 
 if __name__ == '__main__':
-    directory_name, cluster_list = set_up()
+    directory_name, cluster_list = _set_up()
     net_cluster_calculation(directory_name, cluster_list)

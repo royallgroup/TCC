@@ -1,4 +1,4 @@
-"""Python wrapper for running the TCC."""
+"""Python interface to the TCC executable."""
 
 import os
 import tempfile
@@ -8,8 +8,8 @@ import subprocess
 import platform
 from glob import glob
 
-from python_scripts.file_readers import xyz
-from python_scripts.tcc import structures
+from tcc_python_scripts.file_readers import xyz
+from tcc_python_scripts.tcc import structures
 
 
 class TCCWrapper:
@@ -25,6 +25,12 @@ class TCCWrapper:
     On destruction of a wrapper object all of the file input/outputs
     are destroyed, so the user must be careful to extract all of the
     data they need (for e.g. postprocessing) and store this somewhere.
+
+    Attributes:
+        input_parameters['Box']: TCC box paramaters used for TCC run
+        input_parameters['Run']: TCC run paramaters used for TCC run
+        input_parameters['Simulation']: TCC simulation paramaters used for TCC run
+        input_parameters['Output']: TCC output paramaters used for TCC run
     """
 
     def __init__(self):
@@ -43,7 +49,7 @@ class TCCWrapper:
         shutil.rmtree(self.working_directory)
 
     def run(self, box, particle_coordinates, output_directory=None, particle_types='A', silent=True):
-        """Run the TCC
+        """Invoke the TCC using the provided coordinates and parameters.
 
         Args:
             box: box size for boundary conditions, list of [len_x, len_y, len_z]
@@ -52,17 +58,17 @@ class TCCWrapper:
             particle_types: species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.
             silent: if set TCC executable console output will be suppressed
         Returns:
-            pandas table giving the static cluster information
+            pandas table containing the static cluster information
         """
 
         tcc_path = self.get_tcc_executable_path()
-        self.set_up_working_directory(output_directory)
+        self._set_up_working_directory(output_directory)
 
         # Create the INI file.
-        self.serialise_input_parameters('{}/inputparameters.ini'.format(self.working_directory))
+        self._serialise_input_parameters('{}/inputparameters.ini'.format(self.working_directory))
 
         # Create the box and configuration files.
-        self.write_box_file(box, '{}/box.txt'.format(self.working_directory))
+        self._write_box_file(box, '{}/box.txt'.format(self.working_directory))
         xyz.write('{}/sample.xyz'.format(self.working_directory), particle_coordinates, species=particle_types)
 
         # Run the TCC executable.
@@ -72,18 +78,19 @@ class TCCWrapper:
             subprocess_result = subprocess.run([tcc_path], cwd=self.working_directory)
 
         if subprocess_result.returncode == 0:
-            return self.parse_static_clusters()
+            return self._parse_static_clusters()
         else:
             self.__del__()
             print("Error: TCC was not able to run.")
             raise Exception
 
-    def set_up_working_directory(self, output_directory):
+    def _set_up_working_directory(self, output_directory):
         """
         Work out where to run the TCC. Create a directory if necessary.
 
-        :param output_directory: If None run the TCC in a temporary directory.
-            If a path then run the TCC there
+        Args:
+            output_directory (str):  If None run the TCC in a temporary directory.
+                If a path then run the TCC there
         """
         if output_directory is None:
             self.working_directory = tempfile.mkdtemp(prefix='TCC_')
@@ -100,8 +107,9 @@ class TCCWrapper:
     @staticmethod
     def get_tcc_executable_path():
         """Find the full path for the tcc executable. It is expected to be in ../../bin relative this this script
+        
         Returns:
-            String describing full path of TCC executable.
+            (str) Full path of TCC executable.
         """
         bin_directory = os.path.abspath(os.path.dirname(__file__) + '/../../bin/')
         if platform.system() == "Windows":
@@ -114,7 +122,7 @@ class TCCWrapper:
             print("TCC executable not found in bin directory.")
             raise FileNotFoundError
 
-    def serialise_input_parameters(self, output_filename):
+    def _serialise_input_parameters(self, output_filename):
         """Serialise the parameters in INI format.
 
         Args:
@@ -136,7 +144,7 @@ class TCCWrapper:
                 output_file.write('\n')
 
     @staticmethod
-    def write_box_file(box, box_filename):
+    def _write_box_file(box, box_filename):
         """Serialise the box box size in the TCC format.
 
         Args:
@@ -149,10 +157,10 @@ class TCCWrapper:
             for dimension in box:
                 output_file.write('{}\t'.format(dimension))
 
-    def parse_static_clusters(self):
+    def _parse_static_clusters(self):
         """Retrive the static cluster information after running the TCC.
         Returns:
-            pandas table giving the static cluster information
+            Pandas dataframe containing the static cluster information
         """
         summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
         table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.cluster_list))

@@ -1,0 +1,487 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>file_readers package &#8212; TCC  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="file-readers-package">
+<h1>file_readers package<a class="headerlink" href="#file-readers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-file_readers.atom">
+<span id="file-readers-atom-module"></span><h2>file_readers.atom module<a class="headerlink" href="#module-file_readers.atom" title="Permalink to this headline">¶</a></h2>
+<p>Module for reading and writing snapshots from and to LAMMPS (.atom) file formats.</p>
+<dl class="class">
+<dt id="file_readers.atom.AtomSnapshot">
+<em class="property">class </em><code class="descclassname">file_readers.atom.</code><code class="descname">AtomSnapshot</code><span class="sig-paren">(</span><em>particle_coordinates=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>box=None</em>, <em>species=None</em>, <em>time=0</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.atom.AtomSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.snapshot.Snapshot</span></code></a></p>
+<p>Snapshot of a system of particles in LAMMPS (.atom) file format.</p>
+<p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
+<dl class="method">
+<dt id="file_readers.atom.AtomSnapshot.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.atom.AtomSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a snapshot from a file, overwriting any existing data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_or_file</strong> – file stream or path to read snapshot from</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code> – if could not read from file</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – if did not recognise file format</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="file_readers.atom.read">
+<code class="descclassname">file_readers.atom.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.atom.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read one or more snapshots from the atom file.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-file_readers.dynamo">
+<span id="file-readers-dynamo-module"></span><h2>file_readers.dynamo module<a class="headerlink" href="#module-file_readers.dynamo" title="Permalink to this headline">¶</a></h2>
+<p>Module for reading and writing snapshots from and to DynamO (.xml) file formats.</p>
+<dl class="class">
+<dt id="file_readers.dynamo.DynamoSnapshot">
+<em class="property">class </em><code class="descclassname">file_readers.dynamo.</code><code class="descname">DynamoSnapshot</code><span class="sig-paren">(</span><em>particle_coordinates=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>box=None</em>, <em>species=None</em>, <em>time=0</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.dynamo.DynamoSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.snapshot.Snapshot</span></code></a></p>
+<p>Snapshot of a system of particles in DynamO (.xml) file format.</p>
+<p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
+<dl class="method">
+<dt id="file_readers.dynamo.DynamoSnapshot.assign_diameters">
+<code class="descname">assign_diameters</code><span class="sig-paren">(</span><em>uij_range</em>, <em>diameter</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.dynamo.DynamoSnapshot.assign_diameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign diameters to the particles across the given ID range.</p>
+<p>Diameters will only be assigned if the range describes a single-species interaction.
+Any other range is potentially a nonadditive interaction so an exception is raised as
+a warning.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>uij_range</strong> – xml entry describing the range of the interaction</li>
+<li><strong>diameter</strong> – length scale of these hard spheres</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#file_readers.dynamo.NonadditiveError" title="file_readers.dynamo.NonadditiveError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NonadditiveError</span></code></a> – if the given range is a cross-species interaction, so potentially
+the dynamo file describes a nonadditive potential.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="file_readers.dynamo.DynamoSnapshot.is_hard_sphere">
+<em class="property">static </em><code class="descname">is_hard_sphere</code><span class="sig-paren">(</span><em>interaction</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.dynamo.DynamoSnapshot.is_hard_sphere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether an interaction encoded in the dynamo XML tree is a hard sphere
+interaction or not.</p>
+<p>There are two ways to encode hard spheres: either explicitly as a hard sphere, or as
+a square well with zero well depth (although the latter should be avoided as it results
+in a less efficient simulation). This helper function tests for both eventualities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interaction</strong> – xml entry for the interaction</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">boolean stating whether the interaction is a hard sphere</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="file_readers.dynamo.DynamoSnapshot.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.dynamo.DynamoSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a snapshot from a file, overwriting any existing data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_or_file</strong> – file stream or path to read snapshot from</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code> – if could not read from file</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – if did not recognise file format or the data does not describe an
+additive hard sphere system</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="file_readers.dynamo.DynamoSnapshot.verify_cross_species_interactions">
+<code class="descname">verify_cross_species_interactions</code><span class="sig-paren">(</span><em>uij_range</em>, <em>diameter</em>, <em>eps=1e-12</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.dynamo.DynamoSnapshot.verify_cross_species_interactions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether a cross-species hard sphere interaction is consistent with the known
+diameters of each species, assuming additive interactions.</p>
+<p>Additive cross-species interactions have size sigma = 0.5*(sigma_i + sigma_j) where
+sigma_{i,j} are the diameters of the individual species. If the diameter does not
+match this expectation then the interaction is not additive.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>uij_range</strong> – xml entry describing the range of the interaction</li>
+<li><strong>diameter</strong> – length scale of this cross-species hard sphere interaction</li>
+<li><strong>eps</strong> – machine tolerance for the test of additivity</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#file_readers.dynamo.NonadditiveError" title="file_readers.dynamo.NonadditiveError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NonadditiveError</span></code></a> – if the interaction is not additive</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="file_readers.dynamo.NonadditiveError">
+<em class="property">exception </em><code class="descclassname">file_readers.dynamo.</code><code class="descname">NonadditiveError</code><a class="headerlink" href="#file_readers.dynamo.NonadditiveError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/exceptions.html#RuntimeError" title="(in Python v3.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
+<p>Error rasied if the given interaction range is a cross-species
+interaction, so potentially the dynamo file describes a nonadditive potential.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="file_readers.dynamo.read">
+<code class="descclassname">file_readers.dynamo.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.dynamo.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a snaphshot from the dynamo file.
+At the moment only a single frame can be read.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-file_readers.snapshot">
+<span id="file-readers-snapshot-module"></span><h2>file_readers.snapshot module<a class="headerlink" href="#module-file_readers.snapshot" title="Permalink to this headline">¶</a></h2>
+<p>Module defining interface for reading and writing snapshots in various file formats. A snapshot is an object which
+holds data about a configuration of particles at a single point in time. A series of snapshots can be used to describe
+a trajectory in time.</p>
+<dl class="exception">
+<dt id="file_readers.snapshot.NoSnapshotError">
+<em class="property">exception </em><code class="descclassname">file_readers.snapshot.</code><code class="descname">NoSnapshotError</code><a class="headerlink" href="#file_readers.snapshot.NoSnapshotError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/exceptions.html#RuntimeError" title="(in Python v3.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
+<p>Exception raised when not able to read a snapshot from a file.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="file_readers.snapshot.Snapshot">
+<em class="property">class </em><code class="descclassname">file_readers.snapshot.</code><code class="descname">Snapshot</code><span class="sig-paren">(</span><em>particle_coordinates=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>box=None</em>, <em>species=None</em>, <em>time=0</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.snapshot.Snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/functions.html#object" title="(in Python v3.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Snapshot of a system of particles. A snapshot is a single configuration of particles at a point in time.</p>
+<dl class="attribute">
+<dt id="file_readers.snapshot.Snapshot.particle_coordinates">
+<code class="descname">particle_coordinates</code><a class="headerlink" href="#file_readers.snapshot.Snapshot.particle_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>particle coordinates (num_particles by dimensionality container)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="file_readers.snapshot.Snapshot.box">
+<code class="descname">box</code><a class="headerlink" href="#file_readers.snapshot.Snapshot.box" title="Permalink to this definition">¶</a></dt>
+<dd><p>box containing the particles (d by 2 container)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="file_readers.snapshot.Snapshot.species">
+<code class="descname">species</code><a class="headerlink" href="#file_readers.snapshot.Snapshot.species" title="Permalink to this definition">¶</a></dt>
+<dd><p>labels of the particle species (string or container of strings)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="file_readers.snapshot.Snapshot.time">
+<code class="descname">time</code><a class="headerlink" href="#file_readers.snapshot.Snapshot.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>time or frame of the snapshot within a trajectory (integer or float)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="file_readers.snapshot.Snapshot.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.snapshot.Snapshot.copy" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A deep copy of the snapshot.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="file_readers.snapshot.Snapshot.dimensionality">
+<code class="descname">dimensionality</code><a class="headerlink" href="#file_readers.snapshot.Snapshot.dimensionality" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Returns</em> – Dimensionality of configuration space.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="file_readers.snapshot.Snapshot.num_particles">
+<code class="descname">num_particles</code><a class="headerlink" href="#file_readers.snapshot.Snapshot.num_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Returns</em> – Number of particles in snapshot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="file_readers.snapshot.Snapshot.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>file_or_stream</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.snapshot.Snapshot.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to read a snapshot from a file. Not implemented in base class and must be written
+for specific file formats.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="file_readers.snapshot.Snapshot.read_trajectory">
+<em class="property">classmethod </em><code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>path_or_file</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator that snapshots from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path_or_file</strong> – file stream or path to read trajectory from</li>
+<li><strong>num_frames</strong> – Will read this many frames from the trajectory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#file_readers.snapshot.NoSnapshotError" title="file_readers.snapshot.NoSnapshotError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code></a> – if file could not be read.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – file format is not recognised</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="file_readers.snapshot.Snapshot.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>output_file</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.snapshot.Snapshot.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the snapshot to a file.
+:param output_file: file or path to write the snapshot to</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="file_readers.snapshot.SnapshotIncompleteError">
+<em class="property">exception </em><code class="descclassname">file_readers.snapshot.</code><code class="descname">SnapshotIncompleteError</code><a class="headerlink" href="#file_readers.snapshot.SnapshotIncompleteError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.4/library/exceptions.html#RuntimeError" title="(in Python v3.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></a></p>
+<p>Exception raised when a snapshot is partially read
+but not all particles are found or the coordinates cannot be read.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="file_readers.snapshot.stream_safe_open">
+<code class="descclassname">file_readers.snapshot.</code><code class="descname">stream_safe_open</code><span class="sig-paren">(</span><em>path_or_file</em>, <em>mode='r'</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.snapshot.stream_safe_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager for parsers which accept an open file stream or a file path to open.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path_or_file</strong> – either an open file stream (in which case the context manager does nothing and returns it)
+or a path (in which case the context manager will open this, return a stream and then clean up)</li>
+<li><strong>mode</strong> – mode to open file in, ‘r’ for read, ‘w’ for write</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-file_readers.xyz">
+<span id="file-readers-xyz-module"></span><h2>file_readers.xyz module<a class="headerlink" href="#module-file_readers.xyz" title="Permalink to this headline">¶</a></h2>
+<p>Module for reading and writing snapshots from and to XYZ (.xyz) file formats.</p>
+<dl class="class">
+<dt id="file_readers.xyz.XYZSnapshot">
+<em class="property">class </em><code class="descclassname">file_readers.xyz.</code><code class="descname">XYZSnapshot</code><span class="sig-paren">(</span><em>particle_coordinates=array([]</em>, <em>shape=(0</em>, <em>0)</em>, <em>dtype=float64)</em>, <em>box=None</em>, <em>species=None</em>, <em>time=0</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.xyz.XYZSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.snapshot.Snapshot</span></code></a></p>
+<p>Snapshot of a system of particles in XYZ (.xyz) file format.</p>
+<p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
+<dl class="method">
+<dt id="file_readers.xyz.XYZSnapshot.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.xyz.XYZSnapshot.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a single XYZ snapshot from a file.</p>
+<p>Overwrites any exisiting data in the Snaphsot object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">NoSnapshotError if file could not be read.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path_or_file</strong> – file stream or path to read snapshot from</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="file_readers.xyz.read">
+<code class="descclassname">file_readers.xyz.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.xyz.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read one or more snapshots from an xyz file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_name</strong> – Name of XYZ file to read.</li>
+<li><strong>num_frames</strong> – Number of snapshots to read from the xyz file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of XYZSnapshot objects.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="file_readers.xyz.write">
+<code class="descclassname">file_readers.xyz.</code><code class="descname">write</code><span class="sig-paren">(</span><em>output_filename</em>, <em>particle_coordinates</em>, <em>species=None</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.xyz.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a single configuration to the disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_filename</strong> – The filename to write the coordinates to.</li>
+<li><strong>particle_coordinates</strong> – A list of particle coordinates</li>
+<li><strong>species</strong> – A list of particle species. Defaults all particles to ‘A’ if not provided.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="file_readers.xyz.write_snapshot">
+<code class="descclassname">file_readers.xyz.</code><code class="descname">write_snapshot</code><span class="sig-paren">(</span><em>output_filename</em>, <em>snapshot_list</em><span class="sig-paren">)</span><a class="headerlink" href="#file_readers.xyz.write_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write one or more snapshots to the disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>output_filename</strong> – The filename to write the coordinates to.</li>
+<li><strong>snapshot_list</strong> – A list of XYZSnapshots.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-file_readers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-file_readers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">file_readers package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-file_readers.atom">file_readers.atom module</a></li>
+<li><a class="reference internal" href="#module-file_readers.dynamo">file_readers.dynamo module</a></li>
+<li><a class="reference internal" href="#module-file_readers.snapshot">file_readers.snapshot module</a></li>
+<li><a class="reference internal" href="#module-file_readers.xyz">file_readers.xyz module</a></li>
+<li><a class="reference internal" href="#module-file_readers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/file_readers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Peter Crowther.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

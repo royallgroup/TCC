@@ -10,9 +10,11 @@ This documentation gives information about the latest version of the Topological
    introduction
    setup
    running
-   python_wrapper
-   publications
+   tcc_input_parameters
+   python_scripts
    xyz_specification
+   publications
+   tcc_python_scripts
 
 Indices and tables
 ==================

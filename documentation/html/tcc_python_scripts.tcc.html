@@ -1,0 +1,203 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tcc_python_scripts.tcc package &#8212; TCC  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="tcc_python_scripts.net_clusters package" href="tcc_python_scripts.net_clusters.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tcc_python_scripts.net_clusters.html" title="tcc_python_scripts.net_clusters package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="tcc_python_scripts.html" accesskey="U">tcc_python_scripts package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tcc-python-scripts-tcc-package">
+<h1>tcc_python_scripts.tcc package<a class="headerlink" href="#tcc-python-scripts-tcc-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-tcc_python_scripts.tcc.structures">
+<span id="tcc-python-scripts-tcc-structures-module"></span><h2>tcc_python_scripts.tcc.structures module<a class="headerlink" href="#module-tcc_python_scripts.tcc.structures" title="Permalink to this headline">¶</a></h2>
+<p>Information on clusters used by the TCC.</p>
+</div>
+<div class="section" id="module-tcc_python_scripts.tcc.wrapper">
+<span id="tcc-python-scripts-tcc-wrapper-module"></span><h2>tcc_python_scripts.tcc.wrapper module<a class="headerlink" href="#module-tcc_python_scripts.tcc.wrapper" title="Permalink to this headline">¶</a></h2>
+<p>Python interface to the TCC executable.</p>
+<dl class="class">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper">
+<em class="property">class </em><code class="descclassname">tcc_python_scripts.tcc.wrapper.</code><code class="descname">TCCWrapper</code><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Python interface to the TCC executable. Runs the TCC on a
+single configuration.</p>
+<p>The TCC accepts input parameters through a file IO system, so
+this wrapper acts as an intermediate layer to streamline the
+process of running the TCC from within python. All file operations
+are hidden from the user to create a more pythonic interface to
+the TCC.</p>
+<p>On destruction of a wrapper object all of the file input/outputs
+are destroyed, so the user must be careful to extract all of the
+data they need (for e.g. postprocessing) and store this somewhere.</p>
+<dl class="attribute">
+<dt>
+<code class="descname">input_parameters['Box']</code></dt>
+<dd><p>TCC box paramaters used for TCC run</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">input_parameters['Run']</code></dt>
+<dd><p>TCC run paramaters used for TCC run</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">input_parameters['Simulation']</code></dt>
+<dd><p>TCC simulation paramaters used for TCC run</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">input_parameters['Output']</code></dt>
+<dd><p>TCC output paramaters used for TCC run</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path">
+<em class="property">static </em><code class="descname">get_tcc_executable_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.get_tcc_executable_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the full path for the tcc executable. It is expected to be in ../../bin relative this this script</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(str) Full path of TCC executable.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>box</em>, <em>particle_coordinates</em>, <em>output_directory=None</em>, <em>particle_types='A'</em>, <em>silent=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke the TCC using the provided coordinates and parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>box</strong> – box size for boundary conditions, list of [len_x, len_y, len_z]</li>
+<li><strong>particle_coordinates</strong> – a list of lists, one list for each frame containing coordinates of atoms</li>
+<li><strong>output_directory</strong> – If you want to save the output of the TCC specify a directory to store the output</li>
+<li><strong>particle_types</strong> – species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.</li>
+<li><strong>silent</strong> – if set TCC executable console output will be suppressed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">pandas table containing the static cluster information</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tcc_python_scripts.tcc">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tcc_python_scripts.tcc" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">tcc_python_scripts.tcc package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-tcc_python_scripts.tcc.structures">tcc_python_scripts.tcc.structures module</a></li>
+<li><a class="reference internal" href="#module-tcc_python_scripts.tcc.wrapper">tcc_python_scripts.tcc.wrapper module</a></li>
+<li><a class="reference internal" href="#module-tcc_python_scripts.tcc">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tcc_python_scripts.net_clusters.html"
+                        title="previous chapter">tcc_python_scripts.net_clusters package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tcc_python_scripts.tcc.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tcc_python_scripts.net_clusters.html" title="tcc_python_scripts.net_clusters package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="tcc_python_scripts.html" >tcc_python_scripts package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Peter Crowther.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

@@ -1,10 +1,7 @@
-import subprocess
-from glob import glob
 import filecmp
 import os
-import sys
+from tcc_python_scripts.net_clusters import net
 
-from python_scripts.net_clusters import net
 
 class cd:
     """Context manager for changing the current working directory"""

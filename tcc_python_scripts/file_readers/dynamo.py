@@ -1,18 +1,15 @@
-#!/usr/bin/env python3
-"""
-Module for reading and writing snapshots from and to DynamO (.xml) file formats.
-
-The module defines:
-  - DynamoSnapshot: the class the defining the file interface to this file format
-  - read: shorthand for DynamoSnapshot.read_trajectory
-"""
+""" Module for reading and writing snapshots from and to DynamO (.xml) file formats."""
 
 import numpy
-import python_scripts.file_readers.snapshot as snapshot
+import tcc_python_scripts.file_readers.snapshot as snapshot
 import xml.etree.ElementTree as ET
 
 
 class NonadditiveError(RuntimeError):
+    """
+    Error rasied if the given interaction range is a cross-species 
+    interaction, so potentially the dynamo file describes a nonadditive potential.
+    """
     pass
 
 

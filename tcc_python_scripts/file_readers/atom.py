@@ -1,16 +1,9 @@
-#!/usr/bin/env python3
-"""
-Module for reading and writing snapshots from and to LAMMPS (.atom) file formats.
-
-The module defines:
-  - AtomSnapshot: the class the defining the file interface to this file format
-  - read: shorthand for AtomSnapshot.read_trajectory
-"""
+""" Module for reading and writing snapshots from and to LAMMPS (.atom) file formats."""
 
 import io
 import numpy
 import pandas
-from python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, Snapshot
+from tcc_python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, Snapshot
 
 
 class AtomSnapshot(Snapshot):

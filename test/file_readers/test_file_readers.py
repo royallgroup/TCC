@@ -1,4 +1,4 @@
-from python_scripts.file_readers import snapshot, atom, dynamo, xyz
+from tcc_python_scripts.file_readers import snapshot, atom, dynamo, xyz
 import pytest
 import numpy as np
 import math
