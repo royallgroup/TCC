@@ -127,13 +127,12 @@ class Snapshot:
             while frames_read < num_frames:
                 snap = cls()
                 try:
-                    
                     snap.read(f)
                 except NoSnapshotError:
                     break
 
-
                 yield snap
+
                 frames_read += 1
                 if unknown:
                     num_frames+=1
