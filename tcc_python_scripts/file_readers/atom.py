@@ -108,5 +108,9 @@ class AtomSnapshot(Snapshot):
 
 
 def read(file_name, num_frames=1):
-    """Read one or more snapshots from the atom file."""
+    """
+    Read one or more snapshots from the atom file.
+    Default num_frames = 1.
+    If num_frames="Unknown", returns a generator attached to the file.
+    """
     return AtomSnapshot.read_trajectory(file_name, num_frames)

@@ -96,15 +96,29 @@ class Snapshot:
             NoSnapshotError: if file could not be read.
             RuntimeException: file format is not recognised
         """
-        with stream_safe_open(path_or_file) as f:
-            frames_read = 0
-            while frames_read < num_frames:
-                snap = cls()
-                snap.read(f)
+        if num_frames== "Unknown":
+            with stream_safe_open(path_or_file) as f:
+                frames = 0
+                while True:
+                    try:
+                        snap = cls.read_single(f)
+                    except NoSnapshotError:
+                        break
 
-                yield snap
-                frames_read += 1
+                    yield snap
+                    frames += 1
+                    if max_frames is not None and frames is max_frames:
+                        break
+        else:
+            with stream_safe_open(path_or_file) as f:
+                frames_read = 0
+                while frames_read < num_frames:
+                    snap = cls()
+                    snap.read(f)
 
+                    yield snap
+                    frames_read += 1
+  
     def write(self, output_file):
         """Dump the snapshot to a file.
         Args:
