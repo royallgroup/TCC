@@ -129,6 +129,8 @@ class Snapshot:
                 try:
                     snap.read(f)
                 except NoSnapshotError:
+                    if not unknown: 
+                        raise
                     break
 
                 yield snap
