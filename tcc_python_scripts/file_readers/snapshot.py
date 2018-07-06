@@ -125,9 +125,9 @@ class Snapshot:
         with stream_safe_open(path_or_file) as f:
             frames_read = 0
             while frames_read < num_frames:
-               
-                    snap = cls()
+                snap = cls()
                 try:
+                    
                     snap.read(f)
                 except NoSnapshotError:
                     break
