@@ -106,40 +106,35 @@ class Snapshot:
         return snap
 
     @classmethod
-    def read_trajectory(cls, path_or_file, num_frames=1):
-        """A generator that snapshots from a file.
+    def read_trajectory(cls, path_or_file, num_frames=0):
+        """A generator that reads snapshots from a file.
 
         Args:
             path_or_file: file stream or path to read trajectory from
-            num_frames: Will read this many frames from the trajectory
+            num_frames: Will read this many frames from the trajectory.
+                If set to 0 will read frames until the file ends.
         Raises:
             NoSnapshotError: if file could not be read.
             RuntimeException: file format is not recognised
         """
 
-        unknown =False
-        if num_frames =="Unknown":
-            num_frames = 1
-            unknown = True
-
         with stream_safe_open(path_or_file) as f:
-            frames_read = 0
-            while frames_read < num_frames:
-                snap = cls()
-                try:
+            if num_frames > 0:
+                frames_read = 0
+                while frames_read < num_frames:
+                    snap = cls()
                     snap.read(f)
-                except NoSnapshotError:
-                    if not unknown: 
-                        raise
-                    break
+                    yield snap
+                    frames_read += 1
+            else:
+                while True:
+                    snap = cls()
+                    try:
+                        snap.read(f)
+                    except NoSnapshotError:
+                        break
+                    yield snap
 
-                yield snap
-
-                frames_read += 1
-                if unknown:
-                    num_frames+=1
-
-  
     def write(self, output_file):
         """Dump the snapshot to a file.
         Args:

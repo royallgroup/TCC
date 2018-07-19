@@ -59,7 +59,31 @@
 <p><a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snapshot</span></code></a> is the base class from which other file readers are defined. We define a <em>snapshot</em> as a single configuration of particles at one time. Regradless of the file format read, the data is stored in a common <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snapshot</span></code></a> object. Multiple snapshots may be present in an XYZ or atom file and these can be read in and each will be stored in a seperate <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">Snapshot</span></code></a> object.</p>
 <div class="section" id="example-xyz-file-reader-script">
 <h3>Example XYZ file reader script<a class="headerlink" href="#example-xyz-file-reader-script" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read" title="tcc_python_scripts.file_readers.xyz.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.xyz.read()</span></code></a> method is a generator which returns sequential <a class="reference internal" href="tcc_python_scripts.file_readers.html#module-tcc_python_scripts.file_readers.snapshot" title="tcc_python_scripts.file_readers.snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">snapshot</span></code></a> objects from a file. To retrieve all snapshots at once use the python <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#list" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> function.</p>
+<p>The <a class="reference internal" href="tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read" title="tcc_python_scripts.file_readers.xyz.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.xyz.read()</span></code></a> method is a generator which returns sequential <a class="reference internal" href="tcc_python_scripts.file_readers.html#module-tcc_python_scripts.file_readers.snapshot" title="tcc_python_scripts.file_readers.snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">snapshot</span></code></a> objects from a file. By default the genertor will iterate over all snapshots in the file returning them sequentually.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
+<span class="go">59</span>
+<span class="go">57</span>
+<span class="go">58</span>
+</pre></div>
+</div>
+<p>To load only some of the frames you can use the parameter num_frames which will load that many frames from the begining of the file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
+<span class="go">59</span>
+</pre></div>
+</div>
+<p>For more complex operations such as reading every other frame you should load all frames and only operate on those frames needed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">num_frames_loaded</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">num_frames_loaded</span> <span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">num_frames_loaded</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="go">59</span>
+<span class="go">58</span>
+</pre></div>
+</div>
+<p>To retrieve all snapshots at once use the python <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#list" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> function to return a list continaing all of the snapshots.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">file_readers</span> <span class="k">import</span> <span class="n">xyz</span>
 <span class="gp">...</span>
 <span class="gp">... </span><span class="n">particle_coordinates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;../../test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -67,19 +91,12 @@
 <span class="go">[&lt;snapshot n=59 t=None&gt;, &lt;snapshot n=57 t=None&gt;]</span>
 </pre></div>
 </div>
-<p>Alternatively you can use the generator in a for loop and operate on each Snapshot seperately:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xyz</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;test/integration_tests/basic_voronoi/sample.xyz&quot;</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">num_particles</span><span class="p">)</span>
-<span class="go">59</span>
-<span class="go">57</span>
-</pre></div>
-</div>
 </div>
 </div>
 <div class="section" id="python-wrapper">
 <h2>Python Wrapper<a class="headerlink" href="#python-wrapper" title="Permalink to this headline">¶</a></h2>
 <p>The TCC Python wrapper is designed to be a lightweight way of automating simple TCC analyses. It can analyse a single configuration, this is most easily loaded using the above file readers.</p>
-<p>The <a class="reference internal" href="tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="tcc_python_scripts.tcc.wrapper.TCCWrapper.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.tcc.wrapper.TCCWrapper.run()</span></code></a> will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
+<p>The <a class="reference internal" href="tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="tcc_python_scripts.tcc.wrapper.TCCWrapper.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.tcc.wrapper.TCCWrapper.run()</span></code></a> method will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
 directory and deleting it after the run is complete. To save the results, for example raw or cluster xyz files you can provide a directory to the <a class="reference internal" href="tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="tcc_python_scripts.tcc.wrapper.TCCWrapper.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.tcc.wrapper.TCCWrapper.run()</span></code></a>
 method where the results will be saved.</p>
 <p>Input parameters are set to default values unless specified. They can be set by adding values to the releveant input_parameters attribute. For details on in input parameters see: <a class="reference internal" href="tcc_input_parameters.html"><span class="doc">TCC input parameters</span></a>.</p>

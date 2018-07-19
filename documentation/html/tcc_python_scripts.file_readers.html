@@ -84,7 +84,9 @@
 <dl class="function">
 <dt id="tcc_python_scripts.file_readers.atom.read">
 <code class="descclassname">tcc_python_scripts.file_readers.atom.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/atom.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.atom.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read one or more snapshots from the atom file.</p>
+<dd><p>Read one or more snapshots from the atom file.
+Default num_frames = 1.
+If num_frames=”Unknown”, returns a generator attached to the file.</p>
 </dd></dl>
 
 </div>
@@ -282,16 +284,46 @@ for specific file formats.</p>
 </dd></dl>
 
 <dl class="classmethod">
+<dt id="tcc_python_scripts.file_readers.snapshot.Snapshot.read_single">
+<em class="property">classmethod </em><code class="descname">read_single</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a single snapshot from the disk.
+Example:
+&gt;&gt;&gt; Snapshot.read_single(‘snapshot.atom’)
+&lt;snapshot n=10976 t=0&gt;
+:param cls: derived class defining specific file format
+:param path_or_file: file stream or path to read snapshot from</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the snapshot read from disk</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">snapshot</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#tcc_python_scripts.file_readers.snapshot.NoSnapshotError" title="tcc_python_scripts.file_readers.snapshot.NoSnapshotError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code></a> – if could not read from file</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – if did not recognise file format</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
 <dt id="tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory">
-<em class="property">classmethod </em><code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>path_or_file</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generator that snapshots from a file.</p>
+<em class="property">classmethod </em><code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>path_or_file</em>, <em>num_frames=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator that reads snapshots from a file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>path_or_file</strong> – file stream or path to read trajectory from</li>
-<li><strong>num_frames</strong> – Will read this many frames from the trajectory</li>
+<li><strong>num_frames</strong> – Will read this many frames from the trajectory.
+If set to 0 will read frames until the file ends.</li>
 </ul>
 </td>
 </tr>
@@ -372,19 +404,20 @@ or a path (in which case the context manager will open this, return a stream and
 
 <dl class="function">
 <dt id="tcc_python_scripts.file_readers.xyz.read">
-<code class="descclassname">tcc_python_scripts.file_readers.xyz.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/xyz.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.xyz.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read one or more snapshots from an xyz file.</p>
+<code class="descclassname">tcc_python_scripts.file_readers.xyz.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/xyz.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.xyz.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generatro that reads one or more snapshots from an xyz file.
+If num_frames is not specified then all frames are returned from the file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>file_name</strong> – Name of XYZ file to read.</li>
-<li><strong>num_frames</strong> – Number of snapshots to read from the xyz file.</li>
+<li><strong>num_frames</strong> – Number of snapshots to read from the xyz file. If 0, will return all frames in file.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of XYZSnapshot objects.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A generator object that generates Snapshots.</p>
 </td>
 </tr>
 </tbody>

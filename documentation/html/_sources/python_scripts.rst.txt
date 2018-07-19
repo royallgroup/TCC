@@ -20,7 +20,31 @@ The scripts in the file readers folder are designed to privde a unified interfac
 Example XYZ file reader script
 --------------------------------
 
-The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator which returns sequential :class:`~tcc_python_scripts.file_readers.snapshot` objects from a file. To retrieve all snapshots at once use the python :class:`list` function. ::
+The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator which returns sequential :class:`~tcc_python_scripts.file_readers.snapshot` objects from a file. By default the genertor will iterate over all snapshots in the file returning them sequentually. :: 
+
+    >>> for frame in xyz.read("test/integration_tests/basic_voronoi/sample.xyz"):
+    ...     print(frame.num_particles)
+    59
+    57
+    58
+
+To load only some of the frames you can use the parameter num_frames which will load that many frames from the begining of the file. ::
+    
+    >>> for frame in xyz.read("test/integration_tests/basic_voronoi/sample.xyz", num_frames=1):
+    ...     print(frame.num_particles)
+    59
+
+For more complex operations such as reading every other frame you should load all frames and only operate on those frames needed. ::
+
+    >>> num_frames_loaded = 0
+    ... for frame in xyz.read("test/integration_tests/basic_voronoi/sample.xyz"):
+    ...     if num_frames_loaded %2 == 0:
+    ...         print(frame.num_particles)
+    ...     num_frames_loaded += 1
+    59
+    58
+    
+To retrieve all snapshots at once use the python :class:`list` function to return a list continaing all of the snapshots. ::
 
     >>> from file_readers import xyz
     ... 
@@ -28,20 +52,13 @@ The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator whi
     ... print(particle_coordinates)
     [<snapshot n=59 t=None>, <snapshot n=57 t=None>]
     
-Alternatively you can use the generator in a for loop and operate on each Snapshot seperately::
-
-    >>> for frame in xyz.read("test/integration_tests/basic_voronoi/sample.xyz", num_frames=2):
-    ...     print(frame.num_particles)
-    59
-    57
-
     
 Python Wrapper
 ===============
 
 The TCC Python wrapper is designed to be a lightweight way of automating simple TCC analyses. It can analyse a single configuration, this is most easily loaded using the above file readers.
 
-The :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
+The :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` method will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
 directory and deleting it after the run is complete. To save the results, for example raw or cluster xyz files you can provide a directory to the :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()`
 method where the results will be saved.
 

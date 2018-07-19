@@ -130,14 +130,15 @@
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read one or more snapshots from an xyz file.</span>
-
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A generatro that reads one or more snapshots from an xyz file.</span>
+<span class="sd">    If num_frames is not specified then all frames are returned from the file.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        file_name: Name of XYZ file to read.</span>
-<span class="sd">        num_frames: Number of snapshots to read from the xyz file.</span>
+<span class="sd">        num_frames: Number of snapshots to read from the xyz file. If 0, will return all frames in file.</span>
 <span class="sd">    Returns:</span>
-<span class="sd">         A list of XYZSnapshot objects.</span>
+<span class="sd">         A generator object that generates Snapshots.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">XYZSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">)</span></div>
 

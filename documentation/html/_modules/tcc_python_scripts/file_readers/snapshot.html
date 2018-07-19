@@ -124,25 +124,55 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">particle_coordinates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
+<div class="viewcode-block" id="Snapshot.read_single"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot.read_single">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_single</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read a single snapshot from the disk.</span>
+<span class="sd">        Example:</span>
+<span class="sd">        &gt;&gt;&gt; Snapshot.read_single(&#39;snapshot.atom&#39;)</span>
+<span class="sd">        &lt;snapshot n=10976 t=0&gt;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            cls: derived class defining specific file format</span>
+<span class="sd">            path_or_file: file stream or path to read snapshot from</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            snapshot: the snapshot read from disk</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NoSnapshotError: if could not read from file</span>
+<span class="sd">            RuntimeException: if did not recognise file format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">snap</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+            <span class="n">snap</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">snap</span></div>
+
 <div class="viewcode-block" id="Snapshot.read_trajectory"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">read_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A generator that snapshots from a file.</span>
+    <span class="k">def</span> <span class="nf">read_trajectory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A generator that reads snapshots from a file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path_or_file: file stream or path to read trajectory from</span>
-<span class="sd">            num_frames: Will read this many frames from the trajectory</span>
+<span class="sd">            num_frames: Will read this many frames from the trajectory.</span>
+<span class="sd">                If set to 0 will read frames until the file ends.</span>
 <span class="sd">        Raises:</span>
 <span class="sd">            NoSnapshotError: if file could not be read.</span>
 <span class="sd">            RuntimeException: file format is not recognised</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">frames_read</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="n">frames_read</span> <span class="o">&lt;</span> <span class="n">num_frames</span><span class="p">:</span>
-                <span class="n">snap</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-                <span class="n">snap</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-                <span class="k">yield</span> <span class="n">snap</span>
-                <span class="n">frames_read</span> <span class="o">+=</span> <span class="mi">1</span></div>
+        <span class="k">with</span> <span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_frames</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">frames_read</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">frames_read</span> <span class="o">&lt;</span> <span class="n">num_frames</span><span class="p">:</span>
+                    <span class="n">snap</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+                    <span class="n">snap</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">snap</span>
+                    <span class="n">frames_read</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">snap</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">snap</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="n">NoSnapshotError</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="k">yield</span> <span class="n">snap</span></div>
 
 <div class="viewcode-block" id="Snapshot.write"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.snapshot.Snapshot.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump the snapshot to a file.</span>

@@ -91,14 +91,15 @@ class XYZSnapshot(Snapshot):
         return f.getvalue()
 
 
-def read(file_name, num_frames=1):
-    """Read one or more snapshots from an xyz file.
+def read(file_name, num_frames=0):
+    """A generator that reads one or more snapshots from an xyz file.
+    If num_frames is not specified then all frames are returned from the file.
 
     Args:
         file_name: Name of XYZ file to read.
-        num_frames: Number of snapshots to read from the xyz file.
+        num_frames: Number of snapshots to read from the xyz file. If 0, will return all frames in file.
     Returns:
-         A list of XYZSnapshot objects.
+         A generator object that generates Snapshots.
     """
     return XYZSnapshot.read_trajectory(file_name, num_frames)
 
