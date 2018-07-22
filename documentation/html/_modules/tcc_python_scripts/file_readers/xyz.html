@@ -51,7 +51,7 @@
 <span class="sd">    Interface defined in parent class Snapshot. Further documentation can be found there.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="XYZSnapshot.read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.XYZSnapshot.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Read a single XYZ snapshot from a file.</span>
 
 <span class="sd">        Overwrites any exisiting data in the Snaphsot object.</span>
@@ -81,7 +81,7 @@
                 <span class="k">raise</span> <span class="n">SnapshotIncompleteError</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">particle_coordinates</span> <span class="o">=</span> <span class="n">table</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">longdouble</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;atom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="kc">None</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_process_number_of_particles</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
@@ -130,17 +130,15 @@
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A generatro that reads one or more snapshots from an xyz file.</span>
-<span class="sd">    If num_frames is not specified then all frames are returned from the file.</span>
-<span class="sd">    </span>
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a generator that reads one or more snapshots from an xyz file.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        file_name: Name of XYZ file to read.</span>
-<span class="sd">        num_frames: Number of snapshots to read from the xyz file. If 0, will return all frames in file.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">         A generator object that generates Snapshots.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">XYZSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">XYZSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="write_snapshot"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.xyz.write_snapshot">[docs]</a><span class="k">def</span> <span class="nf">write_snapshot</span><span class="p">(</span><span class="n">output_filename</span><span class="p">,</span> <span class="n">snapshot_list</span><span class="p">):</span>

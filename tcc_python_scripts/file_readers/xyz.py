@@ -12,7 +12,7 @@ class XYZSnapshot(Snapshot):
     Interface defined in parent class Snapshot. Further documentation can be found there.
     """
 
-    def read(self, path_or_file):
+    def _read(self, path_or_file):
         """ Read a single XYZ snapshot from a file.
 
         Overwrites any exisiting data in the Snaphsot object.
@@ -91,17 +91,15 @@ class XYZSnapshot(Snapshot):
         return f.getvalue()
 
 
-def read(file_name, num_frames=0):
-    """A generator that reads one or more snapshots from an xyz file.
-    If num_frames is not specified then all frames are returned from the file.
+def read(file_name):
+    """ Returns a generator that reads one or more snapshots from an xyz file.
 
     Args:
         file_name: Name of XYZ file to read.
-        num_frames: Number of snapshots to read from the xyz file. If 0, will return all frames in file.
     Returns:
          A generator object that generates Snapshots.
     """
-    return XYZSnapshot.read_trajectory(file_name, num_frames)
+    return XYZSnapshot.read_trajectory(file_name)
 
 
 def write_snapshot(output_filename, snapshot_list):

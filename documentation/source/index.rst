@@ -8,6 +8,7 @@ This documentation gives information about the latest version of the Topological
    :caption: Contents:
    
    introduction
+   publications
    setup
    running
    tcc_input_parameters

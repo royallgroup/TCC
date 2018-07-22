@@ -58,35 +58,22 @@
 <dd><p>Bases: <a class="reference internal" href="#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in LAMMPS (.atom) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="method">
-<dt id="tcc_python_scripts.file_readers.atom.AtomSnapshot.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/atom.html#AtomSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.atom.AtomSnapshot.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a snapshot from a file, overwriting any existing data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_or_file</strong> – file stream or path to read snapshot from</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code> – if could not read from file</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – if did not recognise file format</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="function">
 <dt id="tcc_python_scripts.file_readers.atom.read">
-<code class="descclassname">tcc_python_scripts.file_readers.atom.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/atom.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.atom.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read one or more snapshots from the atom file.
-Default num_frames = 1.
-If num_frames=”Unknown”, returns a generator attached to the file.</p>
+<code class="descclassname">tcc_python_scripts.file_readers.atom.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/atom.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.atom.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a generator that reads one or more snapshots from a .atom file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – Name of .atom file to read.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A generator object that generates Snapshots.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -99,99 +86,6 @@ If num_frames=”Unknown”, returns a generator attached to the file.</p>
 <dd><p>Bases: <a class="reference internal" href="#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in DynamO (.xml) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="method">
-<dt id="tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.assign_diameters">
-<code class="descname">assign_diameters</code><span class="sig-paren">(</span><em>uij_range</em>, <em>diameter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/dynamo.html#DynamoSnapshot.assign_diameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.assign_diameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assign diameters to the particles across the given ID range.</p>
-<p>Diameters will only be assigned if the range describes a single-species interaction.
-Any other range is potentially a nonadditive interaction so an exception is raised as
-a warning.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>uij_range</strong> – xml entry describing the range of the interaction</li>
-<li><strong>diameter</strong> – length scale of these hard spheres</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#tcc_python_scripts.file_readers.dynamo.NonadditiveError" title="tcc_python_scripts.file_readers.dynamo.NonadditiveError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NonadditiveError</span></code></a> – if the given range is a cross-species interaction, so potentially
-the dynamo file describes a nonadditive potential.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.is_hard_sphere">
-<em class="property">static </em><code class="descname">is_hard_sphere</code><span class="sig-paren">(</span><em>interaction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/dynamo.html#DynamoSnapshot.is_hard_sphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.is_hard_sphere" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine whether an interaction encoded in the dynamo XML tree is a hard sphere
-interaction or not.</p>
-<p>There are two ways to encode hard spheres: either explicitly as a hard sphere, or as
-a square well with zero well depth (although the latter should be avoided as it results
-in a less efficient simulation). This helper function tests for both eventualities.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>interaction</strong> – xml entry for the interaction</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">boolean stating whether the interaction is a hard sphere</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/dynamo.html#DynamoSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a snapshot from a file, overwriting any existing data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_or_file</strong> – file stream or path to read snapshot from</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">NoSnapshotError</span></code> – if could not read from file</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeException</span></code> – if did not recognise file format or the data does not describe an
-additive hard sphere system</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.verify_cross_species_interactions">
-<code class="descname">verify_cross_species_interactions</code><span class="sig-paren">(</span><em>uij_range</em>, <em>diameter</em>, <em>eps=1e-12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/dynamo.html#DynamoSnapshot.verify_cross_species_interactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.verify_cross_species_interactions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check whether a cross-species hard sphere interaction is consistent with the known
-diameters of each species, assuming additive interactions.</p>
-<p>Additive cross-species interactions have size sigma = 0.5*(sigma_i + sigma_j) where
-sigma_{i,j} are the diameters of the individual species. If the diameter does not
-match this expectation then the interaction is not additive.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>uij_range</strong> – xml entry describing the range of the interaction</li>
-<li><strong>diameter</strong> – length scale of this cross-species hard sphere interaction</li>
-<li><strong>eps</strong> – machine tolerance for the test of additivity</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#tcc_python_scripts.file_readers.dynamo.NonadditiveError" title="tcc_python_scripts.file_readers.dynamo.NonadditiveError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NonadditiveError</span></code></a> – if the interaction is not additive</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="exception">
@@ -207,6 +101,16 @@ interaction, so potentially the dynamo file describes a nonadditive potential.</
 <code class="descclassname">tcc_python_scripts.file_readers.dynamo.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/dynamo.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.dynamo.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a snaphshot from the dynamo file.
 At the moment only a single frame can be read.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – Name of Dynamo file to read.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A generator object that generates Snapshots.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -276,13 +180,6 @@ a trajectory in time.</p>
 <dd><p><em>Returns</em> – Number of particles in snapshot.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="tcc_python_scripts.file_readers.snapshot.Snapshot.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>file_or_stream</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to read a snapshot from a file. Not implemented in base class and must be written
-for specific file formats.</p>
-</dd></dl>
-
 <dl class="classmethod">
 <dt id="tcc_python_scripts.file_readers.snapshot.Snapshot.read_single">
 <em class="property">classmethod </em><code class="descname">read_single</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read_single" title="Permalink to this definition">¶</a></dt>
@@ -314,17 +211,13 @@ Example:
 
 <dl class="classmethod">
 <dt id="tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory">
-<em class="property">classmethod </em><code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>path_or_file</em>, <em>num_frames=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">read_trajectory</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.read_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.read_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator that reads snapshots from a file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path_or_file</strong> – file stream or path to read trajectory from</li>
-<li><strong>num_frames</strong> – Will read this many frames from the trajectory.
-If set to 0 will read frames until the file ends.</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_or_file</strong> – file stream or path to read trajectory from</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
@@ -340,8 +233,15 @@ If set to 0 will read frames until the file ends.</li>
 <dl class="method">
 <dt id="tcc_python_scripts.file_readers.snapshot.Snapshot.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>output_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/snapshot.html#Snapshot.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.snapshot.Snapshot.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dump the snapshot to a file.
-:param output_file: file or path to write the snapshot to</p>
+<dd><p>Dump the snapshot to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>output_file</strong> – file or path to write the snapshot to</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -383,42 +283,19 @@ or a path (in which case the context manager will open this, return a stream and
 <dd><p>Bases: <a class="reference internal" href="#tcc_python_scripts.file_readers.snapshot.Snapshot" title="tcc_python_scripts.file_readers.snapshot.Snapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">tcc_python_scripts.file_readers.snapshot.Snapshot</span></code></a></p>
 <p>Snapshot of a system of particles in XYZ (.xyz) file format.</p>
 <p>Interface defined in parent class Snapshot. Further documentation can be found there.</p>
-<dl class="method">
-<dt id="tcc_python_scripts.file_readers.xyz.XYZSnapshot.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>path_or_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/xyz.html#XYZSnapshot.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.xyz.XYZSnapshot.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a single XYZ snapshot from a file.</p>
-<p>Overwrites any exisiting data in the Snaphsot object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">NoSnapshotError if file could not be read.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path_or_file</strong> – file stream or path to read snapshot from</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="function">
 <dt id="tcc_python_scripts.file_readers.xyz.read">
-<code class="descclassname">tcc_python_scripts.file_readers.xyz.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em>, <em>num_frames=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/xyz.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.xyz.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generatro that reads one or more snapshots from an xyz file.
-If num_frames is not specified then all frames are returned from the file.</p>
+<code class="descclassname">tcc_python_scripts.file_readers.xyz.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/file_readers/xyz.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.file_readers.xyz.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a generator that reads one or more snapshots from an xyz file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file_name</strong> – Name of XYZ file to read.</li>
-<li><strong>num_frames</strong> – Number of snapshots to read from the xyz file. If 0, will return all frames in file.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – Name of XYZ file to read.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A generator object that generates Snapshots.</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A generator object that generates Snapshots.</td>
 </tr>
 </tbody>
 </table>

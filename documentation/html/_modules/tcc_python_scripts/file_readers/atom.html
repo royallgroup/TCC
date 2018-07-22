@@ -51,7 +51,7 @@
 <span class="sd">    Interface defined in parent class Snapshot. Further documentation can be found there.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AtomSnapshot.read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.atom.AtomSnapshot.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Read a snapshot from a file, overwriting any existing data.</span>
 
 <span class="sd">        Args:</span>
@@ -121,7 +121,7 @@
                     <span class="k">return</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unknown header: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">item</span><span class="p">)</span></div>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unknown header: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">item</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;String representation of the snapshot in LAMMPS (.atom) format&quot;&quot;&quot;</span>
@@ -146,13 +146,15 @@
         <span class="k">return</span> <span class="n">string_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.atom.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read one or more snapshots from the atom file.</span>
-<span class="sd">    Default num_frames = 1.</span>
-<span class="sd">    If num_frames=&quot;Unknown&quot;, returns a generator attached to the file.</span>
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.atom.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a generator that reads one or more snapshots from a .atom file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_name: Name of .atom file to read.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">         A generator object that generates Snapshots.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">AtomSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">AtomSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

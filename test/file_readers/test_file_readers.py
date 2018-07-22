@@ -7,8 +7,7 @@ import math
 class TestXYZ:
     @staticmethod
     def test_empty_file():
-        with pytest.raises(snapshot.NoSnapshotError):
-            list(xyz.read("test/file_readers/test_files/empty_file.xyz"))
+        assert list(xyz.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod
     def test_partial_frame():
@@ -24,8 +23,7 @@ class TestXYZ:
 class TestAtom:
     @staticmethod
     def test_empty_file():
-        with pytest.raises(snapshot.NoSnapshotError):
-            list(atom.read("test/file_readers/test_files/empty_file.xyz"))
+        assert list(atom.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod
     def test_sample_file():
@@ -40,8 +38,7 @@ class TestAtom:
 class TestDynamo:
     @staticmethod
     def test_empty_file():
-        with pytest.raises(snapshot.NoSnapshotError):
-            list(dynamo.read("test/file_readers/test_files/empty_file.xyz"))
+        assert list(dynamo.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod
     def test_dynamo_snapshot():

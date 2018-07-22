@@ -102,41 +102,32 @@ class Snapshot:
         """
         with stream_safe_open(path_or_file) as f:
             snap = cls()
-            snap.read(f)
+            snap._read(f)
         return snap
 
     @classmethod
-    def read_trajectory(cls, path_or_file, num_frames=0):
+    def read_trajectory(cls, path_or_file):
         """A generator that reads snapshots from a file.
 
         Args:
             path_or_file: file stream or path to read trajectory from
-            num_frames: Will read this many frames from the trajectory.
-                If set to 0 will read frames until the file ends.
         Raises:
             NoSnapshotError: if file could not be read.
             RuntimeException: file format is not recognised
         """
 
         with stream_safe_open(path_or_file) as f:
-            if num_frames > 0:
-                frames_read = 0
-                while frames_read < num_frames:
-                    snap = cls()
-                    snap.read(f)
-                    yield snap
-                    frames_read += 1
-            else:
-                while True:
-                    snap = cls()
-                    try:
-                        snap.read(f)
-                    except NoSnapshotError:
-                        break
-                    yield snap
+            while True:
+                snap = cls()
+                try:
+                    snap._read(f)
+                except NoSnapshotError:
+                    break
+                yield snap
 
     def write(self, output_file):
         """Dump the snapshot to a file.
+
         Args:
              output_file: file or path to write the snapshot to
         """
@@ -158,7 +149,7 @@ class Snapshot:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def read(self, file_or_stream):
+    def _read(self, file_or_stream):
         """
         Function to read a snapshot from a file. Not implemented in base class and must be written
         for specific file formats.
