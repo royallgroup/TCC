@@ -1,0 +1,30 @@
+python\_scripts.tcc package
+===========================
+
+Submodules
+----------
+
+python\_scripts.tcc.structures module
+-------------------------------------
+
+.. automodule:: python_scripts.tcc.structures
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+python\_scripts.tcc.wrapper module
+----------------------------------
+
+.. automodule:: python_scripts.tcc.wrapper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: python_scripts.tcc
+    :members:
+    :undoc-members:
+    :show-inheritance:

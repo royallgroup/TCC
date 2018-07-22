@@ -1,4 +1,4 @@
-from python_scripts.file_readers import snapshot, atom, dynamo, xyz
+from tcc_python_scripts.file_readers import snapshot, atom, dynamo, xyz
 import pytest
 import numpy as np
 import math
@@ -7,29 +7,27 @@ import math
 class TestXYZ:
     @staticmethod
     def test_empty_file():
-        with pytest.raises(snapshot.NoSnapshotError):
-            xyz.read("test/file_readers/test_files/empty_file.xyz")
+        assert list(xyz.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod
     def test_partial_frame():
         with pytest.raises(snapshot.SnapshotIncompleteError):
-            xyz.read("test/file_readers/test_files/partial_frame.xyz")
+            list(xyz.read("test/file_readers/test_files/partial_frame.xyz"))
 
     @staticmethod
     def test_partial_multiple_frames():
         with pytest.raises(snapshot.SnapshotIncompleteError):
-            xyz.read("test/file_readers/test_files/partial_multiple_frames.xyz")
+            list(xyz.read("test/file_readers/test_files/partial_multiple_frames.xyz"))
 
 
 class TestAtom:
     @staticmethod
     def test_empty_file():
-        with pytest.raises(snapshot.NoSnapshotError):
-            atom.read("test/file_readers/test_files/empty_file.xyz")
+        assert list(atom.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod
     def test_sample_file():
-        data = atom.read("test/file_readers/test_files/sample.atom")
+        data = list(atom.read("test/file_readers/test_files/sample.atom"))[0]
         assert np.array_equal(data.box, np.array([[-1, 1], [-1, 1], [-1, 1]]))
         assert data.dimensionality == 3
         assert data.num_particles == 8
@@ -40,12 +38,11 @@ class TestAtom:
 class TestDynamo:
     @staticmethod
     def test_empty_file():
-        with pytest.raises(snapshot.NoSnapshotError):
-            dynamo.read("test/file_readers/test_files/empty_file.xyz")
+        assert list(dynamo.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod
     def test_dynamo_snapshot():
-        data = dynamo.read("test/file_readers/test_files/sample_dynamo_snapshot.xml")
+        data = list(dynamo.read("test/file_readers/test_files/sample_dynamo_snapshot.xml"))[0]
         assert np.allclose(data.box, np.array([[0, 8.71188], [0, 8.71188], [0, 8.71188]]), atol=0.00001)
         assert math.isclose(data.density, 2.075)
         assert data.diameters.shape == (1372,)
@@ -58,7 +55,7 @@ class TestDynamo:
 
     @staticmethod
     def test_dynamo_config():
-        data = dynamo.read("test/file_readers/test_files/sample_dynamo_config.end.xml")
+        data = list(dynamo.read("test/file_readers/test_files/sample_dynamo_config.end.xml"))[0]
         assert np.allclose(data.box, np.array([[0, 9.68024], [0, 9.68024], [0, 9.68024]]), atol=0.00001)
         assert math.isclose(data.density, 1.5125)
         assert data.diameters.shape == (1372,)

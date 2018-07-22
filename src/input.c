@@ -40,7 +40,7 @@ void read_ini_file() {
     rcutBB = iniparser_getdouble(ini, "simulation:rcutBB", 1.8);
     use_voronoi_bonds = iniparser_getboolean(ini, "simulation:bond_type", 1);
     PBCs = iniparser_getboolean(ini, "simulation:pbcs", 1);
-    fc = iniparser_getdouble(ini, "simulation:voronoi_parameter", 1);
+    fc = iniparser_getdouble(ini, "simulation:voronoi_parameter", 0.82);
     max_num_bonds = iniparser_getint(ini, "simulation:num_bonds", 50);
     use_cell_list = iniparser_getboolean(ini, "simulation:cell_list", 0);
     analyse_all_clusters = iniparser_getboolean(ini, "simulation:analyse_all_clusters", 1);
