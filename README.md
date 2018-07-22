@@ -2,7 +2,7 @@
 
 Latest version of the Topological Cluster Classification (TCC) code.
 
-For documentation, open index.html in the docs folder.
+For documentation, open index.html in the docs folder or https://royallgroup.github.io/TCC/.
 
 ### Citation
 
