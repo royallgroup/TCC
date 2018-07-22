@@ -19,7 +19,8 @@ def run_unit_test(cluster_path, bond_type):
     :param bond_type: the type of bond to be used by the TCC
     """
 
-    particle_coordinates = list(xyz.read(cluster_path, 1))[0].particle_coordinates
+    xyz_frames = xyz.read(cluster_path)
+    particle_coordinates = next(xyz_frames).particle_coordinates
     cluster_name = os.path.split(cluster_path)[1].rstrip(".xyz")
 
     tcc_parameters = wrapper.TCCWrapper()

@@ -20,32 +20,53 @@ The scripts in the file readers folder are designed to privde a unified interfac
 Example XYZ file reader script
 --------------------------------
 
-The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator which returns sequential :class:`~tcc_python_scripts.file_readers.snapshot` objects from a file. To retrieve all snapshots at once use the python :class:`list` function. ::
+The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator which returns sequential :class:`~tcc_python_scripts.file_readers.snapshot` objects from a file. The genertor will iterate over all snapshots in the file returning them sequentually. :: 
 
-    >>> from file_readers import xyz
-    ... 
-    ... particle_coordinates = list(xyz.read("../../test/integration_tests/basic_voronoi/sample.xyz", num_frames=2))
-    ... print(particle_coordinates)
-    [<snapshot n=59 t=None>, <snapshot n=57 t=None>]
-    
-Alternatively you can use the generator in a for loop and operate on each Snapshot seperately::
-
-    >>> for frame in xyz.read("test/integration_tests/basic_voronoi/sample.xyz", num_frames=2):
+    >>> xyz_file = xyz.read("sample.xyz")
+    ... for frame in xyz_file:
     ...     print(frame.num_particles)
     59
     57
+    58
 
+To load only some of the frames you can use the enumerate function. ::
+    
+    >>> for frame_number, frame in enumerate(xyz.read("sample.xyz")):
+    ...     if frame_number < 1:
+    ...         print(frame.num_particles)
+    59
+
+For more complex operations such as reading every other frame you can use the same method. ::
+
+    >>> for frame_number, frame in enumerate(xyz.read("sample.xyz"):
+    ...     if frame_number %2 == 0:
+    ...         print(frame.num_particles)
+    59
+    58
+    
+To retrieve all snapshots at once use the python :class:`list` function to return a list continaing all of the snapshots. ::
+
+    >>> from file_readers import xyz
+    ... 
+    ... particle_coordinates = list(xyz.read("sample.xyz"))
+    ... print(particle_coordinates)
+    [<snapshot n=59 t=None>, <snapshot n=57 t=None>, <snapshot n=58 t=None>]
+    
     
 Python Wrapper
 ===============
 
 The TCC Python wrapper is designed to be a lightweight way of automating simple TCC analyses. It can analyse a single configuration, this is most easily loaded using the above file readers.
 
-The :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
+The :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` method will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
 directory and deleting it after the run is complete. To save the results, for example raw or cluster xyz files you can provide a directory to the :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()`
 method where the results will be saved.
 
 Input parameters are set to default values unless specified. They can be set by adding values to the releveant input_parameters attribute. For details on in input parameters see: :doc:`tcc_input_parameters`.
+Because the input parameters must be placed in the appropriate section, the input parameter must be preceded by the name of its section ::
+
+    TCC_setup.input_parameters['Run']['Frames'] = 1
+    TCC_setup.input_parameters['Output']['raw'] = 1
 
     
 Example Wrapper Script
@@ -65,7 +86,8 @@ Example Wrapper Script
     particle_coordinates = list(xyz.read("../../test/integration_tests/basic_voronoi/sample.xyz", num_frames=1))[0].particle_coordinates
     
     TCC_setup.input_parameters['Run']['Frames'] = 1
-    TCC_setup.input_parameters['Run']['Frames'] = 1
+    TCC_setup.input_parameters['Run']['xyzfilename'] = "my_xyz_file.xyz"
+    TCC_setup.input_parameters['Output']['raw'] = 1
     results = TCC_setup.run(box, particle_coordinates, silent=False)
     
     print(results['Number of clusters'])
@@ -74,7 +96,7 @@ Example Wrapper Script
 Net TCC
 ========
 
-Simple python script to post process TCC output to find net TCC clusters. Writteb by Francesco Turci - February 2016, edited by Peter Crowther - March 2018.
+This is a simple python script to post process TCC output to find net TCC clusters. Writteb by Francesco Turci - February 2016, edited by Peter Crowther - March 2018.
 
 Description of net clusters
 ---------------------------------
@@ -87,7 +109,7 @@ This definition relies on a hierarchy of cluster types which determines which is
 
 Using the net cluster script
 ----------------------------------
-Requires Python 3 and NumPy (Python 2 may be supported but is untested).
+Requires Python 3 and NumPy.
 
 The list of clusters considered is determined by the priority list. The clusters listed first will be those of highest priority in the net calculation, those listed last will be lowest priority.
 

@@ -12,7 +12,7 @@ class AtomSnapshot(Snapshot):
     Interface defined in parent class Snapshot. Further documentation can be found there.
     """
 
-    def read(self, path_or_file):
+    def _read(self, path_or_file):
         """Read a snapshot from a file, overwriting any existing data.
 
         Args:
@@ -107,6 +107,12 @@ class AtomSnapshot(Snapshot):
         return string_buffer.getvalue()
 
 
-def read(file_name, num_frames=1):
-    """Read one or more snapshots from the atom file."""
-    return AtomSnapshot.read_trajectory(file_name, num_frames)
+def read(file_name):
+    """ Returns a generator that reads one or more snapshots from a .atom file.
+
+    Args:
+        file_name: Name of .atom file to read.
+    Returns:
+         A generator object that generates Snapshots.
+    """
+    return AtomSnapshot.read_trajectory(file_name)

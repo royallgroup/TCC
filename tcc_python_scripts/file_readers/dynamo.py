@@ -2,7 +2,7 @@
 
 import numpy
 import tcc_python_scripts.file_readers.snapshot as snapshot
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ElementTree
 
 
 class NonadditiveError(RuntimeError):
@@ -20,7 +20,7 @@ class DynamoSnapshot(snapshot.Snapshot):
     """
 
     @staticmethod
-    def is_hard_sphere(interaction):
+    def _is_hard_sphere(interaction):
         """Determine whether an interaction encoded in the dynamo XML tree is a hard sphere
         interaction or not.
 
@@ -37,7 +37,7 @@ class DynamoSnapshot(snapshot.Snapshot):
             return True
         return interaction.attrib['Type'] == 'SquareWell' and interaction.attrib['WellDepth'] == '0'
 
-    def assign_diameters(self, uij_range, diameter):
+    def _assign_diameters(self, uij_range, diameter):
         """Assign diameters to the particles across the given ID range.
 
         Diameters will only be assigned if the range describes a single-species interaction.
@@ -80,7 +80,7 @@ class DynamoSnapshot(snapshot.Snapshot):
         else:
             raise RuntimeError('unknown range type encounted: %s' % range_type)
 
-    def verify_cross_species_interactions(self, uij_range, diameter, eps=1e-12):
+    def _verify_cross_species_interactions(self, uij_range, diameter, eps=1e-12):
         """Check whether a cross-species hard sphere interaction is consistent with the known
         diameters of each species, assuming additive interactions.
 
@@ -118,7 +118,7 @@ class DynamoSnapshot(snapshot.Snapshot):
 
         raise NonadditiveError('cross interaction between ranges (%d,%d) and (%d,%d) is non additive!' % (start0, end0, start1, end1))
 
-    def read(self, path_or_file):
+    def _read(self, path_or_file):
         """Read a snapshot from a file, overwriting any existing data.
 
         Args:
@@ -129,11 +129,11 @@ class DynamoSnapshot(snapshot.Snapshot):
                               additive hard sphere system
         """
         with snapshot.stream_safe_open(path_or_file) as f:
-            parser = ET.XMLParser()
+            parser = ElementTree.XMLParser()
             self.xml = {}
             try:
-                self.xml['tree'] = ET.parse(f, parser)
-            except ET.ParseError:
+                self.xml['tree'] = ElementTree.parse(f, parser)
+            except ElementTree.ParseError:
                 print("Unable to read dynamo file.")
                 raise snapshot.NoSnapshotError
 
@@ -173,13 +173,13 @@ class DynamoSnapshot(snapshot.Snapshot):
             # Assign diameters
             definitely_additive = True
             for uij in self.xml['interactions']:
-                if not self.is_hard_sphere(uij):
+                if not self._is_hard_sphere(uij):
                     raise RuntimeError('can only process additive hard spheres!')
 
                 uij_range = uij.find('IDPairRange')
                 diameter = float(uij.attrib['Diameter'])
                 try:
-                    self.assign_diameters(uij_range, diameter)
+                    self._assign_diameters(uij_range, diameter)
                 except NonadditiveError:
                     definitely_additive = False
 
@@ -193,7 +193,7 @@ class DynamoSnapshot(snapshot.Snapshot):
                 for uij in self.xml['interactions']:
                     uij_range = uij.find('IDPairRange')
                     diameter = float(uij.attrib['Diameter'])
-                    self.verify_cross_species_interactions(uij_range, diameter)
+                    self._verify_cross_species_interactions(uij_range, diameter)
 
             # Compute exact volume fraction.
             intrinsic_volumes = numpy.pi * self.diameters**3 / 6
@@ -207,8 +207,12 @@ class DynamoSnapshot(snapshot.Snapshot):
 
 
 def read(file_name):
-    """
-    Read a snaphshot from the dynamo file.
+    """ Read a snaphshot from the dynamo file.
     At the moment only a single frame can be read.
+
+    Args:
+        file_name: Name of Dynamo file to read.
+    Returns:
+         A generator object that generates Snapshots.
     """
-    return DynamoSnapshot.read_trajectory(file_name, num_frames=1)
+    return DynamoSnapshot.read_trajectory(file_name)

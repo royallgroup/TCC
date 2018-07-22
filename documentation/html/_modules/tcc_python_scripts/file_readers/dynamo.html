@@ -41,7 +41,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">tcc_python_scripts.file_readers.snapshot</span> <span class="k">as</span> <span class="nn">snapshot</span>
-<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ElementTree</span>
 
 
 <div class="viewcode-block" id="NonadditiveError"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.NonadditiveError">[docs]</a><span class="k">class</span> <span class="nc">NonadditiveError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
@@ -58,8 +58,8 @@
 <span class="sd">    Interface defined in parent class Snapshot. Further documentation can be found there.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DynamoSnapshot.is_hard_sphere"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.is_hard_sphere">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">is_hard_sphere</span><span class="p">(</span><span class="n">interaction</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_hard_sphere</span><span class="p">(</span><span class="n">interaction</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Determine whether an interaction encoded in the dynamo XML tree is a hard sphere</span>
 <span class="sd">        interaction or not.</span>
 
@@ -74,9 +74,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;HardSphere&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SquareWell&#39;</span> <span class="ow">and</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;WellDepth&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span></div>
+        <span class="k">return</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SquareWell&#39;</span> <span class="ow">and</span> <span class="n">interaction</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;WellDepth&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;0&#39;</span>
 
-<div class="viewcode-block" id="DynamoSnapshot.assign_diameters"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.assign_diameters">[docs]</a>    <span class="k">def</span> <span class="nf">assign_diameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_assign_diameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Assign diameters to the particles across the given ID range.</span>
 
 <span class="sd">        Diameters will only be assigned if the range describes a single-species interaction.</span>
@@ -117,9 +117,9 @@
                 <span class="k">raise</span> <span class="n">NonadditiveError</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unknown range type encounted: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">range_type</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;unknown range type encounted: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">range_type</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DynamoSnapshot.verify_cross_species_interactions"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.verify_cross_species_interactions">[docs]</a>    <span class="k">def</span> <span class="nf">verify_cross_species_interactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_verify_cross_species_interactions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check whether a cross-species hard sphere interaction is consistent with the known</span>
 <span class="sd">        diameters of each species, assuming additive interactions.</span>
 
@@ -155,9 +155,9 @@
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">additive_diameter</span> <span class="o">-</span> <span class="n">diameter</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
                 <span class="k">return</span>
 
-        <span class="k">raise</span> <span class="n">NonadditiveError</span><span class="p">(</span><span class="s1">&#39;cross interaction between ranges (</span><span class="si">%d</span><span class="s1">,</span><span class="si">%d</span><span class="s1">) and (</span><span class="si">%d</span><span class="s1">,</span><span class="si">%d</span><span class="s1">) is non additive!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start0</span><span class="p">,</span> <span class="n">end0</span><span class="p">,</span> <span class="n">start1</span><span class="p">,</span> <span class="n">end1</span><span class="p">))</span></div>
+        <span class="k">raise</span> <span class="n">NonadditiveError</span><span class="p">(</span><span class="s1">&#39;cross interaction between ranges (</span><span class="si">%d</span><span class="s1">,</span><span class="si">%d</span><span class="s1">) and (</span><span class="si">%d</span><span class="s1">,</span><span class="si">%d</span><span class="s1">) is non additive!&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start0</span><span class="p">,</span> <span class="n">end0</span><span class="p">,</span> <span class="n">start1</span><span class="p">,</span> <span class="n">end1</span><span class="p">))</span>
 
-<div class="viewcode-block" id="DynamoSnapshot.read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.DynamoSnapshot.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_or_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Read a snapshot from a file, overwriting any existing data.</span>
 
 <span class="sd">        Args:</span>
@@ -168,11 +168,11 @@
 <span class="sd">                              additive hard sphere system</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">stream_safe_open</span><span class="p">(</span><span class="n">path_or_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">parser</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">XMLParser</span><span class="p">()</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">XMLParser</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xml</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">parser</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">ET</span><span class="o">.</span><span class="n">ParseError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;tree&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">parser</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">ParseError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to read dynamo file.&quot;</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">NoSnapshotError</span>
 
@@ -212,13 +212,13 @@
             <span class="c1"># Assign diameters</span>
             <span class="n">definitely_additive</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">for</span> <span class="n">uij</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hard_sphere</span><span class="p">(</span><span class="n">uij</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_hard_sphere</span><span class="p">(</span><span class="n">uij</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;can only process additive hard spheres!&#39;</span><span class="p">)</span>
 
                 <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;IDPairRange&#39;</span><span class="p">)</span>
                 <span class="n">diameter</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uij</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">])</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">assign_diameters</span><span class="p">(</span><span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_assign_diameters</span><span class="p">(</span><span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">NonadditiveError</span><span class="p">:</span>
                     <span class="n">definitely_additive</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -232,13 +232,13 @@
                 <span class="k">for</span> <span class="n">uij</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="p">[</span><span class="s1">&#39;interactions&#39;</span><span class="p">]:</span>
                     <span class="n">uij_range</span> <span class="o">=</span> <span class="n">uij</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;IDPairRange&#39;</span><span class="p">)</span>
                     <span class="n">diameter</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">uij</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Diameter&#39;</span><span class="p">])</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">verify_cross_species_interactions</span><span class="p">(</span><span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_verify_cross_species_interactions</span><span class="p">(</span><span class="n">uij_range</span><span class="p">,</span> <span class="n">diameter</span><span class="p">)</span>
 
             <span class="c1"># Compute exact volume fraction.</span>
             <span class="n">intrinsic_volumes</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">diameters</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">6</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">volume_fraction</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intrinsic_volumes</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
 
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;xml&#39;</span><span class="p">]</span></div>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;xml&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;To be implemented.&quot;&quot;&quot;</span>
@@ -246,11 +246,15 @@
 
 
 <div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../tcc_python_scripts.file_readers.html#tcc_python_scripts.file_readers.dynamo.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read a snaphshot from the dynamo file.</span>
+    <span class="sd">&quot;&quot;&quot; Read a snaphshot from the dynamo file.</span>
 <span class="sd">    At the moment only a single frame can be read.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_name: Name of Dynamo file to read.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">         A generator object that generates Snapshots.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">DynamoSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">DynamoSnapshot</span><span class="o">.</span><span class="n">read_trajectory</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

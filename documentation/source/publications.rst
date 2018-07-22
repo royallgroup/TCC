@@ -23,6 +23,7 @@ This is a chronological list of publications that have made use of the TCC
 * The nature of geometric frustration in the Kob-Andersen mixture - Peter Crowther et al. `The Journal of Chemical Physics, 143, 044503 (2015) <https://doi.org/10.1063/1.4927302>`_
 * Recasting a model atomistic glassformer as a system of icosahedra - Rhiannon Pinney et al. `The Journal of Chemical Physics, 143, 244507 (2016) <https://doi.org/10.1063/1.4938424>`_
 * Crystallisation driven by sedimentation: a particle resolved study - Francesco Turci and C.P. Royall `J. Stat. Mech., 084004 (2016). <https://doi.org/10.1088/1742-5468/2016/08/084004>`_
+* Polydisperse hard spheres: crystallization kinetics in small systems and role of local structure - Matteo Campo and Thomas Speck `J. Stat. Mech., 084007 (2016). <https://doi.org/10.1088/1742-5468/2016/8/084007>`_
 * The role of fivefold symmetry in suppressing crystallization - Jade Taffs and C.P. Royall `Nature Communications, Vol. 7, 13225 (2016) <https://doi.org/10.1038/ncomms13225>`_
 * Controlling local order of athermal self-propelled particles - Niamh Dougan et al. `J. Stat. Mech., 124001 (2016) <https://doi.org/10.1088/1742-5468/aa4e5b>`_
 * Structure in sheared supercooled liquids: Dynamical rearrangements of an effective system of icosahedra - Rhiannon Pinney et al. `The Journal of Chemical Physics, 145, 234501 (2016) <https://doi.org/10.1063/1.4968555>`_
