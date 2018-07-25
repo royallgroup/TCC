@@ -18,11 +18,21 @@ void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
                     if (n2 > n0) {
                         if (Bonds_BondCheck(n1, n2)) {
                             // SP3 found, check type and store
-                            get_sp3_clusters(n0, n1, n2);
+                            if (n2 > n1) {
+                                get_sp3_clusters(n0, n1, n2);
+                            }
+                            else {
+                                get_sp3_clusters(n0, n2, n1);
+                            }
                         }
                         else { // not SP3, search for SP4 & SP5
                             if (dosp4 == 1) {
-                                get_basic_sp4_rings(n0, n1, n2);
+                                if (n2 > n1) {
+                                    get_basic_sp4_rings(n0, n1, n2);
+                                }
+                                else {
+                                    get_basic_sp4_rings(n0, n2, n1);
+                                }
                             }
                         }
                     }
@@ -35,13 +45,6 @@ void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
 void get_basic_sp4_rings(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
     int i;
     int n3;
-    int tmp;
-
-    if(n1 > n2) {
-        tmp = n2;
-        n2 = n1;
-        n1 = tmp;
-    }
 
     for (i=0; i<num_bonds[n1]; ++i) {
         n3 = bond_list[n1][i];
@@ -91,42 +94,35 @@ void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {    // {n0,n1,n3,n2} i
     }
 }
 
-void get_sp3_clusters(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
-    int i, j;
-    int type = 0;
-    int cp[2];  // common spindles - particles bonded to all members of three membered ring
-    int tmp;
+void get_sp3_clusters(int n0, int n1, int n2) {
+    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
 
-    if(n1 > n2) {
-        tmp = n2;
-        n2 = n1;
-        n1 = tmp;
-    }
+    int num_spindle_particles = 0;
+    int spindle_ids[2];  // common spindles - particles bonded to all members of three membered ring
 
-    cp[0]=cp[1]=-1;
-    for (i=0; i<num_bonds[n0]; ++i) {
-        j = bond_list[n0][i];
-        if (j != n1 && j != n2) {
-            if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
-                if (type < 2) {
-                    cp[type] = j;
-                    type++;
+    for (int i=0; i<num_bonds[n0]; ++i) {
+        int neighbour_id = bond_list[n0][i];
+        if (neighbour_id != n1 && neighbour_id != n2) {
+            if (Bonds_BondCheck(n1, neighbour_id) == 1 && Bonds_BondCheck(n2, neighbour_id) == 1) {
+                if (num_spindle_particles < 2) {
+                    spindle_ids[num_spindle_particles] = neighbour_id;
+                    num_spindle_particles++;
                 }
                 else {
-                    type++;
+                    num_spindle_particles++;
                 }
             }
         }
     }
     
-    if (type==0 && dosp3a==1) {
+    if (num_spindle_particles==0 && dosp3a==1) {
         Store_sp3a(n0, n1, n2);
     }
-    else if (type==1 && dosp3b==1) {
-        Store_sp3b(n0, n1, n2, cp);
+    else if (num_spindle_particles==1 && dosp3b==1) {
+        Store_sp3b(n0, n1, n2, spindle_ids);
     }
-    else if (type==2 && dosp3c==1) {
-        Store_sp3c(n0, n1, n2, cp);
+    else if (num_spindle_particles==2 && dosp3c==1) {
+        Store_sp3c(n0, n1, n2, spindle_ids);
     }
     else if (dosp3a==1) {
         Store_sp3a(n0, n1, n2);
@@ -272,8 +268,9 @@ void Store_sp4c(int n0, int n1, int n2, int n3, const int *cp) {
     add_mem_sp4c(cp[0]);
     add_mem_sp4c(cp[1]);
 
-
-    get_6A_clusters();
+    if (do6A) {
+        get_6A_clusters();
+    }
 
     ++nsp4c;
 }
@@ -496,9 +493,9 @@ void add_mem_sp3b(int particle_ID) {
     nmem_sp3b[particle_ID]++;
     if (nmem_sp3b[particle_ID] >= mmem_sp3b) {
         for (binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
+            mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrStatic);
         }
-        mmem_sp3b=mmem_sp3b+incrClustPerPart;
+        mmem_sp3b=mmem_sp3b+incrStatic;
     }
 }
 
@@ -509,9 +506,9 @@ void add_mem_sp3c(int particle_ID) {
     nmem_sp3c[particle_ID]++;
     if (nmem_sp3c[particle_ID] >= mmem_sp3c) {
         for (binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
+            mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrStatic);
         }
-        mmem_sp3c=mmem_sp3c+incrClustPerPart;
+        mmem_sp3c=mmem_sp3c+incrStatic;
     }
 }
 
@@ -522,9 +519,9 @@ void add_mem_sp4b(int particle_ID) {
     nmem_sp4b[particle_ID]++;
     if (nmem_sp4b[particle_ID] >= mmem_sp4b) {
         for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrClustPerPart);
+            mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrStatic);
         }
-        mmem_sp4b = mmem_sp4b + incrClustPerPart;
+        mmem_sp4b = mmem_sp4b + incrStatic;
     }
 }
 
@@ -535,9 +532,9 @@ void add_mem_sp4c(int particle_ID) {
     nmem_sp4c[particle_ID]++;
     if (nmem_sp4c[particle_ID] >= mmem_sp4c) {
         for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrClustPerPart);
+            mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrStatic);
         }
-        mmem_sp4c = mmem_sp4c + incrClustPerPart;
+        mmem_sp4c = mmem_sp4c + incrStatic;
     }
 }
 
@@ -548,9 +545,9 @@ void add_mem_sp5b(int particle_ID) {
     nmem_sp5b[particle_ID]++;
     if (nmem_sp5b[particle_ID] >= mmem_sp5b) {
         for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrClustPerPart);
+            mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrStatic);
         }
-        mmem_sp5b = mmem_sp5b + incrClustPerPart;
+        mmem_sp5b = mmem_sp5b + incrStatic;
     }
 }
 
@@ -561,8 +558,8 @@ void add_mem_sp5c(int particle_ID) {
     nmem_sp5c[particle_ID]++;
     if (nmem_sp5c[particle_ID] >= mmem_sp5c) {
         for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrClustPerPart);
+            mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrStatic);
         }
-        mmem_sp5c = mmem_sp5c + incrClustPerPart;
+        mmem_sp5c = mmem_sp5c + incrStatic;
     }
 }

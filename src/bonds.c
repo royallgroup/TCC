@@ -161,11 +161,12 @@ void Add_New_Bond(int particle_1, int particle_2, double squared_distance) {
     num_bonds[particle_1]++;
 }
 
-int Bonds_BondCheck(int i, int j) { // Returns 1 if i & j are bonded; 0 otherwise
-    int k;
-
-    for (k=0; k<num_bonds[i]; ++k) {
-        if (bond_list[i][k] == j) return 1;
-    } 
+int Bonds_BondCheck(int particle_1_id, int particle_2_id) {
+    // Returns 1 if particle 1 & particle 2 are bonded; 0 otherwise
+    for (int i = 0; i < num_bonds[particle_1_id]; ++i) {
+        if (bond_list[particle_1_id][i] == particle_2_id) {
+            return 1;
+        }
+    }
     return 0;
 }

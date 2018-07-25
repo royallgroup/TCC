@@ -154,10 +154,7 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
         sprintf(errMsg, "resize_1D_int(): the_array[] out of memory old_col_size %d new_col_size %d\n", old_col_size, new_col_size);
         Error_no_free(errMsg);
     }
-    for (i = old_col_size; i < new_col_size; i++) {
-        the_array[i] = -1;
-    }
-    
+
     return the_array;
 }
 

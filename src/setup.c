@@ -76,7 +76,6 @@ void initialise_run_variables() {
     int cluster_type;
 
     incrStatic=1000;
-    incrClustPerPart=1;
 
     num_gross_particles = malloc(num_cluster_types * sizeof(int));
     total_clusters = malloc(num_cluster_types * sizeof(int));
