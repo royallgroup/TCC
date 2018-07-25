@@ -14,6 +14,7 @@ void get_sp4_clusters(int, int, int, int);
 void Store_sp4a(int n0, int n1, int n2, int n3);
 void Store_sp4b(int n0, int n1, int n2, int n3, const int *cp);
 void Store_sp4c(int n0, int n1, int n3, int n2, const int *cp);
+void get_6A_clusters();
 
 void get_sp5_clusters(int, int, int, int, int);
 void Store_sp5a(int n0, int n1, int n2, int n3, int n4);
