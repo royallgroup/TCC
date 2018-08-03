@@ -83,7 +83,7 @@ Example Wrapper Script
     box = [10, 10, 10]
     
     # Get the coordinates. The file_readers scripts are a good way to read in coordinates from a file.
-    particle_coordinates = list(xyz.read("../../test/integration_tests/basic_voronoi/sample.xyz", num_frames=1))[0].particle_coordinates
+    particle_coordinates = list(xyz.read("../../test/integration_tests/basic_voronoi/sample.xyz"))[0].particle_coordinates
     
     TCC_setup.input_parameters['Run']['Frames'] = 1
     TCC_setup.input_parameters['Run']['xyzfilename'] = "my_xyz_file.xyz"
