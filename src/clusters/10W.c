@@ -28,7 +28,9 @@ void Clusters_Get10W() {
             for (int other_sp5b_pointer = 0; other_sp5b_pointer < nmem_sp5b[center_id]; ++other_sp5b_pointer) {
                 int other_sp5_id = mem_sp5b[center_id][other_sp5b_pointer];
                 if (other_sp5_id > first_sp5b_id) {
-                    neighbouring_sp5_ids[num_shared_sp5b] = other_sp5_id;
+                    if (num_shared_sp5b < 9) {
+                        neighbouring_sp5_ids[num_shared_sp5b] = other_sp5_id;
+                    }
                     num_shared_sp5b++;
                 }
             }
