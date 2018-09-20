@@ -31,6 +31,7 @@ class TCCWrapper:
         input_parameters['Run']: TCC run paramaters used for TCC run
         input_parameters['Simulation']: TCC simulation paramaters used for TCC run
         input_parameters['Output']: TCC output paramaters used for TCC run
+        input_parameters['Clusters_to_analyse']: List of clusters to include in the analysis, all are detected if list is empty
     """
 
     def __init__(self):
@@ -42,6 +43,7 @@ class TCCWrapper:
         self.input_parameters['Run'] = dict()
         self.input_parameters['Simulation'] = dict()
         self.input_parameters['Output'] = dict()
+        self.clusters_to_analyse = []
 
     def __del__(self):
         """Upon deletion we can remove the temporary working folder
@@ -55,7 +57,8 @@ class TCCWrapper:
             box: box size for boundary conditions, list of [len_x, len_y, len_z]
             particle_coordinates: a list of lists, one list for each frame containing coordinates of atoms
             output_directory: If you want to save the output of the TCC specify a directory to store the output
-            particle_types: species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.
+            particle_types: species of atoms individually (if given container) or collectively. This must be either length 1
+                            (if specifying species of all atoms) or the same length as the number of particles.
             silent: if set TCC executable console output will be suppressed
         Returns:
             pandas table containing the static cluster information
@@ -68,8 +71,10 @@ class TCCWrapper:
         self._serialise_input_parameters('{}/inputparameters.ini'.format(self.working_directory))
 
         # Create the box and configuration files.
-        self._write_box_file(box, '{}/box.txt'.format(self.working_directory))
+        self._write_box_file(box, self.working_directory)
         xyz.write('{}/sample.xyz'.format(self.working_directory), particle_coordinates, species=particle_types)
+        if self.clusters_to_analyse:
+            self._write_clusters_to_analyse(self.clusters_to_analyse, self.working_directory)
 
         # Run the TCC executable.
         if silent:
@@ -144,18 +149,34 @@ class TCCWrapper:
                 output_file.write('\n')
 
     @staticmethod
-    def _write_box_file(box, box_filename):
+    def _write_box_file(box, folder_path):
         """Serialise the box box size in the TCC format.
 
         Args:
             box: Box dimensions are given as a list of the format [len_x, len_y, len_z].
-            box_filename: file path to write box to
+            folder_path: folder to write box file to
         """
-        with open(box_filename, 'w') as output_file:
+        with open('{}/box.txt'.format(folder_path), 'w') as output_file:
             output_file.write('#iter Lx Ly Lz\n')
             output_file.write('1\t')
             for dimension in box:
                 output_file.write('{}\t'.format(dimension))
+
+    @staticmethod
+    def _write_clusters_to_analyse(clusters_to_include, folder_path):
+        """Write an ini file which specifies which clusters to analyse.
+
+        Args:
+            clusters_to_include: A list specifying which cluster types to turn on
+            folder_path: folder to write clusters_to_analyse file to
+        """
+        with open("{}/clusters_to_analyse.ini".format(folder_path), 'w') as output_file:
+            output_file.write('[Clusters]\n')
+            for cluster in structures.cluster_list:
+                if cluster in clusters_to_include:
+                    output_file.write("{}\t=\t1\n".format(cluster))
+                else:
+                    output_file.write("{}\t=\t0\n".format(cluster))
 
     def _parse_static_clusters(self):
         """Retrive the static cluster information after running the TCC.

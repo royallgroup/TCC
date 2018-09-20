@@ -25,6 +25,9 @@ def run_unit_test(cluster_path, bond_type):
 
     tcc_parameters = wrapper.TCCWrapper()
     tcc_parameters.input_parameters['Run']['xyzfilename'] = 'sample.xyz'
+    tcc_parameters.input_parameters['Simulation']['analyse_all_clusters'] = 0
+    tcc_parameters.clusters_to_analyse = cluster_name
+
     if bond_type == "voronoi_short":
         tcc_parameters.input_parameters['Simulation']['voronoi_parameter'] = 0.82
     elif bond_type == "voronoi_long":
