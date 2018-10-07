@@ -90,6 +90,12 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 <dd><p>TCC output paramaters used for TCC run</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt>
+<code class="descname">input_parameters['Clusters_to_analyse']</code></dt>
+<dd><p>List of clusters to include in the analysis, all are detected if list is empty</p>
+</dd></dl>
+
 <dl class="staticmethod">
 <dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path">
 <em class="property">static </em><code class="descname">get_tcc_executable_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.get_tcc_executable_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path" title="Permalink to this definition">¶</a></dt>
@@ -116,7 +122,8 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 <li><strong>box</strong> – box size for boundary conditions, list of [len_x, len_y, len_z]</li>
 <li><strong>particle_coordinates</strong> – a list of lists, one list for each frame containing coordinates of atoms</li>
 <li><strong>output_directory</strong> – If you want to save the output of the TCC specify a directory to store the output</li>
-<li><strong>particle_types</strong> – species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.</li>
+<li><strong>particle_types</strong> – species of atoms individually (if given container) or collectively. This must be either length 1
+(if specifying species of all atoms) or the same length as the number of particles.</li>
 <li><strong>silent</strong> – if set TCC executable console output will be suppressed</li>
 </ul>
 </td>
