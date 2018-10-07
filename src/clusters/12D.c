@@ -2,22 +2,19 @@
 #include <tools.h>
 #include "12D.h"
 
-int Clusters_Get12D(int j, int k, int sp1, int sp2) {  // Return 1 if 12B is also 11E
-
-    //!  A 12D is the intersection of an 11F and a 7A.
-    /*!
-   *  Find 12D clusters
-   *  An 12A is an 11C and an extra particle where:
-   *      - The spindle particles of the 7A cluster are common with 11E cluster spindles sd2 and sd3.
-   *      - Of the sp5 ring particles of the 7A cluster, one is common to sc, one is common to sd1,
-   *      - two are in the SP5 rings of the 7A clusters constituting 11E, and one is new
-   *
-   *  Cluster output: OOOOBBBBBBBB
-   *  Storage order: d1_unc, d2_unc, d3_unc, d4_unc, d12_com, d13_com, d24_com, d34_com, s_d1, s_d2, s_d3, s_com
-   *
-   */
-
-
+//!  A 12D is the intersection of an 11F and a 7A.
+/*!
+*  Find 12D clusters
+*  An 12A is an 11C and an extra particle where:
+*      - The spindle particles of the 7A cluster are common with 11E cluster spindles sd2 and sd3.
+*      - Of the sp5 ring particles of the 7A cluster, one is common to sc, one is common to sd1,
+*      - two are in the SP5 rings of the 7A clusters constituting 11E, and one is new
+*
+*  Cluster output: OOOOBBBBBBBB
+*  Storage order: d1_unc, d2_unc, d3_unc, d4_unc, d12_com, d13_com, d24_com, d34_com, s_d1, s_d2, s_d3, s_com
+*
+*/
+int Clusters_Get12D(int j, int k, int sp1, int sp2) {
     int l, m, n, o, p, q;
     int flg1, flg2;
     int break_out;

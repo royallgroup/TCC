@@ -5,25 +5,23 @@
 #include "tools.h"
 #include "string.h"
 
+//!  An 8A cluster is one of 3 possible topological combinations of sp5b/c clusters.
+/*!
+*  Find 8A clusters
+*  There are 3 methods used for 8A detection
+*  - A pair of sp5b where the spindles are distinct and share 4 ring particles
+*  - A pair of 7A clusters where
+*      - Both 7Ai spindle particles are common with the 7Aj spindles.
+*      - There are four common particles between sp5 rings of 7Ai and 7Aj .
+*  - A sp5b cluster and a 7A cluster where:
+*      - One 7A spindle is common with the sp5b spindle.
+*      - The other 7A spindle is distinct from all the sp5b particles.
+*      - There are four common particles between sp5 rings of sp5b and 7A.
+*
+*  Cluster output: BBBBBBBB
+*  Storage order: particles ordered by id x 8)
+*/
 void Clusters_Get8A() {
-
-    //!  An 8A cluster is one of 3 possible topological combinations of sp5b/c clusters.
-    /*!
-   *  Find 8A clusters
-   *  There are 3 methods used for 8A detection
-   *  - A pair of sp5b where the spindles are distinct and share 4 ring particles
-   *  - A pair of 7A clusters where
-   *      - Both 7Ai spindle particles are common with the 7Aj spindles.
-   *      - There are four common particles between sp5 rings of 7Ai and 7Aj .
-   *  - A sp5b cluster and a 7A cluster where:
-   *      - One 7A spindle is common with the sp5b spindle.
-   *      - The other 7A spindle is distinct from all the sp5b particles.
-   *      - There are four common particles between sp5 rings of sp5b and 7A.
-   *
-   *  Cluster output: BBBBBBBB
-   *  Storage order: particles ordered by id x 8)
-   */
-
     get_first_8A_type();
     get_second_8A_type();
     get_third_8A_type();

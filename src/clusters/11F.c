@@ -4,23 +4,21 @@
 #include "11F.h"
 #include "13K.h"
 
+//!  An 11F cluster is the intersection of two 5A and two 6A clusters
+/*!
+*  Find 11F clusters
+*  An 11E is constructed from two 5A two 6A clusters where:
+*      - Each spindle of 5Ai is bonded to a spindle of 5Aj.
+*      - There is one common ring particle between the 5A clusters.
+*      - There is one bonded pair of ring particle between the 5A clusters.
+*      - Both 6As have one distinct spindle and one spindle which is the common ring particle of the 5As.
+*      - Each 6A has two bonded 5A spindles and two bonded 5A ring particles as its ring.
+*
+*  Cluster output: BOOOOOOBBBB
+*  Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4)
+*
+*/
 void Clusters_Get11F_13K() {
-
-    //!  An 11F cluster is the intersection of two 5A and two 6A clusters
-    /*!
-   *  Find 11F clusters
-   *  An 11E is constructed from two 5A two 6A clusters where:
-   *      - Each spindle of 5Ai is bonded to a spindle of 5Aj.
-   *      - There is one common ring particle between the 5A clusters.
-   *      - There is one bonded pair of ring particle between the 5A clusters.
-   *      - Both 6As have one distinct spindle and one spindle which is the common ring particle of the 5As.
-   *      - Each 6A has two bonded 5A spindles and two bonded 5A ring particles as its ring.
-   *
-   *  Cluster output: BOOOOOOBBBB
-   *  Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4)
-   *
-   */
-
     int first_5A_ring_pointer;
 
     int first_5A_id, second_5A_id, second_5A_pointer;

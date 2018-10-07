@@ -2,22 +2,20 @@
 #include "globals.h"
 #include "tools.h"
 
+//!  A 13K cluster is the intersection an 11F and two 5A clusters
+/*!
+*  Find 13K clusters
+*  A 13K is constructed from an 11F and two 5A clusters where:
+*      -
+*      -
+*      -
+*      -
+*
+*  Cluster output: SBBBBBBBBBBOO
+*  Storage order: as_for_11F, extra_particles x 2
+*
+*/
 int Clusters_Get13K(int sp3c_i, int sp3c_j, int the6A_i) {
-
-    //!  A 13K cluster is the intersection an 11F and two 5A clusters
-    /*!
-   *  Find 13K clusters
-   *  A 13K is constructed from an 11F and two 5A clusters where:
-   *      -
-   *      -
-   *      -
-   *      -
-   *
-   *  Cluster output: SBBBBBBBBBBOO
-   *  Storage order: as_for_11F, extra_particles x 2
-   *
-   */
-
     int i, j, k, l;
     int sp3c_i_unc, sp3c_j_unc, ep[2], eclus5A[2], tmp;
     int clusSize=13;

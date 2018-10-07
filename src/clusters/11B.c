@@ -3,23 +3,21 @@
 #include "bonds.h"
 #include "tools.h"
 
+//!  An 11B cluster is 9B with two additional particles.
+/*!
+*  Find 11B clusters
+*  An 11A is a 9B and two extra particles where:
+*      - The common spindle particle from the 9B cluster has coordination number 10.
+*      - The two additional particles are bonded to each other and to the common spindle particle of 9B.
+*      - Each additional particle is bonded to two more particles in the shell of the 9B cluster,
+*        leading to a total of four bonds between the additional particles and 9B.
+*      - For each additional particle, the two shell particles to which they are bonded are not themselves bonded.
+*      - The four shell particles of the 9B cluster that are bonded to the two additional particles form two pairs that are neighbours.
+*
+*  Cluster output: BBBBBBOOSBB
+*  Storage order: as_for_9B x 9, extra_particles x 2
+*/
 int Clusters_Get11B() {
-
-    //!  An 11B cluster is 9B with two additional particles.
-    /*!
-   *  Find 11B clusters
-   *  An 11A is a 9B and two extra particles where:
-   *      - The common spindle particle from the 9B cluster has coordination number 10.
-   *      - The two additional particles are bonded to each other and to the common spindle particle of 9B.
-   *      - Each additional particle is bonded to two more particles in the shell of the 9B cluster,
-   *        leading to a total of four bonds between the additional particles and 9B.
-   *      - For each additional particle, the two shell particles to which they are bonded are not themselves bonded.
-   *      - The four shell particles of the 9B cluster that are bonded to the two additional particles form two pairs that are neighbours.
-   *
-   *  Cluster output: BBBBBBOOSBB
-   *  Storage order: as_for_9B x 9, extra_particles x 2
-   */
-
     int k, l, m;
     int b1[2], b2[2], nb1, nb2;
     int ep[2]; // The two extra particles

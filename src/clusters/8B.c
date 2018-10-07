@@ -4,18 +4,15 @@
 #include "bonds.h"
 #include "tools.h"
 
+//!  An 8B cluster is an 7A cluster with an extra particle attached.
+/*!
+*  Find 8B clusters
+*  An 8B is a 7A cluster with an extra particle bonded to two of the ring particles and a spindle of the 7A cluster
+*
+*  Cluster output: BBBBOOB
+*  Storage order: as for 7A x 7, extra_particle)
+*/
 void Clusters_Get8B() {
-
-    //!  An 8B cluster is an 7A cluster with an extra particle attached.
-    /*!
-   *  Find 8B clusters
-   *  An 8B is a 7A cluster with an extra particle bonded to two of the ring particles and a spindle of the 7A cluster
-   *
-   *  Cluster output: BBBBOOB
-   *  Storage order: as for 7A x 7, extra_particle)
-   */
-
-
     for (int first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id) {
         int *first_7A_cluster = hcsp5c[first_7A_id];
         for (int spindle_pointer = 0; spindle_pointer < 2; ++spindle_pointer) {

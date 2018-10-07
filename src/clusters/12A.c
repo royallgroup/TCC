@@ -4,21 +4,19 @@
 #include "bonds.h"
 #include "tools.h"
 
+//!  A 12A is an 11C with an extra particle bonded to only 3 specific particles in the 11C.
+/*!
+*  Find 12A clusters
+*  An 12A is an 11C and an extra particle where:
+*      - The common spindle particle of the 11C has coordination number 11.
+*      - The extra particle is bonded to the common spindle.
+*      - The extra particle is bonded to the two unbonded ring particles of 11C.
+*
+*  Cluster output: SOOBBBBBBBBB
+*  Storage order: as_for_11C x 11, extra_particle
+*
+*/
 void Clusters_Get12A() {
-
-    //!  A 12A is an 11C with an extra particle bonded to only 3 specific particles in the 11C.
-    /*!
-   *  Find 12A clusters
-   *  An 12A is an 11C and an extra particle where:
-   *      - The common spindle particle of the 11C has coordination number 11.
-   *      - The extra particle is bonded to the common spindle.
-   *      - The extra particle is bonded to the two unbonded ring particles of 11C.
-   *
-   *  Cluster output: SOOBBBBBBBBB
-   *  Storage order: as_for_11C x 11, extra_particle
-   *
-   */
-
     int first_11C_id;
     int extra_particle;
 

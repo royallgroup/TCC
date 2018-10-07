@@ -4,21 +4,19 @@
 #include "bonds.h"
 #include "tools.h"
 
+//!  A 12K clusters is an 11A with an extra particle bonded to three of the ring particles of the 11A
+/*!
+*  Find 12K clusters
+*  A 12K is constructed of from an 11A and an extra particle where:
+*      - The additional particle is bonded to three mutually bonded sp4 ring particles of the 11A cluster.
+*
+*      Since there are 8 possible sites for bonding on each 11A there may be multiple 12K for each 11A
+*
+*  Cluster output: BBBBBBBBOOSB
+*  Storage order: as_for_11A x 11, extra_particle
+*
+*/
 void Clusters_Get12K() {
-
-    //!  A 12K clusters is an 11A with an extra particle bonded to three of the ring particles of the 11A
-    /*!
-   *  Find 12K clusters
-   *  A 12K is constructed of from an 11A and an extra particle where:
-   *      - The additional particle is bonded to three mutually bonded sp4 ring particles of the 11A cluster.
-   *
-   *      Since there are 8 possible sites for bonding on each 11A there may be multiple 12K for each 11A
-   *
-   *  Cluster output: BBBBBBBBOOSB
-   *  Storage order: as_for_11A x 11, extra_particle
-   *
-   */
-
     int first_11A_pointer, ring_number;
     int sp3_rings[8][3] = {-1};
     int *sp3_ring;

@@ -1,0 +1,1836 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cluster Descriptions &#8212; TCC  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="tcc_python_scripts.tcc package" href="tcc_python_scripts.tcc.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tcc_python_scripts.tcc.html" title="tcc_python_scripts.tcc package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cluster-descriptions">
+<h1>Cluster Descriptions<a class="headerlink" href="#cluster-descriptions" title="Permalink to this headline">¶</a></h1>
+<dl class="file">
+<dt>
+<span class="target" id="bonds_8c"></span><em>file</em> <code class="descname">bonds.c</code></dt>
+<dd><em>#include &lt;output.h&gt;</em><em>#include “math.h”</em><em>#include “bonds.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><em>#include “cell_list.h”</em><em>#include “string.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Get_Interparticle_Distance">
+<span class="target" id="bonds_8c_1a0d3c0bcf899de781a5df658b5b0a30fd"></span>double <code class="descname">Get_Interparticle_Distance</code><span class="sig-paren">(</span>int<em>&nbsp;i</em>, int<em>&nbsp;j</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Get_Interparticle_Distance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.enforce_PBCs">
+<span class="target" id="bonds_8c_1a33a665d07d6e249f3c4a62ab4080118f"></span>void <code class="descname">enforce_PBCs</code><span class="sig-paren">(</span>double *<em>&nbsp;dx</em>, double *<em>&nbsp;dy</em>, double *<em>&nbsp;dz</em><span class="sig-paren">)</span><a class="headerlink" href="#c.enforce_PBCs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_distance_components">
+<span class="target" id="bonds_8c_1ada3ff3e83bd3c1c89154a0ad7b15f2b5"></span>void <code class="descname">get_distance_components</code><span class="sig-paren">(</span>int<em>&nbsp;i</em>, int<em>&nbsp;j</em>, double *<em>&nbsp;dx</em>, double *<em>&nbsp;dy</em>, double *<em>&nbsp;dz</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_distance_components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Are_All_Bonds_Symmetric">
+<span class="target" id="bonds_8c_1ac5b81912c6b637f1f5234a8b3bd3d5e8"></span>void <code class="descname">Are_All_Bonds_Symmetric</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Are_All_Bonds_Symmetric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.build_bond_network">
+<span class="target" id="bonds_8c_1ae680d201faa5c17c14518a9b43786632"></span>void <code class="descname">build_bond_network</code><span class="sig-paren">(</span>int<em>&nbsp;frame_number</em><span class="sig-paren">)</span><a class="headerlink" href="#c.build_bond_network" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Get_Simple_Bonds">
+<span class="target" id="bonds_8c_1a8a5a9d8e2098cc815f1e8d056eccb58f"></span>void <code class="descname">Get_Simple_Bonds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Get_Simple_Bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Check_For_Valid_Bond">
+<span class="target" id="bonds_8c_1a703cad9075a4f67deab33324bd956654"></span>void <code class="descname">Check_For_Valid_Bond</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, int<em>&nbsp;particle_2</em>, double<em>&nbsp;squared_distance</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Check_For_Valid_Bond" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Check_Num_Bonds">
+<span class="target" id="bonds_8c_1a5978c6cbc987e5c2e22345c874215cad"></span>void <code class="descname">Check_Num_Bonds</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, int<em>&nbsp;particle_2</em>, double<em>&nbsp;squared_distance</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Check_Num_Bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.too_many_bonds">
+<span class="target" id="bonds_8c_1abf47500975976aef24fd91d0ef846066"></span>void <code class="descname">too_many_bonds</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, int<em>&nbsp;particle_2</em>, const char *<em>&nbsp;method_name</em><span class="sig-paren">)</span><a class="headerlink" href="#c.too_many_bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Add_New_Bond">
+<span class="target" id="bonds_8c_1a46b0c54e81848420c292cbf32e32d8e3"></span>void <code class="descname">Add_New_Bond</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, int<em>&nbsp;particle_2</em>, double<em>&nbsp;squared_distance</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Add_New_Bond" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Bonds_BondCheck">
+<span class="target" id="bonds_8c_1a3b703f8c94d88b3e407c23aa78dbaa70"></span>int <code class="descname">Bonds_BondCheck</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1_id</em>, int<em>&nbsp;particle_2_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Bonds_BondCheck" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="cell__list_8c"></span><em>file</em> <code class="descname">cell_list.c</code></dt>
+<dd><em>#include “cell_list.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><em>#include “bonds.h”</em><em>#include &lt;math.h&gt;</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.cell_list_get_particle_1_neighbours">
+<span class="target" id="cell__list_8c_1ac0da1e219d20cf0fde524a36d109fc00"></span>int <code class="descname">cell_list_get_particle_1_neighbours</code><span class="sig-paren">(</span>int<em>&nbsp;i</em>, int *<em>&nbsp;particle_1_neighbours</em>, int *<em>&nbsp;particle_1_bonds</em>, double *<em>&nbsp;particle_1_bond_lengths</em>, double *<em>&nbsp;store_dr2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.cell_list_get_particle_1_neighbours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_all_particle_neighbours">
+<span class="target" id="cell__list_8c_1a17118ff983bd44dc19379d74477eadd0"></span>void <code class="descname">get_all_particle_neighbours</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.get_all_particle_neighbours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.loop_over_neighbouring_cells">
+<span class="target" id="cell__list_8c_1ac7f914285838001bc9e14f53e28826c1"></span>void <code class="descname">loop_over_neighbouring_cells</code><span class="sig-paren">(</span>int<em>&nbsp;cell_x</em>, int<em>&nbsp;cell_y</em>, int<em>&nbsp;cell_z</em>, int<em>&nbsp;current_cell_index</em><span class="sig-paren">)</span><a class="headerlink" href="#c.loop_over_neighbouring_cells" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.loop_over_particles_in_cell">
+<span class="target" id="cell__list_8c_1a0ec20485a7621c08925a3331b8167f55"></span>void <code class="descname">loop_over_particles_in_cell</code><span class="sig-paren">(</span>int<em>&nbsp;current_cell_index</em>, int<em>&nbsp;neighbour_cell_index</em><span class="sig-paren">)</span><a class="headerlink" href="#c.loop_over_particles_in_cell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.fill_cell_list">
+<span class="target" id="cell__list_8c_1ac8523720489c9ff0ec523f2faf4da1bd"></span>void <code class="descname">fill_cell_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.fill_cell_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_scalar_cell_index">
+<span class="target" id="cell__list_8c_1a9c0be353fd25c18b4aed1e14ecd2e50c"></span>int <code class="descname">get_scalar_cell_index</code><span class="sig-paren">(</span>int<em>&nbsp;x_index</em>, int<em>&nbsp;y_index</em>, int<em>&nbsp;z_index</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_scalar_cell_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.set_up_cell_list">
+<span class="target" id="cell__list_8c_1a34b713fae65fe0f7bfa894dd367ed869"></span>void <code class="descname">set_up_cell_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.set_up_cell_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.free_cell_list">
+<span class="target" id="cell__list_8c_1af2e32a632ab4be65a258a1263f98b511"></span>void <code class="descname">free_cell_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.free_cell_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="10_a_8c"></span><em>file</em> <code class="descname">10A.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;clusters/simple_cluster_methods.h&gt;</em><em>#include “10A.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get10A">
+<span class="target" id="10_a_8c_1aeed12a78b1909b18791d18df43ee9401"></span>void <code class="descname">Clusters_Get10A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get10A" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 10A cluster is the two bonded sp4b clusters with no common particles. </p>
+<p>Find 10A clusters An 10A is 2 sp4b clusters where:<ul class="simple">
+<li>There are no common particles.</li>
+<li>The spindles are not bonded.</li>
+<li>Each particle in each sp4 ring is bonded to exactly two particles in the other sp4 ring</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBBOO Storage order: first_sp4b_ring x 4, second_sp4b_ring x 4, firrst_sp4b_spindle, second_sp4b_spindle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.zero_used_array">
+<span class="target" id="10_a_8c_1a853b48eebf5aed908cdd9a6920249590"></span>void <code class="descname">zero_used_array</code><span class="sig-paren">(</span>int *<em>&nbsp;used_sp4b</em><span class="sig-paren">)</span><a class="headerlink" href="#c.zero_used_array" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_10A">
+<span class="target" id="10_a_8c_1a31dd7fa09bc4858c68c9afc68a98ade8"></span>void <code class="descname">Cluster_Write_10A</code><span class="sig-paren">(</span>int *<em>&nbsp;first_sp4b_cluster</em>, int *<em>&nbsp;second_sp4b_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_10A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="10_b_8c"></span><em>file</em> <code class="descname">10B.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “10B.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get10B">
+<span class="target" id="10_b_8c_1a65fdb41cf29d734cdfb4024fe4995a49"></span>void <code class="descname">Clusters_Get10B</code><span class="sig-paren">(</span>int<em>&nbsp;j</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get10B" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 10B cluster is the intersection of a 9B and a 7A cluster. </p>
+<p>Find 10B clusters An 10A is a 9B and 7A cluster where:<ul class="simple">
+<li>One spindle from 7A is common to the common spindle particle of the 9B cluster</li>
+<li>The other spindle from 7A is bonded to the two distinct spindles of 9B.</li>
+<li>Two sp5 ring particles from 7A are common with the distinct spindles of 9B.</li>
+<li>Two sp5 ring particles from 7A are common with the distinct sp5 particles of 9B.</li>
+<li>The final sp5 ring particle from 7A is distinct from the 9B cluster.</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBOOOS Storage order: ordered_shell_particles x 6, spindles x 3, common_spindle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_10B">
+<span class="target" id="10_b_8c_1a71885e5f114d2567de624ac9ec070e68"></span>void <code class="descname">Cluster_Write_10B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_10B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="10_k_8c"></span><em>file</em> <code class="descname">10K.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “10K.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get10K">
+<span class="target" id="10_k_8c_1aad346e6754dc756ae5ed44ca92c51f9c"></span>void <code class="descname">Clusters_Get10K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get10K" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 10K cluster is 9K with a SINGLE particle bonded to the common spindle of 9K. </p>
+<p>Find 10K clusters An 10K is a 9K with one extra particle where:<ul class="simple">
+<li>The extra particle is bonded to common spindle of 9K.</li>
+<li>The 9K common spindle has no other extra neighbours.</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBOOOO Storage order: as_for_9K x 9, extra_particle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_extra_particles">
+<span class="target" id="10_k_8c_1a382c2a1cfe03c465274fad24e5d3339a"></span>int <code class="descname">count_extra_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_9K_cluster</em>, int<em>&nbsp;first_9K_common_id</em>, int *<em>&nbsp;extra_particle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_extra_particles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_10K">
+<span class="target" id="10_k_8c_1acb7f85848581a09735fa175f81c591c4"></span>void <code class="descname">Cluster_Write_10K</code><span class="sig-paren">(</span>int<em>&nbsp;id_9k</em>, int<em>&nbsp;extra_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_10K" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="10_w_8c"></span><em>file</em> <code class="descname">10W.c</code></dt>
+<dd><em>#include &lt;clusters/simple_cluster_methods.h&gt;</em><em>#include “10W.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get10W">
+<span class="target" id="10_w_8c_1ae83017ed14095e3f0cf4527026135f8b"></span>void <code class="descname">Clusters_Get10W</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get10W" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 10W cluster is the intersection six sp5b which all share one spindle. </p>
+<p>Find 10W clusters An 10W is six sp5b clusters where:<ul class="simple">
+<li>All clusters share the same spindle</li>
+<li>The coordination number of this common spindle is 9. The reason this construction is chosen over simpler ones is that it is robust to different values of the voronoi parameter from 0.82 to 1.</li>
+</ul>
+</p>
+<p>Cluster output: SBBBBBBBB Storage order: central_spindle_particle, shell_particles x 9 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_shared_sp5bs">
+<span class="target" id="10_w_8c_1aad43d6c7aca28f25f46fd5b809c1be86"></span>int <code class="descname">count_shared_sp5bs</code><span class="sig-paren">(</span>int *<em>&nbsp;neighbouring_sp5_ids</em>, const int<em>&nbsp;first_sp5b_id</em>, const int<em>&nbsp;center_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_shared_sp5bs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_shell_particle_ids">
+<span class="target" id="10_w_8c_1aaf76e0f2962b5236c986772bb040ce49"></span>int <code class="descname">get_shell_particle_ids</code><span class="sig-paren">(</span>int *<em>&nbsp;shell_ids</em>, const int *<em>&nbsp;neighbouring_sp5_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_shell_particle_ids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_10W">
+<span class="target" id="10_w_8c_1a60f62e87fa5b9ad42b3b63c035c9683b"></span>void <code class="descname">Cluster_Write_10W</code><span class="sig-paren">(</span>int<em>&nbsp;center_id</em>, int *<em>&nbsp;shell_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_10W" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="11_a_8c"></span><em>file</em> <code class="descname">11A.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “11A.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><em>#include “bonds.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get11A">
+<span class="target" id="11_a_8c_1ad9965dc2f6cd0014b7947e6f4f9fb546"></span>void <code class="descname">Clusters_Get11A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11A" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 11A cluster is the intersection two 6A clusters with a common spindle. </p>
+<p>Find 11A clusters An 11A is two 6A clusters where:<ul class="simple">
+<li>There is one common spindle particle</li>
+<li>All other particles are distinct.</li>
+<li>Each particle in each ring is bonded to exactly 2 particles in the other ring</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBBBOOS Storage order: sp4_i x 4, sp4_j x 4, uncommon_spindles x 2, common_spindle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Check_6A_rings_bonded">
+<span class="target" id="11_a_8c_1a7b8eb9865d2b53d25f6ad02eb4dac766"></span>int <code class="descname">Check_6A_rings_bonded</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_6A_cluster</em>, const int *<em>&nbsp;second_6A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Check_6A_rings_bonded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_11A">
+<span class="target" id="11_a_8c_1a65aa6f11d21ce94ad5d29eda13f1bf92"></span>void <code class="descname">Cluster_Write_11A</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_6A</em>, const int *<em>&nbsp;second_6A</em>, const int *<em>&nbsp;sother</em>, const int<em>&nbsp;scom</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_11A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="11_b_8c"></span><em>file</em> <code class="descname">11B.c</code></dt>
+<dd><em>#include “11B.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get11B">
+<span class="target" id="11_b_8c_1a8d332bfa299a5404f3f311fdef3ff4e9"></span>int <code class="descname">Clusters_Get11B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11B" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 11B cluster is 9B with two additional particles. </p>
+<p>Find 11B clusters An 11A is a 9B and two extra particles where:<ul class="simple">
+<li>The common spindle particle from the 9B cluster has coordination number 10.</li>
+<li>The two additional particles are bonded to each other and to the common spindle particle of 9B.</li>
+<li>Each additional particle is bonded to two more particles in the shell of the 9B cluster, leading to a total of four bonds between the additional particles and 9B.</li>
+<li>For each additional particle, the two shell particles to which they are bonded are not themselves bonded.</li>
+<li>The four shell particles of the 9B cluster that are bonded to the two additional particles form two pairs that are neighbours.</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBOOSBB Storage order: as_for_9B x 9, extra_particles x 2 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_11B">
+<span class="target" id="11_b_8c_1aecd4ba2b40141bfe8a2f1d3946fa9973"></span>void <code class="descname">Cluster_Write_11B</code><span class="sig-paren">(</span>int *<em>&nbsp;extra_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_11B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="11_c_8c"></span><em>file</em> <code class="descname">11C.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><em>#include “11C.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get11C">
+<span class="target" id="11_c_8c_1a0c970ed54875ff6fd1484dbbe1dfd94e"></span>void <code class="descname">Clusters_Get11C</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11C" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 11C cluster is the intersection of two 7A clusters with a common spindle. </p>
+<p>Find 11C clusters An 11C is two 7A clusters where:<ul class="simple">
+<li>There are two common particles between the two sp5 rings. These are a bonded pair.</li>
+<li>There are two more bonds between two pairs of distinct particles in the sp5 ring.</li>
+</ul>
+</p>
+<p>Cluster output: SOOBBBBBBBB Storage order: common_spindle x 1, uncommon_spindles x 2, common_ring_1, common_ring_2, uncommon_bonded_ring_1_i, uncommon_bonded_ring_2_i, uncommon_bonded_ring_1_j, uncommon_bonded_ring_2_j, uncommon_unbonded x 2 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_particles_bonded_to_common">
+<span class="target" id="11_c_8c_1a84cb4a882cb75a249e9b4ea8d257b818"></span>int <code class="descname">count_particles_bonded_to_common</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster</em>, const int *<em>&nbsp;common_particles</em>, int *<em>&nbsp;bonded_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_particles_bonded_to_common" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.count_bonded_ring_particles_11C">
+<span class="target" id="11_c_8c_1ab8ee4a370d0d362da6520d9d2c5437d9"></span>int <code class="descname">count_bonded_ring_particles_11C</code><span class="sig-paren">(</span>const int *<em>&nbsp;common_ring_particles</em>, const int *<em>&nbsp;first_7A_cluster</em>, const int *<em>&nbsp;second_7A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_bonded_ring_particles_11C" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_11C">
+<span class="target" id="11_c_8c_1afdffbb60f26be6c5012537ba0f63be80"></span>void <code class="descname">Cluster_Write_11C</code><span class="sig-paren">(</span>int *<em>&nbsp;trial</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_11C" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="11_e_8c"></span><em>file</em> <code class="descname">11E.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include &lt;clusters/12D.h&gt;</em><em>#include “11E.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get11E_12D">
+<span class="target" id="11_e_8c_1aa12ab3d1a204c844a384c8d6d4c2c2af"></span>void <code class="descname">Clusters_Get11E_12D</code><span class="sig-paren">(</span>int<em>&nbsp;i</em>, int<em>&nbsp;j</em>, int<em>&nbsp;sp1</em>, int<em>&nbsp;sp2i</em>, int<em>&nbsp;sp2j</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11E_12D" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 11E cluster is the intersection of a 9B and a 7A. </p>
+<p>Find 11E clusters An 11E is a 9B and a 7A where:<ul class="simple">
+<li>One 7A spindle particle is common to one of the uncommon spindle particles, sd1, in the 7A clusters constituting the 9B cluster.</li>
+<li>The other spindle particle of the additional 7A is labeled sd3 and is bonded to the other uncommon spindle particle sd2 in 9B and the common spindle particle sc of 9B. Of the 7A cluster sp5 ring particles, one is common to the common with sc, one is common with sd2, and one is common to one of the uncommon sp5 ring particles of the 9B cluster. The final two sp5 ring particles are distinct from the 9B cluster.</li>
+</ul>
+</p>
+<p>Cluster output: OOOOBBBBBBB Storage order: unknown </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Clust_Write_11E">
+<span class="target" id="11_e_8c_1a01c8587cdf3feba1da837cfe134da240"></span>void <code class="descname">Clust_Write_11E</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clust_Write_11E" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="11_f_8c"></span><em>file</em> <code class="descname">11F.c</code></dt>
+<dd><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><em>#include “11F.h”</em><em>#include “13K.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get11F_13K">
+<span class="target" id="11_f_8c_1ae4bf69fd33901b24879a8db74ba016e1"></span>void <code class="descname">Clusters_Get11F_13K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11F_13K" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 11F cluster is the intersection of two 5A and two 6A clusters. </p>
+<p>Find 11F clusters An 11E is constructed from two 5A two 6A clusters where:<ul class="simple">
+<li>Each spindle of 5Ai is bonded to a spindle of 5Aj.</li>
+<li>There is one common ring particle between the 5A clusters.</li>
+<li>There is one bonded pair of ring particle between the 5A clusters.</li>
+<li>Both 6As have one distinct spindle and one spindle which is the common ring particle of the 5As.</li>
+<li>Each 6A has two bonded 5A spindles and two bonded 5A ring particles as its ring.</li>
+</ul>
+</p>
+<p>Cluster output: BOOOOOOBBBB Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.do_5As_have_distinct_spindles">
+<span class="target" id="11_f_8c_1a42b5f690dc0b6fd169a94d52b13d74de"></span>int <code class="descname">do_5As_have_distinct_spindles</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.do_5As_have_distinct_spindles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.check_common_particle">
+<span class="target" id="11_f_8c_1a98b5831e1021b6a4df99309b3c0ba6f9"></span>void <code class="descname">check_common_particle</code><span class="sig-paren">(</span>int<em>&nbsp;first_5A_cluster_id</em>, int<em>&nbsp;second_5A_id</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_common_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_common_particle_between_5As">
+<span class="target" id="11_f_8c_1a229e4af3d20778190c9fab4b30622c64"></span>int <code class="descname">get_common_particle_between_5As</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_common_particle_between_5As" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_bonded_ring_particles">
+<span class="target" id="11_f_8c_1a42f77ec663c5b5a86b3ffaf688031552"></span>int <code class="descname">get_bonded_ring_particles</code><span class="sig-paren">(</span>int<em>&nbsp;cp</em>, const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em>, int *<em>&nbsp;bpi</em>, int *<em>&nbsp;bpj</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_bonded_ring_particles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_bonded_6As">
+<span class="target" id="11_f_8c_1a9275d5636484bce221ec412c041888a6"></span>int <code class="descname">get_bonded_6As</code><span class="sig-paren">(</span>int<em>&nbsp;common_particle</em>, int<em>&nbsp;bpi</em>, int<em>&nbsp;bpj</em>, int *<em>&nbsp;ep1</em>, int *<em>&nbsp;ep2</em>, int *<em>&nbsp;bonded_6A_id</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_bonded_6As" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_first_6A">
+<span class="target" id="11_f_8c_1a43744f2906fe8923c21610c9937c8acd"></span>int <code class="descname">get_first_6A</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_6A</em>, int<em>&nbsp;bpi</em>, int<em>&nbsp;bpj</em>, int<em>&nbsp;common_particle</em>, int *<em>&nbsp;ep1</em>, int *<em>&nbsp;bonded_6A_id</em>, int<em>&nbsp;potential_6A_pointer</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_first_6A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_second_6A">
+<span class="target" id="11_f_8c_1ae018a464731be01d58802c02273a936f"></span>int <code class="descname">get_second_6A</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_6A</em>, int<em>&nbsp;bpi</em>, int<em>&nbsp;bpj</em>, int<em>&nbsp;common_particle</em>, int *<em>&nbsp;ep2</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_second_6A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.write_11F">
+<span class="target" id="11_f_8c_1a725c880b9a6966d4df6b1811181424dc"></span>void <code class="descname">write_11F</code><span class="sig-paren">(</span>int<em>&nbsp;common_particle</em>, int<em>&nbsp;ep1</em>, int<em>&nbsp;ep2</em>, const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.write_11F" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="11_w_8c"></span><em>file</em> <code class="descname">11W.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “11W.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get11W">
+<span class="target" id="11_w_8c_1afc5db4c521efb67c8988734c27c21d16"></span>void <code class="descname">Clusters_Get11W</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11W" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 11W cluster is a 10B with an extra particle. </p>
+<p>Find 11W clusters An 11W is constructed from a 10B and an extra particle where:<ul class="simple">
+<li>The common spindle of the 10B cluster has coordination number 10.</li>
+<li>The additional particle is not bonded to any of the distinct spindles of the 7A clusters constituting the 10B cluster.</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBBBBBO Storage order: as_for_10B x 10, extra_particle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.is_particle_bonded_to_7As">
+<span class="target" id="11_w_8c_1acafb1e5d24de09e76f4489183d5d3acb"></span>int <code class="descname">is_particle_bonded_to_7As</code><span class="sig-paren">(</span>int<em>&nbsp;id_10B</em>, int<em>&nbsp;extra_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.is_particle_bonded_to_7As" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_11W_extra_particle">
+<span class="target" id="11_w_8c_1a4240f29a6269e0bddfc7546f1e034645"></span>int <code class="descname">get_11W_extra_particle</code><span class="sig-paren">(</span>int *<em>&nbsp;parent_10B_cluster</em>, int<em>&nbsp;spindle_10B</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_11W_extra_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_11W">
+<span class="target" id="11_w_8c_1a34cabde93a47af473ae8557ca58c5107"></span>void <code class="descname">Write_11W</code><span class="sig-paren">(</span>int<em>&nbsp;id_10B</em>, int<em>&nbsp;extra_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_11W" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="12_a_8c"></span><em>file</em> <code class="descname">12A.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “12A.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get12A">
+<span class="target" id="12_a_8c_1aaabc7f862a2b1b369f784689078814ef"></span>void <code class="descname">Clusters_Get12A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get12A" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 12A is an 11C with an extra particle bonded to only 3 specific particles in the 11C. </p>
+<p>Find 12A clusters An 12A is an 11C and an extra particle where:<ul class="simple">
+<li>The common spindle particle of the 11C has coordination number 11.</li>
+<li>The extra particle is bonded to the common spindle.</li>
+<li>The extra particle is bonded to the two unbonded ring particles of 11C.</li>
+</ul>
+</p>
+<p>Cluster output: SOOBBBBBBBBB Storage order: as_for_11C x 11, extra_particle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.get_12A_extra_particle">
+<span class="target" id="12_a_8c_1a7d048395066703f6328796f58bb5c489"></span>int <code class="descname">get_12A_extra_particle</code><span class="sig-paren">(</span>int *<em>&nbsp;parent_11C_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_12A_extra_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.bond_check_12A_extra_particle">
+<span class="target" id="12_a_8c_1aad9de5a3ab2f4c0612d1f892f29f1e87"></span>int <code class="descname">bond_check_12A_extra_particle</code><span class="sig-paren">(</span>int *<em>&nbsp;first_11C_cluster</em>, int<em>&nbsp;extra_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.bond_check_12A_extra_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_12A">
+<span class="target" id="12_a_8c_1a2096eb04295b771751c6a31bf3935d74"></span>void <code class="descname">Write_12A</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_11C_cluster</em>, int<em>&nbsp;ep</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_12A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="12_b_8c"></span><em>file</em> <code class="descname">12B.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “13A.h”</em><em>#include “12B.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get12B_13A">
+<span class="target" id="12_b_8c_1a96c738fb0dff06eec3a6fc75790b6763"></span>void <code class="descname">Clusters_Get12B_13A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get12B_13A" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 12B is the intersection of 6 7A clusters. </p>
+<p>Find 12B clusters A 12B is 6 7A clusters where:<ul class="simple">
+<li>There is one central 7A with spindles A and B</li>
+<li>Every other 7A has a spindle common with the 7A spindle A and a spindle common with a ring particle of the first 7A</li>
+</ul>
+</p>
+<p>Cluster output: SBOOOOOBBBBB Storage order: unknown </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Clust_Write_12B">
+<span class="target" id="12_b_8c_1ade40143a0bfca523a55d7cbd6917508e"></span>void <code class="descname">Clust_Write_12B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clust_Write_12B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="12_d_8c"></span><em>file</em> <code class="descname">12D.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “12D.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get12D">
+<span class="target" id="12_d_8c_1aece7323d582c68c1c94e5cd09396cc6c"></span>int <code class="descname">Clusters_Get12D</code><span class="sig-paren">(</span>int<em>&nbsp;j</em>, int<em>&nbsp;k</em>, int<em>&nbsp;sp1</em>, int<em>&nbsp;sp2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get12D" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 12D is the intersection of an 11F and a 7A. </p>
+<p>Find 12D clusters An 12A is an 11C and an extra particle where:<ul class="simple">
+<li>The spindle particles of the 7A cluster are common with 11E cluster spindles sd2 and sd3.</li>
+<li>Of the sp5 ring particles of the 7A cluster, one is common to sc, one is common to sd1,</li>
+<li>two are in the SP5 rings of the 7A clusters constituting 11E, and one is new</li>
+</ul>
+</p>
+<p>Cluster output: OOOOBBBBBBBB Storage order: d1_unc, d2_unc, d3_unc, d4_unc, d12_com, d13_com, d24_com, d34_com, s_d1, s_d2, s_d3, s_com </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_12D">
+<span class="target" id="12_d_8c_1a3309c6c16ae64d83c4d83061eec3191e"></span>void <code class="descname">Cluster_Write_12D</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_12D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="12_e_8c"></span><em>file</em> <code class="descname">12E.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “simple_cluster_methods.h”</em><em>#include “12E.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get12E">
+<span class="target" id="12_e_8c_1ac518ece4d5d871e5dd9feac413dd71c4"></span>void <code class="descname">Clusters_Get12E</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get12E" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 12E cluster is the intersection of an 11F and 5A cluster. </p>
+<p>Find 12E clusters A 12E cluster is an 11F and 5A cluster where:<ul class="simple">
+<li>The spindle atoms of the 5A cluster are common with the uncommon spindle atoms of the 6A clusters constituting the 11F cluster.</li>
+<li>Of the SP3 ring particles in the 5A cluster, two are common with rd1 and rd2 from the 11F cluster, and one is new.</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBBBBBBB Storage order: particles ordered by id x 12 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.get_uncommon_5A_ring_particle">
+<span class="target" id="12_e_8c_1ace8a756f9afe4a13975af131f64533b7"></span>int <code class="descname">get_uncommon_5A_ring_particle</code><span class="sig-paren">(</span>const int *<em>&nbsp;common_particle_ids</em>, const int *<em>&nbsp;first_5A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_uncommon_5A_ring_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_12E">
+<span class="target" id="12_e_8c_1afa072f66b1d4579159cfe623a6a6e4f2"></span>void <code class="descname">Write_12E</code><span class="sig-paren">(</span>const int *<em>&nbsp;trial</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_12E" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="12_k_8c"></span><em>file</em> <code class="descname">12K.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “12K.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get12K">
+<span class="target" id="12_k_8c_1a004552e223c9df3e9509326b19c374fb"></span>void <code class="descname">Clusters_Get12K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get12K" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 12K clusters is an 11A with an extra particle bonded to three of the ring particles of the 11A. </p>
+<p>Find 12K clusters A 12K is constructed of from an 11A and an extra particle where:<ul class="simple">
+<li>The additional particle is bonded to three mutually bonded sp4 ring particles of the 11A cluster.</li>
+</ul>
+</p>
+<p>Since there are 8 possible sites for bonding on each 11A there may be multiple 12K for each 11A</p>
+<p>Cluster output: BBBBBBBBOOSB Storage order: as_for_11A x 11, extra_particle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.find_12K_cluster">
+<span class="target" id="12_k_8c_1ae8d325cec1dbaebd9dbe0a00c44115f4"></span>void <code class="descname">find_12K_cluster</code><span class="sig-paren">(</span>int *<em>&nbsp;parent_11A_cluster</em>, const int *<em>&nbsp;sp3_ring</em><span class="sig-paren">)</span><a class="headerlink" href="#c.find_12K_cluster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_12K_ring_bonds">
+<span class="target" id="12_k_8c_1a5183750c6c3c685d2b72ff983408647d"></span>void <code class="descname">get_12K_ring_bonds</code><span class="sig-paren">(</span>int<em>&nbsp;id_11A</em>, int(*sp3_rings)[3]<span class="sig-paren">)</span><a class="headerlink" href="#c.get_12K_ring_bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_12K">
+<span class="target" id="12_k_8c_1a9797b0eb7dbe5daa87a39edcdff7ffce"></span>void <code class="descname">Cluster_Write_12K</code><span class="sig-paren">(</span>int<em>&nbsp;ep</em>, const int *<em>&nbsp;parent_11A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_12K" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="13_a_8c"></span><em>file</em> <code class="descname">13A.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include “13A.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clust_Write_13A">
+<span class="target" id="13_a_8c_1a128368a019c4dcfc673d6a324a347e11"></span>void <code class="descname">Clust_Write_13A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clust_Write_13A" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 13K clusters is the intersection of a 12B and a 7A cluster. Topologically it is a regular icosahedron. </p>
+<p>Find 13K clusters A 13K is constructed from a 12B and a 7A where:<ul class="simple">
+<li>The 7A cluster has one spindle given by sc of the 12B cluster, and one spindle that is distinct from the 12B particles.</li>
+<li>The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.</li>
+</ul>
+</p>
+<p>Cluster output: SOOBBBBBBBBBB Storage order: unknown </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="13_b_8c"></span><em>file</em> <code class="descname">13B.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “13B.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get13B">
+<span class="target" id="13_b_8c_1a86e22f9b117d59be5895a9a5edd5a425"></span>void <code class="descname">Clusters_Get13B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get13B" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 13B cluster is the intersection of two 7A clusters. </p>
+<p>Find 13B clusters A 13K is constructed from two 7A clusters where:<ul class="simple">
+<li>There is one common spindle between the two 7As</li>
+<li>Other spindle particles are distinct and unbonded.</li>
+<li>The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.</li>
+<li>Each particle from each ring is bonded to one particle of the other ring</li>
+</ul>
+</p>
+<p>Cluster output: SOOBBBBBBBBBB Storage order: common_spindle, uncommon_spindle x 2, first_7A_ring_particles x 5, second_7A_ring_particles x 5 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.check_rings_are_bonded">
+<span class="target" id="13_b_8c_1acb2cbce7dca502338cbb2c9d918909da"></span>int <code class="descname">check_rings_are_bonded</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_7A_cluster</em>, const int *<em>&nbsp;second_7A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_rings_are_bonded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.count_bonds_to_ring">
+<span class="target" id="13_b_8c_1a878310e40ef77ad439705b2312e490e1"></span>int <code class="descname">count_bonds_to_ring</code><span class="sig-paren">(</span>int<em>&nbsp;particle_id</em>, const int *<em>&nbsp;first_7A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_bonds_to_ring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_13B">
+<span class="target" id="13_b_8c_1aeaec229bb059115dc734235f1b7bc7fe"></span>void <code class="descname">Cluster_Write_13B</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_7A_cluster</em>, const int *<em>&nbsp;second_7A_cluster</em>, int<em>&nbsp;common_spindle_id</em>, const int *<em>&nbsp;uncommon_spindle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_13B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="13_k_8c"></span><em>file</em> <code class="descname">13K.c</code></dt>
+<dd><em>#include “13K.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get13K">
+<span class="target" id="13_k_8c_1aabd9a5c84bfc29cf2d1ae8236ae90e71"></span>int <code class="descname">Clusters_Get13K</code><span class="sig-paren">(</span>int<em>&nbsp;sp3c_i</em>, int<em>&nbsp;sp3c_j</em>, int<em>&nbsp;the6A_i</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get13K" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 13K cluster is the intersection an 11F and two 5A clusters. </p>
+<p>Find 13K clusters A 13K is constructed from an 11F and two 5A clusters where:<ul class="simple">
+<li></li>
+<li></li>
+<li></li>
+<li>Cluster output: SBBBBBBBBBBOO Storage order: as_for_11F, extra_particles x 2 </li>
+</ul>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_13K">
+<span class="target" id="13_k_8c_1afb62a6c804bcc614b9e14d33f1f95f83"></span>void <code class="descname">Cluster_Write_13K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_13K" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="6_z_8c"></span><em>file</em> <code class="descname">6Z.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “6Z.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get6Z">
+<span class="target" id="6_z_8c_1a35e161b99d6777d26c57e0ff4e07346d"></span>void <code class="descname">Clusters_Get6Z</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get6Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 6Z is made of two overlapping 5A clusters. </p>
+<p>Find 6Z clusters 6Z is made from two overlapping 5A particles where:<ul class="simple">
+<li>The are no common spindles between the two 5A clusters.</li>
+<li>One spindle of 5Ai is common with a sp3 ring particle of 5Aj.</li>
+<li>One spindle of 5Aj is common with a sp3 ring particle of 5Ai.</li>
+<li>The spindles in the two sp3 rings are bonded.</li>
+<li>Two particles are common between the sp3 rings of 5Ai and 5Aj.</li>
+</ul>
+</p>
+<p>Cluster output: OOOBBB Storage order: bonded spindle i, non-bonded spindle i, bonded spindle j, non-bonded spindle j, common ring x 2 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_spindles_in_ring">
+<span class="target" id="6_z_8c_1aaf03e2d843a9b1b506210ff73f534438"></span>int <code class="descname">count_spindles_in_ring</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A_cluster</em>, const int *<em>&nbsp;second_5A_cluster</em>, int *<em>&nbsp;spindles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_spindles_in_ring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_bonds_between_rings">
+<span class="target" id="6_z_8c_1ad4d4de42fb2fb2a08405b2691a2088a5"></span>int <code class="descname">get_bonds_between_rings</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A_cluster</em>, const int *<em>&nbsp;second_5A_cluster</em>, int *<em>&nbsp;common_ring_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_bonds_between_rings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_6Z">
+<span class="target" id="6_z_8c_1a06ada30b253fd6b5fc89d6bb34a23c32"></span>void <code class="descname">Cluster_Write_6Z</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_spindles</em>, const int *<em>&nbsp;second_spindles</em>, const int *<em>&nbsp;common_ring_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_6Z" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="7_k_8c"></span><em>file</em> <code class="descname">7K.c</code></dt>
+<dd><em>#include “7K.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><em>#include “simple_cluster_methods.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get7K">
+<span class="target" id="7_k_8c_1a9ba56887eff5941350416e58296aa0c3"></span>void <code class="descname">Clusters_Get7K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get7K" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 7K is made of two overlapping 5A clusters which have one common spindle. </p>
+<p>Find 7K clusters 7K is made from two overlapping 5A particles where:<ul class="simple">
+<li>5Ai and 5Aj have one common spindle.</li>
+<li>The other spindle of 5Ai is distinct from all the particles in 5Aj.</li>
+<li>The other spindle of 5Aj is distinct from all the particles in 5Ai.</li>
+<li>There are two common particles between the sp3 rings of 5Ai and 5Aj.</li>
+</ul>
+</p>
+<p>Cluster output: OOOOBBB Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_7K">
+<span class="target" id="7_k_8c_1aec67c1edb8e44a3b0cb6380e49d5aeac"></span>void <code class="descname">Cluster_Write_7K</code><span class="sig-paren">(</span>int<em>&nbsp;common_spindle_id</em>, int *<em>&nbsp;other_spindle_ids</em>, int *<em>&nbsp;common_ring_particles</em>, int *<em>&nbsp;uncommon_ring_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_7K" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="7_t_8c"></span><em>file</em> <code class="descname">7T.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “7T.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get7T">
+<span class="target" id="7_t_8c_1a9492417f8fe796bbf6ac733ce68cfb38"></span>void <code class="descname">Clusters_Get7T</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get7T" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 7T is made of a 6Z cluster with an additional particle. </p>
+<p>Find 7Ta and 7Ts clusters 7T is made made of a 6Z cluster and a 5A. Depending on where the location of the new 5A spindle, the cluster is either asymmetric (7Ta) or symmetric (7Ts) 7T:<ul class="simple">
+<li>The 5A has one spindle common with the common ring particles of the 6A</li>
+<li>For 7Ts the other 5A spindle is bonded to both 6Z bonded spindles</li>
+<li>For 7TA the other 5A spindle is bonded to one bonded 6Z spindle and one unbonded 6Z spindle</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBB Storage order: original 6Z particles x 6, new 5A spindle) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.is_particle_spindle_of_5A">
+<span class="target" id="7_t_8c_1a3abcf6917fe6c6f4b475532ba22b9a4d"></span>int <code class="descname">is_particle_spindle_of_5A</code><span class="sig-paren">(</span>int<em>&nbsp;particle_id</em>, const int *<em>&nbsp;new_5A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.is_particle_spindle_of_5A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_new_particle">
+<span class="target" id="7_t_8c_1ae617481e3790543cbc4b091f1ec1abca"></span>int <code class="descname">get_new_particle</code><span class="sig-paren">(</span>const int *<em>&nbsp;new_5A_cluster</em>, int<em>&nbsp;spindle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_new_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.check_ring_bonds">
+<span class="target" id="7_t_8c_1af587be3bf9ac44fb4dda562fdc14defd"></span>int <code class="descname">check_ring_bonds</code><span class="sig-paren">(</span>const int *<em>&nbsp;new_5A_cluster</em>, const int *<em>&nbsp;old_6Z_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_ring_bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.check_7T_type">
+<span class="target" id="7_t_8c_1aaa5e8a93d5cb3b0e9b66abbc99e13631"></span>void <code class="descname">check_7T_type</code><span class="sig-paren">(</span>int<em>&nbsp;bond_counter</em>, const int *<em>&nbsp;old_6Z</em>, int<em>&nbsp;new_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_7T_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_7T_a">
+<span class="target" id="7_t_8c_1ad01eda26de4d243bcde53acd88d02bad"></span>void <code class="descname">add_7T_a</code><span class="sig-paren">(</span>const int *<em>&nbsp;old_6Z</em>, int<em>&nbsp;new_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_7T_a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_7T_s">
+<span class="target" id="7_t_8c_1aa912000a58beeb640934d63c62b9865d"></span>void <code class="descname">add_7T_s</code><span class="sig-paren">(</span>const int *<em>&nbsp;old_6Z</em>, int<em>&nbsp;new_particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_7T_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="8_a_8c"></span><em>file</em> <code class="descname">8A.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “8A.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><em>#include “string.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get8A">
+<span class="target" id="8_a_8c_1a5d2e2febcee87de47152519bd03a8dee"></span>void <code class="descname">Clusters_Get8A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get8A" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 8A cluster is one of 3 possible topological combinations of sp5b/c clusters. </p>
+<p>Find 8A clusters There are 3 methods used for 8A detection<ul class="simple">
+<li>A pair of sp5b where the spindles are distinct and share 4 ring particles</li>
+<li>A pair of 7A clusters where<ul>
+<li>Both 7Ai spindle particles are common with the 7Aj spindles.</li>
+<li>There are four common particles between sp5 rings of 7Ai and 7Aj .</li>
+</ul>
+</li>
+<li>A sp5b cluster and a 7A cluster where:<ul>
+<li>One 7A spindle is common with the sp5b spindle.</li>
+<li>The other 7A spindle is distinct from all the sp5b particles.</li>
+<li>There are four common particles between sp5 rings of sp5b and 7A.</li>
+</ul>
+</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBBB Storage order: particles ordered by id x 8) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.get_first_8A_type">
+<span class="target" id="8_a_8c_1a304b611712792f14028b9f54cae854e2"></span>void <code class="descname">get_first_8A_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.get_first_8A_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_second_8A_type">
+<span class="target" id="8_a_8c_1ab3c61dc06fcee5ad36aecb2e3ac78583"></span>void <code class="descname">get_second_8A_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.get_second_8A_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_third_8A_type">
+<span class="target" id="8_a_8c_1aa5790282aadb23f146cd9af3f62e3209"></span>void <code class="descname">get_third_8A_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.get_third_8A_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_8A">
+<span class="target" id="8_a_8c_1afdec0028709a97e52caa85f16f7baa70"></span>void <code class="descname">Cluster_Write_8A</code><span class="sig-paren">(</span>const int *<em>&nbsp;trial</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_8A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="8_b_8c"></span><em>file</em> <code class="descname">8B.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “8B.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get8B">
+<span class="target" id="8_b_8c_1a7e10dabc415645bb573db5d0cd5d2dc8"></span>void <code class="descname">Clusters_Get8B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get8B" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 8B cluster is an 7A cluster with an extra particle attached. </p>
+<p>Find 8B clusters An 8B is a 7A cluster with an extra particle bonded to two of the ring particles and a spindle of the 7A cluster</p>
+<p>Cluster output: BBBBOOB Storage order: as for 7A x 7, extra_particle) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_bonds_to_7A_ring">
+<span class="target" id="8_b_8c_1a9186e66dfebc68948867bee7290e8211"></span>int <code class="descname">count_bonds_to_7A_ring</code><span class="sig-paren">(</span>int<em>&nbsp;first_7A_id</em>, int<em>&nbsp;new_particle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_bonds_to_7A_ring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_8B">
+<span class="target" id="8_b_8c_1ac30b713e4ca8cc05f5caf4ab4ad1d5ea"></span>void <code class="descname">Cluster_Write_8B</code><span class="sig-paren">(</span>int *<em>&nbsp;first_7A_cluster</em>, int<em>&nbsp;new_particle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_8B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="8_k_8c"></span><em>file</em> <code class="descname">8K.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><em>#include “8K.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get8K">
+<span class="target" id="8_k_8c_1af797bdf38380860840f41f7818cda7df"></span>void <code class="descname">Clusters_Get8K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get8K" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 8K cluster is the intersection of 3 5A clusters. </p>
+<p>Find 8K clusters An 8B is 3 5A clusters where:<ul class="simple">
+<li>There are two common particles in the sp3 rings of 5Ai, 5Aj and 5Ak.</li>
+<li>There is one unique particle in each of the 5Ai, 5Aj and 5Ak rings.</li>
+<li>There is one common spindle between each pair of 5As</li>
+</ul>
+</p>
+<p>Cluster output: OOBBBBBB Storage order: common_ring_particles x2, spindles x 3, uncommon_ring_particles x 3 </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.is_particle_in_5A_ring">
+<span class="target" id="8_k_8c_1ad230493f45f84bd0afb4b2cf2c5a4407"></span>int <code class="descname">is_particle_in_5A_ring</code><span class="sig-paren">(</span>const int *<em>&nbsp;second_5A_cluster</em>, int<em>&nbsp;first_5A_ring_particle</em>, int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.is_particle_in_5A_ring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_8K">
+<span class="target" id="8_k_8c_1a5369b8447a8b1cdc94d08ed4668cd0c0"></span>void <code class="descname">Cluster_Write_8K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_8K" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="9_a_8c"></span><em>file</em> <code class="descname">9A.c</code></dt>
+<dd><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><em>#include “simple_cluster_methods.h”</em><em>#include “9A.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get9A">
+<span class="target" id="9_a_8c_1a698059fe331a90c6fc4177e63c8f21c3"></span>void <code class="descname">Clusters_Get9A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get9A" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 9A is made of three overlapping sp4b clusters which each share 2 ring particles with each of the others. </p>
+<p>Find 9A clusters 9A is made from three overlapping sp4b clusters where:<ul class="simple">
+<li>All of the spindles are uncommon</li>
+<li>Two particles are common between the rings of sp4b_i and sp4b_j</li>
+<li>The ring of sp4b_j is made from the uncommon ring particles of sp4b_i and sp4b_j</li>
+</ul>
+</p>
+<p>Cluster output: OOOBBBBBB Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2) </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.check_spindles_are_uncommon_and_unbonded">
+<span class="target" id="9_a_8c_1a5b5aed778ce5ad3d7238d953fba4efcf"></span>int <code class="descname">check_spindles_are_uncommon_and_unbonded</code><span class="sig-paren">(</span>int *<em>&nbsp;cluster_1</em>, int *<em>&nbsp;cluster_2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_spindles_are_uncommon_and_unbonded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.count_bonded_ring_particles">
+<span class="target" id="9_a_8c_1a563937b70c89c41696b94bdaf3a9dc96"></span>int <code class="descname">count_bonded_ring_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_sp4b_cluster</em>, const int *<em>&nbsp;second_sp4b_cluster</em>, const int *<em>&nbsp;common_ring_particles</em>, int *<em>&nbsp;uncommon_ring_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_bonded_ring_particles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_9A">
+<span class="target" id="9_a_8c_1ad89b8975bf182dcf6ebb7fbbd3445cfc"></span>void <code class="descname">Cluster_Write_9A</code><span class="sig-paren">(</span>int *<em>&nbsp;first_sp4b_cluster</em>, int *<em>&nbsp;second_sp4b_cluster</em>, int *<em>&nbsp;third_sp4b_cluster</em>, int *<em>&nbsp;i_j_common_ring_particles</em>, int *<em>&nbsp;i_j_uncommon_ring_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_9A" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="9_b_8c"></span><em>file</em> <code class="descname">9B.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include &lt;clusters/10B.h&gt;</em><em>#include &lt;clusters/11B.h&gt;</em><em>#include &lt;clusters/11E.h&gt;</em><em>#include &lt;clusters/simple_cluster_methods.h&gt;</em><em>#include “9B.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get9B_10B_11B_11E_12D">
+<span class="target" id="9_b_8c_1a92e9b84f0cbfa133204c107df8226290"></span>void <code class="descname">Clusters_Get9B_10B_11B_11E_12D</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get9B_10B_11B_11E_12D" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 9B cluster is the intersection of 7A clusters shraing a spindle and two ring particles. </p>
+<p>Find 9B clusters An 9B is 2 7A clusters where:<ul class="simple">
+<li>There is one common spindle.</li>
+<li>The uncommon spindles are bonded.</li>
+<li>Each distinct spindle is common with a ring particle of the other 7A</li>
+<li>There are two common particles between the two 7A rings</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBOOS Storage order: SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_9B">
+<span class="target" id="9_b_8c_1ab04df5f60372f9b306e12d5f1a235eb5"></span>void <code class="descname">Cluster_Write_9B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_9B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="9_k_8c"></span><em>file</em> <code class="descname">9K.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “9K.h”</em><em>#include “simple_cluster_methods.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_Get9K">
+<span class="target" id="9_k_8c_1a34f41cd8a8ae81626987b4d9e0efc6ac"></span>void <code class="descname">Clusters_Get9K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get9K" title="Permalink to this definition">¶</a></dt>
+<dd><p>An 9K cluster is the intersection of two 6A clusters sharing a spindle and two ring particles. </p>
+<p>Find 9K clusters An 9K is 2 6A clusters where:<ul class="simple">
+<li>There is one common spindle.</li>
+<li>The uncommon spindles are not in the opposite cluster.</li>
+<li>There are two common particles between the two 6A rings</li>
+<li>The uncommon sp4 ring particle are bonded</li>
+</ul>
+</p>
+<p>Cluster output: BBBBBBOOO Storage order: common_ring_particles x 2, uncommon_ring_particles x 4, uncommon_spindles x 2, common_spindle </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_9k">
+<span class="target" id="9_k_8c_1aeb4f0c6ad3a67656d76fb387da5920bd"></span>void <code class="descname">Cluster_Write_9k</code><span class="sig-paren">(</span>const int *<em>&nbsp;common_ring_particle_ids</em>, const int *<em>&nbsp;uncommon_ring_particles</em>, const int *<em>&nbsp;uncommon_spindle_particles</em>, int<em>&nbsp;common_spindle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_9k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="_b_c_c9_8c"></span><em>file</em> <code class="descname">BCC9.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “BCC9.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_GetBCC_9">
+<span class="target" id="_b_c_c9_8c_1aad63c147a2cf79274ae7776764a38498"></span>void <code class="descname">Clusters_GetBCC_9</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_GetBCC_9" title="Permalink to this definition">¶</a></dt>
+<dd><p>A BCC_9 cluster is the intersection of sp4b and sp4c clusters. </p>
+<p>Find BCC_9 clusters A BCC_9 is constructed from some combination of sp4b and sp4c clusters<ul class="simple">
+<li></li>
+<li></li>
+<li></li>
+<li>Cluster output: SBBBBBBBB Storage order: unknown </li>
+</ul>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_BCC9">
+<span class="target" id="_b_c_c9_8c_1a50d5e626f8a5de33220380393b19dd29"></span>void <code class="descname">Cluster_Write_BCC9</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_BCC9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="_f_c_c_8c"></span><em>file</em> <code class="descname">FCC.c</code></dt>
+<dd><em>#include &lt;globals.h&gt;</em><em>#include &lt;bonds.h&gt;</em><em>#include &lt;tools.h&gt;</em><em>#include “FCC.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_GetFCC">
+<span class="target" id="_f_c_c_8c_1a88dbc5c5055b99f13bda633ae9514b50"></span>void <code class="descname">Clusters_GetFCC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_GetFCC" title="Permalink to this definition">¶</a></dt>
+<dd><p>An FCC cluster is a 13 particle cluster of the FCC lattice, it is made from either four sp3b clusters or three sp3b clusters and a 5A cluster. </p>
+<p>Find FCC clusters Method 1: An FCC cluster is constructed from four sp3b clusters Method 2: An FCC cluster is constructed from three sp3b clusters and a 5A cluster</p>
+<p>Cluster output: SBBOOBBOBBOOO Storage order: unknown </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_FCC">
+<span class="target" id="_f_c_c_8c_1a559aded44da425deca939073631dd28c"></span>void <code class="descname">Cluster_Write_FCC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_FCC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="_h_c_p_8c"></span><em>file</em> <code class="descname">HCP.c</code></dt>
+<dd><em>#include “HCP.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Clusters_GetHCP">
+<span class="target" id="_h_c_p_8c_1af5286d5d82e3114945c0b8ee3e23923d"></span>void <code class="descname">Clusters_GetHCP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_GetHCP" title="Permalink to this definition">¶</a></dt>
+<dd><p>An HCP cluster is a 13 particle cluster of the HCP lattice, it is made from three 5A clusters. </p>
+<p>Find HCP clusters An HCP cluster is made from three 5A clusters where:<ul class="simple">
+<li>There is one common ring particle the three 5A clusters.</li>
+<li>The spindles are all distinct and form two sp3 rings above and below the plane created by the ring particles.</li>
+<li>Within the three 5A clusters, the spindle atoms are only bonded to the particles from the cluster’s own sp3 ring.</li>
+<li>The uncommon ring particles form a six-membered ring around the common ring particle</li>
+</ul>
+</p>
+<p>Cluster output: unknown Storage order: unknown </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.Cluster_Write_HCP">
+<span class="target" id="_h_c_p_8c_1a249521d22ca9f44d095454e216b676d6"></span>void <code class="descname">Cluster_Write_HCP</code><span class="sig-paren">(</span>int<em>&nbsp;i</em>, int<em>&nbsp;j</em>, int<em>&nbsp;j2</em>, int<em>&nbsp;k</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_HCP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="simple__cluster__methods_8c"></span><em>file</em> <code class="descname">simple_cluster_methods.c</code></dt>
+<dd><em>#include “simple_cluster_methods.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.count_common_ring_particles">
+<span class="target" id="simple__cluster__methods_8c_1a95d86c831ba75c00bc07a1751bff6384"></span>int <code class="descname">count_common_ring_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;cluster_1_ring_particles</em>, int<em>&nbsp;cluster_2_ring_particles</em>, int *<em>&nbsp;common_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_common_ring_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count number of common ring particles between two clusters and get thier ids</p>
+<p><p>This function assumes that the n ring particles are the first n particles of the cluster. This is true for the basic clusters but may not be true for other clusters. </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>an integer giving the number of common ring particles between the clusters</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1_ring_particles</span></code>: - the number of ring particles in cluster 1 </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2_ring_particles</span></code>: - the number of ring particles in cluster 2 </li>
+<li><code class="docutils literal notranslate"><span class="pre">common_particle_ids</span></code>: - a pointer to an array of length num_particles_in_ring, ids of common particles will be written to this array </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_uncommon_ring_particles">
+<span class="target" id="simple__cluster__methods_8c_1ab2a26ba9e6dae7fc094797ad3a81ddb9"></span>int <code class="descname">count_uncommon_ring_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;num_in_ring_1</em>, int<em>&nbsp;num_in_ring_2</em>, int *<em>&nbsp;uncommon_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_uncommon_ring_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count number of uncommon particles between two clusters and get their ids. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>an integer giving the number of uncommon ring particles between the clusters </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">num_in_ring_1</span></code>: - the number of particles in the ring of cluster_1, this is 3, 4 or 5 for the basic clusters </li>
+<li><code class="docutils literal notranslate"><span class="pre">num_in_ring_2</span></code>: - the number of particles in the ring of cluster_1, this is 3, 4 or 5 for the basic clusters </li>
+<li><code class="docutils literal notranslate"><span class="pre">uncommon_particle_ids</span></code>: - a pointer to an array of length num_in_ring_1 + num_in_ring_2, ids of uncommon particles will be written to this array </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_common_spindle_particles">
+<span class="target" id="simple__cluster__methods_8c_1a43b36d66711b6f5e5bc7da376bab3b07"></span>int <code class="descname">count_common_spindle_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;cluster_1_size</em>, int<em>&nbsp;cluster_2_size</em>, int *<em>&nbsp;common_spindle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_common_spindle_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count number of common spindle particles between two clusters and get thier ids. </p>
+<p><p>This function assumes that the spindle particles are the final two particles in the cluster, this is true for all of the basic clusters but may not be true for larger clusters. </p>
+<dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>an integer giving the number of common ring particles between the clusters</dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1_size</span></code>: - the number of particles in cluster_1 </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2_size</span></code>: - the number of particles in cluster_2 </li>
+<li><code class="docutils literal notranslate"><span class="pre">common_spindle_ids</span></code>: - a pointer to an array of length 2 where common spindle ids will be written </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.get_uncommon_spindle">
+<span class="target" id="simple__cluster__methods_8c_1a995820f6df5faf585505d1e7404078f4"></span>int <code class="descname">get_uncommon_spindle</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster</em>, int<em>&nbsp;cluster_size</em>, int<em>&nbsp;common_spindle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_uncommon_spindle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the id of the uncommon spindle in an sp3c, sp4c or sp5c cluster. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>the id_of the uncommon spindle </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_size</span></code>: - the number of particles in cluster </li>
+<li><code class="docutils literal notranslate"><span class="pre">common_spindle_id</span></code>: - the id of the common particle </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.is_particle_in_cluster">
+<span class="target" id="simple__cluster__methods_8c_1a76adf4a0634d143deee59670c351225c"></span>int <code class="descname">is_particle_in_cluster</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster</em>, int<em>&nbsp;cluster_size</em>, int<em>&nbsp;particle_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.is_particle_in_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if a particle id exists within a cluster. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>1 if particle_id is in cluster, 0 if particle_id is not in cluster </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_size</span></code>: - the number of particles in cluster </li>
+<li><code class="docutils literal notranslate"><span class="pre">particle_id</span></code>: - the id of the particle to check </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.are_clusters_distinct">
+<span class="target" id="simple__cluster__methods_8c_1a817c8f753d17d7695ffcff60a468df6c"></span>int <code class="descname">are_clusters_distinct</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;cluster_1_size</em>, int<em>&nbsp;cluster_2_size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.are_clusters_distinct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if there are any shared particles between two clusters. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>1 if there are no common particles, 0 if there is at least 1 common particle </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1_size</span></code>: - the number of particles in cluster_1 </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2_size</span></code>: - the number of particles in cluster_2 </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.check_unique_cluster">
+<span class="target" id="simple__cluster__methods_8c_1af4cdbe4718a8cb9af83b321fb7b47c97"></span>int <code class="descname">check_unique_cluster</code><span class="sig-paren">(</span>const int *<em>&nbsp;trial</em>, const int<em>&nbsp;cluster_size</em>, int **<em>&nbsp;cluster_list</em>, const int<em>&nbsp;num_clusters</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_unique_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if a trial cluster already exists in list of clusters. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>0 if the cluster is unique, 1 if the cluster already exists in the list </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">trial</span></code>: - a pointer to a cluster, particle ids sorted in ascending order </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_size</span></code>: - the number of particles in the trial cluster </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_list</span></code>: - a pointer to a list of clusters with the particle ids making up each cluster sorted in ascending order </li>
+<li><code class="docutils literal notranslate"><span class="pre">num_clusters</span></code>: - the number of clusters in cluster list </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="input_8c"></span><em>file</em> <code class="descname">input.c</code></dt>
+<dd><em>#include &lt;bonds.h&gt;</em><em>#include “input.h”</em><em>#include “globals.h”</em><em>#include “iniparser.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.read_ini_file">
+<span class="target" id="input_8c_1a98b3e64d6f9aaf6acfd6b02dd79c3e52"></span>void <code class="descname">read_ini_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.read_ini_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.read_clusters_to_analyse">
+<span class="target" id="input_8c_1aa58e50350598359239cdd044a2627f90"></span>void <code class="descname">read_clusters_to_analyse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.read_clusters_to_analyse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.parse_box_file">
+<span class="target" id="input_8c_1a6441b0c6f9d44be9595621d34059af07"></span>void <code class="descname">parse_box_file</code><span class="sig-paren">(</span>int<em>&nbsp;total_frames</em><span class="sig-paren">)</span><a class="headerlink" href="#c.parse_box_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_NVT_box">
+<span class="target" id="input_8c_1a220a3f670e654ce86d46cb43829c577b"></span>void <code class="descname">get_NVT_box</code><span class="sig-paren">(</span>FILE *<em>&nbsp;read_box_file</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_NVT_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_box_file_offsets">
+<span class="target" id="input_8c_1a819a692792cc1d52bf172f0bea418395"></span>void <code class="descname">get_box_file_offsets</code><span class="sig-paren">(</span>FILE *<em>&nbsp;read_box_file</em>, int<em>&nbsp;total_frames</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_box_file_offsets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_box_size">
+<span class="target" id="input_8c_1a0ccde7c902500361910fcb426a20e2a0"></span>void <code class="descname">get_box_size</code><span class="sig-paren">(</span>int<em>&nbsp;current_frame_number</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_box_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.parse_xyz_file">
+<span class="target" id="input_8c_1aa628f2af658b4684641b212b1d9ff837"></span>struct xyz_info <code class="descname">parse_xyz_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.parse_xyz_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.initialize_xyz_info">
+<span class="target" id="input_8c_1a7b8ec2cfdac039b28d9ead1889828596"></span>void <code class="descname">initialize_xyz_info</code><span class="sig-paren">(</span>struct xyz_info *<em>&nbsp;input_xyz_info</em><span class="sig-paren">)</span><a class="headerlink" href="#c.initialize_xyz_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.free_xyz_info">
+<span class="target" id="input_8c_1ac995ebe9c1d0ed324aa73f02e94ea357"></span>void <code class="descname">free_xyz_info</code><span class="sig-paren">(</span>struct xyz_info *<em>&nbsp;input_xyz_info</em><span class="sig-paren">)</span><a class="headerlink" href="#c.free_xyz_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_frame_coordinates_from_xyz">
+<span class="target" id="input_8c_1a4d59d6fc5617fdb054d6830275bdb706"></span>void <code class="descname">get_frame_coordinates_from_xyz</code><span class="sig-paren">(</span>const struct xyz_info *<em>&nbsp;input_xyz_info</em>, int<em>&nbsp;frame_number</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_frame_coordinates_from_xyz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_coords_from_line">
+<span class="target" id="input_8c_1adc2c1345aae94268090a64e1854361f8"></span>void <code class="descname">get_coords_from_line</code><span class="sig-paren">(</span>int<em>&nbsp;frame_number</em>, FILE *<em>&nbsp;xyzfile</em>, int<em>&nbsp;particle</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_coords_from_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="main_8c"></span><em>file</em> <code class="descname">main.c</code></dt>
+<dd><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “rings.h”</em><em>#include “output.h”</em><em>#include “stats.h”</em><em>#include “tools.h”</em><em>#include “input.h”</em><em>#include “6Z.h”</em><em>#include “7K.h”</em><em>#include “7T.h”</em><em>#include “8A.h”</em><em>#include “8B.h”</em><em>#include “8K.h”</em><em>#include “9A.h”</em><em>#include “9B.h”</em><em>#include “9K.h”</em><em>#include “10A.h”</em><em>#include “10K.h”</em><em>#include “10W.h”</em><em>#include “11A.h”</em><em>#include “11B.h”</em><em>#include “11C.h”</em><em>#include “11W.h”</em><em>#include “11F.h”</em><em>#include “12A.h”</em><em>#include “12B.h”</em><em>#include “12E.h”</em><em>#include “12K.h”</em><em>#include “13B.h”</em><em>#include “HCP.h”</em><em>#include “FCC.h”</em><em>#include “BCC9.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.main">
+<span class="target" id="main_8c_1a3c04138a5bfe5d72780bb7e82a18e627"></span>int <code class="descname">main</code><span class="sig-paren">(</span>int<em>&nbsp;argc</em>, char **<em>&nbsp;argv</em><span class="sig-paren">)</span><a class="headerlink" href="#c.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Variables</p>
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1ac66f0c75c45d3125cc5ab73e322bd1cf"></span><code class="descname">char* cluster_names[]</code><p>= {“sp3a”, “sp3b”, “sp3c”, “sp4a”, “sp4b”, “sp4c”, “sp5a”, “sp5b”, “sp5c”,</p>
+<p>                         “6A”, “6Z”, “7K”, “7T_a”, “7T_s”, “8A”, “8B”, “8K”, “9A”, “9B”, “9K”, “10A”, “10B”,</p>
+<p>                         “10K”, “10W”, “11A”, “11B”, “11C”, “11E”, “11F”, “11W”, “12A”, “12B”, “12D”,</p>
+<p>                         “12E”, “12K”, “13A”, “13B”, “13K”, “FCC”, “HCP”, “BCC_9”, “-1”}</p>
+</dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1a7b76973a060b4a3179af3850a639d535"></span><code class="descname">int cluster_size[]</code><p>= {3, 4, 5, 4, 5, 6, 5, 6, 7,</p>
+<p>                      6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10,</p>
+<p>                      10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12,</p>
+<p>                      12, 12, 13, 13, 13, 13, 13, 9, -1}</p>
+</dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1aead29b33afcd92d58157fe62d3277618"></span><code class="descname">int* do_cluster_list[]</code><p>= {&amp;dosp3a, &amp;dosp3b, &amp;dosp3c, &amp;dosp4a, &amp;dosp4b, &amp;dosp4c, &amp;dosp5a, &amp;dosp5b, &amp;dosp5c,</p>
+<p>                          &amp;do6A, &amp;do6Z, &amp;do7K, &amp;do7T_a, &amp;do7T_s, &amp;do8A, &amp;do8B, &amp;do8K, &amp;do9A, &amp;do9B, &amp;do9K, &amp;do10A, &amp;do10B,</p>
+<p>                          &amp;do10K, &amp;do10W, &amp;do11A, &amp;do11B, &amp;do11C, &amp;do11E, &amp;do11F, &amp;do11W, &amp;do12A, &amp;do12B, &amp;do12D,</p>
+<p>                          &amp;do12E, &amp;do12K, &amp;do13A, &amp;do13B, &amp;do13K, &amp;doFCC, &amp;doHCP, &amp;doBCC9, NULL}</p>
+</dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1a1c0b545852beb3a68e0c2c0684576b05"></span><code class="descname">int* num_cluster_list[]</code><p>= {&amp;nsp3a, &amp;nsp3b, &amp;nsp3c, &amp;nsp4a, &amp;nsp4b, &amp;nsp4c, &amp;nsp5a, &amp;nsp5b, &amp;nsp5c,</p>
+<p>                           &amp;n6A, &amp;n6Z, &amp;n7K, &amp;n7T_a, &amp;n7T_s, &amp;n8A, &amp;n8B, &amp;n8K, &amp;n9A, &amp;n9B, &amp;n9K, &amp;n10A, &amp;n10B,</p>
+<p>                           &amp;n10K, &amp;n10W, &amp;n11A, &amp;n11B, &amp;n11C, &amp;n11E, &amp;n11F, &amp;n11W, &amp;n12A, &amp;n12B, &amp;n12D,</p>
+<p>                           &amp;n12E, &amp;n12K, &amp;n13A, &amp;n13B, &amp;n13K, &amp;nFCC, &amp;nHCP, &amp;nBCC_9, NULL}</p>
+</dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1abce33e7e13b369d7d03734a72f8aedc6"></span><code class="descname">char** raw_list[]</code><p>= {&amp;ssp3a, &amp;ssp3b, &amp;ssp3c, &amp;ssp4a, &amp;ssp4b, &amp;ssp4c, &amp;ssp5a, &amp;ssp5b, &amp;ssp5c,</p>
+<p>                     &amp;s6A, &amp;s6Z, &amp;s7K, &amp;s7T_a, &amp;s7T_s, &amp;s8A, &amp;s8B, &amp;s8K, &amp;s9A, &amp;s9B, &amp;s9K, &amp;s10A, &amp;s10B,</p>
+<p>                     &amp;s10K, &amp;s10W, &amp;s11A, &amp;s11B, &amp;s11C, &amp;s11E, &amp;s11F, &amp;s11W, &amp;s12A, &amp;s12B, &amp;s12D,</p>
+<p>                     &amp;s12E, &amp;s12K, &amp;s13A, &amp;s13B, &amp;s13K, &amp;sFCC, &amp;sHCP, &amp;sBCC_9, NULL}</p>
+</dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1a73fd280905f46c8733790295c8fdd309"></span><code class="descname">int*** cluster_list[]</code><p>= {&amp;hcsp3a, &amp;hcsp3b, &amp;hcsp3c, &amp;hcsp4a, &amp;hcsp4b, &amp;hcsp4c, &amp;hcsp5a, &amp;hcsp5b, &amp;hcsp5c,</p>
+<p>                         &amp;hc6A, &amp;hc6Z, &amp;hc7K, &amp;hc7T_a, &amp;hc7T_s, &amp;hc8A, &amp;hc8B, &amp;hc8K, &amp;hc9A, &amp;hc9B, &amp;hc9K, &amp;hc10A, &amp;hc10B,</p>
+<p>                         &amp;hc10K, &amp;hc10W, &amp;hc11A, &amp;hc11B, &amp;hc11C, &amp;hc11E, &amp;hc11F, &amp;hc11W, &amp;hc12A, &amp;hc12B, &amp;hc12D,</p>
+<p>                         &amp;hc12E, &amp;hc12K, &amp;hc13A, &amp;hc13B, &amp;hc13K, &amp;hcFCC, &amp;hcHCP, &amp;hcBCC_9, NULL}</p>
+</dt>
+<dd></dd></dl>
+
+<dl class="variable">
+<dt>
+<span class="target" id="main_8c_1ae80c16ae5a8fab6caa7e5180302a0f21"></span><code class="descname">int* cluster_list_width[]</code><p>= {&amp;msp3a, &amp;msp3b, &amp;msp3c, &amp;msp4a, &amp;msp4b, &amp;msp4c, &amp;msp5a, &amp;msp5b, &amp;msp5c,</p>
+<p>                             &amp;m6A, &amp;m6Z, &amp;m7K, &amp;m7T_a, &amp;m7T_s, &amp;m8A, &amp;m8B, &amp;m8K, &amp;m9A, &amp;m9B, &amp;m9K, &amp;m10A, &amp;m10B,</p>
+<p>                             &amp;m10K, &amp;m10W, &amp;m11A, &amp;m11B, &amp;m11C, &amp;m11E, &amp;m11F, &amp;m11W, &amp;m12A, &amp;m12B, &amp;m12D,</p>
+<p>                             &amp;m12E, &amp;m12K, &amp;m13A, &amp;m13B, &amp;m13K, &amp;mFCC, &amp;mHCP, &amp;mBCC_9, NULL}</p>
+</dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="output_8c"></span><em>file</em> <code class="descname">output.c</code></dt>
+<dd><em>#include &lt;math.h&gt;</em><em>#include &lt;stats.h&gt;</em><em>#include “output.h”</em><em>#include “tools.h”</em><em>#include “globals.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Write_Raw">
+<span class="target" id="output_8c_1aa0ed19128adc2650e77290ccc965fba6"></span>void <code class="descname">Write_Raw</code><span class="sig-paren">(</span>int<em>&nbsp;f</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Raw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Raw_Particle_Types">
+<span class="target" id="output_8c_1acc311664456483da767535d852769d08"></span>void <code class="descname">Write_Raw_Particle_Types</code><span class="sig-paren">(</span>int<em>&nbsp;f</em>, FILE *<em>&nbsp;thefile</em>, const char *<em>&nbsp;sarr</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Raw_Particle_Types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Bonds_File">
+<span class="target" id="output_8c_1a8f44873b0b4e7be52adccb42171ff1c1"></span>void <code class="descname">Write_Bonds_File</code><span class="sig-paren">(</span>int<em>&nbsp;f</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Bonds_File" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Cluster_Centers_xyz">
+<span class="target" id="output_8c_1ae6ab9bc68cfcfc6d658e0516ea81b809"></span>void <code class="descname">Write_Cluster_Centers_xyz</code><span class="sig-paren">(</span>int<em>&nbsp;f</em>, int<em>&nbsp;cluster_type</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Cluster_Centers_xyz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Cluster_XYZ">
+<span class="target" id="output_8c_1a5018215c4f86cfdbf49493f1e578c250"></span>void <code class="descname">Write_Cluster_XYZ</code><span class="sig-paren">(</span>int<em>&nbsp;f</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Cluster_XYZ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Cluster">
+<span class="target" id="output_8c_1ab67a7bbb4b565072c961611b12ac860f"></span>void <code class="descname">Write_Cluster</code><span class="sig-paren">(</span>int<em>&nbsp;f</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Cluster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Cluster_Compostions">
+<span class="target" id="output_8c_1abecc23879c105d752307c676dbcdf494"></span>void <code class="descname">Write_Cluster_Compostions</code><span class="sig-paren">(</span>int<em>&nbsp;f</em>, int<em>&nbsp;cluster_type</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Cluster_Compostions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Write_Pop_Per_Frame">
+<span class="target" id="output_8c_1a890c1962709c40cb3a6a2969484b45ac"></span>void <code class="descname">Write_Pop_Per_Frame</code><span class="sig-paren">(</span>int<em>&nbsp;f</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Write_Pop_Per_Frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.write_output_files">
+<span class="target" id="output_8c_1a7083c6b4302946f4288508fd2a9cf77f"></span>void <code class="descname">write_output_files</code><span class="sig-paren">(</span>int<em>&nbsp;current_frame_number</em><span class="sig-paren">)</span><a class="headerlink" href="#c.write_output_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="rings_8c"></span><em>file</em> <code class="descname">rings.c</code></dt>
+<dd><em>#include “rings.h”</em><em>#include “globals.h”</em><em>#include “bonds.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.get_basic_clusters">
+<span class="target" id="rings_8c_1a5e79c3da4695827e695f6b956b988ae4"></span>void <code class="descname">get_basic_clusters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.get_basic_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_basic_sp4_rings">
+<span class="target" id="rings_8c_1a6f49c984a510e02dbc73bca14c3977f8"></span>void <code class="descname">get_basic_sp4_rings</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_basic_sp4_rings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_basic_sp5_rings">
+<span class="target" id="rings_8c_1a3a695a3679229d3e58981b0d45ccd36d"></span>void <code class="descname">get_basic_sp5_rings</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_basic_sp5_rings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_sp3_clusters">
+<span class="target" id="rings_8c_1a62fcb52d33abd0e2366e155660c471b9"></span>void <code class="descname">get_sp3_clusters</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_sp3_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp3c">
+<span class="target" id="rings_8c_1afa7b70fd09b533b1553c6b97990d3e38"></span>void <code class="descname">Store_sp3c</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, const int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp3c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp3b">
+<span class="target" id="rings_8c_1ac28a726b2bbbd1b521e1ea063db52b77"></span>void <code class="descname">Store_sp3b</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, const int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp3b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp3a">
+<span class="target" id="rings_8c_1a5d56716ba22fd9877ea250f84b46d3dc"></span>void <code class="descname">Store_sp3a</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp3a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_sp4_clusters">
+<span class="target" id="rings_8c_1a88fc37a30178afec5291a94abc738e68"></span>void <code class="descname">get_sp4_clusters</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_sp4_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp4c">
+<span class="target" id="rings_8c_1af7fdd83016dd04b953469e9c8d82a72a"></span>void <code class="descname">Store_sp4c</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em>, const int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp4c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_6A_clusters">
+<span class="target" id="rings_8c_1a784bda2c82fac165043a2f76039a463a"></span>void <code class="descname">get_6A_clusters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.get_6A_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp4b">
+<span class="target" id="rings_8c_1ab1ff78d13f119bcc5d9f964288ea2eee"></span>void <code class="descname">Store_sp4b</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em>, const int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp4b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp4a">
+<span class="target" id="rings_8c_1a63e02b2b036554aadf4fad52aea1b5d2"></span>void <code class="descname">Store_sp4a</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp4a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_sp5_clusters">
+<span class="target" id="rings_8c_1a0912ed590eed9734b03812b409713b1d"></span>void <code class="descname">get_sp5_clusters</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em>, int<em>&nbsp;n4</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_sp5_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp5c">
+<span class="target" id="rings_8c_1a162030c6673626baff443cb85ccb5080"></span>void <code class="descname">Store_sp5c</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em>, int<em>&nbsp;n4</em>, const int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp5c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp5b">
+<span class="target" id="rings_8c_1a8862f92df670def0e89978059fb79dea"></span>void <code class="descname">Store_sp5b</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em>, int<em>&nbsp;n4</em>, const int *<em>&nbsp;cp</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp5b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Store_sp5a">
+<span class="target" id="rings_8c_1af65836ee2a0f9862098495e73135d8c9"></span>void <code class="descname">Store_sp5a</code><span class="sig-paren">(</span>int<em>&nbsp;n0</em>, int<em>&nbsp;n1</em>, int<em>&nbsp;n2</em>, int<em>&nbsp;n3</em>, int<em>&nbsp;n4</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Store_sp5a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_mem_sp3b">
+<span class="target" id="rings_8c_1a0d2a951b2de0a3a9ed3dacd737d2f2be"></span>void <code class="descname">add_mem_sp3b</code><span class="sig-paren">(</span>int<em>&nbsp;particle_ID</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_mem_sp3b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_mem_sp3c">
+<span class="target" id="rings_8c_1a0874a89d0fc7f042c93022f23de92bcd"></span>void <code class="descname">add_mem_sp3c</code><span class="sig-paren">(</span>int<em>&nbsp;particle_ID</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_mem_sp3c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_mem_sp4b">
+<span class="target" id="rings_8c_1a156362e59fd21cafd2e5ab0710837ca4"></span>void <code class="descname">add_mem_sp4b</code><span class="sig-paren">(</span>int<em>&nbsp;particle_ID</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_mem_sp4b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_mem_sp4c">
+<span class="target" id="rings_8c_1a4b9cadd94cd210e8abb422af9759bcf8"></span>void <code class="descname">add_mem_sp4c</code><span class="sig-paren">(</span>int<em>&nbsp;particle_ID</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_mem_sp4c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_mem_sp5b">
+<span class="target" id="rings_8c_1af95ab11d59d2fc7b4302ff7bf5e46aae"></span>void <code class="descname">add_mem_sp5b</code><span class="sig-paren">(</span>int<em>&nbsp;particle_ID</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_mem_sp5b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_mem_sp5c">
+<span class="target" id="rings_8c_1a771634088aeac52caa39d0e429b7ecda"></span>void <code class="descname">add_mem_sp5c</code><span class="sig-paren">(</span>int<em>&nbsp;particle_ID</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_mem_sp5c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="setup_8c"></span><em>file</em> <code class="descname">setup.c</code></dt>
+<dd><em>#include “setup.h”</em><em>#include “tools.h”</em><em>#include “iniparser.h”</em><em>#include “globals.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Setup_Output_Files">
+<span class="target" id="setup_8c_1a9cf579fad2ddcb8ed5b3f45e48aec2db"></span>void <code class="descname">Setup_Output_Files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Setup_Output_Files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.initialise_run_variables">
+<span class="target" id="setup_8c_1aaa40ce334dcdc00f285a17df0a013393"></span>void <code class="descname">initialise_run_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.initialise_run_variables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.free_run_variables">
+<span class="target" id="setup_8c_1abe86e9bce97bf6aed8dc30647f4511be"></span>void <code class="descname">free_run_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.free_run_variables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.initialise_frame_variables">
+<span class="target" id="setup_8c_1ab2dc9274aff4202f590d8f64221a5555"></span>void <code class="descname">initialise_frame_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.initialise_frame_variables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.free_frame_variables">
+<span class="target" id="setup_8c_1a2e8b6e72de24f99c45ff4eb8915d13b8"></span>void <code class="descname">free_frame_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.free_frame_variables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.check_null_pointer">
+<span class="target" id="setup_8c_1ac2f3fcf72d67fa7a60f110f65355d291"></span>void <code class="descname">check_null_pointer</code><span class="sig-paren">(</span>void *<em>&nbsp;pointer</em>, char *<em>&nbsp;pointer_name</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_null_pointer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.analyse_cluster_dependencies">
+<span class="target" id="setup_8c_1a4003a169cd6bfb54a6f1476f8e521945"></span>void <code class="descname">analyse_cluster_dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.analyse_cluster_dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.setup_cluster_lists">
+<span class="target" id="setup_8c_1a412e88560c54677bd691e8a371ed1840"></span>void <code class="descname">setup_cluster_lists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.setup_cluster_lists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="stats_8c"></span><em>file</em> <code class="descname">stats.c</code></dt>
+<dd><em>#include “stats.h”</em><em>#include “globals.h”</em><em>#include “tools.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.count_number_of_clusters">
+<span class="target" id="stats_8c_1aad543944d3c4b7689e684e904e3c3520"></span>void <code class="descname">count_number_of_clusters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.count_number_of_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Stats_Report">
+<span class="target" id="stats_8c_1a9e02cfebf652019be16f87dd84e87366"></span>void <code class="descname">Stats_Report</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Stats_Report" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.open_stats_report_file">
+<span class="target" id="stats_8c_1abcffaafa281253732e362ee6aa93d707"></span>FILE* <code class="descname">open_stats_report_file</code><span class="sig-paren">(</span>const char *<em>&nbsp;output_name</em><span class="sig-paren">)</span><a class="headerlink" href="#c.open_stats_report_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.stats_report_clusters">
+<span class="target" id="stats_8c_1a596278e107a58825e713061ddfbe8c18"></span>void <code class="descname">stats_report_clusters</code><span class="sig-paren">(</span>FILE *<em>&nbsp;output_file</em><span class="sig-paren">)</span><a class="headerlink" href="#c.stats_report_clusters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.stats_report_title">
+<span class="target" id="stats_8c_1a9410f774d7484b0cb414cad4140f92a6"></span>void <code class="descname">stats_report_title</code><span class="sig-paren">(</span>const char *<em>&nbsp;output_name</em>, FILE *<em>&nbsp;output_file</em><span class="sig-paren">)</span><a class="headerlink" href="#c.stats_report_title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.count_frame_cluster_population">
+<span class="target" id="stats_8c_1ab4228f0be3950734e7c342b81bfb91c6"></span>void <code class="descname">count_frame_cluster_population</code><span class="sig-paren">(</span>int<em>&nbsp;f</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_frame_cluster_population" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.count_mean_pop_per_frame">
+<span class="target" id="stats_8c_1a40719acf1aebfce13bf566dc61582e5d"></span>void <code class="descname">count_mean_pop_per_frame</code><span class="sig-paren">(</span>int<em>&nbsp;frames_analysed</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_mean_pop_per_frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="tools_8c"></span><em>file</em> <code class="descname">tools.c</code></dt>
+<dd><em>#include “tools.h”</em><em>#include “globals.h”</em><em>#include &lt;errno.h&gt;</em><em>#include &lt;limits.h&gt;</em><em>#include &lt;math.h&gt;</em><em>#include &lt;string.h&gt;</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.get_long_from_string">
+<span class="target" id="tools_8c_1a412d0b022eb23c9bf7f9319df7064ccb"></span>long <code class="descname">get_long_from_string</code><span class="sig-paren">(</span>const char *<em>&nbsp;buff</em>, int *<em>&nbsp;validLong</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_long_from_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_double_from_string">
+<span class="target" id="tools_8c_1abc655df1015d78ccb998eaeaa47caffb"></span>double <code class="descname">get_double_from_string</code><span class="sig-paren">(</span>const char *<em>&nbsp;buff</em>, int *<em>&nbsp;validDouble</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_double_from_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.try_read_line_from_file">
+<span class="target" id="tools_8c_1aed9d336ba47a18d2d3c91fb864f4b99b"></span>int <code class="descname">try_read_line_from_file</code><span class="sig-paren">(</span>FILE *<em>&nbsp;file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#c.try_read_line_from_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.open_file">
+<span class="target" id="tools_8c_1a3b24f5278cc33de07565a1c7c277ffeb"></span>FILE* <code class="descname">open_file</code><span class="sig-paren">(</span>char *<em>&nbsp;file_name</em>, char *<em>&nbsp;mode</em><span class="sig-paren">)</span><a class="headerlink" href="#c.open_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.make_directory">
+<span class="target" id="tools_8c_1ae8f299c1cc0bb08265f6f3f6a3e46b13"></span>int <code class="descname">make_directory</code><span class="sig-paren">(</span>const char *<em>&nbsp;name</em><span class="sig-paren">)</span><a class="headerlink" href="#c.make_directory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Error_no_free">
+<span class="target" id="tools_8c_1a7267a6dfccbe2d1a389d6ce8265ba74c"></span>void <code class="descname">Error_no_free</code><span class="sig-paren">(</span>char *<em>&nbsp;msg</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Error_no_free" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Error">
+<span class="target" id="tools_8c_1a3ff077aacbe6ab2cc45ad9fad93c67b1"></span>void <code class="descname">Error</code><span class="sig-paren">(</span>char *<em>&nbsp;msg</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.resize_2D_int">
+<span class="target" id="tools_8c_1ac460b51be1fe816878b14706b4615bd0"></span>int** <code class="descname">resize_2D_int</code><span class="sig-paren">(</span>int **<em>&nbsp;the_array</em>, int<em>&nbsp;old_row_size</em>, int<em>&nbsp;new_row_size</em>, int<em>&nbsp;new_col_size</em>, int<em>&nbsp;value</em><span class="sig-paren">)</span><a class="headerlink" href="#c.resize_2D_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.resize_1D_int">
+<span class="target" id="tools_8c_1a845e624dffe73c66046784db6fec2c75"></span>int* <code class="descname">resize_1D_int</code><span class="sig-paren">(</span>int *<em>&nbsp;the_array</em>, int<em>&nbsp;old_col_size</em>, int<em>&nbsp;new_col_size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.resize_1D_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.sort_list_of_lists_of_ints">
+<span class="target" id="tools_8c_1ad235fe53d1dad53e8a1ba434c75fa31c"></span>int <code class="descname">sort_list_of_lists_of_ints</code><span class="sig-paren">(</span>const void *<em>&nbsp;lhs</em>, const void *<em>&nbsp;rhs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sort_list_of_lists_of_ints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.quickSort">
+<span class="target" id="tools_8c_1a2d1c46bdd6275f6f47a97363dd5f5be8"></span>int <code class="descname">quickSort</code><span class="sig-paren">(</span>int *<em>&nbsp;arr</em>, int<em>&nbsp;elements</em><span class="sig-paren">)</span><a class="headerlink" href="#c.quickSort" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="voronoi__bonds_8c"></span><em>file</em> <code class="descname">voronoi_bonds.c</code></dt>
+<dd><em>#include “globals.h”</em><em>#include “tools.h”</em><em>#include “bonds.h”</em><em>#include “voronoi_bonds.h”</em><em>#include “cell_list.h”</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="function">
+<dt id="c.Get_Bonds_With_Voronoi">
+<span class="target" id="voronoi__bonds_8c_1a9af8334e031f85f49481845271a61b76"></span>void <code class="descname">Get_Bonds_With_Voronoi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Get_Bonds_With_Voronoi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.add_new_voronoi_bond">
+<span class="target" id="voronoi__bonds_8c_1a5d18774c066714efbcb2355ecf02e45a"></span>void <code class="descname">add_new_voronoi_bond</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, int<em>&nbsp;num_particle_1_neighbours</em>, const int *<em>&nbsp;sorted_particle_1_neighbours</em>, const double *<em>&nbsp;store_dr2</em>, const int *<em>&nbsp;particle_1_bonds</em><span class="sig-paren">)</span><a class="headerlink" href="#c.add_new_voronoi_bond" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.check_bond_cut_offs">
+<span class="target" id="voronoi__bonds_8c_1ad6a85f525743b95a3e140186c16c9ecb"></span>void <code class="descname">check_bond_cut_offs</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, int<em>&nbsp;num_particle_1_neighbours</em>, const int *<em>&nbsp;sorted_particle_1_neighbours</em>, const double *<em>&nbsp;sorted_particle_1_bond_lengths</em>, int *<em>&nbsp;particle_1_bonds</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_bond_cut_offs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Remove_Unbonded_Neighbours">
+<span class="target" id="voronoi__bonds_8c_1a42433b24148e95b6898e27c5750f0307"></span>void <code class="descname">Remove_Unbonded_Neighbours</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, const int<em>&nbsp;num_particle_1_neighbours</em>, const int *<em>&nbsp;sorted_particle_1_neighbours</em>, int *<em>&nbsp;particle_1_bonds</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Remove_Unbonded_Neighbours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.is_particle_bonded">
+<span class="target" id="voronoi__bonds_8c_1afee2d57d55f42e860556e301cc2e41ed"></span>double <code class="descname">is_particle_bonded</code><span class="sig-paren">(</span>int<em>&nbsp;p1</em>, int<em>&nbsp;p2</em>, int<em>&nbsp;p3</em><span class="sig-paren">)</span><a class="headerlink" href="#c.is_particle_bonded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.get_particle_1_neighbours">
+<span class="target" id="voronoi__bonds_8c_1a6df1f78a12a799aea8cbc67c9d6a7737"></span>int <code class="descname">get_particle_1_neighbours</code><span class="sig-paren">(</span>int<em>&nbsp;particle_1</em>, const int<em>&nbsp;max_allowed_bonds</em>, int *<em>&nbsp;particle_1_bonds</em>, double *<em>&nbsp;particle_1_bond_lengths</em>, double *<em>&nbsp;store_dr2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_particle_1_neighbours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.Insertion_Sort_Bond_Lengths">
+<span class="target" id="voronoi__bonds_8c_1ae9af7b6652cfec52fa4e586f4bb38bdd"></span>void <code class="descname">Insertion_Sort_Bond_Lengths</code><span class="sig-paren">(</span>int<em>&nbsp;num_particle_1_neighbours</em>, int *<em>&nbsp;particle_1_neighbours</em>, double *<em>&nbsp;particle_1_bond_lengths</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Insertion_Sort_Bond_Lengths" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="dir">
+<dt>
+<span class="target" id="dir_c287ebfe77906c0a7947bd3a2eed8c98"></span><em>dir</em> <code class="descname">C:/Users/Peter/GitHub/TCC/src/clusters</code></dt>
+<dd></dd></dl>
+
+<dl class="dir">
+<dt>
+<span class="target" id="dir_68267d1309a1af8e8297ef4c3efbcdba"></span><em>dir</em> <code class="descname">C:/Users/Peter/GitHub/TCC/src</code></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tcc_python_scripts.tcc.html"
+                        title="previous chapter">tcc_python_scripts.tcc package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tcc_cluster_source.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tcc_python_scripts.tcc.html" title="tcc_python_scripts.tcc package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Peter Crowther.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+    </div>
+  </body>
+</html>

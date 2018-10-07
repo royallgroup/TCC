@@ -4,20 +4,18 @@
 #include "simple_cluster_methods.h"
 #include "9A.h"
 
+//!  A 9A is made of three overlapping sp4b clusters which each share 2 ring particles with each of the others.
+/*!
+*  Find 9A clusters
+*  9A is made from three overlapping sp4b clusters where:
+*  - All of the spindles are uncommon
+*  - Two particles are common between the rings of sp4b_i and sp4b_j
+*  - The ring of sp4b_j is made from the uncommon ring particles of sp4b_i and sp4b_j
+*
+*  Cluster output: OOOBBBBBB
+*  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
+*/
 void Clusters_Get9A() {
-
-    //!  A 9A is made of three overlapping sp4b clusters which each share 2 ring particles with each of the others.
-    /*!
-    *  Find 9A clusters
-    *  9A is made from three overlapping sp4b clusters where:
-    *  - All of the spindles are uncommon
-    *  - Two particles are common between the rings of sp4b_i and sp4b_j
-    *  - The ring of sp4b_j is made from the uncommon ring particles of sp4b_i and sp4b_j
-    *
-    *  Cluster output: OOOBBBBBB
-    *  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
-    */
-
     int i_j_common_ring_particles[8], i_j_uncommon_ring_particles[8];
 
     for (int first_sp4b_id = 0; first_sp4b_id < nsp4b; ++first_sp4b_id) {

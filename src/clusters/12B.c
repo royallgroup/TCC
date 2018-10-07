@@ -4,20 +4,18 @@
 #include "13A.h"
 #include "12B.h"
 
-void Clusters_Get12B_13A() { // Detect 12B & 13A D5h clusters together
-
-    //!  A 12B is the intersection of 6 7A clusters.
-    /*!
-   *  Find 12B clusters
-   *  A 12B is 6 7A clusters where:
-   *      - There is one central 7A with spindles A and B
-   *      - Every other 7A has a spindle common with the 7A spindle A and a spindle common with a ring particle of the first 7A
-   *
-   *  Cluster output: SBOOOOOBBBBB
-   *  Storage order: unknown
-   *
-   */
-
+//!  A 12B is the intersection of 6 7A clusters.
+/*!
+*  Find 12B clusters
+*  A 12B is 6 7A clusters where:
+*      - There is one central 7A with spindles A and B
+*      - Every other 7A has a spindle common with the 7A spindle A and a spindle common with a ring particle of the first 7A
+*
+*  Cluster output: SBOOOOOBBBBB
+*  Storage order: unknown
+*
+*/
+void Clusters_Get12B_13A() {
     int i, j, k, l, m;
     int sp1, sp2;
     int sj1[5], sj2[5];
