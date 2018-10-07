@@ -14,7 +14,6 @@ This documentation gives information about the latest version of the Topological
    tcc_input_parameters
    python_scripts
    xyz_specification
-   publications
    tcc_python_scripts
 
 Indices and tables

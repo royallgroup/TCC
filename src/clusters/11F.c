@@ -2,10 +2,9 @@
 #include "bonds.h"
 #include "tools.h"
 #include "11F.h"
-#include "12E.h"
 #include "13K.h"
 
-void Clusters_Get11F_12E_13K() {
+void Clusters_Get11F_13K() {
 
     //!  An 11F cluster is the intersection of two 5A and two 6A clusters
     /*!
@@ -234,10 +233,6 @@ void write_11F(int common_particle, int ep1, int ep2, const int *first_5A, const
             j++;
         }
     }
-
-    quickSort(&hc11F[n11F][1], 2);
-    quickSort(&hc11F[n11F][3], 4);
-    quickSort(&hc11F[n11F][7], 4);
 
     if (s11F[hc11F[n11F][0]] == 'C') s11F[hc11F[n11F][0]] = 'B';
     for(int i = 1; i < 7; i++) {

@@ -14,4 +14,6 @@ int is_particle_in_cluster(const int *cluster, int cluster_size, int particle_id
 
 int are_clusters_distinct(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size);
 
+int check_unique_cluster(const int *trial, int cluster_size, int **cluster_list, int num_clusters);
+
 #endif

@@ -1,5 +1,6 @@
 #include <globals.h>
 #include <tools.h>
+#include "simple_cluster_methods.h"
 #include "12E.h"
 
 void Clusters_Get12E() {
@@ -11,11 +12,11 @@ void Clusters_Get12E() {
    *      - The spindle atoms of the 5A cluster are common with the uncommon spindle atoms of the 6A clusters constituting the 11F cluster.
    *      - Of the SP3 ring particles in the 5A cluster, two are common with rd1 and rd2 from the 11F cluster, and one is new.
    *
-   *  Cluster output: BOOOOOOBBBBB
-   *  Storage order: as for 11F x 11, new_particle)
+   *  Cluster output: BBBBBBBBBBBB
+   *  Storage order: particles ordered by id x 12
    */
 
-    int common_particle_ids[4];
+    int common_particle_ids[4], trial[12];
 
     for (int first_11F_id = 0; first_11F_id < n11F; first_11F_id++) {
         int *first_11F_cluster = hc11F[first_11F_id];
@@ -49,7 +50,17 @@ void Clusters_Get12E() {
                             }
                         }
                         if (common_particle_overlap == 0) {
-                            Write_12E(first_11F_cluster, uncommon_sp3_ring_particle);
+
+                            for (int i = 0; i < 11; ++i) {
+                                trial[i] = first_11F_cluster[i];
+                            }
+                            trial[11] = uncommon_sp3_ring_particle;
+
+                            quickSort(&trial[0], 12);
+
+                            if (check_unique_cluster(trial, 12, hc12E, n12E) == 0) {
+                                Write_12E(trial);
+                            }
                         }
                     }
                 }
@@ -69,7 +80,7 @@ int get_uncommon_5A_ring_particle(const int *common_particle_ids, const int *fir
     return 0;
 }
 
-void Write_12E(const int *first_11F, int uncommon_sp3_ring_particle) {
+void Write_12E(const int *trial) {
 
     int clusSize = 12;
 
@@ -78,23 +89,10 @@ void Write_12E(const int *first_11F, int uncommon_sp3_ring_particle) {
         m12E = m12E + incrStatic;
     }
 
-    for (int i = 0; i < 11; i++) {
-        hc12E[n12E][i] = first_11F[i];
+    for (int i = 0; i < 12; i++) {
+        hc12E[n12E][i] = trial[i];
+        s12E[hc12E[n12E][i]] = 'B';
     }
-    hc12E[n12E][11] = uncommon_sp3_ring_particle;
-
-    if(s12E[hc12E[n12E][0]] == 'C') s12E[hc12E[n12E][0]] = 'B';
-    s12E[hc12E[n12E][1]] = 'O';
-    s12E[hc12E[n12E][2]] = 'O';
-    s12E[hc12E[n12E][3]] = 'O';
-    s12E[hc12E[n12E][4]] = 'O';
-    s12E[hc12E[n12E][5]] = 'O';
-    s12E[hc12E[n12E][6]] = 'O';
-    if(s12E[hc12E[n12E][7]] == 'C') s12E[hc12E[n12E][7]] = 'B';
-    if(s12E[hc12E[n12E][8]] == 'C') s12E[hc12E[n12E][8]] = 'B';
-    if(s12E[hc12E[n12E][9]] == 'C') s12E[hc12E[n12E][9]] = 'B';
-    if(s12E[hc12E[n12E][10]] == 'C') s12E[hc12E[n12E][10]] = 'B';
-    if(s12E[hc12E[n12E][11]] == 'C') s12E[hc12E[n12E][11]] = 'B';
 
     n12E++;
 }

@@ -3,6 +3,6 @@
 
 void Clusters_Get7K();
 
-void Cluster_Write_7K(int scom, int *sother, int *common_ring_particles, int *uncommon_ring_particles);
+void Cluster_Write_7K(int scom, int *other_spindle_ids, int *common_ring_particles, int *uncommon_ring_particles);
 
 #endif
