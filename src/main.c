@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
             if (do10W == 1) Clusters_Get10W();
             if (do11A == 1) Clusters_Get11A();
             if (do11C == 1) Clusters_Get11C();
-            if (do11F == 1) Clusters_Get11F_12E_13K();
+            if (do11F == 1) Clusters_Get11F_13K();
             if (do11W == 1) Clusters_Get11W();
             if (do12A == 1) Clusters_Get12A();
             if (do12B == 1) Clusters_Get12B_13A();

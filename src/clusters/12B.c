@@ -4,7 +4,7 @@
 #include "13A.h"
 #include "12B.h"
 
-void Clusters_Get12B_13A() { // Detect 12B & 13A D5h clusters together#
+void Clusters_Get12B_13A() { // Detect 12B & 13A D5h clusters together
 
     //!  A 12B is the intersection of 6 7A clusters.
     /*!
