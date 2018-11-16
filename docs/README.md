@@ -6,11 +6,12 @@ Documentation is written in reStructuredText format and compiled by the Sphinx p
 
 C docstrings are scraped by Doxygen to XML format and then imported into sphinx using the Breathe package for Sphinx.
 
-Requrements
-=============
+Requrements to compile documentation
+======================================
 
 Doxygen (http://www.doxygen.nl/)
-Sphinx (http://www.sphinx-doc.org/en/master/)
+Sphinx (http://www.sphinx-doc.org/en/master/) - (conda install sphinx/pip install sphinx)
+Breathe (https://breathe.readthedocs.io/en/latest/) (conda install -c conda-forge breathe)
 
 Compiling documentation
 =========================
