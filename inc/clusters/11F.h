@@ -1,7 +1,7 @@
 #ifndef TCC_11F_H
 #define TCC_11F_H
 
-void Clusters_Get11F_12E_13K();
+void Clusters_Get11F_13K();
 
 int do_5As_have_distinct_spindles(const int *first_5A, const int *second_5A);
 

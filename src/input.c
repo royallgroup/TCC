@@ -1,3 +1,4 @@
+#include <bonds.h>
 #include "input.h"
 #include "globals.h"
 #include "iniparser.h"
@@ -174,10 +175,13 @@ void get_box_file_offsets(FILE *read_box_file, int total_frames) {
 
         for (dimension = 0; dimension < num_items; dimension++) {
             word = strtok(NULL, " \t");
+            if (word == NULL) {
+                sprintf(error_message, "Unexpected end of line in box file on line %d. Expected %d more values.", frame+2, num_items-dimension);
+                Error_no_free(error_message);
+            }
             tmp[dimension] = get_double_from_string(word, &valid_double);
             if (valid_double != 1) {
-                sprintf(error_message, "Unable to read box file. Expected %d lines of box coordinates but box reading "
-                                "failed on %d", total_frames, frame);
+                sprintf(error_message, "Unable to read box file. Value %d on line %d is not a valid number", dimension+1, frame+2);
                 Error_no_free(error_message);
             }
         }
@@ -349,32 +353,10 @@ void get_coords_from_line(int frame_number, FILE *xyzfile, int particle) {
         }
     }
 
-    if (PBCs == 1 && box_type != 3) {
-        wrap_particle_into_pbc(&temp_coord[0], &temp_coord[1], &temp_coord[2]);
+    if (PBCs == 1) {
+        enforce_PBCs(&temp_coord[0], &temp_coord[1], &temp_coord[2]);
     }
     x[particle] = temp_coord[0];
     y[particle] = temp_coord[1];
     z[particle] = temp_coord[2];
-}
-
-void wrap_particle_into_pbc(double *tx, double *ty, double *tz) {
-    // wrap particles back into the box
-    while ((*tx) < -half_sidex) {
-        (*tx) +=sidex;
-    }
-    while ((*tx) > half_sidex) {
-        (*tx) -=sidex;
-    }
-    while ((*ty) < -half_sidey) {
-        (*ty) +=sidey;
-    }
-    while ((*ty) > half_sidey) {
-        (*ty) -=sidey;
-    }
-    while ((*tz) < -half_sidez) {
-        (*tz) +=sidez;
-    }
-    while ((*tz) > half_sidez) {
-        (*tz) -=sidez;
-    }
 }

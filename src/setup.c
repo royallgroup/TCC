@@ -76,7 +76,6 @@ void initialise_run_variables() {
     int cluster_type;
 
     incrStatic=1000;
-    incrClustPerPart=1;
 
     num_gross_particles = malloc(num_cluster_types * sizeof(int));
     total_clusters = malloc(num_cluster_types * sizeof(int));
@@ -266,7 +265,7 @@ void analyse_cluster_dependencies() {
     if(do11A == 1) dosp4c = 1;
     if(do10W == 1) dosp5b = 1;
     if(do10K == 1) do9K = 1;
-    if(do10B == 1) dosp5c = do9K = 1;
+    if(do10B == 1) dosp5c = do9B = 1;
     if(do10A == 1) dosp4b = 1;
     if(do9K == 1) dosp4c = 1;
     if(do9B == 1) dosp5c = 1;

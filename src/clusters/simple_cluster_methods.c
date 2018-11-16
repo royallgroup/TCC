@@ -151,3 +151,27 @@ int are_clusters_distinct(const int *cluster_1, const int *cluster_2, int cluste
     }
     return 1;
 }
+
+int check_unique_cluster(const int *trial, const int cluster_size, int **cluster_list, const int num_clusters) {
+    //!  Determine if a trial cluster already exists in list of clusters
+    /*!
+   *  \param trial - a pointer to a cluster, particle ids sorted in ascending order
+   *  \param cluster_size - the number of particles in the trial cluster
+   *  \param cluster_list - a pointer to a list of clusters with the particle ids making up each cluster sorted in ascending order
+   *  \param num_clusters - the number of clusters in cluster list
+   *  \return 0 if the cluster is unique, 1 if the cluster already exists in the list
+   */
+
+    int i;
+    for (int existing_cluster_pointer = 0; existing_cluster_pointer < num_clusters; ++existing_cluster_pointer) {
+        for (i = 0; i < cluster_size; ++i) {
+            if (trial[i] != cluster_list[existing_cluster_pointer][i]) {
+                break;
+            }
+        }
+        if (i == cluster_size) {
+            return 1;
+        }
+    }
+    return 0;
+}

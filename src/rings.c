@@ -3,18 +3,17 @@
 #include "bonds.h"
 #include "tools.h"
 
-void get_6A_clusters();
 
-void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
-    int n1_pointer, n2_pointer;
-    int n0, n1, n2;
 
-    for (n0 = 0; n0 < particles_in_current_frame; n0++) {
-        for (n1_pointer = 0; n1_pointer < num_bonds[n0]; n1_pointer++) {
-            n1 = bond_list[n0][n1_pointer];
+void get_basic_clusters() {
+    // get SP3/4/5 rings including particle n0
+
+    for (int n0 = 0; n0 < particles_in_current_frame; n0++) {
+        for (int n1_pointer = 0; n1_pointer < num_bonds[n0]; n1_pointer++) {
+            int n1 = bond_list[n0][n1_pointer];
             if (n1 > n0) {
-                for (n2_pointer = n1_pointer + 1; n2_pointer < num_bonds[n0]; n2_pointer++) {
-                    n2 = bond_list[n0][n2_pointer];
+                for (int n2_pointer = n1_pointer + 1; n2_pointer < num_bonds[n0]; n2_pointer++) {
+                    int n2 = bond_list[n0][n2_pointer];
                     if (n2 > n0) {
                         if (Bonds_BondCheck(n1, n2)) {
                             // SP3 found, check type and store
@@ -22,7 +21,12 @@ void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
                         }
                         else { // not SP3, search for SP4 & SP5
                             if (dosp4 == 1) {
-                                get_basic_sp4_rings(n0, n1, n2);
+                                if (n2 > n1) {
+                                    get_basic_sp4_rings(n0, n1, n2);
+                                }
+                                else {
+                                    get_basic_sp4_rings(n0, n2, n1);
+                                }
                             }
                         }
                     }
@@ -33,18 +37,9 @@ void get_basic_clusters() {	// get SP3/4/5 rings including particle n0
 }
 
 void get_basic_sp4_rings(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP3 ring, is it an SP4 or SP5 ring?
-    int i;
-    int n3;
-    int tmp;
 
-    if(n1 > n2) {
-        tmp = n2;
-        n2 = n1;
-        n1 = tmp;
-    }
-
-    for (i=0; i<num_bonds[n1]; ++i) {
-        n3 = bond_list[n1][i];
+    for (int i=0; i<num_bonds[n1]; ++i) {
+        int n3 = bond_list[n1][i];
         if (n3 > n0){
             if (Bonds_BondCheck(n0, n3) == 0) {  // n1 not bonded to n2 & n0 not bonded to n3
                 if (Bonds_BondCheck(n2, n3)) { // 4 membered ring found
@@ -60,7 +55,8 @@ void get_basic_sp4_rings(int n0, int n1, int n2) {    // {n0,n1,n2} is not an SP
     }
 }
 
-void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {    // {n0,n1,n3,n2} is not an SP4 ring, is it an SP5 ring?
+void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {
+    // {n0,n1,n3,n2} is not an SP4 ring, is it an SP5 ring?
     int i, j;
     int n4, n5;
     int bond4_1;
@@ -91,42 +87,36 @@ void get_basic_sp5_rings(int n0, int n1, int n2, int n3) {    // {n0,n1,n3,n2} i
     }
 }
 
-void get_sp3_clusters(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
-    int i, j;
-    int type = 0;
-    int cp[2];  // common spindles - particles bonded to all members of three membered ring
-    int tmp;
+void get_sp3_clusters(int n0, int n1, int n2) {
+    // Take {n0,n1,n2}, check SP3 ring and if so detect SP3a/b/c cluster
 
-    if(n1 > n2) {
-        tmp = n2;
-        n2 = n1;
-        n1 = tmp;
-    }
+    int num_spindle_particles = 0;
+    int spindle_ids[2];  // common spindles - particles bonded to all members of three membered ring
 
-    cp[0]=cp[1]=-1;
-    for (i=0; i<num_bonds[n0]; ++i) {
-        j = bond_list[n0][i];
-        if (j != n1 && j != n2) {
-            if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
-                if (type < 2) {
-                    cp[type] = j;
-                    type++;
+    for (int i=0; i<num_bonds[n0]; ++i) {
+        int neighbour_id = bond_list[n0][i];
+        if (neighbour_id != n1 && neighbour_id != n2) {
+            if (Bonds_BondCheck(n1, neighbour_id) == 1 && Bonds_BondCheck(n2, neighbour_id) == 1) {
+                if (num_spindle_particles < 2) {
+                    spindle_ids[num_spindle_particles] = neighbour_id;
+                    num_spindle_particles++;
                 }
                 else {
-                    type++;
+                    num_spindle_particles++;
+                    break;
                 }
             }
         }
     }
     
-    if (type==0 && dosp3a==1) {
+    if (num_spindle_particles==0 && dosp3a==1) {
         Store_sp3a(n0, n1, n2);
     }
-    else if (type==1 && dosp3b==1) {
-        Store_sp3b(n0, n1, n2, cp);
+    else if (num_spindle_particles==1 && dosp3b==1) {
+        Store_sp3b(n0, n1, n2, spindle_ids);
     }
-    else if (type==2 && dosp3c==1) {
-        Store_sp3c(n0, n1, n2, cp);
+    else if (num_spindle_particles==2 && dosp3c==1) {
+        Store_sp3c(n0, n1, n2, spindle_ids);
     }
     else if (dosp3a==1) {
         Store_sp3a(n0, n1, n2);
@@ -135,7 +125,7 @@ void get_sp3_clusters(int n0, int n1, int n2) {    // Take {n0,n1,n2}, check SP3
 
 void Store_sp3c(int n0, int n1, int n2, const int *cp) {
     if (nsp3c == msp3c) {
-        hcsp3c=resize_2D_int(hcsp3c,msp3c,msp3c+incrStatic,5,-1);
+        hcsp3c = resize_2D_int(hcsp3c, msp3c, msp3c + incrStatic, 5, -1);
         msp3c=msp3c+incrStatic;
     }
     hcsp3c[nsp3c][0] = n0;
@@ -205,33 +195,32 @@ void Store_sp3a(int n0, int n1, int n2) {
 }
 
 void get_sp4_clusters(int n0, int n1, int n2, int n3) {    // Take {n0,n1,n3,n2}, check SP4 ring and if so detect SP4a/b/c cluster
-    int i, j;
-    int type = 0;
+    int num_spindles = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
 
-    cp[0]=cp[1]=-1;
-    for (i=0; i<num_bonds[n0]; ++i) {
-        j = bond_list[n0][i];
-        if (j != n1 && j != n2) {
-            if (Bonds_BondCheck(n1, j) == 1 && Bonds_BondCheck(n3, j) == 1 && Bonds_BondCheck(n2, j) == 1) {
-                if (type < 2) {
-                    cp[type] = j;
-                    type++;
+    for (int i=0; i<num_bonds[n0]; ++i) {
+        int neighbour_id = bond_list[n0][i];
+        if (neighbour_id != n1 && neighbour_id != n2) {
+            if (Bonds_BondCheck(n1, neighbour_id) == 1 && Bonds_BondCheck(n3, neighbour_id) == 1 && Bonds_BondCheck(n2, neighbour_id) == 1) {
+                if (num_spindles < 2) {
+                    cp[num_spindles] = neighbour_id;
+                    num_spindles++;
                 }
                 else {
-                    type++;
+                    num_spindles++;
+                    break;
                 }
             }
         }
     }
     
-    if (type==0 && dosp4a==1) {
+    if (num_spindles==0 && dosp4a==1) {
         Store_sp4a(n0, n1, n2, n3);
     }
-    else if (type==1 && dosp4b==1) {
+    else if (num_spindles==1 && dosp4b==1) {
         Store_sp4b(n0, n1, n2, n3, cp);
     }
-    else if (type==2 && dosp4c==1) {
+    else if (num_spindles==2 && dosp4c==1) {
         Store_sp4c(n0, n1, n2, n3, cp);
     }
     else if (dosp4a==1) {
@@ -272,8 +261,9 @@ void Store_sp4c(int n0, int n1, int n2, int n3, const int *cp) {
     add_mem_sp4c(cp[0]);
     add_mem_sp4c(cp[1]);
 
-
-    get_6A_clusters();
+    if (do6A) {
+        get_6A_clusters();
+    }
 
     ++nsp4c;
 }
@@ -363,37 +353,39 @@ void Store_sp4a(int n0, int n1, int n2, int n3) {
 }
 
 void get_sp5_clusters(int n0, int n1, int n2, int n3, int n4) {    // Take {n0,n1,n2,n3,n4}, check SP5 ring and if so detect SP5a/b/c cluster
-    int i, j;
-    int type = 0;
+
+    int num_spindles = 0;
     int cp[2];  // common spindles - particles bonded to all members of three membered ring
 
     // Loop through all neighbours of n0
-    for (i=0; i<num_bonds[n0]; ++i) {
-        j = bond_list[n0][i];
+    for (int i = 0; i < num_bonds[n0]; ++i) {
+        int neighbour_id = bond_list[n0][i];
         // If the n0 neighbour is not n1 or n4
-        if (j != n1 || j != n4) {
+        if (neighbour_id != n1 || neighbour_id != n4) {
             // If the neighbour is bonded to all other ring particles
-            if (Bonds_BondCheck(n1,j)==1 && Bonds_BondCheck(n2,j)==1 && Bonds_BondCheck(n3,j)==1 && Bonds_BondCheck(n4,j)==1) {
-                if (type < 2) {
-                    cp[type] = j;
-                    type++;
+            if (Bonds_BondCheck(n1, neighbour_id) == 1 && Bonds_BondCheck(n2, neighbour_id) == 1 &&
+                Bonds_BondCheck(n3, neighbour_id) == 1 && Bonds_BondCheck(n4, neighbour_id) == 1) {
+                if (num_spindles < 2) {
+                    cp[num_spindles] = neighbour_id;
+                    num_spindles++;
                 }
                 else {
-                    type++;
+                    num_spindles++;
+                    break;
                 }
             }
         }
     }
 
-    if (type==0 && dosp5a==1) {
+    if (num_spindles==0 && dosp5a==1) {
         Store_sp5a(n0, n1, n2, n3, n4);
 
     }
-    else if (type==1 && dosp5b==1) {
+    else if (num_spindles==1 && dosp5b==1) {
         Store_sp5b(n0, n1, n2, n3, n4, cp);
 
     }
-    else if (type==2 && dosp5c==1) {
+    else if (num_spindles==2 && dosp5c==1) {
         Store_sp5c(n0, n1, n2, n3, n4, cp);
 
     }
@@ -442,8 +434,8 @@ void Store_sp5c(int n0, int n1, int n2, int n3, int n4, const int *cp) {
 
 void Store_sp5b(int n0, int n1, int n2, int n3, int n4, const int *cp) {
     if (nsp5b == msp5b) {
-        hcsp5b=resize_2D_int(hcsp5b,msp5b,msp5b+incrStatic,6,-1);
-        msp5b=msp5b+incrStatic;
+        hcsp5b = resize_2D_int(hcsp5b, msp5b, msp5b + incrStatic, 6, -1);
+        msp5b = msp5b + incrStatic;
     }
     hcsp5b[nsp5b][0] = n0;
     hcsp5b[nsp5b][1] = n1;
@@ -471,8 +463,8 @@ void Store_sp5b(int n0, int n1, int n2, int n3, int n4, const int *cp) {
 
 void Store_sp5a(int n0, int n1, int n2, int n3, int n4) {
     if (nsp5a == msp5a) {
-        hcsp5a=resize_2D_int(hcsp5a,msp5a,msp5a+incrStatic,5,-1);
-        msp5a=msp5a+incrStatic;
+        hcsp5a = resize_2D_int(hcsp5a, msp5a, msp5a + incrStatic, 5, -1);
+        msp5a = msp5a + incrStatic;
     }
     hcsp5a[nsp5a][0] = n0;
     hcsp5a[nsp5a][1] = n1;
@@ -490,28 +482,26 @@ void Store_sp5a(int n0, int n1, int n2, int n3, int n4) {
 }
 
 void add_mem_sp3b(int particle_ID) {
-    int binAcnt;
 
-    mem_sp3b[particle_ID][nmem_sp3b[particle_ID]]=nsp3b;
+    mem_sp3b[particle_ID][nmem_sp3b[particle_ID]] = nsp3b;
     nmem_sp3b[particle_ID]++;
     if (nmem_sp3b[particle_ID] >= mmem_sp3b) {
-        for (binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp3b[binAcnt]=resize_1D_int(mem_sp3b[binAcnt],mmem_sp3b,mmem_sp3b+incrClustPerPart);
+        for (int binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
+            mem_sp3b[binAcnt] = resize_1D_int(mem_sp3b[binAcnt], mmem_sp3b, mmem_sp3b + incrStatic);
         }
-        mmem_sp3b=mmem_sp3b+incrClustPerPart;
+        mmem_sp3b = mmem_sp3b + incrStatic;
     }
 }
 
 void add_mem_sp3c(int particle_ID) {
-    int binAcnt;
 
     mem_sp3c[particle_ID][nmem_sp3c[particle_ID]]=nsp3c;
     nmem_sp3c[particle_ID]++;
     if (nmem_sp3c[particle_ID] >= mmem_sp3c) {
-        for (binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrClustPerPart);
+        for (int binAcnt=0; binAcnt < particles_in_current_frame; binAcnt++) {
+            mem_sp3c[binAcnt]=resize_1D_int(mem_sp3c[binAcnt],mmem_sp3c,mmem_sp3c+incrStatic);
         }
-        mmem_sp3c=mmem_sp3c+incrClustPerPart;
+        mmem_sp3c=mmem_sp3c+incrStatic;
     }
 }
 
@@ -522,47 +512,44 @@ void add_mem_sp4b(int particle_ID) {
     nmem_sp4b[particle_ID]++;
     if (nmem_sp4b[particle_ID] >= mmem_sp4b) {
         for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrClustPerPart);
+            mem_sp4b[binAcnt] = resize_1D_int(mem_sp4b[binAcnt], mmem_sp4b, mmem_sp4b + incrStatic);
         }
-        mmem_sp4b = mmem_sp4b + incrClustPerPart;
+        mmem_sp4b = mmem_sp4b + incrStatic;
     }
 }
 
 void add_mem_sp4c(int particle_ID) {
-    int binAcnt;
 
     mem_sp4c[particle_ID][nmem_sp4c[particle_ID]] = nsp4c;
     nmem_sp4c[particle_ID]++;
     if (nmem_sp4c[particle_ID] >= mmem_sp4c) {
-        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrClustPerPart);
+        for (int binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
+            mem_sp4c[binAcnt] = resize_1D_int(mem_sp4c[binAcnt], mmem_sp4c, mmem_sp4c + incrStatic);
         }
-        mmem_sp4c = mmem_sp4c + incrClustPerPart;
+        mmem_sp4c = mmem_sp4c + incrStatic;
     }
 }
 
 void add_mem_sp5b(int particle_ID) {
-    int binAcnt;
 
     mem_sp5b[particle_ID][nmem_sp5b[particle_ID]] = nsp5b;
     nmem_sp5b[particle_ID]++;
     if (nmem_sp5b[particle_ID] >= mmem_sp5b) {
-        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrClustPerPart);
+        for (int binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
+            mem_sp5b[binAcnt] = resize_1D_int(mem_sp5b[binAcnt], mmem_sp5b, mmem_sp5b + incrStatic);
         }
-        mmem_sp5b = mmem_sp5b + incrClustPerPart;
+        mmem_sp5b = mmem_sp5b + incrStatic;
     }
 }
 
 void add_mem_sp5c(int particle_ID) {
-    int binAcnt;
 
     mem_sp5c[particle_ID][nmem_sp5c[particle_ID]] = nsp5c;
     nmem_sp5c[particle_ID]++;
     if (nmem_sp5c[particle_ID] >= mmem_sp5c) {
-        for (binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
-            mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrClustPerPart);
+        for (int binAcnt = 0; binAcnt < particles_in_current_frame; binAcnt++) {
+            mem_sp5c[binAcnt] = resize_1D_int(mem_sp5c[binAcnt], mmem_sp5c, mmem_sp5c + incrStatic);
         }
-        mmem_sp5c = mmem_sp5c + incrClustPerPart;
+        mmem_sp5c = mmem_sp5c + incrStatic;
     }
 }

@@ -65,7 +65,7 @@ void get_first_8A_type() {
 
                             quickSort(&trial[0], 8);
 
-                            if (check_unique_cluster(trial) == 0) {
+                            if (check_unique_cluster(trial, 8, hc8A, n8A) == 0) {
                                 Cluster_Write_8A(trial);
                             }
                         }
@@ -110,7 +110,7 @@ void get_second_8A_type() {
 
                             quickSort(&trial[0], 8);
 
-                            if (check_unique_cluster(trial) == 0) {
+                            if (check_unique_cluster(trial, 8, hc8A, n8A) == 0) {
                                 Cluster_Write_8A(trial);
                             }
                         }
@@ -152,7 +152,7 @@ void get_third_8A_type() {
 
                         quickSort(&trial[0], 8);
 
-                        if (check_unique_cluster(trial) == 0) {
+                        if (check_unique_cluster(trial, 8, hc8A, n8A) == 0) {
                             Cluster_Write_8A(trial);
                         }
                     }
@@ -162,23 +162,6 @@ void get_third_8A_type() {
     }
 }
 
-int check_unique_cluster(const int *trial) {
-    // Check that cluster has not already been found
-    // Return 0 if cluster is unique, else return 1
-
-    int i;
-    for (int existing_8A_cluster_pointer = 0; existing_8A_cluster_pointer < n8A; ++existing_8A_cluster_pointer) {
-        for (i = 0; i < 8; ++i) {
-            if (trial[i] != hc8A[existing_8A_cluster_pointer][i]) {
-                break;
-            }
-        }
-        if (i == 8) {
-            return 1;
-        }
-    }
-    return 0;
-}
 
 void Cluster_Write_8A(const int *trial) {// hc8A key: (4 of 8A_possible_spindles increasing, 4 of 8A_not_possible_spindles increasing)
     int clusSize = 8;

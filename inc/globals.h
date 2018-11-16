@@ -51,8 +51,7 @@ int thirteen_A_number;
 int doWritePopPerFrame; // write pop_per_frame file
 int doWriteXYZ; // Write clusters as XYZ file
 
-int incrStatic; // when full, increment static cluster arrays by this amount
-int incrClustPerPart;   // when full, increment cluster per part arrays by this amount
+int incrStatic; // when full, increment cluster arrays by this amount
 
 // Lists of particle population of each cluster type in each frame, index i is the frame number,
 // index j is the cluster type

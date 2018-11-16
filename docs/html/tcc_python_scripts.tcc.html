@@ -9,11 +9,12 @@
     <title>tcc_python_scripts.tcc package &#8212; TCC  documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="tcc_python_scripts.net_clusters package" href="tcc_python_scripts.net_clusters.html" /> 
@@ -90,6 +91,12 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 <dd><p>TCC output paramaters used for TCC run</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt>
+<code class="descname">input_parameters['Clusters_to_analyse']</code></dt>
+<dd><p>List of clusters to include in the analysis, all are detected if list is empty</p>
+</dd></dl>
+
 <dl class="staticmethod">
 <dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path">
 <em class="property">static </em><code class="descname">get_tcc_executable_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.get_tcc_executable_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path" title="Permalink to this definition">¶</a></dt>
@@ -116,7 +123,8 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 <li><strong>box</strong> – box size for boundary conditions, list of [len_x, len_y, len_z]</li>
 <li><strong>particle_coordinates</strong> – a list of lists, one list for each frame containing coordinates of atoms</li>
 <li><strong>output_directory</strong> – If you want to save the output of the TCC specify a directory to store the output</li>
-<li><strong>particle_types</strong> – species of atoms individually (if given container) or collectively. This must be either length 1 (if specifying species of all atoms) or the same length as the number of particles.</li>
+<li><strong>particle_types</strong> – species of atoms individually (if given container) or collectively. This must be either length 1
+(if specifying species of all atoms) or the same length as the number of particles.</li>
 <li><strong>silent</strong> – if set TCC executable console output will be suppressed</li>
 </ul>
 </td>
@@ -142,7 +150,7 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
+  <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">tcc_python_scripts.tcc package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -197,7 +205,7 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Peter Crowther.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>
