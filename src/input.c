@@ -69,11 +69,11 @@ void read_ini_file() {
 
     // print out values read from ini file
     printf("XYZ file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
-    printf("Box type %d\n",box_type);
-    printf("Number of frames to analyse %d Sample frequency %d\n",frames_to_analyse, SAMPLEFREQ);
-    printf("A-A bond cut-off length %lg A-B bond cut-off length %lg B-B bond cut-off length %lg\n", rcutAA, rcutAB, rcutBB);
-    printf("Voronoi bond detection %d Periodic boundary conditions %d Voronoi fc parameter %lg maximum number of bonds per particle %d Use cell list for bond detection %d\n", use_voronoi_bonds, PBCs, fc, max_num_bonds, use_cell_list);
-    printf("Write bonds file %d Write cluster files %d Write raw files %d Write PopPerFrame %d\n", doWriteBonds, doWriteClus, doWriteRaw, doWritePopPerFrame);
+    printf("Box type: %d\n",box_type);
+    printf("Number of frames to analyse: %d Sample frequency: %d\n",frames_to_analyse, SAMPLEFREQ);
+    printf("A-A bond cut-off length: %lg A-B bond cut-off length: %lg B-B bond cut-off length: %lg\n", rcutAA, rcutAB, rcutBB);
+    printf("Voronoi bond detection: %d Periodic boundary conditions: %d Voronoi fc parameter: %lg maximum number of bonds per particle: %d Use cell list for bond detection: %d\n", use_voronoi_bonds, PBCs, fc, max_num_bonds, use_cell_list);
+    printf("Write bonds file: %d Write cluster files: %d Write raw files: %d Write PopPerFrame: %d\n", doWriteBonds, doWriteClus, doWriteRaw, doWritePopPerFrame);
 
     iniparser_freedict(ini);
 }
