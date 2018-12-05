@@ -17,4 +17,6 @@ void analyse_cluster_dependencies();
 
 void setup_cluster_lists();
 
+void print_version_number();
+
 #endif

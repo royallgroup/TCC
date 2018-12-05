@@ -2,6 +2,7 @@
 #include "tools.h"
 #include "iniparser.h"
 #include "globals.h"
+#include "version.h"
 
 void Setup_Output_Files() {
     char output_file[200];
@@ -321,4 +322,8 @@ void setup_cluster_lists() {
 
     if(cluster_list_width[num_cluster_types] != NULL)
         Error_no_free("Incorrect number of elements in cluster_list_width");
+}
+
+void print_version_number() {
+    printf("The Topological Cluster Classification. Version %d.%d.%d.\n", TCC_VERSION_MAJOR, TCC_VERSION_MINOR, TCC_VERSION_PATCH);
 }
