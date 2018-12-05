@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Cluster Descriptions &#8212; TCC  documentation</title>
+    <title>TCC source code function listing and descriptions &#8212; TCC  documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -40,8 +40,9 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="cluster-descriptions">
-<h1>Cluster Descriptions<a class="headerlink" href="#cluster-descriptions" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tcc-source-code-function-listing-and-descriptions">
+<h1>TCC source code function listing and descriptions<a class="headerlink" href="#tcc-source-code-function-listing-and-descriptions" title="Permalink to this headline">¶</a></h1>
+<p>This page lists function names and descriptions which are scraped from the TCC source code using doxygen.</p>
 <dl class="file">
 <dt>
 <span class="target" id="bonds_8c"></span><em>file</em> <code class="descname">bonds.c</code></dt>
@@ -1331,72 +1332,6 @@
 <dl class="function">
 <dt id="c.main">
 <span class="target" id="main_8c_1a3c04138a5bfe5d72780bb7e82a18e627"></span>int <code class="descname">main</code><span class="sig-paren">(</span>int<em>&nbsp;argc</em>, char **<em>&nbsp;argv</em><span class="sig-paren">)</span><a class="headerlink" href="#c.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric">Variables</p>
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1ac66f0c75c45d3125cc5ab73e322bd1cf"></span><code class="descname">char* cluster_names[]</code><p>= {“sp3a”, “sp3b”, “sp3c”, “sp4a”, “sp4b”, “sp4c”, “sp5a”, “sp5b”, “sp5c”,</p>
-<p>                         “6A”, “6Z”, “7K”, “7T_a”, “7T_s”, “8A”, “8B”, “8K”, “9A”, “9B”, “9K”, “10A”, “10B”,</p>
-<p>                         “10K”, “10W”, “11A”, “11B”, “11C”, “11E”, “11F”, “11W”, “12A”, “12B”, “12D”,</p>
-<p>                         “12E”, “12K”, “13A”, “13B”, “13K”, “FCC”, “HCP”, “BCC_9”, “-1”}</p>
-</dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1a7b76973a060b4a3179af3850a639d535"></span><code class="descname">int cluster_size[]</code><p>= {3, 4, 5, 4, 5, 6, 5, 6, 7,</p>
-<p>                      6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10,</p>
-<p>                      10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12,</p>
-<p>                      12, 12, 13, 13, 13, 13, 13, 9, -1}</p>
-</dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1aead29b33afcd92d58157fe62d3277618"></span><code class="descname">int* do_cluster_list[]</code><p>= {&amp;dosp3a, &amp;dosp3b, &amp;dosp3c, &amp;dosp4a, &amp;dosp4b, &amp;dosp4c, &amp;dosp5a, &amp;dosp5b, &amp;dosp5c,</p>
-<p>                          &amp;do6A, &amp;do6Z, &amp;do7K, &amp;do7T_a, &amp;do7T_s, &amp;do8A, &amp;do8B, &amp;do8K, &amp;do9A, &amp;do9B, &amp;do9K, &amp;do10A, &amp;do10B,</p>
-<p>                          &amp;do10K, &amp;do10W, &amp;do11A, &amp;do11B, &amp;do11C, &amp;do11E, &amp;do11F, &amp;do11W, &amp;do12A, &amp;do12B, &amp;do12D,</p>
-<p>                          &amp;do12E, &amp;do12K, &amp;do13A, &amp;do13B, &amp;do13K, &amp;doFCC, &amp;doHCP, &amp;doBCC9, NULL}</p>
-</dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1a1c0b545852beb3a68e0c2c0684576b05"></span><code class="descname">int* num_cluster_list[]</code><p>= {&amp;nsp3a, &amp;nsp3b, &amp;nsp3c, &amp;nsp4a, &amp;nsp4b, &amp;nsp4c, &amp;nsp5a, &amp;nsp5b, &amp;nsp5c,</p>
-<p>                           &amp;n6A, &amp;n6Z, &amp;n7K, &amp;n7T_a, &amp;n7T_s, &amp;n8A, &amp;n8B, &amp;n8K, &amp;n9A, &amp;n9B, &amp;n9K, &amp;n10A, &amp;n10B,</p>
-<p>                           &amp;n10K, &amp;n10W, &amp;n11A, &amp;n11B, &amp;n11C, &amp;n11E, &amp;n11F, &amp;n11W, &amp;n12A, &amp;n12B, &amp;n12D,</p>
-<p>                           &amp;n12E, &amp;n12K, &amp;n13A, &amp;n13B, &amp;n13K, &amp;nFCC, &amp;nHCP, &amp;nBCC_9, NULL}</p>
-</dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1abce33e7e13b369d7d03734a72f8aedc6"></span><code class="descname">char** raw_list[]</code><p>= {&amp;ssp3a, &amp;ssp3b, &amp;ssp3c, &amp;ssp4a, &amp;ssp4b, &amp;ssp4c, &amp;ssp5a, &amp;ssp5b, &amp;ssp5c,</p>
-<p>                     &amp;s6A, &amp;s6Z, &amp;s7K, &amp;s7T_a, &amp;s7T_s, &amp;s8A, &amp;s8B, &amp;s8K, &amp;s9A, &amp;s9B, &amp;s9K, &amp;s10A, &amp;s10B,</p>
-<p>                     &amp;s10K, &amp;s10W, &amp;s11A, &amp;s11B, &amp;s11C, &amp;s11E, &amp;s11F, &amp;s11W, &amp;s12A, &amp;s12B, &amp;s12D,</p>
-<p>                     &amp;s12E, &amp;s12K, &amp;s13A, &amp;s13B, &amp;s13K, &amp;sFCC, &amp;sHCP, &amp;sBCC_9, NULL}</p>
-</dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1a73fd280905f46c8733790295c8fdd309"></span><code class="descname">int*** cluster_list[]</code><p>= {&amp;hcsp3a, &amp;hcsp3b, &amp;hcsp3c, &amp;hcsp4a, &amp;hcsp4b, &amp;hcsp4c, &amp;hcsp5a, &amp;hcsp5b, &amp;hcsp5c,</p>
-<p>                         &amp;hc6A, &amp;hc6Z, &amp;hc7K, &amp;hc7T_a, &amp;hc7T_s, &amp;hc8A, &amp;hc8B, &amp;hc8K, &amp;hc9A, &amp;hc9B, &amp;hc9K, &amp;hc10A, &amp;hc10B,</p>
-<p>                         &amp;hc10K, &amp;hc10W, &amp;hc11A, &amp;hc11B, &amp;hc11C, &amp;hc11E, &amp;hc11F, &amp;hc11W, &amp;hc12A, &amp;hc12B, &amp;hc12D,</p>
-<p>                         &amp;hc12E, &amp;hc12K, &amp;hc13A, &amp;hc13B, &amp;hc13K, &amp;hcFCC, &amp;hcHCP, &amp;hcBCC_9, NULL}</p>
-</dt>
-<dd></dd></dl>
-
-<dl class="variable">
-<dt>
-<span class="target" id="main_8c_1ae80c16ae5a8fab6caa7e5180302a0f21"></span><code class="descname">int* cluster_list_width[]</code><p>= {&amp;msp3a, &amp;msp3b, &amp;msp3c, &amp;msp4a, &amp;msp4b, &amp;msp4c, &amp;msp5a, &amp;msp5b, &amp;msp5c,</p>
-<p>                             &amp;m6A, &amp;m6Z, &amp;m7K, &amp;m7T_a, &amp;m7T_s, &amp;m8A, &amp;m8B, &amp;m8K, &amp;m9A, &amp;m9B, &amp;m9K, &amp;m10A, &amp;m10B,</p>
-<p>                             &amp;m10K, &amp;m10W, &amp;m11A, &amp;m11B, &amp;m11C, &amp;m11E, &amp;m11F, &amp;m11W, &amp;m12A, &amp;m12B, &amp;m12D,</p>
-<p>                             &amp;m12E, &amp;m12K, &amp;m13A, &amp;m13B, &amp;m13K, &amp;mFCC, &amp;mHCP, &amp;mBCC_9, NULL}</p>
-</dt>
 <dd></dd></dl>
 
 </div>

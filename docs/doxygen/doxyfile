@@ -900,7 +900,13 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        = 
+EXCLUDE_SYMBOLS        = cluster_names \
+                         cluster_size \
+                         do_cluster_list \
+                         num_cluster_list \
+                         raw_list \
+                         cluster_list \
+                         cluster_list_width
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
