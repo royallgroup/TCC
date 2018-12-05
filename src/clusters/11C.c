@@ -4,21 +4,19 @@
 #include "tools.h"
 #include "11C.h"
 
+//!  An 11C cluster is the intersection of two 7A clusters with a common spindle
+/*!
+*  Find 11C clusters
+*  An 11C is two 7A clusters where:
+*      - There are two common particles between the two sp5 rings. These are a bonded pair.
+*      - There are two more bonds between two pairs of distinct particles in the sp5 ring.
+*
+*  Cluster output: SOOBBBBBBBB
+*  Storage order: common_spindle x 1, uncommon_spindles x 2, common_ring_1, common_ring_2,
+*  uncommon_bonded_ring_1_i, uncommon_bonded_ring_2_i, uncommon_bonded_ring_1_j, uncommon_bonded_ring_2_j, uncommon_unbonded x 2
+*
+*/
 void Clusters_Get11C() {
-
-    //!  An 11C cluster is the intersection of two 7A clusters with a common spindle
-    /*!
-   *  Find 11C clusters
-   *  An 11C is two 7A clusters where:
-   *      - There are two common particles between the two sp5 rings. These are a bonded pair.
-   *      - There are two more bonds between two pairs of distinct particles in the sp5 ring.
-   *
-   *  Cluster output: SOOBBBBBBBB
-   *  Storage order: common_spindle x 1, uncommon_spindles x 2, common_ring_1, common_ring_2,
-   *  uncommon_bonded_ring_1_i, uncommon_bonded_ring_2_i, uncommon_bonded_ring_1_j, uncommon_bonded_ring_2_j, uncommon_unbonded x 2
-   *
-   */
-
     int common_ring_particles[5];
     int uncommon_spindle[2];
     int common_spindle[2];

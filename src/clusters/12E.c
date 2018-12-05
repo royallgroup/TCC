@@ -3,19 +3,17 @@
 #include "simple_cluster_methods.h"
 #include "12E.h"
 
+//!  An 12E cluster is the intersection of an 11F and 5A cluster.
+/*!
+*  Find 12E clusters
+*  A 12E cluster is an 11F and 5A cluster where:
+*      - The spindle atoms of the 5A cluster are common with the uncommon spindle atoms of the 6A clusters constituting the 11F cluster.
+*      - Of the SP3 ring particles in the 5A cluster, two are common with rd1 and rd2 from the 11F cluster, and one is new.
+*
+*  Cluster output: BBBBBBBBBBBB
+*  Storage order: particles ordered by id x 12
+*/
 void Clusters_Get12E() {
-
-    //!  An 12E cluster is the intersection of an 11F and 5A cluster.
-    /*!
-   *  Find 12E clusters
-   *  A 12E cluster is an 11F and 5A cluster where:
-   *      - The spindle atoms of the 5A cluster are common with the uncommon spindle atoms of the 6A clusters constituting the 11F cluster.
-   *      - Of the SP3 ring particles in the 5A cluster, two are common with rd1 and rd2 from the 11F cluster, and one is new.
-   *
-   *  Cluster output: BBBBBBBBBBBB
-   *  Storage order: particles ordered by id x 12
-   */
-
     int common_particle_ids[4], trial[12];
 
     for (int first_11F_id = 0; first_11F_id < n11F; first_11F_id++) {

@@ -3,20 +3,18 @@
 #include "globals.h"
 #include "tools.h"
 
+//!  An 10W cluster is the intersection six sp5b which all share one spindle.
+/*!
+*  Find 10W clusters
+*  An 10W is six sp5b clusters where:
+*      - All clusters share the same spindle
+*      - The coordination number of this common spindle is 9.
+*  The reason this construction is chosen over simpler ones is that it is robust to different values of the voronoi parameter from 0.82 to 1.
+*
+*  Cluster output: SBBBBBBBB
+*  Storage order: central_spindle_particle, shell_particles x 9
+*/
 void Clusters_Get10W() {
-
-    //!  An 10W cluster is the intersection six sp5b which all share one spindle.
-    /*!
-   *  Find 10W clusters
-   *  An 10W is six sp5b clusters where:
-   *      - All clusters share the same spindle
-   *      - The coordination number of this common spindle is 9.
-   *  The reason this construction is chosen over simpler ones is that it is robust to different values of the voronoi parameter from 0.82 to 1.
-   *
-   *  Cluster output: SBBBBBBBB
-   *  Storage order: central_spindle_particle, shell_particles x 9
-   */
-
     int shell_ids[9], neighbouring_sp5_ids[5];
 
     for (int first_sp5b_id = 0; first_sp5b_id < nsp5b; ++first_sp5b_id) {

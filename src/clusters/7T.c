@@ -2,22 +2,20 @@
 #include <tools.h>
 #include "7T.h"
 
+//!  A 7T is made of a 6Z cluster with an additional particle.
+/*!
+*  Find 7Ta and 7Ts clusters
+*  7T is made made of a 6Z cluster and a 5A. Depending on where the location of the new 5A spindle,
+*  the cluster is either asymmetric (7Ta) or symmetric (7Ts)
+*  7T:
+*  - The 5A has one spindle common with the common ring particles of the 6A
+*  - For 7Ts the other 5A spindle is bonded to both 6Z bonded spindles
+*  - For 7TA the other 5A spindle is bonded to one bonded 6Z spindle and one unbonded 6Z spindle
+*
+*  Cluster output: BBBBBBB
+*  Storage order: original 6Z particles x 6, new 5A spindle)
+*/
 void Clusters_Get7T() {
-
-     //!  A 7T is made of a 6Z cluster with an additional particle.
-     /*!
-    *  Find 7Ta and 7Ts clusters
-    *  7T is made made of a 6Z cluster and a 5A. Depending on where the location of the new 5A spindle,
-    *  the cluster is either asymmetric (7Ta) or symmetric (7Ts)
-    *  7T:
-    *  - The 5A has one spindle common with the common ring particles of the 6A
-    *  - For 7Ts the other 5A spindle is bonded to both 6Z bonded spindles
-    *  - For 7TA the other 5A spindle is bonded to one bonded 6Z spindle and one unbonded 6Z spindle
-    *
-    *  Cluster output: BBBBBBB
-    *  Storage order: original 6Z particles x 6, new 5A spindle)
-    */
-
     for (int old_6Z_id = 0; old_6Z_id < n6Z; ++old_6Z_id) {
         int *old_6Z_cluster = hc6Z[old_6Z_id];
         for (int spindle_pointer = 4; spindle_pointer < 6; ++spindle_pointer) {

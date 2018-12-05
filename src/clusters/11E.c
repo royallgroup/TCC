@@ -4,25 +4,23 @@
 #include <clusters/12D.h>
 #include "11E.h"
 
+//!  An 11E cluster is the intersection of a 9B and a 7A
+/*!
+*  Find 11E clusters
+*  An 11E is a 9B and a 7A where:
+*      - One 7A spindle particle is common to one of the uncommon spindle particles, sd1,
+*      in the 7A clusters constituting the 9B cluster.
+*      - The other spindle particle of the additional 7A is labeled sd3 and is bonded to the
+*      other uncommon spindle particle sd2 in 9B and the common spindle particle sc of 9B.
+*      Of the 7A cluster sp5 ring particles, one is common to the common with sc, one is common
+*      with sd2, and one is common to one of the uncommon sp5 ring particles  of the 9B cluster.
+*      The final two sp5 ring particles are distinct from the 9B cluster.
+*
+*  Cluster output: OOOOBBBBBBB
+*  Storage order: unknown
+*
+*/
 void Clusters_Get11E_12D(int i, int j, int sp1, int sp2i, int sp2j) {
-
-    //!  An 11E cluster is the intersection of a 9B and a 7A
-    /*!
-   *  Find 11E clusters
-   *  An 11E is a 9B and a 7A where:
-   *      - One 7A spindle particle is common to one of the uncommon spindle particles, sd1,
-   *      in the 7A clusters constituting the 9B cluster.
-   *      - The other spindle particle of the additional 7A is labeled sd3 and is bonded to the
-   *      other uncommon spindle particle sd2 in 9B and the common spindle particle sc of 9B.
-   *      Of the 7A cluster sp5 ring particles, one is common to the common with sc, one is common
-   *      with sd2, and one is common to one of the uncommon sp5 ring particles  of the 9B cluster.
-   *      The final two sp5 ring particles are distinct from the 9B cluster.
-   *
-   *  Cluster output: OOOOBBBBBBB
-   *  Storage order: unknown
-   *
-   */
-
     int k, l, m, n;
     int trial[11];
     int break_out,break_out2;

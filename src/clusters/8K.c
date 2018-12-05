@@ -3,20 +3,18 @@
 #include "globals.h"
 #include "tools.h"
 
+//!  An 8K cluster is the intersection of 3 5A clusters.
+/*!
+*  Find 8K clusters
+*  An 8B is 3 5A clusters where:
+*      - There are two common particles in the sp3 rings of 5Ai, 5Aj and 5Ak.
+*      - There is one unique particle in each of the 5Ai, 5Aj and 5Ak rings.
+*      - There is one common spindle between each pair of 5As
+*
+*  Cluster output: OOBBBBBB
+*  Storage order: common_ring_particles x2, spindles x 3, uncommon_ring_particles x 3
+*/
 void Clusters_Get8K() {
-
-    //!  An 8K cluster is the intersection of 3 5A clusters.
-    /*!
-   *  Find 8K clusters
-   *  An 8B is 3 5A clusters where:
-   *      - There are two common particles in the sp3 rings of 5Ai, 5Aj and 5Ak.
-   *      - There is one unique particle in each of the 5Ai, 5Aj and 5Ak rings.
-   *      - There is one common spindle between each pair of 5As
-   *
-   *  Cluster output: OOBBBBBB
-   *  Storage order: common_ring_particles x2, spindles x 3, uncommon_ring_particles x 3
-   */
-
     int k, l, m, n;
     int common_ring_particle_ids[2], uncommon_ring_particle_ids[3], common_spindle_ids[2], other_spindle_ids[2];
     int clusSize = 8;

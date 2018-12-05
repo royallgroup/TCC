@@ -3,21 +3,19 @@
 #include "9K.h"
 #include "simple_cluster_methods.h"
 
+//!  An 9K cluster is the intersection of two 6A clusters sharing a spindle and two ring particles.
+/*!
+*  Find 9K clusters
+*  An 9K is 2 6A clusters where:
+*      - There is one common spindle.
+*      - The uncommon spindles are not in the opposite cluster.
+*      - There are two common particles between the two 6A rings
+*      - The uncommon sp4 ring particle are bonded
+*
+*  Cluster output: BBBBBBOOO
+*  Storage order: common_ring_particles x 2, uncommon_ring_particles x 4, uncommon_spindles x 2, common_spindle
+*/
 void Clusters_Get9K() {
-
-    //!  An 9K cluster is the intersection of two 6A clusters sharing a spindle and two ring particles.
-    /*!
-   *  Find 9K clusters
-   *  An 9K is 2 6A clusters where:
-   *      - There is one common spindle.
-   *      - The uncommon spindles are not in the opposite cluster.
-   *      - There are two common particles between the two 6A rings
-   *      - The uncommon sp4 ring particle are bonded
-   *
-   *  Cluster output: BBBBBBOOO
-   *  Storage order: common_ring_particles x 2, uncommon_ring_particles x 4, uncommon_spindles x 2, common_spindle
-   */
-
     int common_ring_particle_ids[5], common_spindle_ids[2], uncommon_spindle_particles[2], uncommon_ring_particles[4];
 
     for(int first_6A_id = 0; first_6A_id < nsp4c; ++first_6A_id) {

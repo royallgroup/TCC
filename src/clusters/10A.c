@@ -4,20 +4,18 @@
 #include <clusters/simple_cluster_methods.h>
 #include "10A.h"
 
+//!  An 10A cluster is the two bonded sp4b clusters with no common particles.
+/*!
+*  Find 10A clusters
+*  An 10A is 2 sp4b clusters where:
+*      - There are no common particles.
+*      - The spindles are not bonded.
+*      - Each particle in each sp4 ring is bonded to exactly two particles in the other sp4 ring
+*
+*  Cluster output: BBBBBBBOO
+*  Storage order: first_sp4b_ring x 4, second_sp4b_ring x 4, firrst_sp4b_spindle, second_sp4b_spindle
+*/
 void Clusters_Get10A() {
-
-    //!  An 10A cluster is the two bonded sp4b clusters with no common particles.
-    /*!
-   *  Find 10A clusters
-   *  An 10A is 2 sp4b clusters where:
-   *      - There are no common particles.
-   *      - The spindles are not bonded.
-   *      - Each particle in each sp4 ring is bonded to exactly two particles in the other sp4 ring
-   *
-   *  Cluster output: BBBBBBBOO
-   *  Storage order: first_sp4b_ring x 4, second_sp4b_ring x 4, firrst_sp4b_spindle, second_sp4b_spindle
-   */
-
     int neighbour_pointer, k, l, m;
     int *used_sp4b;
 

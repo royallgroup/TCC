@@ -3,22 +3,20 @@
 #include <tools.h>
 #include "10B.h"
 
+//!  An 10B cluster is the intersection of a 9B and a 7A cluster.
+/*!
+*  Find 10B clusters
+*  An 10A is a 9B and 7A cluster where:
+*      -  One spindle from 7A is common to the common spindle particle of the 9B cluster
+*      -  The other spindle from 7A is bonded to the two distinct spindles of 9B.
+*      -  Two sp5 ring particles from 7A are common with the distinct spindles of 9B.
+*      -  Two sp5 ring particles from 7A are common with the distinct sp5 particles of 9B.
+*      -  The final sp5 ring particle from 7A is distinct from the 9B cluster.
+*
+*  Cluster output: BBBBBBOOOS
+*  Storage order: ordered_shell_particles x 6, spindles x 3, common_spindle
+*/
 void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
-
-    //!  An 10B cluster is the intersection of a 9B and a 7A cluster.
-    /*!
-   *  Find 10B clusters
-   *  An 10A is a 9B and 7A cluster where:
-   *      -  One spindle from 7A is common to the common spindle particle of the 9B cluster
-   *      -  The other spindle from 7A is bonded to the two distinct spindles of 9B.
-   *      -  Two sp5 ring particles from 7A are common with the distinct spindles of 9B.
-   *      -  Two sp5 ring particles from 7A are common with the distinct sp5 particles of 9B.
-   *      -  The final sp5 ring particle from 7A is distinct from the 9B cluster.
-   *
-   *  Cluster output: BBBBBBOOOS
-   *  Storage order: ordered_shell_particles x 6, spindles x 3, common_spindle
-   */
-
     int k,l,m;
     int flg1, flg2;
     int trial[10];

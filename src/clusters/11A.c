@@ -4,19 +4,18 @@
 #include "tools.h"
 #include "bonds.h"
 
+//!  An 11A cluster is the intersection two 6A clusters with a common spindle
+/*!
+*  Find 11A clusters
+*  An 11A is two 6A clusters where:
+*      - There is one common spindle particle
+*      - All other particles are distinct.
+*      - Each particle in each ring is bonded to exactly 2 particles in the other ring
+*
+*  Cluster output: BBBBBBBBOOS
+*  Storage order: sp4_i x 4, sp4_j x 4, uncommon_spindles x 2, common_spindle
+*/
 void Clusters_Get11A() {
-
-    //!  An 11A cluster is the intersection two 6A clusters with a common spindle
-    /*!
-   *  Find 11A clusters
-   *  An 11A is two 6A clusters where:
-   *      - There is one common spindle particle
-   *      - All other particles are distinct.
-   *      - Each particle in each ring is bonded to exactly 2 particles in the other ring
-   *
-   *  Cluster output: BBBBBBBBOOS
-   *  Storage order: sp4_i x 4, sp4_j x 4, uncommon_spindles x 2, common_spindle
-   */
     int common_spindle_id[2], uncommon_spindle_ids[2];
     int common_ring_particles[2];
 
