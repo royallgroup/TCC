@@ -8,7 +8,6 @@
 
 int box_type;                    //if the system in non-cubic or NPT, get box size info from a datafile
 int frames_to_analyse;           // frames to read from input xmol file
-int SAMPLEFREQ;                  // frequency at which to take frames from the xmol file
 int num_cluster_types;           // The number of items in the cluster names array
 
 extern int cluster_size[];        // A list of the number of particles in each cluster type

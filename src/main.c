@@ -72,7 +72,6 @@ int* cluster_list_width[] = {&msp3a, &msp3b, &msp3c, &msp4a, &msp4b, &msp4c, &ms
 
 int main(int argc, char **argv) {
     int current_frame_number;
-    int remainder;
     struct xyz_info input_xyz_info;
 
     print_version_number();
@@ -82,61 +81,48 @@ int main(int argc, char **argv) {
     analyse_cluster_dependencies();
 
     input_xyz_info = parse_xyz_file();
-
-    parse_box_file(input_xyz_info.total_frames);
+    frames_to_analyse = check_frame_numbers(input_xyz_info.total_frames);
+    parse_box_file(frames_to_analyse);
 
     initialise_run_variables();
     Setup_Output_Files();
 
-    if(frames_to_analyse > input_xyz_info.total_frames) {
-        frames_to_analyse = input_xyz_info.total_frames;
-    }
-
     for (current_frame_number = 0; current_frame_number < frames_to_analyse; current_frame_number++) {
-        remainder = current_frame_number % SAMPLEFREQ;
 
-        if (remainder == 0) {
-            printf("Processing frame %d.\n", current_frame_number);
-            particles_in_current_frame = input_xyz_info.num_particles[current_frame_number];
-            initialise_frame_variables();
-
-            get_box_size(current_frame_number);
-            get_frame_coordinates_from_xyz(&input_xyz_info, current_frame_number);
-
-            build_bond_network(current_frame_number);
-
-            if (dosp3 == 1) get_basic_clusters();
-            if (do6Z == 1) Clusters_Get6Z();
-            if (do7K == 1) Clusters_Get7K();
-            if (do7T_a == 1 || do7T_s == 1) Clusters_Get7T();
-            if (do8A == 1) Clusters_Get8A();
-            if (do8B == 1) Clusters_Get8B();
-            if (do8K == 1) Clusters_Get8K();
-            if (do9A == 1) Clusters_Get9A();
-            if (do9B == 1) Clusters_Get9B_10B_11B_11E_12D();
-            if (do9K == 1) Clusters_Get9K();
-            if (do10A == 1) Clusters_Get10A();
-            if (do10K == 1) Clusters_Get10K();
-            if (do10W == 1) Clusters_Get10W();
-            if (do11A == 1) Clusters_Get11A();
-            if (do11C == 1) Clusters_Get11C();
-            if (do11F == 1) Clusters_Get11F_13K();
-            if (do11W == 1) Clusters_Get11W();
-            if (do12A == 1) Clusters_Get12A();
-            if (do12B == 1) Clusters_Get12B_13A();
-            if (do12E == 1) Clusters_Get12E();
-            if (do12K == 1) Clusters_Get12K();
-            if (do13B == 1) Clusters_Get13B();
-            if (doFCC == 1) Clusters_GetFCC();
-            if (doHCP == 1) Clusters_GetHCP();
-            if (doBCC9 == 1) Clusters_GetBCC_9();
-
-            write_output_files(current_frame_number);
-
-            free_frame_variables();
-
-            printf("Cluster analysis for frame %d complete\n\n", current_frame_number);
-        }
+        printf("Processing frame %d.\n", current_frame_number);
+        particles_in_current_frame = input_xyz_info.num_particles[current_frame_number];
+        initialise_frame_variables();
+        get_box_size(current_frame_number);
+        get_frame_coordinates_from_xyz(&input_xyz_info, current_frame_number);
+        build_bond_network(current_frame_number);
+        if (dosp3 == 1) get_basic_clusters();
+        if (do6Z == 1) Clusters_Get6Z();
+        if (do7K == 1) Clusters_Get7K();
+        if (do7T_a == 1 || do7T_s == 1) Clusters_Get7T();
+        if (do8A == 1) Clusters_Get8A();
+        if (do8B == 1) Clusters_Get8B();
+        if (do8K == 1) Clusters_Get8K();
+        if (do9A == 1) Clusters_Get9A();
+        if (do9B == 1) Clusters_Get9B_10B_11B_11E_12D();
+        if (do9K == 1) Clusters_Get9K();
+        if (do10A == 1) Clusters_Get10A();
+        if (do10K == 1) Clusters_Get10K();
+        if (do10W == 1) Clusters_Get10W();
+        if (do11A == 1) Clusters_Get11A();
+        if (do11C == 1) Clusters_Get11C();
+        if (do11F == 1) Clusters_Get11F_13K();
+        if (do11W == 1) Clusters_Get11W();
+        if (do12A == 1) Clusters_Get12A();
+        if (do12B == 1) Clusters_Get12B_13A();
+        if (do12E == 1) Clusters_Get12E();
+        if (do12K == 1) Clusters_Get12K();
+        if (do13B == 1) Clusters_Get13B();
+        if (doFCC == 1) Clusters_GetFCC();
+        if (doHCP == 1) Clusters_GetHCP();
+        if (doBCC9 == 1) Clusters_GetBCC_9();
+        write_output_files(current_frame_number);
+        free_frame_variables();
+        printf("Cluster analysis for frame %d complete\n\n", current_frame_number);
     }
 
     // Do post analysis statistics

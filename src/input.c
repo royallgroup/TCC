@@ -32,7 +32,6 @@ void read_ini_file() {
     //run
     strcpy(fXmolName, (char*)iniparser_getstring(ini, "run:xyzfilename", "sample.xyz"));
     frames_to_analyse = iniparser_getint(ini, "run:frames", 1);
-    SAMPLEFREQ = iniparser_getint(ini, "run:sample_freqency", 1);
 
     //simulation
     rcutAA = iniparser_getdouble(ini, "simulation:rcutAA", 1.8);
@@ -70,7 +69,7 @@ void read_ini_file() {
     // print out values read from ini file
     printf("XYZ file name:%s Box file name:%s\n", fXmolName, fBoxSizeName);
     printf("Box type: %d\n",box_type);
-    printf("Number of frames to analyse: %d Sample frequency: %d\n",frames_to_analyse, SAMPLEFREQ);
+    printf("Number of frames to analyse: %d\n",frames_to_analyse);
     printf("A-A bond cut-off length: %lg A-B bond cut-off length: %lg B-B bond cut-off length: %lg\n", rcutAA, rcutAB, rcutBB);
     printf("Voronoi bond detection: %d Periodic boundary conditions: %d Voronoi fc parameter: %lg maximum number of bonds per particle: %d Use cell list for bond detection: %d\n", use_voronoi_bonds, PBCs, fc, max_num_bonds, use_cell_list);
     printf("Write bonds file: %d Write cluster files: %d Write raw files: %d Write PopPerFrame: %d\n", doWriteBonds, doWriteClus, doWriteRaw, doWritePopPerFrame);
@@ -167,7 +166,7 @@ void get_box_file_offsets(FILE *read_box_file, int total_frames) {
     if(box_type==2) num_items=3;
     else num_items=6;
 
-    for(frame=0; frame<total_frames; frame++) {
+    for (frame = 0; frame < total_frames; frame++) {
 
         box_offsets[frame] = ftell(read_box_file);
         fgets(line, 1000, read_box_file);
@@ -359,4 +358,12 @@ void get_coords_from_line(int frame_number, FILE *xyzfile, int particle) {
     x[particle] = temp_coord[0];
     y[particle] = temp_coord[1];
     z[particle] = temp_coord[2];
+}
+
+int check_frame_numbers(int num_xyz_frames) {
+    if(frames_to_analyse > num_xyz_frames) {
+        printf("\nWarning: Number of frames to analyse in inputparameters.ini is greater then the number of frames in the XYZ coordinates file.\n\n");
+        frames_to_analyse = num_xyz_frames;
+    }
+    return(frames_to_analyse);
 }
