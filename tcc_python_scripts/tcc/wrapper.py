@@ -27,6 +27,9 @@ class TCCWrapper:
     data they need (for e.g. postprocessing) and store this somewhere.
 
     Attributes:
+        working_directory: The directory in which the TCC will run
+        tcc_executable_directory: The directory containing the TCC executable
+        tcc_executable_path: The full path of the TCC executable
         input_parameters['Box']: TCC box paramaters used for TCC run
         input_parameters['Run']: TCC run paramaters used for TCC run
         input_parameters['Simulation']: TCC simulation paramaters used for TCC run
@@ -38,6 +41,7 @@ class TCCWrapper:
         """On initialisation we have to create a temporary directory
         where file operations will be performed behind the scenes."""
         self.working_directory = None
+        self.tcc_executable_directory = None
         self.tcc_executable_path = None
         self.input_parameters = dict()
         self.input_parameters['Box'] = dict()
@@ -65,7 +69,7 @@ class TCCWrapper:
             pandas table containing the static cluster information
         """
 
-        self.check_tcc_executable_path()
+        self._check_tcc_executable_path()
         self._set_up_working_directory(output_directory)
 
         # Create the INI file.
@@ -90,8 +94,13 @@ class TCCWrapper:
             print("Error: TCC was not able to run.")
             raise Exception
 
-    def set_tcc_executable_path(self, path):
-        self.tcc_executable_path = path
+    def set_tcc_executable_directory(self, path):
+        """A method for setting the directory containing the compiled TCC executable.
+
+        Args:
+            path: The directory containing the compiled TCC executable.
+        """
+        self.tcc_executable_directory = path
 
     def _set_up_working_directory(self, output_directory):
         """
@@ -99,7 +108,7 @@ class TCCWrapper:
 
         Args:
             output_directory (str):  If None run the TCC in a temporary directory.
-                If a path then run the TCC there
+                If a path then run the TCC there.
         """
         if output_directory is None:
             self.working_directory = tempfile.mkdtemp(prefix='TCC_')
@@ -113,13 +122,13 @@ class TCCWrapper:
                     raise os.error
             self.working_directory = output_directory
 
-    def check_tcc_executable_path(self):
+    def _check_tcc_executable_path(self):
         """Check the provided path for the tcc executable is valid.
         
         Returns:
             If provided executable path is valid, returns full path, else raises FileNotFoundError.
         """
-        bin_directory = os.path.abspath(self.tcc_executable_path)
+        bin_directory = os.path.abspath(self.tcc_executable_directory)
         if platform.system() == "Windows":
             tcc_exe = bin_directory + "\\tcc.exe"
         else:

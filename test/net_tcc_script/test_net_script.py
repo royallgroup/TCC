@@ -1,6 +1,6 @@
 import filecmp
 import os
-from tcc_python_scripts.net_clusters import net
+from tcc_python_scripts.post_processing import net
 
 
 class cd:
@@ -40,7 +40,7 @@ class FileChecks:
 
 
 def test_basic_configuration():
-    with cd("./test/net_tcc_script/basic_configuration"):
+    with cd("test/net_tcc_script/basic_configuration"):
         assert FileOperations.run_net() == 0
         assert FileChecks.check_net() is True
         assert FileOperations.tidy() == 0
