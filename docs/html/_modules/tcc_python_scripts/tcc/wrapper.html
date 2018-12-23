@@ -14,6 +14,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -78,6 +79,7 @@
         <span class="sd">&quot;&quot;&quot;On initialisation we have to create a temporary directory</span>
 <span class="sd">        where file operations will be performed behind the scenes.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">working_directory</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tcc_executable_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;Box&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;Run&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -104,7 +106,7 @@
 <span class="sd">            pandas table containing the static cluster information</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">tcc_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tcc_executable_path</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_tcc_executable_path</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_up_working_directory</span><span class="p">(</span><span class="n">output_directory</span><span class="p">)</span>
 
         <span class="c1"># Create the INI file.</span>
@@ -118,9 +120,9 @@
 
         <span class="c1"># Run the TCC executable.</span>
         <span class="k">if</span> <span class="n">silent</span><span class="p">:</span>
-            <span class="n">subprocess_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">tcc_path</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">working_directory</span><span class="p">)</span>
+            <span class="n">subprocess_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tcc_executable_path</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">working_directory</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">subprocess_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">tcc_path</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">working_directory</span><span class="p">)</span>
+            <span class="n">subprocess_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tcc_executable_path</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">working_directory</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">subprocess_result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_static_clusters</span><span class="p">()</span>
@@ -128,6 +130,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="fm">__del__</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: TCC was not able to run.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span></div>
+
+<div class="viewcode-block" id="TCCWrapper.set_tcc_executable_path"><a class="viewcode-back" href="../../../tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_tcc_executable_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tcc_executable_path</span> <span class="o">=</span> <span class="n">path</span></div>
 
     <span class="k">def</span> <span class="nf">_set_up_working_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -149,22 +154,21 @@
                     <span class="k">raise</span> <span class="n">os</span><span class="o">.</span><span class="n">error</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">working_directory</span> <span class="o">=</span> <span class="n">output_directory</span>
 
-<div class="viewcode-block" id="TCCWrapper.get_tcc_executable_path"><a class="viewcode-back" href="../../../tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_tcc_executable_path</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;Find the full path for the tcc executable. It is expected to be in ../../bin relative this this script</span>
+<div class="viewcode-block" id="TCCWrapper.check_tcc_executable_path"><a class="viewcode-back" href="../../../tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.check_tcc_executable_path">[docs]</a>    <span class="k">def</span> <span class="nf">check_tcc_executable_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check the provided path for the tcc executable is valid.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
-<span class="sd">            (str) Full path of TCC executable.</span>
+<span class="sd">            If provided executable path is valid, returns full path, else raises FileNotFoundError.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bin_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/../../bin/&#39;</span><span class="p">)</span>
+        <span class="n">bin_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tcc_executable_path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
             <span class="n">tcc_exe</span> <span class="o">=</span> <span class="n">bin_directory</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">tcc.exe&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tcc_exe</span> <span class="o">=</span> <span class="n">bin_directory</span> <span class="o">+</span> <span class="s2">&quot;/tcc&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tcc_exe</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">tcc_exe</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tcc_executable_path</span> <span class="o">=</span> <span class="n">tcc_exe</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TCC executable not found in bin directory.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TCC executable not found in provided directory.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span></div>
 
     <span class="k">def</span> <span class="nf">_serialise_input_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">):</span>
@@ -265,7 +269,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Peter Crowther.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

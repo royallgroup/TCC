@@ -38,6 +38,7 @@ class TCCWrapper:
         """On initialisation we have to create a temporary directory
         where file operations will be performed behind the scenes."""
         self.working_directory = None
+        self.tcc_executable_path = None
         self.input_parameters = dict()
         self.input_parameters['Box'] = dict()
         self.input_parameters['Run'] = dict()
@@ -64,7 +65,7 @@ class TCCWrapper:
             pandas table containing the static cluster information
         """
 
-        tcc_path = self.get_tcc_executable_path()
+        self.check_tcc_executable_path()
         self._set_up_working_directory(output_directory)
 
         # Create the INI file.
@@ -78,9 +79,9 @@ class TCCWrapper:
 
         # Run the TCC executable.
         if silent:
-            subprocess_result = subprocess.run([tcc_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.working_directory)
+            subprocess_result = subprocess.run(self.tcc_executable_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.working_directory)
         else:
-            subprocess_result = subprocess.run([tcc_path], cwd=self.working_directory)
+            subprocess_result = subprocess.run(self.tcc_executable_path, cwd=self.working_directory)
 
         if subprocess_result.returncode == 0:
             return self._parse_static_clusters()
@@ -88,6 +89,9 @@ class TCCWrapper:
             self.__del__()
             print("Error: TCC was not able to run.")
             raise Exception
+
+    def set_tcc_executable_path(self, path):
+        self.tcc_executable_path = path
 
     def _set_up_working_directory(self, output_directory):
         """
@@ -109,22 +113,21 @@ class TCCWrapper:
                     raise os.error
             self.working_directory = output_directory
 
-    @staticmethod
-    def get_tcc_executable_path():
-        """Find the full path for the tcc executable. It is expected to be in ../../bin relative this this script
+    def check_tcc_executable_path(self):
+        """Check the provided path for the tcc executable is valid.
         
         Returns:
-            (str) Full path of TCC executable.
+            If provided executable path is valid, returns full path, else raises FileNotFoundError.
         """
-        bin_directory = os.path.abspath(os.path.dirname(__file__) + '/../../bin/')
+        bin_directory = os.path.abspath(self.tcc_executable_path)
         if platform.system() == "Windows":
             tcc_exe = bin_directory + "\\tcc.exe"
         else:
             tcc_exe = bin_directory + "/tcc"
         if os.path.exists(tcc_exe):
-            return tcc_exe
+            self.tcc_executable_path = tcc_exe
         else:
-            print("TCC executable not found in bin directory.")
+            print("TCC executable not found in provided directory.")
             raise FileNotFoundError
 
     def _serialise_input_parameters(self, output_filename):
