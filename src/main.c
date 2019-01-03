@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
         if (do8B == 1) Clusters_Get8B();
         if (do8K == 1) Clusters_Get8K();
         if (do9A == 1) Clusters_Get9A();
-        if (do9B == 1) Clusters_Get9B_10B_11B_11E_12D();
+        if (do9B == 1) Clusters_Get9B_10B_11E_12D();
         if (do9K == 1) Clusters_Get9K();
         if (do10A == 1) Clusters_Get10A();
         if (do10K == 1) Clusters_Get10K();

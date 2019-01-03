@@ -21,7 +21,6 @@
 int Clusters_Get11B() {
 
     for (int parent_9B_id = 0; parent_9B_id < n9B; ++parent_9B_id) {
-        int extra_particles[18];
 
         int *parent_9B_cluster = hc9B[parent_9B_id];
 
@@ -32,6 +31,7 @@ int Clusters_Get11B() {
 
         // Check that there are exactly 2 particles bonded to the 9B center that are not in the 9B.
         int *parent_9B_center_neighbours = bond_list[parent_9B_cluster[8]];
+        int extra_particles[18];
         if(count_uncommon_particles(parent_9B_center_neighbours, parent_9B_cluster, 10, 8, extra_particles) != 2) {
             continue;
         }
@@ -45,8 +45,9 @@ int Clusters_Get11B() {
         int bonded_b[8], bonded_c[8], num_bonded_b, num_bonded_c;
         num_bonded_b = count_cluster_bonds_to_particle(extra_particles[0], parent_9B_cluster, 8, bonded_b);
         num_bonded_c = count_cluster_bonds_to_particle(extra_particles[1], parent_9B_cluster, 8, bonded_c);
-
-        if(num_bonded_b != 2 || num_bonded_c != 2) return 0;
+        if(num_bonded_b != 2 || num_bonded_c != 2) {
+            continue;
+        }
 
         // Particles bonded to the extra particles must be distinct.
         if (are_clusters_distinct(bonded_b, bonded_c, 2, 2) == 0) {
@@ -60,7 +61,6 @@ int Clusters_Get11B() {
 
         // There must be either bonds between (b1-c1 and b2-c2)
         // or bonds between b1-c2 and b2-c1
-
         int bond_b1_c1, bond_b1_c2, bond_b2_c1, bond_b2_c2;
         bond_b1_c1 = Bonds_BondCheck(bonded_b[0], bonded_c[0]);
         bond_b1_c2 = Bonds_BondCheck(bonded_b[0], bonded_c[1]);
@@ -74,8 +74,6 @@ int Clusters_Get11B() {
             Cluster_Write_11B(extra_particles, parent_9B_id);
         }
     }
-
-
 }
 
 void Cluster_Write_11B(const int *extra_particles, int parent_9B_id) {

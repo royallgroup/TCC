@@ -19,7 +19,7 @@
 *  Cluster output: BBBBBBOOS
 *  Storage order: SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com
 */
-void Clusters_Get9B_10B_11B_11E_12D() {
+void Clusters_Get9B_10B_11E_12D() {
     int common_spindle_particle_ids[2], sp2i, sp2j;
     int sp5com[2];
     int k;
