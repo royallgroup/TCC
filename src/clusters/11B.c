@@ -57,17 +57,27 @@ int Clusters_Get11B() {
         return 0;
     }
 
-    int bond_1_1, bond_1_2, bond_2_1, bond_2_2;
-    bond_1_1 = Bonds_BondCheck(bonded_b[0], bonded_c[0]);
-    bond_1_2 = Bonds_BondCheck(bonded_b[0], bonded_c[1]);
-    bond_2_1 = Bonds_BondCheck(bonded_b[1], bonded_c[0]);
-    bond_2_2 = Bonds_BondCheck(bonded_b[1], bonded_c[1]);
-    if(!((bond_1_1 && !bond_1_2) || (!bond_1_1 && bond_1_2))) return 0;
-    if(!((bond_2_1 && !bond_2_2) || (!bond_2_1 && bond_2_2))) return 0;
+    // There must be either bonds between (b1-c1 and b2-c2)
+    // or bonds between b1-c2 and b2-c1
 
-    Cluster_Write_11B(extra_particles);
+    int bond_b1_c1, bond_b1_c2, bond_b2_c1, bond_b2_c2;
+    bond_b1_c1 = Bonds_BondCheck(bonded_b[0], bonded_c[0]);
+    bond_b1_c2 = Bonds_BondCheck(bonded_b[0], bonded_c[1]);
+    bond_b2_c1 = Bonds_BondCheck(bonded_b[1], bonded_c[0]);
+    bond_b2_c2 = Bonds_BondCheck(bonded_b[1], bonded_c[1]);
 
-    return 1;
+    if(bond_b1_c1 && bond_b2_c2 && !bond_b1_c2 && !bond_b2_c1) {
+        Cluster_Write_11B(extra_particles);
+        return 1;
+    }
+    else if(bond_b1_c2 && bond_b2_c1 && !bond_b1_c1 && !bond_b2_c2) {
+        Cluster_Write_11B(extra_particles);
+        return 1;
+    }
+    else {
+        return 0;
+    }
+
 }
 
 void Cluster_Write_11B(int *extra_particles) {
