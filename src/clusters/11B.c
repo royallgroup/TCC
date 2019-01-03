@@ -18,43 +18,57 @@
 *  Storage order: as_for_9B x 9, extra_particles x 2
 */
 int Clusters_Get11B() {
-    int l, m;
+
     int b1[2], b2[2], nb1, nb2;
     int extra_particles[2]; // The two extra particles
     int flg11, flg12, flg21, flg22;
     int break_out;
 
-    if(num_bonds[hc9B[n9B][8]] != 10) {
+    int *parent_9B_cluster = hc9B[n9B];
+    int center_9B_id = parent_9B_cluster[8];
+
+    if(num_bonds[parent_9B_cluster[8]] != 10) {
         return 0; // s_com has 10 bonds in total (all forming the shell)
     }
 
-    m = 0;
-    break_out=0;
-    for(int k=0; k<10; ++k) {
-        for(l=0; l<8; ++l) {
-            if(bond_list[hc9B[n9B][8]][k] == hc9B[n9B][l]) break;
-        }
-        if(l==8){
-            if(m==2) {
-                break_out=1;
+    int *potential_11B = bond_list[center_9B_id];
+
+    // Check that there are exactly 2 particles bonded to the 9B center that are not in the 9B.
+    int num_extra_particles = 0;
+    break_out = 0;
+    for (int k = 0; k < 10; ++k) {
+        int pointer_9B;
+        for (pointer_9B = 0; pointer_9B < 8; ++pointer_9B) {
+            if (potential_11B[k] == parent_9B_cluster[pointer_9B]) {
                 break;
             }
-            extra_particles[m++] = bond_list[hc9B[n9B][8]][k];    // two extra particles
+        }
+        if (pointer_9B == 8) {
+            if (num_extra_particles == 2) {
+                break_out = 1;
+                break;
+            }
+            extra_particles[num_extra_particles++] = potential_11B[k];
         }
     }
-    if(break_out == 1 || m < 2) return 0;
+    if (break_out == 1 || num_extra_particles < 2) return 0;
 
-    if(Bonds_BondCheck(extra_particles[0], extra_particles[1])==0) return 0;  // extra particles must be bonded
+    // Check the two extra particles are bonded to each other
+    if(Bonds_BondCheck(extra_particles[0], extra_particles[1])==0) {
+        return 0;
+    }
+
+    // Check that both of the extra particles are bonded to exactly two 9B shell particles.
     nb1 = nb2 = 0;
     for(int k=0; k<8; ++k){
-        if(Bonds_BondCheck(hc9B[n9B][k], extra_particles[0])){
+        if(Bonds_BondCheck(parent_9B_cluster[k], extra_particles[0])){
             if(nb1 == 2) return 0;  // extra particle 1 bonded to 2 members of 9B shell
-            b1[nb1]=hc9B[n9B][k];
+            b1[nb1]=parent_9B_cluster[k];
             nb1++;
         }
-        if(Bonds_BondCheck(hc9B[n9B][k], extra_particles[1])){
+        if(Bonds_BondCheck(parent_9B_cluster[k], extra_particles[1])){
             if(nb2 == 2) return 0;  // extra particle 2 bonded to 2 members of 9B shell
-            b2[nb2]=hc9B[n9B][k];
+            b2[nb2]=parent_9B_cluster[k];
             nb2++;
         }
     }
