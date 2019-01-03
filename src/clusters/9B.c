@@ -115,7 +115,6 @@ void Clusters_Get9B_10B_11B_11E_12D() {
                                 if (do10B == 1) Clusters_Get10B(second_7A_id);
                                 if (do11B == 1) {
                                     if (Clusters_Get11B()) {
-                                        s11B[hc9B[n9B][8]] = 'S';
                                         ++n11B;
                                     }
                                 }

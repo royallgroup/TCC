@@ -9,11 +9,11 @@
 *  Find 11B clusters
 *  An 11A is a 9B and two extra particles where:
 *      - The common spindle particle from the 9B cluster has coordination number 10.
-*      - The two additional particles are bonded to each other and to the common spindle particle of 9B.
-*      - Each additional particle is bonded to two more particles in the shell of the 9B cluster,
-*        leading to a total of four bonds between the additional particles and 9B.
-*      - For each additional particle, the two shell particles to which they are bonded are not themselves bonded.
-*      - The four shell particles of the 9B cluster that are bonded to the two additional particles form two pairs that are neighbours.
+*      - The two additional particles (a1 and a2) are bonded to each other and to the common spindle particle of 9B.
+*      - a1 is bonded to two particles in the shell of the 9B cluster (b1 and b2).
+*      - a2 is bonded to two particles in the shell of the 9B cluster (c1 and c2).
+*      - b1 and b2 are not bonded. c1 and c2 are not bonded.
+*      - One of b1 or b2 is bonded to one of c1 or c2. The other pair are also bonded.
 *
 *  Cluster output: BBBBBBOOSBB
 *  Storage order: as_for_9B x 9, extra_particles x 2
@@ -41,27 +41,29 @@ int Clusters_Get11B() {
     }
 
     // Check that both of the extra particles are bonded to exactly two 9B shell particles.
-    int b1[8], b2[8], nb1, nb2;
-    nb1 = count_cluster_bonds_to_particle(extra_particles[0], parent_9B_cluster, 8, b1);
-    nb2 = count_cluster_bonds_to_particle(extra_particles[1], parent_9B_cluster, 8, b2);
+    int bonded_b[8], bonded_c[8], num_bonded_b, num_bonded_c;
+    num_bonded_b = count_cluster_bonds_to_particle(extra_particles[0], parent_9B_cluster, 8, bonded_b);
+    num_bonded_c = count_cluster_bonds_to_particle(extra_particles[1], parent_9B_cluster, 8, bonded_c);
 
-    if(nb1 != 2 || nb2 != 2) return 0;
+    if(num_bonded_b != 2 || num_bonded_c != 2) return 0;
 
-    // Particles bonded to extra 2 particles b[] must be distinct.
-    if (b1[0] == b2[0] || b1[0] == b2[1] || b1[1] == b2[0] || b1[1] == b2[1]) {
+    // Particles bonded to the extra particles must be distinct.
+    if (are_clusters_distinct(bonded_b, bonded_c, 2, 2) == 0) {
         return 0;
     }
-    if(Bonds_BondCheck(b1[0], b1[1]) || Bonds_BondCheck(b2[0], b2[1])) {
+
+    // Pairs of bonded particles must not be bonded.
+    if(Bonds_BondCheck(bonded_b[0], bonded_b[1]) || Bonds_BondCheck(bonded_c[0], bonded_c[1])) {
         return 0;
     }
-    
-    int flg11, flg12, flg21, flg22;
-    flg11 = Bonds_BondCheck(b1[0], b2[0]);
-    flg12 = Bonds_BondCheck(b1[0], b2[1]);
-    flg21 = Bonds_BondCheck(b1[1], b2[0]);
-    flg22 = Bonds_BondCheck(b1[1], b2[1]);
-    if(!((flg11 && !flg12) || (!flg11 && flg12))) return 0;
-    if(!((flg21 && !flg22) || (!flg21 && flg22))) return 0;
+
+    int bond_1_1, bond_1_2, bond_2_1, bond_2_2;
+    bond_1_1 = Bonds_BondCheck(bonded_b[0], bonded_c[0]);
+    bond_1_2 = Bonds_BondCheck(bonded_b[0], bonded_c[1]);
+    bond_2_1 = Bonds_BondCheck(bonded_b[1], bonded_c[0]);
+    bond_2_2 = Bonds_BondCheck(bonded_b[1], bonded_c[1]);
+    if(!((bond_1_1 && !bond_1_2) || (!bond_1_1 && bond_1_2))) return 0;
+    if(!((bond_2_1 && !bond_2_2) || (!bond_2_1 && bond_2_2))) return 0;
 
     Cluster_Write_11B(extra_particles);
 
