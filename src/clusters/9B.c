@@ -41,7 +41,7 @@ void Clusters_Get9B_10B_11B_11E_12D() {
                     if (is_particle_in_cluster(first_7A_cluster, 7, sp2j) == 1) {
                         if (is_particle_in_cluster(second_7A_cluster, 7, sp2i) == 1) {
 
-                            if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, sp5com) == 2) {
+                            if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, sp5com) == 2) {
 
                                 // Now we have found the 9B C2v cluster
                                 if (n9B == m9B) {

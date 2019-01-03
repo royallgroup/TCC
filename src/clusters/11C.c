@@ -39,7 +39,7 @@ void Clusters_Get11C() {
                         uncommon_spindle[1] = get_uncommon_spindle(second_7A_cluster, 7, common_spindle[0]);
 
                         // need two common particles from SP5 rings
-                        if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 2) {
+                        if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 2) {
 
                             // the common ring particles need to be bonded
                             if (Bonds_BondCheck(common_ring_particles[0], common_ring_particles[1]) == 1) {

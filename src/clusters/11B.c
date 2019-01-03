@@ -1,3 +1,4 @@
+#include <clusters/simple_cluster_methods.h>
 #include "11B.h"
 #include "globals.h"
 #include "bonds.h"
@@ -20,7 +21,7 @@
 int Clusters_Get11B() {
 
     int b1[2], b2[2], nb1, nb2;
-    int extra_particles[2]; // The two extra particles
+    int extra_particles[10]; // The id's of the two extra particles
     int flg11, flg12, flg21, flg22;
     int break_out;
 
@@ -34,27 +35,12 @@ int Clusters_Get11B() {
     int *potential_11B = bond_list[center_9B_id];
 
     // Check that there are exactly 2 particles bonded to the 9B center that are not in the 9B.
-    int num_extra_particles = 0;
-    break_out = 0;
-    for (int k = 0; k < 10; ++k) {
-        int pointer_9B;
-        for (pointer_9B = 0; pointer_9B < 8; ++pointer_9B) {
-            if (potential_11B[k] == parent_9B_cluster[pointer_9B]) {
-                break;
-            }
-        }
-        if (pointer_9B == 8) {
-            if (num_extra_particles == 2) {
-                break_out = 1;
-                break;
-            }
-            extra_particles[num_extra_particles++] = potential_11B[k];
-        }
+    if(count_uncommon_particles(potential_11B, parent_9B_cluster, 10, 8, extra_particles) != 2) {
+        return 0;
     }
-    if (break_out == 1 || num_extra_particles < 2) return 0;
 
     // Check the two extra particles are bonded to each other
-    if(Bonds_BondCheck(extra_particles[0], extra_particles[1])==0) {
+    if (Bonds_BondCheck(extra_particles[0], extra_particles[1]) == 0) {
         return 0;
     }
 
