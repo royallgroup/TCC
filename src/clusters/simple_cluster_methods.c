@@ -1,3 +1,4 @@
+#include <bonds.h>
 #include "simple_cluster_methods.h"
 
 /*!  Count number of common ring particles between two clusters and get thier ids
@@ -180,4 +181,25 @@ int check_unique_cluster(const int *trial, const int cluster_size, int **cluster
         }
     }
     return 0;
+}
+
+//!  Count the number of bonds between a particle and a cluster and return the ids of bonded particles.
+/*!
+*  @param particle_id - an integer representing a particle id
+*  @param cluster - a pointer to a cluster stored in an hc memory array
+*  @param cluster_size - the number of particles in cluster
+*  @param bonded_ids - an empty list which w
+*  @return a pointer to an array of length cluster_size, ids of bonded particles will be written to this array
+*/
+int count_cluster_bonds_to_particle(int particle_id, int *cluster, int cluster_size, int *bonded_ids) {
+    int num_bonded = 0;
+
+    for (int cluster_pointer = 0; cluster_pointer < cluster_size; ++cluster_pointer) {
+        if(Bonds_BondCheck(particle_id, cluster[cluster_pointer])) {
+            bonded_ids[num_bonded] = cluster[cluster_pointer];
+            num_bonded++;
+        }
+    }
+
+    return num_bonded;
 }
