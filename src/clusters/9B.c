@@ -113,11 +113,6 @@ void Clusters_Get9B_10B_11B_11E_12D() {
                                 Cluster_Write_9B();
 
                                 if (do10B == 1) Clusters_Get10B(second_7A_id);
-                                if (do11B == 1) {
-                                    if (Clusters_Get11B()) {
-                                        ++n11B;
-                                    }
-                                }
                                 if (do11E == 1)
                                     Clusters_Get11E_12D(first_7A_id, second_7A_id, common_spindle_particle_ids[0],
                                                         sp2i, sp2j);
