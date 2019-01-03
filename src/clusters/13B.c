@@ -38,7 +38,7 @@ void Clusters_Get13B() {
 
                         if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
 
-                            if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 0) {
+                            if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 0) {
 
                                 if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 1) {
 

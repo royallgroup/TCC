@@ -44,12 +44,12 @@ void get_first_8A_type() {
                 if (second_sp5b_id > first_sp5b_id) {
 
                     // Check rings share 4 particles
-                    if (count_common_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, common_ring_particle_ids) == 4) {
+                    if (count_common_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, common_ring_particle_ids) == 4) {
 
                         // Check for distinct spindles
                         if (first_sp5b_cluster[5] != second_sp5b_cluster[5]) {
 
-                            count_uncommon_ring_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, uncommon_ring_particle_ids);
+                            count_uncommon_particles(first_sp5b_cluster, second_sp5b_cluster, 5, 5, uncommon_ring_particle_ids);
 
                             // build up trial cluster
                             trial[0] = first_sp5b_cluster[5];
@@ -91,11 +91,11 @@ void get_second_8A_type() {
                 if (second_7A_id <= first_7A_id) {
 
                     // exactly four members of the SP5 rings of 7A_i and 7A_j in common
-                    if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_particle_ids) == 4) {
+                    if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_particle_ids) == 4) {
 
                         if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, spindle_ids) == 2) {
 
-                            count_uncommon_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, uncommon_ring_particle_ids);
+                            count_uncommon_particles(first_7A_cluster, second_7A_cluster, 5, 5, uncommon_ring_particle_ids);
                             // build up trial cluster
                             trial[0] = first_7A_cluster[5];
                             trial[1] = first_7A_cluster[6];
@@ -131,12 +131,12 @@ void get_third_8A_type() {
             for (int first_7A_id = 0; first_7A_id < nmem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]]; ++first_7A_id) {
                 int *first_7A_cluster = hcsp5c[mem_sp5c[first_sp5b_cluster[first_sp5b_spindle_pointer]][first_7A_id]];
 
-                if (count_common_ring_particles(first_sp5b_cluster, first_7A_cluster, 5, 5, common_ring_particle_ids) == 4) {
+                if (count_common_particles(first_sp5b_cluster, first_7A_cluster, 5, 5, common_ring_particle_ids) == 4) {
 
                     // sp5b_i spindle common with one of 7A_j spindles
                     if (first_sp5b_cluster[5] == first_7A_cluster[5] || first_sp5b_cluster[5] == first_7A_cluster[6]) {
 
-                        count_uncommon_ring_particles(first_sp5b_cluster, first_7A_cluster, 5, 5, uncommon_ring_particle_ids);
+                        count_uncommon_particles(first_sp5b_cluster, first_7A_cluster, 5, 5, uncommon_ring_particle_ids);
 
                         // build up trial cluster
                         trial[0] = first_7A_cluster[5];
