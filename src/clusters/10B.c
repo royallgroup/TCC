@@ -12,7 +12,7 @@
 *      -  The other spindle from 7A is bonded to the two distinct spindles of 9B.
 *      -  Both of the distinct spindles of 9B are in the ring of the 7A.
 *      -  Two 7A ring particles are common with the distinct sp5 particles of 9B.
-*      -  The 7A ring particle is distinct from the 9B cluster.
+*      -  There is one 7A ring particle which is distinct from the 9B cluster.
 *
 *  Cluster output: BBBBBBOOOS
 *  Storage order: ordered_shell_particles x 6, spindles x 3, common_spindle
@@ -21,6 +21,7 @@ void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
     int m;
     int trial[10];
     int break_out;
+    int secondary_7A_spindle;
 
 
     for (int second_7A = j + 1; second_7A < nsp5c; ++second_7A) {
@@ -31,8 +32,6 @@ void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
         int first_9B_spindle = parent_9B[6];
         int second_9B_spindle = parent_9B[7];
 
-        int secondary_7A_spindle;
-
         // At least one 7A spindle must be the common spindle of 9B - this is the primary spindle
         if (second_7A_cluster[5] == parent_9B[8]) {
             secondary_7A_spindle = second_7A_cluster[6];
@@ -41,6 +40,7 @@ void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
             secondary_7A_spindle = second_7A_cluster[5];
         }
         else {
+            // If the 7A has no common spindles then try the next 7A
             continue;
         }
 
@@ -58,29 +58,26 @@ void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
         trial[8] = secondary_7A_spindle;
         trial[9] = parent_9B[8];
 
-        // Check that two 7A ring particles are common with the distinct sp5 particles of 9B.
-        m = 0;
-        break_out = 0;
+        // Get the 7A ring particles from the 9B.
+        int particle_count = 0;
         for (int pointer_9B = 0; pointer_9B < 6; pointer_9B++) {
-            if (parent_9B[pointer_9B] == secondary_7A_spindle) continue;
-            if (m == 5) {
-                m++;
-                break_out = 1;
-                break;
+            if (parent_9B[pointer_9B] == secondary_7A_spindle) {
+                continue;
             }
-            trial[m] = parent_9B[pointer_9B];
-            m++;
+            else {
+                trial[particle_count] = parent_9B[pointer_9B];
+                particle_count++;
+            }
         }
-        if (break_out == 1 || m != 5) continue;
+        if (particle_count != 5) continue;
 
+        // Find the distinct particle from the 7A
         break_out = 0;
         for (int l = 0; l < 5; l++) {
             if (second_7A_cluster[l] == first_9B_spindle) continue;
             if (second_7A_cluster[l] == second_9B_spindle) continue;
-            for (m = 0; m < 5; m++) {
-                if (second_7A_cluster[l] == trial[m]) break;
-            }
-            if (m == 5) {
+
+            if (is_particle_in_cluster(trial, 5, second_7A_cluster[l]) == 0) {
                 trial[5] = second_7A_cluster[l];
                 break_out++;
             }
@@ -106,14 +103,12 @@ void Cluster_Write_10B(int trial[10]) {
     // 2) one member of the SP5 ring of 7A_k is common with one member of SP5 ring of 7A_j
     // (this member of 7A_j was uncommon to the SP5 ring of 7A_i)
 
-    quickSort(&trial[0], 6);
-    quickSort(&trial[6], 3);
     for (int i = 0; i < 10; i++) hc10B[n10B][i] = trial[i];
 
-    for(int i=0; i<6; i++) {
+    for (int i = 0; i < 6; i++) {
         if (s10B[hc10B[n10B][i]] == 'C') s10B[hc10B[n10B][i]] = 'B';
     }
-    for(int i=6; i<9; i++) {
+    for (int i = 6; i < 9; i++) {
         if (s10B[hc10B[n10B][i]] != 'S') s10B[hc10B[n10B][i]] = 'O';
     }
     s10B[hc10B[n10B][9]] = 'S';
