@@ -34,8 +34,8 @@ void Clusters_Get11W() {
 
 int is_particle_bonded_to_7As(int id_10B, int extra_particle) {
 
-    for(int i = 6; i < 9; i++) {
-        if (Bonds_BondCheck(extra_particle, hc10B[id_10B][i]) == 1){
+    for (int i = 6; i < 9; i++) {
+        if (Bonds_BondCheck(extra_particle, hc10B[id_10B][i]) == 1) {
             return 1;
         }
     }

@@ -17,12 +17,9 @@
 *  Cluster output: BBBBBBOOOS
 *  Storage order: ordered_shell_particles x 6, spindles x 3, common_spindle
 */
-void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
-    int m;
+void Clusters_Get10B(int j) {
     int trial[10];
-    int break_out;
     int secondary_7A_spindle;
-
 
     for (int second_7A = j + 1; second_7A < nsp5c; ++second_7A) {
         int *second_7A_cluster = hcsp5c[second_7A];
@@ -61,10 +58,7 @@ void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
         // Get the 7A ring particles from the 9B.
         int particle_count = 0;
         for (int pointer_9B = 0; pointer_9B < 6; pointer_9B++) {
-            if (parent_9B[pointer_9B] == secondary_7A_spindle) {
-                continue;
-            }
-            else {
+            if (parent_9B[pointer_9B] != secondary_7A_spindle) {
                 trial[particle_count] = parent_9B[pointer_9B];
                 particle_count++;
             }
@@ -72,19 +66,28 @@ void Clusters_Get10B(int j) {        // Return 1 if 9B is also 10B cluster
         if (particle_count != 5) continue;
 
         // Find the distinct particle from the 7A
-        break_out = 0;
+        int particle_found = 0;
         for (int l = 0; l < 5; l++) {
             if (second_7A_cluster[l] == first_9B_spindle) continue;
             if (second_7A_cluster[l] == second_9B_spindle) continue;
 
             if (is_particle_in_cluster(trial, 5, second_7A_cluster[l]) == 0) {
                 trial[5] = second_7A_cluster[l];
-                break_out++;
+                particle_found++;
             }
         }
-        if (break_out != 1) continue;
 
-        Cluster_Write_10B(trial);
+        // Now we have found the 10B C3v cluster
+        // ###### NOTE #####
+        // we have sterically assumed that
+        // 1) one member of the SP5 ring of 7A_k is common with one member of SP5 ring of 7A_i
+        // (this member of 7A_i was uncommon to the SP5 ring of 7A_j)
+        // 2) one member of the SP5 ring of 7A_k is common with one member of SP5 ring of 7A_j
+        // (this member of 7A_j was uncommon to the SP5 ring of 7A_i)
+
+        if (particle_found == 1) {
+            Cluster_Write_10B(trial);
+        }
     }
 }
 
@@ -95,15 +98,10 @@ void Cluster_Write_10B(int trial[10]) {
         hc10B = resize_2D_int(hc10B, m10B, m10B + incrStatic, clusSize, -1);
         m10B = m10B + incrStatic;
     }
-    // Now we have found the 10B C3v cluster
-    // ###### NOTE #####
-    // we have sterically assumed that
-    // 1) one member of the SP5 ring of 7A_k is common with one member of SP5 ring of 7A_i
-    // (this member of 7A_i was uncommon to the SP5 ring of 7A_j)
-    // 2) one member of the SP5 ring of 7A_k is common with one member of SP5 ring of 7A_j
-    // (this member of 7A_j was uncommon to the SP5 ring of 7A_i)
 
-    for (int i = 0; i < 10; i++) hc10B[n10B][i] = trial[i];
+    for (int i = 0; i < 10; i++) {
+        hc10B[n10B][i] = trial[i];
+    }
 
     for (int i = 0; i < 6; i++) {
         if (s10B[hc10B[n10B][i]] == 'C') s10B[hc10B[n10B][i]] = 'B';
