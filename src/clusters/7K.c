@@ -34,9 +34,9 @@ void Clusters_Get7K() {
                         if (is_particle_in_cluster(second_5A_cluster, 5, other_spindle_ids[0]) == 0) {
                             if (is_particle_in_cluster(first_5A_cluster, 5, other_spindle_ids[1]) == 0) {
 
-                                if (count_common_ring_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_ring_ids) == 2) {
+                                if (count_common_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_ring_ids) == 2) {
 
-                                    count_uncommon_ring_particles(first_5A_cluster, second_5A_cluster, 3, 3, uncommon_ring_particles);
+                                    count_uncommon_particles(first_5A_cluster, second_5A_cluster, 3, 3, uncommon_ring_particles);
 
                                     Cluster_Write_7K(common_spindle_id[0], other_spindle_ids, common_ring_ids, uncommon_ring_particles);
                                 }

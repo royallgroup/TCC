@@ -1,26 +1,29 @@
 Python Scripts
 ****************
 
-A number of Python scripts are located in the ``tcc_python_scripts`` folder in the root directory of the TCC. These are provided for convinience interfacing with the TCC and post processing results. To in order to import these python scripts as modules it is necessary to add the ``tcc_python_scripts`` folder to your $PYTHONPATH environment variable. This can either be done by permenantly adding the path to the environment variables on your system or by dynamically adding the path each time the scripts are run. An example of the latter is::
+A number of Python scripts are located in the ``tcc_python_scripts`` folder in the root directory of the TCC. These are provided for convenience interfacing with the TCC and post processing results. 
 
-    import sys
-    import os
-    sys.path.append(os.path.abspath("../../"))
-    from tcc_scripts.file_readers import xyz
-    
-where you append the path of the main TCC directory.
+.. _installation:
+
+Installation
+==============
+
+To in use these python scripts as modules they must be installed locally. From the ``tcc_python_scripts`` folder execute the command. ::
+
+	pip install .
+
 
 Coordinate File Readers
 ==========================
 
-The scripts in the file readers folder are designed to privde a unified interface for reading from different coordinate file types. These allow reading in configurations from XYZ, dynamo and .atom (LAMMPS) files.
+The scripts in the file readers folder are designed to provide a unified interface for reading from different coordinate file types. These allow reading in configurations from XYZ, dynamo and .atom (LAMMPS) files.
 
-:class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` is the base class from which other file readers are defined. We define a *snapshot* as a single configuration of particles at one time. Regradless of the file format read, the data is stored in a common :class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` object. Multiple snapshots may be present in an XYZ or atom file and these can be read in and each will be stored in a seperate :class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` object.
+:class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` is the base class from which other file readers are defined. We define a *snapshot* as a single configuration of particles at one time. Regardless of the file format read, the data is stored in a common :class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` object. Multiple snapshots may be present in an XYZ or atom file and these can be read in and each will be stored in a separate :class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` object.
 
 Example XYZ file reader script
 --------------------------------
 
-The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator which returns sequential :class:`~tcc_python_scripts.file_readers.snapshot` objects from a file. The genertor will iterate over all snapshots in the file returning them sequentually. :: 
+The :meth:`tcc_python_scripts.file_readers.xyz.read()` method is a generator which returns sequential :class:`~tcc_python_scripts.file_readers.snapshot.Snapshot` objects from a file. The generator will iterate over all snapshots in the file returning them sequentially. :: 
 
     >>> xyz_file = xyz.read("sample.xyz")
     ... for frame in xyz_file:
@@ -44,9 +47,9 @@ For more complex operations such as reading every other frame you can use the sa
     59
     58
     
-To retrieve all snapshots at once use the python :class:`list` function to return a list continaing all of the snapshots. ::
+To retrieve all snapshots at once use the python :class:`list` function to return a list containing all of the snapshots. ::
 
-    >>> from file_readers import xyz
+    >>> from tcc_python_scripts.file_readers import xyz
     ... 
     ... particle_coordinates = list(xyz.read("sample.xyz"))
     ... print(particle_coordinates)
@@ -56,47 +59,48 @@ To retrieve all snapshots at once use the python :class:`list` function to retur
 Python Wrapper
 ===============
 
-The TCC Python wrapper is designed to be a lightweight way of automating simple TCC analyses. It can analyse a single configuration, this is most easily loaded using the above file readers.
+The TCC Python wrapper is designed to be a lightweight way of automating simple TCC analyses and as such can analyse a single configuration at a time. Configurations are most easily loaded using the above file readers.
 
-The :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` method will run the TCC with the provided coordinates and return the cluster count after completion. By default the script will run the TCC in a temporary
-directory and deleting it after the run is complete. To save the results, for example raw or cluster xyz files you can provide a directory to the :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()`
-method where the results will be saved.
+The :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` method will run the TCC with the provided coordinates and return the cluster counts after completion. By default the script will run the TCC in a temporary directory, deleting it after the run is complete. To save the results, for example raw or cluster XYZ files you can provide a directory to the :meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.run()` method where the results will be saved.
 
-Input parameters are set to default values unless specified. They can be set by adding values to the releveant input_parameters attribute. For details on in input parameters see: :doc:`tcc_input_parameters`.
+Input parameters are set to default values unless specified. They can be set by adding values to the relevant input_parameters attribute. For details on in input parameters see: :doc:`tcc_input_parameters`.
 Because the input parameters must be placed in the appropriate section, the input parameter must be preceded by the name of its section ::
 
     TCC_setup.input_parameters['Run']['Frames'] = 1
     TCC_setup.input_parameters['Output']['raw'] = 1
 
+If the Python scripts are installed using the recommended method in the :ref:`installation` section above, they can be run from anywhere on your computer. For this reason the folder which contains the compiled TCC executable must be specified in the invoking script using the
+:meth:`tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_directory()` method. An example of this is shown below.
     
 Example Wrapper Script
 ------------------------
 ::
 
-    from tcc import wrapper
-    from file_readers import xyz
+    from tcc_python_scripts.file_readers import xyz
+    from tcc_python_scripts.tcc import wrapper
     
     # Open a TCCWrapper object - this holds information about the simulation we want to run
     TCC_setup = wrapper.TCCWrapper()
+    # Specify the directory that contains the compiled TCC executable. This can be a relative or static path.
+    TCC_setup.set_tcc_executable_directory(".")
     
     # Get the box size. This can be read from a file or input manually
-    box = [10, 10, 10]
+    box = [26.996, 26.9987, 21.7012]
     
     # Get the coordinates. The file_readers scripts are a good way to read in coordinates from a file.
-    particle_coordinates = list(xyz.read("../../test/integration_tests/basic_voronoi/sample.xyz"))[0].particle_coordinates
+    particle_coordinates = list(xyz.read("sample_ka.xyz"))[0].particle_coordinates
     
     TCC_setup.input_parameters['Run']['Frames'] = 1
-    TCC_setup.input_parameters['Run']['xyzfilename'] = "my_xyz_file.xyz"
-    TCC_setup.input_parameters['Output']['raw'] = 1
-    results = TCC_setup.run(box, particle_coordinates, silent=False)
+    results = TCC_setup.run(box, particle_coordinates)
     
     print(results['Number of clusters'])
+    print("\n\n")
     print(results['Mean Pop Per Frame'])
     
 Net TCC
 ========
 
-This is a simple python script to post process TCC output to find net TCC clusters. Writteb by Francesco Turci - February 2016, edited by Peter Crowther - March 2018.
+This is a simple python script to post process TCC output to find net TCC clusters. Written by Francesco Turci - February 2016, edited by Peter Crowther - March 2018.
 
 Description of net clusters
 ---------------------------------
@@ -114,7 +118,7 @@ Requires Python 3 and NumPy.
 The list of clusters considered is determined by the priority list. The clusters listed first will be those of highest priority in the net calculation, those listed last will be lowest priority.
 
 The code requires a TCC raw file for each cluster specified in the priority list. The net script can be run directly from the command line or by
-calling the :func:`~tcc_python_scripts.net_clusters.net.net_cluster_calculation` function.
+calling the :func:`~tcc_python_scripts.post_processing.net.net_cluster_calculation` function.
 
 To run from the command line
 -------------------------------
@@ -130,8 +134,7 @@ To run from a Python script
 
 ::
 
-    from from 
-    from tcc_python_scripts.net_clusters import net
+    from tcc_python_scripts.post_processing import net
     net.net_cluster_calculation("./raw_output, [FCC, 13A, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c])
     
 

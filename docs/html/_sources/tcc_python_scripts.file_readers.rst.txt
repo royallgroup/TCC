@@ -35,12 +35,3 @@ tcc\_python\_scripts.file\_readers.xyz module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: tcc_python_scripts.file_readers
-    :members:
-    :undoc-members:
-    :show-inheritance:

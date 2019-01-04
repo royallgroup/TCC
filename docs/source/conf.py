@@ -14,8 +14,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../'))
-sys.path.append("../../breathe/extern/breathe/" )
+sys.path.insert(0, os.path.abspath('../../')) 	# Reference the root directory so autodocs can find the python modules
+sys.path.append(os.path.abspath("../../extern/breathe/" ))
 
 
 

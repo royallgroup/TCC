@@ -103,12 +103,13 @@ int main(int argc, char **argv) {
         if (do8B == 1) Clusters_Get8B();
         if (do8K == 1) Clusters_Get8K();
         if (do9A == 1) Clusters_Get9A();
-        if (do9B == 1) Clusters_Get9B_10B_11B_11E_12D();
+        if (do9B == 1) Clusters_Get9B_10B_11E_12D();
         if (do9K == 1) Clusters_Get9K();
         if (do10A == 1) Clusters_Get10A();
         if (do10K == 1) Clusters_Get10K();
         if (do10W == 1) Clusters_Get10W();
         if (do11A == 1) Clusters_Get11A();
+        if (do11B == 1) Clusters_Get11B();
         if (do11C == 1) Clusters_Get11C();
         if (do11F == 1) Clusters_Get11F_13K();
         if (do11W == 1) Clusters_Get11W();

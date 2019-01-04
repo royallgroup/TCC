@@ -30,7 +30,7 @@ void Clusters_Get11A() {
                     if (count_common_spindle_particles(first_6A_cluster, second_6A_cluster, 6, 6, common_spindle_id) == 1) {
                         uncommon_spindle_ids[0] = get_uncommon_spindle(first_6A_cluster, 6, common_spindle_id[0]);
                         uncommon_spindle_ids[1] = get_uncommon_spindle(second_6A_cluster, 6, common_spindle_id[0]);
-                        if (count_common_ring_particles(first_6A_cluster, second_6A_cluster, 4, 4, common_ring_particles) == 0) {
+                        if (count_common_particles(first_6A_cluster, second_6A_cluster, 4, 4, common_ring_particles) == 0) {
                             if (Check_6A_rings_bonded(first_6A_cluster, second_6A_cluster) == 1) {
                                 Cluster_Write_11A(first_6A_cluster, second_6A_cluster, uncommon_spindle_ids, common_spindle_id[0]);
                             }

@@ -19,12 +19,3 @@ tcc\_python\_scripts.tcc.wrapper module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: tcc_python_scripts.tcc
-    :members:
-    :undoc-members:
-    :show-inheritance:

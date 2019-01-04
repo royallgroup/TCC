@@ -7,6 +7,9 @@ import math
 class TestXYZ:
     @staticmethod
     def test_empty_file():
+        import os
+        cwd = os.getcwd()
+        print(cwd)
         assert list(xyz.read("test/file_readers/test_files/empty_file.xyz")) == []
 
     @staticmethod

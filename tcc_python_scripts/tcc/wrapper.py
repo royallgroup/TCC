@@ -27,6 +27,9 @@ class TCCWrapper:
     data they need (for e.g. postprocessing) and store this somewhere.
 
     Attributes:
+        working_directory: The directory in which the TCC will run
+        tcc_executable_directory: The directory containing the TCC executable
+        tcc_executable_path: The full path of the TCC executable
         input_parameters['Box']: TCC box paramaters used for TCC run
         input_parameters['Run']: TCC run paramaters used for TCC run
         input_parameters['Simulation']: TCC simulation paramaters used for TCC run
@@ -38,6 +41,8 @@ class TCCWrapper:
         """On initialisation we have to create a temporary directory
         where file operations will be performed behind the scenes."""
         self.working_directory = None
+        self.tcc_executable_directory = None
+        self.tcc_executable_path = None
         self.input_parameters = dict()
         self.input_parameters['Box'] = dict()
         self.input_parameters['Run'] = dict()
@@ -64,7 +69,7 @@ class TCCWrapper:
             pandas table containing the static cluster information
         """
 
-        tcc_path = self.get_tcc_executable_path()
+        self._check_tcc_executable_path()
         self._set_up_working_directory(output_directory)
 
         # Create the INI file.
@@ -78,9 +83,9 @@ class TCCWrapper:
 
         # Run the TCC executable.
         if silent:
-            subprocess_result = subprocess.run([tcc_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.working_directory)
+            subprocess_result = subprocess.run(self.tcc_executable_path, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=self.working_directory)
         else:
-            subprocess_result = subprocess.run([tcc_path], cwd=self.working_directory)
+            subprocess_result = subprocess.run(self.tcc_executable_path, cwd=self.working_directory)
 
         if subprocess_result.returncode == 0:
             return self._parse_static_clusters()
@@ -89,13 +94,21 @@ class TCCWrapper:
             print("Error: TCC was not able to run.")
             raise Exception
 
+    def set_tcc_executable_directory(self, path):
+        """A method for setting the directory containing the compiled TCC executable.
+
+        Args:
+            path: The directory containing the compiled TCC executable.
+        """
+        self.tcc_executable_directory = path
+
     def _set_up_working_directory(self, output_directory):
         """
         Work out where to run the TCC. Create a directory if necessary.
 
         Args:
             output_directory (str):  If None run the TCC in a temporary directory.
-                If a path then run the TCC there
+                If a path then run the TCC there.
         """
         if output_directory is None:
             self.working_directory = tempfile.mkdtemp(prefix='TCC_')
@@ -109,22 +122,21 @@ class TCCWrapper:
                     raise os.error
             self.working_directory = output_directory
 
-    @staticmethod
-    def get_tcc_executable_path():
-        """Find the full path for the tcc executable. It is expected to be in ../../bin relative this this script
+    def _check_tcc_executable_path(self):
+        """Check the provided path for the tcc executable is valid.
         
         Returns:
-            (str) Full path of TCC executable.
+            If provided executable path is valid, returns full path, else raises FileNotFoundError.
         """
-        bin_directory = os.path.abspath(os.path.dirname(__file__) + '/../../bin/')
+        bin_directory = os.path.abspath(self.tcc_executable_directory)
         if platform.system() == "Windows":
             tcc_exe = bin_directory + "\\tcc.exe"
         else:
             tcc_exe = bin_directory + "/tcc"
         if os.path.exists(tcc_exe):
-            return tcc_exe
+            self.tcc_executable_path = tcc_exe
         else:
-            print("TCC executable not found in bin directory.")
+            print("TCC executable not found in provided directory.")
             raise FileNotFoundError
 
     def _serialise_input_parameters(self, output_filename):

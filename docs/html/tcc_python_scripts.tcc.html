@@ -14,11 +14,12 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="TCC C Code function listing" href="tcc_cluster_source.html" />
-    <link rel="prev" title="tcc_python_scripts.net_clusters package" href="tcc_python_scripts.net_clusters.html" /> 
+    <link rel="next" title="TCC source code function listing and descriptions" href="tcc_cluster_source.html" />
+    <link rel="prev" title="tcc_python_scripts.post_processing package" href="tcc_python_scripts.post_processing.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -30,13 +31,13 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tcc_cluster_source.html" title="TCC C Code function listing"
+          <a href="tcc_cluster_source.html" title="TCC source code function listing and descriptions"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tcc_python_scripts.net_clusters.html" title="tcc_python_scripts.net_clusters package"
+          <a href="tcc_python_scripts.post_processing.html" title="tcc_python_scripts.post_processing package"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="tcc_python_scripts.html" accesskey="U">tcc_python_scripts package</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="tcc_python_scripts.html" accesskey="U">tcc_python_scripts API documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -72,6 +73,24 @@ the TCC.</p>
 are destroyed, so the user must be careful to extract all of the
 data they need (for e.g. postprocessing) and store this somewhere.</p>
 <dl class="attribute">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.working_directory">
+<code class="descname">working_directory</code><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.working_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directory in which the TCC will run</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.tcc_executable_directory">
+<code class="descname">tcc_executable_directory</code><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.tcc_executable_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directory containing the TCC executable</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.tcc_executable_path">
+<code class="descname">tcc_executable_path</code><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.tcc_executable_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>The full path of the TCC executable</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt>
 <code class="descname">input_parameters['Box']</code></dt>
 <dd><p>TCC box paramaters used for TCC run</p>
@@ -101,20 +120,6 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 <dd><p>List of clusters to include in the analysis, all are detected if list is empty</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path">
-<em class="property">static </em><code class="descname">get_tcc_executable_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.get_tcc_executable_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.get_tcc_executable_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the full path for the tcc executable. It is expected to be in ../../bin relative this this script</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(str) Full path of TCC executable.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
 <dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.run">
 <code class="descname">run</code><span class="sig-paren">(</span><em>box</em>, <em>particle_coordinates</em>, <em>output_directory=None</em>, <em>particle_types='A'</em>, <em>silent=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.run" title="Permalink to this definition">¶</a></dt>
@@ -140,11 +145,22 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_directory">
+<code class="descname">set_tcc_executable_directory</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/tcc/wrapper.html#TCCWrapper.set_tcc_executable_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for setting the directory containing the compiled TCC executable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> – The directory containing the compiled TCC executable.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-</div>
-<div class="section" id="module-tcc_python_scripts.tcc">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tcc_python_scripts.tcc" title="Permalink to this headline">¶</a></h2>
+</dd></dl>
+
 </div>
 </div>
 
@@ -160,17 +176,16 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-tcc_python_scripts.tcc.structures">tcc_python_scripts.tcc.structures module</a></li>
 <li><a class="reference internal" href="#module-tcc_python_scripts.tcc.wrapper">tcc_python_scripts.tcc.wrapper module</a></li>
-<li><a class="reference internal" href="#module-tcc_python_scripts.tcc">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="tcc_python_scripts.net_clusters.html"
-                        title="previous chapter">tcc_python_scripts.net_clusters package</a></p>
+  <p class="topless"><a href="tcc_python_scripts.post_processing.html"
+                        title="previous chapter">tcc_python_scripts.post_processing package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="tcc_cluster_source.html"
-                        title="next chapter">TCC C Code function listing</a></p>
+                        title="next chapter">TCC source code function listing and descriptions</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -204,18 +219,18 @@ data they need (for e.g. postprocessing) and store this somewhere.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tcc_cluster_source.html" title="TCC C Code function listing"
+          <a href="tcc_cluster_source.html" title="TCC source code function listing and descriptions"
              >next</a> |</li>
         <li class="right" >
-          <a href="tcc_python_scripts.net_clusters.html" title="tcc_python_scripts.net_clusters package"
+          <a href="tcc_python_scripts.post_processing.html" title="tcc_python_scripts.post_processing package"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">TCC  documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="tcc_python_scripts.html" >tcc_python_scripts package</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="tcc_python_scripts.html" >tcc_python_scripts API documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Peter Crowther.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

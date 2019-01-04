@@ -15,4 +15,4 @@ This software is distributed under the GNU General Public License v3. For more d
 
 This software makes use of libraries released under other licenses:
 * The iniparser library (https://github.com/ndevilla/iniparser/) which is distributed under the MIT license.
-* The Breathe package (https://github.com/michaeljones/breathe) which is distributed under the BSD license
+*  The Breathe extension package for Sphinx (https://github.com/michaeljones/breathe) which is distributed under the BSD license

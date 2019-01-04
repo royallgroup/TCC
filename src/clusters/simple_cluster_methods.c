@@ -1,23 +1,24 @@
+#include <bonds.h>
 #include "simple_cluster_methods.h"
 
 /*!  Count number of common ring particles between two clusters and get thier ids
-*
+/*!  This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers.
+*    To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over.
 *  @param cluster_1 - a pointer to a cluster stored in an hc memory array
 *  @param cluster_2 - a pointer to a cluster stored in an hc memory array
-*  @param cluster_1_ring_particles - the number of ring particles in cluster 1
-*  @param cluster_2_ring_particles - the number of ring particles in cluster 2
+*  @param cluster_1_size - the number of ring particles in cluster 1 to iterate over
+*  @param cluster_2_size - the number of ring particles in cluster 2 to iterate over
 *  @param common_particle_ids - a pointer to an array of length num_particles_in_ring, ids of common particles will be written to this array
 *  @return an integer giving the number of common ring particles between the clusters
 *
 *  This function assumes that the n ring particles are the first n particles of the cluster. This is true for the
 *  basic clusters but may not be true for other clusters.
 */
-int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int cluster_1_ring_particles, int cluster_2_ring_particles,
-                                int *common_particle_ids) {
+int count_common_particles(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size, int *common_particle_ids) {
 
     int num_common_particles = 0;
-    for (int first_ring_pointer = 0; first_ring_pointer < cluster_1_ring_particles; ++first_ring_pointer) {
-        for (int second_ring_pointer = 0; second_ring_pointer < cluster_2_ring_particles; ++second_ring_pointer) {
+    for (int first_ring_pointer = 0; first_ring_pointer < cluster_1_size; ++first_ring_pointer) {
+        for (int second_ring_pointer = 0; second_ring_pointer < cluster_2_size; ++second_ring_pointer) {
             if (cluster_1[first_ring_pointer] == cluster_2[second_ring_pointer]) {
                 common_particle_ids[num_common_particles] = cluster_1[first_ring_pointer];
                 num_common_particles++;
@@ -30,43 +31,43 @@ int count_common_ring_particles(const int *cluster_1, const int *cluster_2, int 
 }
 
 //!  Count number of uncommon particles between two clusters and get their ids
-/*!
+/*!  This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers.
+*    To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over.
 *  @param cluster_1 - a pointer to a cluster stored in an hc memory array
 *  @param cluster_2 - a pointer to a cluster stored in an hc memory array
-*  @param num_in_ring_1 - the number of particles in the ring of cluster_1, this is 3, 4 or 5 for the basic clusters
-*  @param num_in_ring_2 - the number of particles in the ring of cluster_1, this is 3, 4 or 5 for the basic clusters
-*  @param uncommon_particle_ids - a pointer to an array of length num_in_ring_1 + num_in_ring_2, ids of uncommon particles will be written to this array
-*  @return an integer giving the number of uncommon ring particles between the clusters
+*  @param clus_1_size - the number of particles in cluster_1 to iterate over
+*  @param clus_2_size - the number of particles in cluster_2 to iterate over
+*  @param uncommon_particle_ids - a pointer to an array of length clus_1_size + clus_2_size, ids of uncommon particles will be written to this array
+*  @return an integer giving the number of uncommon particles between the clusters
 */
-int count_uncommon_ring_particles(const int *cluster_1, const int *cluster_2, int num_in_ring_1, int num_in_ring_2,
-                                  int *uncommon_particle_ids) {
+int count_uncommon_particles(const int *cluster_1, const int *cluster_2, int clus_1_size, int clus_2_size, int *uncommon_particle_ids) {
 
     int num_uncommon_particles = 0;
 
-    for (int first_ring_pointer = 0; first_ring_pointer < num_in_ring_1; ++first_ring_pointer) {
-        int is_uncommon_particle = 0;
-        for (int second_ring_pointer = 0; second_ring_pointer < num_in_ring_2; ++second_ring_pointer) {
-            if (cluster_1[first_ring_pointer] == cluster_2[second_ring_pointer]) {
-                is_uncommon_particle = 1;
+    for (int first_pointer = 0; first_pointer < clus_1_size; ++first_pointer) {
+        int common_particle = 0;
+        for (int second_ring_pointer = 0; second_ring_pointer < clus_2_size; ++second_ring_pointer) {
+            if (cluster_1[first_pointer] == cluster_2[second_ring_pointer]) {
+                common_particle = 1;
                 break;
             }
         }
-        if(is_uncommon_particle == 0) {
-            uncommon_particle_ids[num_uncommon_particles] = cluster_1[first_ring_pointer];
+        if(common_particle == 0) {
+            uncommon_particle_ids[num_uncommon_particles] = cluster_1[first_pointer];
             num_uncommon_particles++;
         }
     }
 
-    for (int first_ring_pointer = 0; first_ring_pointer < num_in_ring_1; ++first_ring_pointer) {
-        int is_uncommon_particle = 0;
-        for (int second_ring_pointer = 0; second_ring_pointer < num_in_ring_2; ++second_ring_pointer) {
-            if (cluster_2[first_ring_pointer] == cluster_1[second_ring_pointer]) {
-                is_uncommon_particle = 1;
+    for (int second_ring_pointer = 0; second_ring_pointer < clus_2_size; ++second_ring_pointer) {
+        int common_particle = 0;
+        for (int first_ring_pointer = 0; first_ring_pointer < clus_1_size; ++first_ring_pointer) {
+            if (cluster_2[second_ring_pointer] == cluster_1[first_ring_pointer]) {
+                common_particle = 1;
                 break;
             }
         }
-        if(is_uncommon_particle == 0) {
-            uncommon_particle_ids[num_uncommon_particles] = cluster_2[first_ring_pointer];
+        if(common_particle == 0) {
+            uncommon_particle_ids[num_uncommon_particles] = cluster_2[second_ring_pointer];
             num_uncommon_particles++;
         }
     }
@@ -180,4 +181,25 @@ int check_unique_cluster(const int *trial, const int cluster_size, int **cluster
         }
     }
     return 0;
+}
+
+//!  Count the number of bonds between a particle and a cluster and return the ids of bonded particles.
+/*!
+*  @param particle_id - an integer representing a particle id
+*  @param cluster - a pointer to a cluster stored in an hc memory array
+*  @param cluster_size - the number of particles in cluster
+*  @param bonded_ids - an empty list which w
+*  @return a pointer to an array of length cluster_size, ids of bonded particles will be written to this array
+*/
+int count_cluster_bonds_to_particle(int particle_id, int *cluster, int cluster_size, int *bonded_ids) {
+    int num_bonded = 0;
+
+    for (int cluster_pointer = 0; cluster_pointer < cluster_size; ++cluster_pointer) {
+        if(Bonds_BondCheck(particle_id, cluster[cluster_pointer])) {
+            bonded_ids[num_bonded] = cluster[cluster_pointer];
+            num_bonded++;
+        }
+    }
+
+    return num_bonded;
 }

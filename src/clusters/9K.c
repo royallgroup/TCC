@@ -34,10 +34,10 @@ void Clusters_Get9K() {
                         if (is_particle_in_cluster(second_6A_cluster, 6, uncommon_spindle_particles[0]) == 0) {
                             if (is_particle_in_cluster(first_6A_cluster, 6, uncommon_spindle_particles[1]) == 0) {
 
-                                if (count_common_ring_particles(first_6A_cluster, second_6A_cluster, 4, 4,
-                                                                common_ring_particle_ids) == 2) {
+                                if (count_common_particles(first_6A_cluster, second_6A_cluster, 4, 4,
+                                                           common_ring_particle_ids) == 2) {
 
-                                    count_uncommon_ring_particles(first_6A_cluster, second_6A_cluster, 4, 4, uncommon_ring_particles);
+                                    count_uncommon_particles(first_6A_cluster, second_6A_cluster, 4, 4, uncommon_ring_particles);
 
                                     Cluster_Write_9k(common_ring_particle_ids, uncommon_ring_particles,
                                                      uncommon_spindle_particles, common_spindle_ids[0]);
