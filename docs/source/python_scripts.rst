@@ -5,12 +5,16 @@ A number of Python scripts are located in the ``tcc_python_scripts`` folder in t
 
 .. _installation:
 
-Installation
-==============
+Python Scrips Installation
+===========================
 
-To in use these python scripts as modules they must be installed locally. From the ``tcc_python_scripts`` folder execute the command. ::
+To in use these python scripts as modules they must be installed locally. From the root TCC folder execute the command. ::
 
 	pip install .
+
+If you are doing development work on the scripts, you can use the -e flag to create a "linked" .egg module which means the module is loaded from the directory at runtime. This avoids having to reinstall every time changes are made. ::
+
+	pip install -e .
 
 
 Coordinate File Readers
