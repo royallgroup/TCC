@@ -12,11 +12,12 @@
 *      - Each spindle of 5Ai is bonded to a spindle of 5Aj.
 *      - There is one common ring particle between the 5A clusters.
 *      - There is one bonded pair of ring particle between the 5A clusters.
-*      - Both 6As have one distinct spindle and one spindle which is the common ring particle of the 5As.
+*      - 6A_i has a distinct spindle and a spindle which is the common ring particle of the 5As
+ *     - 6A_j has a distinct spindle and a spindle which is the common ring particle of the 5As
 *      - Each 6A has two bonded 5A spindles and two bonded 5A ring particles as its ring.
 *
 *  Cluster output: BOOOOOOBBBB
-*  Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4)
+*  Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4
 *
 */
 void Clusters_Get11F_13K() {
@@ -51,10 +52,8 @@ void Clusters_Get11F_13K() {
 
                 // There must be exactly one pair of bonded ring particles between the 5As
                 if (count_bonded_ring_particles_11F(common_particle[0], first_5A_cluster, second_5A_cluster, bonded_particle_ids) != 1) continue;
-                int bpi = bonded_particle_ids[0];
-                int bpj = bonded_particle_ids[1];
 
-                if (get_bonded_6As(common_particle[0], bpi, bpj, &ep1, &ep2, &bonded_6A_id, bonded_pairs)) {
+                if (get_bonded_6As(common_particle[0], bonded_particle_ids, &ep1, &ep2, &bonded_6A_id, bonded_pairs)) {
                     write_11F(common_particle[0], ep1, ep2, first_5A_cluster, second_5A_cluster);
 
                     if (do13K == 1) {
@@ -98,6 +97,23 @@ int are_spindles_bonded(int first_5A_id, int second_5A_id, int *bonded_pairs) {
     return 0;
 }
 
+int get_needed_6As(int common_particle) {
+    // We know that the 6As must have the common spindle as a spindle so use the mem arrays.
+
+    for (int mem_pointer = 0; mem_pointer < nmem_sp4c[common_particle]; ++mem_pointer) {
+        int potential_6A_id = mem_sp4c[common_particle][mem_pointer];
+        int *potential_6A_cluster = hcsp4c[potential_6A_id];
+
+        int first_6A_detected = 0;
+        int second_6A_detected = 0;
+        //TODO: Cut and paste 6A selection from get_bonded_6As
+
+    }
+
+
+    return 0;
+}
+
 int count_bonded_ring_particles_11F(int cp, const int *first_5A, const int *second_5A, int *bonded_particle_ids) {
     int num_bonded_pairs = 0;
 
@@ -115,12 +131,12 @@ int count_bonded_ring_particles_11F(int cp, const int *first_5A, const int *seco
     return num_bonded_pairs;
 }
 
-int get_bonded_6As(int common_particle, int bpi, int bpj, int *ep1, int *ep2, int *bonded_6A_id, const int *bonded_pairs) {
+int get_bonded_6As(int common_particle, int* bonded_particle_ids, int *ep1, int *ep2, int *bonded_6A_id, const int *bonded_pairs) {
 
     int first_6A_detected = 0;
     int second_6A_detected = 0;
 
-    // Loop over all 6As
+    // Loop over all 6As, we find both the 6As with a single loop.
     for (int first_6A_pointer = 0; first_6A_pointer < nsp4c; first_6A_pointer++) {
         int *first_6A = hcsp4c[first_6A_pointer];
         if (first_6A[4] == common_particle || first_6A[5] == common_particle) {
@@ -130,12 +146,17 @@ int get_bonded_6As(int common_particle, int bpi, int bpj, int *ep1, int *ep2, in
                 int counter;
 
                 for (i = 0; i < 4; i++) {
-                    counter = first_6A[i] == bonded_pairs[0] || first_6A[i] == bonded_pairs[1] || first_6A[i] == bpi || first_6A[i] == bpj;
+                    counter = first_6A[i] == bonded_pairs[0] || first_6A[i] == bonded_pairs[1] ||
+                            first_6A[i] == bonded_particle_ids[0] || first_6A[i] == bonded_particle_ids[1];
                     if (counter == 0) break;
                 }
                 if (i == 4) {
-                    if (first_6A[4] == common_particle) *ep1 = first_6A[5];
-                    else *ep1 = first_6A[4];
+                    if (first_6A[4] == common_particle) {
+                        *ep1 = first_6A[5];
+                    }
+                    else {
+                        *ep1 = first_6A[4];
+                    }
                     *bonded_6A_id = first_6A_pointer;
                     first_6A_detected = 1;
                 }
@@ -145,12 +166,17 @@ int get_bonded_6As(int common_particle, int bpi, int bpj, int *ep1, int *ep2, in
                 int counter;
 
                 for (i = 0; i < 4; i++) {
-                    counter = first_6A[i] == bonded_pairs[2] || first_6A[i] == bonded_pairs[3] || first_6A[i] == bpi || first_6A[i] == bpj;
+                    counter = first_6A[i] == bonded_pairs[2] || first_6A[i] == bonded_pairs[3] ||
+                            first_6A[i] == bonded_particle_ids[0] || first_6A[i] == bonded_particle_ids[1];
                     if (counter == 0) break;
                 }
                 if (i == 4) {
-                    if (first_6A[4] == common_particle) *ep2 = first_6A[5];
-                    else *ep2 = first_6A[4];
+                    if (first_6A[4] == common_particle) {
+                        *ep2 = first_6A[5];
+                    }
+                    else {
+                        *ep2 = first_6A[4];
+                    }
                     second_6A_detected = 1;
                 }
             }
