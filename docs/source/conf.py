@@ -14,7 +14,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../../')) 	# Reference the root directory so autodocs can find the python modules
+sys.path.append(os.path.abspath("../../extern/breathe/" ))
+
 
 
 # -- Project information -----------------------------------------------------
@@ -48,6 +50,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
+    'breathe',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -165,6 +168,13 @@ texinfo_documents = [
 
 
 # -- Extension configuration -------------------------------------------------
+
+breathe_projects = { "TCC": "../doxygen/xml/" } # The doxygen XML output
+breathe_default_project = "TCC"
+breathe_domain_by_extension = {
+        "h" : "c",
+        "c" : "c",
+        }
 
 # -- Options for intersphinx extension ---------------------------------------
 

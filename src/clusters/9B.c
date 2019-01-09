@@ -7,21 +7,19 @@
 #include <clusters/simple_cluster_methods.h>
 #include "9B.h"
 
-void Clusters_Get9B_10B_11B_11E_12D() {
-
-    //!  An 9B cluster is the intersection of 7A clusters shraing a spindle and two ring particles.
-    /*!
-   *  Find 9B clusters
-   *  An 9B is 2 7A clusters where:
-   *      - There is one common spindle.
-   *      - The uncommon spindles are bonded.
-   *      - Each distinct spindle is common with a ring particle of the other 7A
-   *      - There are two common particles between the two 7A rings
-   *
-   *  Cluster output: BBBBBBOOS
-   *  Storage order: SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com
-   */
-
+//!  An 9B cluster is the intersection of 7A clusters shraing a spindle and two ring particles.
+/*!
+*  Find 9B clusters
+*  An 9B is 2 7A clusters where:
+*      - There is one common spindle.
+*      - The uncommon spindles are bonded.
+*      - Each distinct spindle is common with a ring particle of the other 7A
+*      - There are two common particles between the two 7A rings
+*
+*  Cluster output: BBBBBBOOS
+*  Storage order: SP5_lowerd_to_4, SP5_lowerd_to_5, SP5_higherd_to_4, SP5_higherd_to_5, SP5_i_j_com_lower, SP5_i_j_com_higher, sp5c_d1_lower, sp5c_d2_higher, s_com
+*/
+void Clusters_Get9B_10B_11E_12D() {
     int common_spindle_particle_ids[2], sp2i, sp2j;
     int sp5com[2];
     int k;
@@ -43,7 +41,7 @@ void Clusters_Get9B_10B_11B_11E_12D() {
                     if (is_particle_in_cluster(first_7A_cluster, 7, sp2j) == 1) {
                         if (is_particle_in_cluster(second_7A_cluster, 7, sp2i) == 1) {
 
-                            if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, sp5com) == 2) {
+                            if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, sp5com) == 2) {
 
                                 // Now we have found the 9B C2v cluster
                                 if (n9B == m9B) {
@@ -115,12 +113,6 @@ void Clusters_Get9B_10B_11B_11E_12D() {
                                 Cluster_Write_9B();
 
                                 if (do10B == 1) Clusters_Get10B(second_7A_id);
-                                if (do11B == 1) {
-                                    if (Clusters_Get11B()) {
-                                        s11B[hc9B[n9B][8]] = 'S';
-                                        ++n11B;
-                                    }
-                                }
                                 if (do11E == 1)
                                     Clusters_Get11E_12D(first_7A_id, second_7A_id, common_spindle_particle_ids[0],
                                                         sp2i, sp2j);

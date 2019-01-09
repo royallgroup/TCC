@@ -17,3 +17,6 @@ tools/net_clusters/*.xyz
 .pytest_cache/
 .DS_Store
 docs/doctrees/*
+.idea_C/
+tcc_python_scripts.egg-info/
+dist/

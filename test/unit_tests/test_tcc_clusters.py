@@ -24,6 +24,7 @@ def run_unit_test(cluster_path, bond_type):
     cluster_name = os.path.split(cluster_path)[1].rstrip(".xyz")
 
     tcc_parameters = wrapper.TCCWrapper()
+    tcc_parameters.set_tcc_executable_directory("./bin")
     tcc_parameters.input_parameters['Run']['xyzfilename'] = 'sample.xyz'
     tcc_parameters.input_parameters['Simulation']['analyse_all_clusters'] = 0
     tcc_parameters.clusters_to_analyse = cluster_name

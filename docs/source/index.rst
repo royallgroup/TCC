@@ -15,7 +15,8 @@ This documentation gives information about the latest version of the Topological
    python_scripts
    xyz_specification
    tcc_python_scripts
-
+   tcc_cluster_source
+   
 Indices and tables
 ==================
 

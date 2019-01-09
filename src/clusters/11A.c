@@ -4,19 +4,18 @@
 #include "tools.h"
 #include "bonds.h"
 
+//!  An 11A cluster is the intersection two 6A clusters with a common spindle
+/*!
+*  Find 11A clusters
+*  An 11A is two 6A clusters where:
+*      - There is one common spindle particle
+*      - All other particles are distinct.
+*      - Each particle in each ring is bonded to exactly 2 particles in the other ring
+*
+*  Cluster output: BBBBBBBBOOS
+*  Storage order: sp4_i x 4, sp4_j x 4, uncommon_spindles x 2, common_spindle
+*/
 void Clusters_Get11A() {
-
-    //!  An 11A cluster is the intersection two 6A clusters with a common spindle
-    /*!
-   *  Find 11A clusters
-   *  An 11A is two 6A clusters where:
-   *      - There is one common spindle particle
-   *      - All other particles are distinct.
-   *      - Each particle in each ring is bonded to exactly 2 particles in the other ring
-   *
-   *  Cluster output: BBBBBBBBOOS
-   *  Storage order: sp4_i x 4, sp4_j x 4, uncommon_spindles x 2, common_spindle
-   */
     int common_spindle_id[2], uncommon_spindle_ids[2];
     int common_ring_particles[2];
 
@@ -31,7 +30,7 @@ void Clusters_Get11A() {
                     if (count_common_spindle_particles(first_6A_cluster, second_6A_cluster, 6, 6, common_spindle_id) == 1) {
                         uncommon_spindle_ids[0] = get_uncommon_spindle(first_6A_cluster, 6, common_spindle_id[0]);
                         uncommon_spindle_ids[1] = get_uncommon_spindle(second_6A_cluster, 6, common_spindle_id[0]);
-                        if (count_common_ring_particles(first_6A_cluster, second_6A_cluster, 4, 4, common_ring_particles) == 0) {
+                        if (count_common_particles(first_6A_cluster, second_6A_cluster, 4, 4, common_ring_particles) == 0) {
                             if (Check_6A_rings_bonded(first_6A_cluster, second_6A_cluster) == 1) {
                                 Cluster_Write_11A(first_6A_cluster, second_6A_cluster, uncommon_spindle_ids, common_spindle_id[0]);
                             }

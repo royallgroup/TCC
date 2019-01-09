@@ -26,4 +26,6 @@ void get_frame_coordinates_from_xyz(const struct xyz_info *input_xyz_info, int f
 
 void get_coords_from_line(int frame_number, FILE *xyzfile, int particle);
 
+int check_frame_numbers(int num_xyz_frames);
+
 #endif

@@ -4,21 +4,19 @@
 #include "bonds.h"
 #include "tools.h"
 
+//!  An 11W cluster is a 10B with an extra particle
+/*!
+*  Find 11W clusters
+*  An 11W is constructed from a 10B and an extra particle where:
+*      - The common spindle of the 10B cluster has coordination number 10.
+*      - The additional particle is not bonded to any of the distinct spindles of the 7A clusters
+*        constituting the 10B cluster.
+*
+*  Cluster output: BBBBBBBBBBO
+*  Storage order: as_for_10B x 10, extra_particle
+*
+*/
 void Clusters_Get11W() {
-
-    //!  An 11W cluster is a 10B with an extra particle
-    /*!
-   *  Find 11W clusters
-   *  An 11W is constructed from a 10B and an extra particle where:
-   *      - The common spindle of the 10B cluster has coordination number 10.
-   *      - The additional particle is not bonded to any of the distinct spindles of the 7A clusters
-   *        constituting the 10B cluster.
-   *
-   *  Cluster output: BBBBBBBBBBO
-   *  Storage order: as_for_10B x 10, extra_particle
-   *
-   */
-
     for(int first_10B_id = 0; first_10B_id < n10B; first_10B_id++) {
         int *first_10B_cluster = hc10B[first_10B_id];
         int first_10B_spindle_id = first_10B_cluster[9];
@@ -36,8 +34,8 @@ void Clusters_Get11W() {
 
 int is_particle_bonded_to_7As(int id_10B, int extra_particle) {
 
-    for(int i = 6; i < 9; i++) {
-        if (Bonds_BondCheck(extra_particle, hc10B[id_10B][i]) == 1){
+    for (int i = 6; i < 9; i++) {
+        if (Bonds_BondCheck(extra_particle, hc10B[id_10B][i]) == 1) {
             return 1;
         }
     }

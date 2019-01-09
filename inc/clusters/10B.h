@@ -3,6 +3,6 @@
 
 void Clusters_Get10B(int j);
 
-void Cluster_Write_10B();
+void Cluster_Write_10B(int trial[10]);
 
 #endif

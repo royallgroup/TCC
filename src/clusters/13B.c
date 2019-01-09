@@ -4,22 +4,20 @@
 #include "bonds.h"
 #include "tools.h"
 
+//!  A 13B cluster is the intersection of two 7A clusters.
+/*!
+*  Find 13B clusters
+*  A 13K is constructed from two 7A clusters where:
+*      - There is one common spindle between the two 7As
+*      - Other spindle particles are distinct and unbonded.
+*      - The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.
+*      - Each particle from each ring is bonded to one particle of the other ring
+*
+*  Cluster output: SOOBBBBBBBBBB
+*  Storage order: common_spindle, uncommon_spindle x 2, first_7A_ring_particles x 5, second_7A_ring_particles x 5
+*
+*/
 void Clusters_Get13B() {
-
-    //!  A 13B cluster is the intersection of two 7A clusters.
-    /*!
-   *  Find 13B clusters
-   *  A 13K is constructed from two 7A clusters where:
-   *      - There is one common spindle between the two 7As
-   *      - Other spindle particles are distinct and unbonded.
-   *      - The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.
-   *      - Each particle from each ring is bonded to one particle of the other ring
-   *
-   *  Cluster output: SOOBBBBBBBBBB
-   *  Storage order: common_spindle, uncommon_spindle x 2, first_7A_ring_particles x 5, second_7A_ring_particles x 5
-   *
-   */
-
     int common_spindle_id[2];
     int uncommon_spindle_ids[2];
     int common_ring_particles[5];
@@ -40,7 +38,7 @@ void Clusters_Get13B() {
 
                         if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
 
-                            if (count_common_ring_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 0) {
+                            if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 0) {
 
                                 if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 1) {
 

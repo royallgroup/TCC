@@ -26,7 +26,6 @@ These settings describe the configuration or configurations to be loaded from th
 
 :frames:              **1**             ; Number of frames to load and analyse
 
-:sample_freqency:     **1**             ; Frequency at which to take frames from the xyz file
 
 Simulation
 ------------

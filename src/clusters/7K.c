@@ -3,21 +3,19 @@
 #include "tools.h"
 #include "simple_cluster_methods.h"
 
+//!  A 7K is made of two overlapping 5A clusters which have one common spindle.
+/*!
+*  Find 7K clusters
+*  7K is made from two overlapping 5A particles where:
+*  - 5Ai and 5Aj have one common spindle.
+*  - The other spindle of 5Ai is distinct from all the particles in 5Aj.
+*  - The other spindle of 5Aj is distinct from all the particles in 5Ai.
+*  - There are two common particles between the sp3 rings of 5Ai and 5Aj.
+*
+*  Cluster output: OOOOBBB
+*  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
+*/
 void Clusters_Get7K() {
-
-    //!  A 7K is made of two overlapping 5A clusters which have one common spindle.
-    /*!
-    *  Find 7K clusters
-    *  7K is made from two overlapping 5A particles where:
-    *  - 5Ai and 5Aj have one common spindle.
-    *  - The other spindle of 5Ai is distinct from all the particles in 5Aj.
-    *  - The other spindle of 5Aj is distinct from all the particles in 5Ai.
-    *  - There are two common particles between the sp3 rings of 5Ai and 5Aj.
-    *
-    *  Cluster output: OOOOBBB
-    *  Storage order: common spindle, other spindle x 2, common ring x 2, other ring x 2)
-    */
-
     int common_spindle_id[2], other_spindle_ids[2], common_ring_ids[5], uncommon_ring_particles[2];
 
     for (int first_5A_id = 0; first_5A_id < nsp3c; ++first_5A_id) {
@@ -36,9 +34,9 @@ void Clusters_Get7K() {
                         if (is_particle_in_cluster(second_5A_cluster, 5, other_spindle_ids[0]) == 0) {
                             if (is_particle_in_cluster(first_5A_cluster, 5, other_spindle_ids[1]) == 0) {
 
-                                if (count_common_ring_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_ring_ids) == 2) {
+                                if (count_common_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_ring_ids) == 2) {
 
-                                    count_uncommon_ring_particles(first_5A_cluster, second_5A_cluster, 3, 3, uncommon_ring_particles);
+                                    count_uncommon_particles(first_5A_cluster, second_5A_cluster, 3, 3, uncommon_ring_particles);
 
                                     Cluster_Write_7K(common_spindle_id[0], other_spindle_ids, common_ring_ids, uncommon_ring_particles);
                                 }

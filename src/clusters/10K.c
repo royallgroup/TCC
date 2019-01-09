@@ -3,19 +3,17 @@
 #include "globals.h"
 #include "tools.h"
 
+//!  An 10K cluster is 9K with a SINGLE particle bonded to the common spindle of 9K.
+/*!
+*  Find 10K clusters
+*  An 10K is a 9K with one extra particle where:
+*      -  The extra particle is bonded to common spindle of 9K.
+*      -  The 9K common spindle has no other extra neighbours.
+*
+*  Cluster output: BBBBBOOOO
+*  Storage order: as_for_9K x 9, extra_particle
+*/
 void Clusters_Get10K() {
-
-    //!  An 10K cluster is 9K with a SINGLE particle bonded to the common spindle of 9K.
-    /*!
-   *  Find 10K clusters
-   *  An 10K is a 9K with one extra particle where:
-   *      -  The extra particle is bonded to common spindle of 9K.
-   *      -  The 9K common spindle has no other extra neighbours.
-   *
-   *  Cluster output: BBBBBOOOO
-   *  Storage order: as_for_9K x 9, extra_particle
-   */
-
     int extra_particle_id;
 
     for (int first_9K_id = 0; first_9K_id < n9K; first_9K_id++) {

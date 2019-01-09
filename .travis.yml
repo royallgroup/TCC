@@ -4,7 +4,7 @@ python:
 
 # command to install dependencies
 install:
-  - pip install pandas
+  - pip install .
 # command to run tests
 script:
   - pytest
