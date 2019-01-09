@@ -126,50 +126,38 @@ int get_bonded_6As(int common_particle, int bpi, int bpj, int *ep1, int *ep2, in
         if (first_6A[4] == common_particle || first_6A[5] == common_particle) {
 
             if (first_6A_detected == 0) {
-                first_6A_detected = get_first_6A(first_6A, bpi, bpj, common_particle, ep1, bonded_6A_id,
-                                                 first_6A_pointer, bonded_pairs);
+                int i;
+                int counter;
+
+                for (i = 0; i < 4; i++) {
+                    counter = first_6A[i] == bonded_pairs[0] || first_6A[i] == bonded_pairs[1] || first_6A[i] == bpi || first_6A[i] == bpj;
+                    if (counter == 0) break;
+                }
+                if (i == 4) {
+                    if (first_6A[4] == common_particle) *ep1 = first_6A[5];
+                    else *ep1 = first_6A[4];
+                    *bonded_6A_id = first_6A_pointer;
+                    first_6A_detected = 1;
+                }
             }
             if (second_6A_detected == 0) {
-                second_6A_detected = get_second_6A(first_6A, bpi, bpj, common_particle, ep2, bonded_pairs);
+                int i;
+                int counter;
+
+                for (i = 0; i < 4; i++) {
+                    counter = first_6A[i] == bonded_pairs[2] || first_6A[i] == bonded_pairs[3] || first_6A[i] == bpi || first_6A[i] == bpj;
+                    if (counter == 0) break;
+                }
+                if (i == 4) {
+                    if (first_6A[4] == common_particle) *ep2 = first_6A[5];
+                    else *ep2 = first_6A[4];
+                    second_6A_detected = 1;
+                }
             }
             if (first_6A_detected == 1 && second_6A_detected == 1) {
                 return 1;
             }
         }
-    }
-    return 0;
-}
-
-int get_first_6A(const int *first_6A, int bpi, int bpj, int common_particle, int *ep1, int *bonded_6A_id,
-                 int potential_6A_pointer, const int *bonded_pairs) {
-    int i;
-    int counter;
-
-    for (i = 0; i < 4; i++) {
-        counter = first_6A[i] == bonded_pairs[0] || first_6A[i] == bonded_pairs[1] || first_6A[i] == bpi || first_6A[i] == bpj;
-        if (counter == 0) break;
-    }
-    if (i == 4) {
-        if (first_6A[4] == common_particle) *ep1 = first_6A[5];
-        else *ep1 = first_6A[4];
-        *bonded_6A_id = potential_6A_pointer;
-        return 1;
-    }
-    return 0;
-}
-
-int get_second_6A(const int *first_6A, int bpi, int bpj, int common_particle, int *ep2, const int *bonded_pairs) {
-    int i;
-    int counter;
-
-    for (i = 0; i < 4; i++) {
-        counter = first_6A[i] == bonded_pairs[2] || first_6A[i] == bonded_pairs[3] || first_6A[i] == bpi || first_6A[i] == bpj;
-        if (counter == 0) break;
-    }
-    if (i == 4) {
-        if (first_6A[4] == common_particle) *ep2 = first_6A[5];
-        else *ep2 = first_6A[4];
-        return 1;
     }
     return 0;
 }
