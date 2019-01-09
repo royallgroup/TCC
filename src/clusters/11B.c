@@ -18,7 +18,7 @@
 *  Cluster output: BBBBBBOOSBB
 *  Storage order: as_for_9B x 9, extra_particles x 2
 */
-int Clusters_Get11B() {
+void Clusters_Get11B() {
 
     for (int parent_9B_id = 0; parent_9B_id < n9B; ++parent_9B_id) {
 

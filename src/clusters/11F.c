@@ -1,3 +1,4 @@
+#include <clusters/simple_cluster_methods.h>
 #include "globals.h"
 #include "bonds.h"
 #include "tools.h"
@@ -67,9 +68,10 @@ int do_5As_have_distinct_spindles(const int *first_5A, const int *second_5A) {
 }
 
 void check_common_particle(int first_5A_cluster_id, int second_5A_id, const int *bonded_pairs) {
-    int common_particle;
+    int common_particle[6];
     int num_bonded_pairs;
     int cluster_found;
+    int bonded_particle_ids[6];
     int bpi, bpj;
     int ep1, ep2;
     int bonded_6A_id;
@@ -78,17 +80,16 @@ void check_common_particle(int first_5A_cluster_id, int second_5A_id, const int 
     first_5A_cluster = hcsp3c[first_5A_cluster_id];
     second_5A_cluster = hcsp3c[second_5A_id];
 
-    common_particle = get_common_particle_between_5As(first_5A_cluster, second_5A_cluster);
-    if (common_particle != -1) {
+    if (count_common_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_particle) == 1) {
         // There must be only 1 particle common between the two 5As
-        num_bonded_pairs = get_bonded_ring_particles(common_particle, first_5A_cluster, second_5A_cluster, &bpi, &bpj);
+        num_bonded_pairs = get_bonded_ring_particles(common_particle[0], first_5A_cluster, second_5A_cluster, &bpi, &bpj);
         // There must be exactly one paticle of first_5A bonded to exactly one of second_5A
         if (num_bonded_pairs == 1) {
 
-            cluster_found = get_bonded_6As(common_particle, bpi, bpj, &ep1, &ep2, &bonded_6A_id, bonded_pairs);
+            cluster_found = get_bonded_6As(common_particle[0], bpi, bpj, &ep1, &ep2, &bonded_6A_id, bonded_pairs);
 
             if (cluster_found) {
-                write_11F(common_particle, ep1, ep2, first_5A_cluster, second_5A_cluster);
+                write_11F(common_particle[0], ep1, ep2, first_5A_cluster, second_5A_cluster);
 
                 if (do13K == 1) {
                     if (Clusters_Get13K(first_5A_cluster_id, second_5A_id, bonded_6A_id)) {
@@ -101,29 +102,6 @@ void check_common_particle(int first_5A_cluster_id, int second_5A_id, const int 
     }
 }
 
-int get_common_particle_between_5As(const int *first_5A, const int *second_5A) {
-    // return id of common particle if only 1 common particle found, else return -1
-
-    int i, j;
-    int num_common_particles;
-    int common_id = -1;
-
-    num_common_particles = 0;
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            if (first_5A[i] == second_5A[j]) {
-                common_id = first_5A[i];
-                num_common_particles++;
-            }
-        }
-    }
-    if(num_common_particles == 1) {
-        return common_id;
-    }
-    else {
-        return -1;
-    }
-}
 
 int get_bonded_ring_particles(int cp, const int *first_5A, const int *second_5A, int *bpi, int *bpj) {
     int i, j, num_bonded_pairs;

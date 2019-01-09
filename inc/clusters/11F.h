@@ -7,8 +7,6 @@ int do_5As_have_distinct_spindles(const int *first_5A, const int *second_5A);
 
 void check_common_particle(int first_5A_cluster_id, int second_5A_pointer, const int *bonded_pairs);
 
-int get_common_particle_between_5As(const int *first_5A, const int *second_5A);
-
 int get_bonded_ring_particles(int cp, const int *first_5A, const int *second_5A, int *bpi, int *bpj);
 
 int get_bonded_6As(int common_particle, int bpi, int bpj, int *ep1, int *ep2, int *bonded_6A_id, const int *bonded_pairs);
