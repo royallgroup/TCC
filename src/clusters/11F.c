@@ -23,26 +23,46 @@ void Clusters_Get11F_13K() {
     int first_5A_ring_pointer;
 
     int first_5A_id, second_5A_id, second_5A_pointer;
-    int *first_5A_custer, *second_5A_cluster;
+    int *first_5A_cluster, *second_5A_cluster;
     int first_5A_ring_particle;
 
     int bonded_pairs[4];
 
     for(first_5A_id = 0; first_5A_id < nsp3c; first_5A_id++) {
-        first_5A_custer = hcsp3c[first_5A_id];
-        for (first_5A_ring_pointer = 0; first_5A_ring_pointer < 3; first_5A_ring_pointer++) {    // loop over only the rings of the 5A clusters
-            first_5A_ring_particle = first_5A_custer[first_5A_ring_pointer];
+        first_5A_cluster = hcsp3c[first_5A_id];
+        // loop over only the rings of the 5A clusters
+        for (first_5A_ring_pointer = 0; first_5A_ring_pointer < 3; first_5A_ring_pointer++) {
+            first_5A_ring_particle = first_5A_cluster[first_5A_ring_pointer];
             for (second_5A_pointer = 0; second_5A_pointer < nmem_sp3c[first_5A_ring_particle]; second_5A_pointer++) {
                 second_5A_id = mem_sp3c[first_5A_ring_particle][second_5A_pointer];
                 second_5A_cluster = hcsp3c[second_5A_id];
                 if (second_5A_id <= first_5A_id) continue;
 
-                // Check that the 5As have distinct spindles
-                if (do_5As_have_distinct_spindles(first_5A_custer, second_5A_cluster) != 1) continue;
-
                 // Check that the sp5 spindles are bonded
-                if (are_spindles_bonded(first_5A_id, second_5A_id, bonded_pairs) == 1) {
-                    check_common_particle(first_5A_id, second_5A_id, bonded_pairs);
+                if (are_spindles_bonded(first_5A_id, second_5A_id, bonded_pairs) != 1) continue;
+
+                int common_particle[6];
+                int bonded_particle_ids[6];
+                int ep1, ep2;
+                int bonded_6A_id;
+
+                // There must be only 1 particle common between the two 5As
+                if (count_common_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_particle) != 1) continue;
+
+                // There must be exactly one pair of bonded ring particles between the 5As
+                if (count_bonded_ring_particles_11F(common_particle[0], first_5A_cluster, second_5A_cluster, bonded_particle_ids) != 1) continue;
+                int bpi = bonded_particle_ids[0];
+                int bpj = bonded_particle_ids[1];
+
+                if (get_bonded_6As(common_particle[0], bpi, bpj, &ep1, &ep2, &bonded_6A_id, bonded_pairs)) {
+                    write_11F(common_particle[0], ep1, ep2, first_5A_cluster, second_5A_cluster);
+
+                    if (do13K == 1) {
+                        if (Clusters_Get13K(first_5A_id, second_5A_id, bonded_6A_id)) {
+                            ++n13K;
+                        }
+                    }
+                    ++n11F;
                 }
             }
         }
@@ -53,6 +73,12 @@ int are_spindles_bonded(int first_5A_id, int second_5A_id, int *bonded_pairs) {
     int *first_5A_cluster = hcsp3c[first_5A_id];
     int *second_5A_cluster = hcsp3c[second_5A_id];
 
+    // First check that the spindles are unique
+    if (first_5A_cluster[3] == second_5A_cluster[3]) return 0;
+    if (first_5A_cluster[3] == second_5A_cluster[4]) return 0;
+    if (first_5A_cluster[4] == second_5A_cluster[4]) return 0;
+
+    // Now check if both pairs of spindles are bonded
     if (Bonds_BondCheck(first_5A_cluster[3], second_5A_cluster[3]) == 1 &&
         Bonds_BondCheck(first_5A_cluster[4], second_5A_cluster[4]) == 1) {
         bonded_pairs[0] = first_5A_cluster[3];
@@ -71,45 +97,6 @@ int are_spindles_bonded(int first_5A_id, int second_5A_id, int *bonded_pairs) {
     }
     return 0;
 }
-
-int do_5As_have_distinct_spindles(const int *first_5A, const int *second_5A) {
-    return first_5A[3] != second_5A[3] && first_5A[3] != second_5A[4] && first_5A[4] != second_5A[4];
-}
-
-void check_common_particle(int first_5A_cluster_id, int second_5A_id, const int *bonded_pairs) {
-    int common_particle[6];
-    int bonded_particle_ids[6];
-    int bpi, bpj;
-    int ep1, ep2;
-    int bonded_6A_id;
-    int *first_5A_cluster, *second_5A_cluster;
-
-    first_5A_cluster = hcsp3c[first_5A_cluster_id];
-    second_5A_cluster = hcsp3c[second_5A_id];
-
-    if (count_common_particles(first_5A_cluster, second_5A_cluster, 3, 3, common_particle) == 1) {
-        // There must be only 1 particle common between the two 5As
-
-        // There must be exactly one particle of first_5A bonded to exactly one of second_5A
-        if (count_bonded_ring_particles_11F(common_particle[0], first_5A_cluster, second_5A_cluster,
-                                            bonded_particle_ids) == 1) {
-            bpi = bonded_particle_ids[0];
-            bpj = bonded_particle_ids[1];
-
-            if (get_bonded_6As(common_particle[0], bpi, bpj, &ep1, &ep2, &bonded_6A_id, bonded_pairs)) {
-                write_11F(common_particle[0], ep1, ep2, first_5A_cluster, second_5A_cluster);
-
-                if (do13K == 1) {
-                    if (Clusters_Get13K(first_5A_cluster_id, second_5A_id, bonded_6A_id)) {
-                        ++n13K;
-                    }
-                }
-                ++n11F;
-            }
-        }
-    }
-}
-
 
 int count_bonded_ring_particles_11F(int cp, const int *first_5A, const int *second_5A, int *bonded_particle_ids) {
     int num_bonded_pairs = 0;
