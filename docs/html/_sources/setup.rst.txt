@@ -49,4 +49,6 @@ Testing the TCC
 
 It is recommended you test the TCC to check it is compiled correctly on your system, this requires Python and the pytest, NumPy and Pandas libraries. The test will run a short configurration to check clusters are correctly detected.
 
+Before running the tests it required to first install the tcc_python_scripts module to your Python envrionment as described in :ref:`installation`
+
 Once you have built the TCC, cd to the main TCC directory and type ``pytest``

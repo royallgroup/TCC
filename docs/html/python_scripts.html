@@ -14,7 +14,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -48,10 +47,14 @@
   <div class="section" id="python-scripts">
 <h1>Python Scripts<a class="headerlink" href="#python-scripts" title="Permalink to this headline">¶</a></h1>
 <p>A number of Python scripts are located in the <code class="docutils literal notranslate"><span class="pre">tcc_python_scripts</span></code> folder in the root directory of the TCC. These are provided for convenience interfacing with the TCC and post processing results.</p>
-<div class="section" id="installation">
-<span id="id1"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>To in use these python scripts as modules they must be installed locally. From the <code class="docutils literal notranslate"><span class="pre">tcc_python_scripts</span></code> folder execute the command.</p>
+<div class="section" id="python-scrips-installation">
+<span id="installation"></span><h2>Python Scrips Installation<a class="headerlink" href="#python-scrips-installation" title="Permalink to this headline">¶</a></h2>
+<p>To in use these python scripts as modules they must be installed locally. From the root TCC folder execute the command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>If you are doing development work on the scripts, you can use the -e flag to create a “linked” .egg module which means the module is loaded from the directory at runtime. This avoids having to reinstall every time changes are made.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 </pre></div>
 </div>
 </div>
@@ -105,7 +108,7 @@ Because the input parameters must be placed in the appropriate section, the inpu
 <span class="n">TCC_setup</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;Output&#39;</span><span class="p">][</span><span class="s1">&#39;raw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 </div>
-<p>If the Python scripts are installed using the recommended method in the <a class="reference internal" href="#installation"><span class="std std-ref">Installation</span></a> section above, they can be run from anywhere on your computer. For this reason the folder which contains the compiled TCC executable must be specified in the invoking script using the
+<p>If the Python scripts are installed using the recommended method in the <a class="reference internal" href="#installation"><span class="std std-ref">Python Scrips Installation</span></a> section above, they can be run from anywhere on your computer. For this reason the folder which contains the compiled TCC executable must be specified in the invoking script using the
 <a class="reference internal" href="tcc_python_scripts.tcc.html#tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_directory" title="tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_directory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">tcc_python_scripts.tcc.wrapper.TCCWrapper.set_tcc_executable_directory()</span></code></a> method. An example of this is shown below.</p>
 <div class="section" id="example-wrapper-script">
 <h3>Example Wrapper Script<a class="headerlink" href="#example-wrapper-script" title="Permalink to this headline">¶</a></h3>
@@ -184,7 +187,7 @@ calling the <a class="reference internal" href="tcc_python_scripts.post_processi
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Python Scripts</a><ul>
-<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#python-scrips-installation">Python Scrips Installation</a></li>
 <li><a class="reference internal" href="#coordinate-file-readers">Coordinate File Readers</a><ul>
 <li><a class="reference internal" href="#example-xyz-file-reader-script">Example XYZ file reader script</a></li>
 </ul>
@@ -254,7 +257,7 @@ calling the <a class="reference internal" href="tcc_python_scripts.post_processi
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Peter Crowther.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>

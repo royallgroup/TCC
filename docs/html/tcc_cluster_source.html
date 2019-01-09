@@ -14,7 +14,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -198,9 +197,9 @@
 <p>Find 10B clusters An 10A is a 9B and 7A cluster where:<ul class="simple">
 <li>One spindle from 7A is common to the common spindle particle of the 9B cluster</li>
 <li>The other spindle from 7A is bonded to the two distinct spindles of 9B.</li>
-<li>Two sp5 ring particles from 7A are common with the distinct spindles of 9B.</li>
-<li>Two sp5 ring particles from 7A are common with the distinct sp5 particles of 9B.</li>
-<li>The final sp5 ring particle from 7A is distinct from the 9B cluster.</li>
+<li>Both of the distinct spindles of 9B are in the ring of the 7A.</li>
+<li>Two 7A ring particles are common with the distinct sp5 particles of 9B.</li>
+<li>There is one 7A ring particle which is distinct from the 9B cluster.</li>
 </ul>
 </p>
 <p>Cluster output: BBBBBBOOOS Storage order: ordered_shell_particles x 6, spindles x 3, common_spindle </p>
@@ -208,7 +207,7 @@
 
 <dl class="function">
 <dt id="c.Cluster_Write_10B">
-<span class="target" id="10_b_8c_1a71885e5f114d2567de624ac9ec070e68"></span>void <code class="descname">Cluster_Write_10B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_10B" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="10_b_8c_1ad2df66c70a881ea512934ad68c4f1b3f"></span>void <code class="descname">Cluster_Write_10B</code><span class="sig-paren">(</span>int<em>&nbsp;trial[10]</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_10B" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -321,10 +320,11 @@
 <dd><p>An 11B cluster is 9B with two additional particles. </p>
 <p>Find 11B clusters An 11A is a 9B and two extra particles where:<ul class="simple">
 <li>The common spindle particle from the 9B cluster has coordination number 10.</li>
-<li>The two additional particles are bonded to each other and to the common spindle particle of 9B.</li>
-<li>Each additional particle is bonded to two more particles in the shell of the 9B cluster, leading to a total of four bonds between the additional particles and 9B.</li>
-<li>For each additional particle, the two shell particles to which they are bonded are not themselves bonded.</li>
-<li>The four shell particles of the 9B cluster that are bonded to the two additional particles form two pairs that are neighbours.</li>
+<li>The two additional particles (a1 and a2) are bonded to each other and to the common spindle particle of 9B.</li>
+<li>a1 is bonded to two particles in the shell of the 9B cluster (b1 and b2).</li>
+<li>a2 is bonded to two particles in the shell of the 9B cluster (c1 and c2).</li>
+<li>b1 and b2 are not bonded. c1 and c2 are not bonded.</li>
+<li>One of b1 or b2 is bonded to one of c1 or c2. The other pair are also bonded.</li>
 </ul>
 </p>
 <p>Cluster output: BBBBBBOOSBB Storage order: as_for_9B x 9, extra_particles x 2 </p>
@@ -332,7 +332,7 @@
 
 <dl class="function">
 <dt id="c.Cluster_Write_11B">
-<span class="target" id="11_b_8c_1aecd4ba2b40141bfe8a2f1d3946fa9973"></span>void <code class="descname">Cluster_Write_11B</code><span class="sig-paren">(</span>int *<em>&nbsp;extra_particles</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_11B" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="11_b_8c_1a38ec24554fab0e3526cd309c9513ffbb"></span>void <code class="descname">Cluster_Write_11B</code><span class="sig-paren">(</span>const int *<em>&nbsp;extra_particles</em>, int<em>&nbsp;parent_9B_id</em><span class="sig-paren">)</span><a class="headerlink" href="#c.Cluster_Write_11B" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -996,8 +996,8 @@
 <dd><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="function">
-<dt id="c.Clusters_Get9B_10B_11B_11E_12D">
-<span class="target" id="9_b_8c_1a92e9b84f0cbfa133204c107df8226290"></span>void <code class="descname">Clusters_Get9B_10B_11B_11E_12D</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get9B_10B_11B_11E_12D" title="Permalink to this definition">¶</a></dt>
+<dt id="c.Clusters_Get9B_10B_11E_12D">
+<span class="target" id="9_b_8c_1afb105c399dafa29d3ec53a66e4c04daf"></span>void <code class="descname">Clusters_Get9B_10B_11E_12D</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get9B_10B_11E_12D" title="Permalink to this definition">¶</a></dt>
 <dd><p>An 9B cluster is the intersection of 7A clusters shraing a spindle and two ring particles. </p>
 <p>Find 9B clusters An 9B is 2 7A clusters where:<ul class="simple">
 <li>There is one common spindle.</li>
@@ -1124,10 +1124,9 @@
 <dd><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="function">
-<dt id="c.count_common_ring_particles">
-<span class="target" id="simple__cluster__methods_8c_1a95d86c831ba75c00bc07a1751bff6384"></span>int <code class="descname">count_common_ring_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;cluster_1_ring_particles</em>, int<em>&nbsp;cluster_2_ring_particles</em>, int *<em>&nbsp;common_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_common_ring_particles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Count number of common ring particles between two clusters and get thier ids</p>
-<p><p>This function assumes that the n ring particles are the first n particles of the cluster. This is true for the basic clusters but may not be true for other clusters. </p>
+<dt id="c.count_common_particles">
+<span class="target" id="simple__cluster__methods_8c_1a9475e86e77aaefdb7924489241102244"></span>int <code class="descname">count_common_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;cluster_1_size</em>, int<em>&nbsp;cluster_2_size</em>, int *<em>&nbsp;common_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_common_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count number of common ring particles between two clusters and get thier ids /*! This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers. To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over. <p>This function assumes that the n ring particles are the first n particles of the cluster. This is true for the basic clusters but may not be true for other clusters. </p>
 <dl class="docutils">
 <dt><strong>Return</strong></dt>
 <dd>an integer giving the number of common ring particles between the clusters</dd>
@@ -1135,8 +1134,8 @@
 <dd><ul class="breatheparameterlist first last simple">
 <li><code class="docutils literal notranslate"><span class="pre">cluster_1</span></code>: - a pointer to a cluster stored in an hc memory array </li>
 <li><code class="docutils literal notranslate"><span class="pre">cluster_2</span></code>: - a pointer to a cluster stored in an hc memory array </li>
-<li><code class="docutils literal notranslate"><span class="pre">cluster_1_ring_particles</span></code>: - the number of ring particles in cluster 1 </li>
-<li><code class="docutils literal notranslate"><span class="pre">cluster_2_ring_particles</span></code>: - the number of ring particles in cluster 2 </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_1_size</span></code>: - the number of ring particles in cluster 1 to iterate over </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_2_size</span></code>: - the number of ring particles in cluster 2 to iterate over </li>
 <li><code class="docutils literal notranslate"><span class="pre">common_particle_ids</span></code>: - a pointer to an array of length num_particles_in_ring, ids of common particles will be written to this array </li>
 </ul>
 </dd>
@@ -1145,19 +1144,19 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="c.count_uncommon_ring_particles">
-<span class="target" id="simple__cluster__methods_8c_1ab2a26ba9e6dae7fc094797ad3a81ddb9"></span>int <code class="descname">count_uncommon_ring_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;num_in_ring_1</em>, int<em>&nbsp;num_in_ring_2</em>, int *<em>&nbsp;uncommon_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_uncommon_ring_particles" title="Permalink to this definition">¶</a></dt>
+<dt id="c.count_uncommon_particles">
+<span class="target" id="simple__cluster__methods_8c_1a99475197349fe5984c99044e597b7211"></span>int <code class="descname">count_uncommon_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;clus_1_size</em>, int<em>&nbsp;clus_2_size</em>, int *<em>&nbsp;uncommon_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_uncommon_particles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count number of uncommon particles between two clusters and get their ids. </p>
-<p><dl class="docutils">
+<p>This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers. To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over. <dl class="docutils">
 <dt><strong>Return</strong></dt>
-<dd>an integer giving the number of uncommon ring particles between the clusters </dd>
+<dd>an integer giving the number of uncommon particles between the clusters </dd>
 <dt><strong>Parameters</strong></dt>
 <dd><ul class="breatheparameterlist first last simple">
 <li><code class="docutils literal notranslate"><span class="pre">cluster_1</span></code>: - a pointer to a cluster stored in an hc memory array </li>
 <li><code class="docutils literal notranslate"><span class="pre">cluster_2</span></code>: - a pointer to a cluster stored in an hc memory array </li>
-<li><code class="docutils literal notranslate"><span class="pre">num_in_ring_1</span></code>: - the number of particles in the ring of cluster_1, this is 3, 4 or 5 for the basic clusters </li>
-<li><code class="docutils literal notranslate"><span class="pre">num_in_ring_2</span></code>: - the number of particles in the ring of cluster_1, this is 3, 4 or 5 for the basic clusters </li>
-<li><code class="docutils literal notranslate"><span class="pre">uncommon_particle_ids</span></code>: - a pointer to an array of length num_in_ring_1 + num_in_ring_2, ids of uncommon particles will be written to this array </li>
+<li><code class="docutils literal notranslate"><span class="pre">clus_1_size</span></code>: - the number of particles in cluster_1 to iterate over </li>
+<li><code class="docutils literal notranslate"><span class="pre">clus_2_size</span></code>: - the number of particles in cluster_2 to iterate over </li>
+<li><code class="docutils literal notranslate"><span class="pre">uncommon_particle_ids</span></code>: - a pointer to an array of length clus_1_size + clus_2_size, ids of uncommon particles will be written to this array </li>
 </ul>
 </dd>
 </dl>
@@ -1253,6 +1252,25 @@
 <li><code class="docutils literal notranslate"><span class="pre">cluster_size</span></code>: - the number of particles in the trial cluster </li>
 <li><code class="docutils literal notranslate"><span class="pre">cluster_list</span></code>: - a pointer to a list of clusters with the particle ids making up each cluster sorted in ascending order </li>
 <li><code class="docutils literal notranslate"><span class="pre">num_clusters</span></code>: - the number of clusters in cluster list </li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.count_cluster_bonds_to_particle">
+<span class="target" id="simple__cluster__methods_8c_1a7a212ecacebe460ec737ff1e96de652a"></span>int <code class="descname">count_cluster_bonds_to_particle</code><span class="sig-paren">(</span>int<em>&nbsp;particle_id</em>, int *<em>&nbsp;cluster</em>, int<em>&nbsp;cluster_size</em>, int *<em>&nbsp;bonded_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_cluster_bonds_to_particle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the number of bonds between a particle and a cluster and return the ids of bonded particles. </p>
+<p><dl class="docutils">
+<dt><strong>Return</strong></dt>
+<dd>a pointer to an array of length cluster_size, ids of bonded particles will be written to this array </dd>
+<dt><strong>Parameters</strong></dt>
+<dd><ul class="breatheparameterlist first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">particle_id</span></code>: - an integer representing a particle id </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster</span></code>: - a pointer to a cluster stored in an hc memory array </li>
+<li><code class="docutils literal notranslate"><span class="pre">cluster_size</span></code>: - the number of particles in cluster </li>
+<li><code class="docutils literal notranslate"><span class="pre">bonded_ids</span></code>: - an empty list which w </li>
 </ul>
 </dd>
 </dl>
@@ -1777,7 +1795,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Peter Crowther.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
   </body>
 </html>
