@@ -36,7 +36,7 @@ void Clusters_Get10W() {
 }
 
 int count_shared_sp5bs(int *neighbouring_sp5_ids, const int first_sp5b_id, const int center_id) {
-    // Count how many sp5b's have a spindle in common with with spindle in common with first_sp5b_id and get their ids
+    // Count how many sp5b's have a spindle in common with first_sp5b_id and get their ids
     int num_shared_sp5b = 0;
     for (int other_sp5b_pointer = 0; other_sp5b_pointer < nmem_sp5b[center_id]; ++other_sp5b_pointer) {
         int other_sp5_id = mem_sp5b[center_id][other_sp5b_pointer];

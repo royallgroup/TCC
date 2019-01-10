@@ -1,7 +1,7 @@
 #include <bonds.h>
 #include "simple_cluster_methods.h"
 
-/*!  Count number of common ring particles between two clusters and get thier ids
+//!  Count number of common ring particles between two clusters and get thier ids
 /*!  This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers.
 *    To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over.
 *  @param cluster_1 - a pointer to a cluster stored in an hc memory array
@@ -112,7 +112,6 @@ int count_common_spindle_particles(const int *cluster_1, const int *cluster_2, i
 */
 int get_uncommon_spindle(const int *cluster, int cluster_size, int common_spindle_id) {
 
-
     if (common_spindle_id == cluster[cluster_size - 2]) {
         return cluster[cluster_size - 1];
     }
@@ -130,7 +129,6 @@ int get_uncommon_spindle(const int *cluster, int cluster_size, int common_spindl
 */
 int is_particle_in_cluster(const int *cluster, int cluster_size, int particle_id) {
 
-
     for (int i = 0; i < cluster_size; i++) {
         if (cluster[i] == particle_id) {
             return 1;
@@ -147,7 +145,6 @@ int is_particle_in_cluster(const int *cluster, int cluster_size, int particle_id
 *  @param cluster_2_size - the number of particles in cluster_2
 *  @return 1 if there are no common particles, 0 if there is at least 1 common particle
 */
-
 int are_clusters_distinct(const int *cluster_1, const int *cluster_2, int cluster_1_size, int cluster_2_size) {
 
     for (int i = 0; i < cluster_1_size; i++) {
@@ -167,7 +164,6 @@ int are_clusters_distinct(const int *cluster_1, const int *cluster_2, int cluste
 *  @return 0 if the cluster is unique, 1 if the cluster already exists in the list
 */
 int check_unique_cluster(const int *trial, const int cluster_size, int **cluster_list, const int num_clusters) {
-
 
     int i;
     for (int existing_cluster_pointer = 0; existing_cluster_pointer < num_clusters; ++existing_cluster_pointer) {
