@@ -6,6 +6,8 @@
 #include "13K.h"
 
 //!  An 11F cluster is the intersection of two 5A and two 6A clusters
+void get_unbonded_5A_particles(int *trial_cluster, const int *first_5A_cluster, const int *second_5A_cluster);
+
 /*!
 *  Find 11F clusters
 *  An 11F is constructed from two 5A and two 6A clusters where:
