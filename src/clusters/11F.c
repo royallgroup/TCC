@@ -119,54 +119,37 @@ int count_bonded_ring_particles_11F(const int *first_5A, const int *second_5A, i
 }
 
 int get_bonded_6As(int *bonded_6A_id, int *trial_cluster) {
-    // We know that the 6As must have the 5A common particle as a spindle so we can use the mem arrays
+    // Returns 1 if both 6A clusters are successfully found, 0 if not.
+
     int first_6A_detected = 0;
     int second_6A_detected = 0;
     int common_particle = trial_cluster[0];     // Particle which is common to all clusters
 
+    // We know the identity of the ring particles already since they are in the 5As
+    // so to find the 6As we just have to search for a 6A containing these ring particles
+    int first_6A_ring[4];
+    int second_6A_ring[4];
+    setup_6A_rings(trial_cluster, first_6A_ring, second_6A_ring);
+
+    // Loop through all 6A clusters
+    // We know that the 6As must have the 5A common particle as a spindle so we can use the mem arrays
     for (int mem_pointer = 0; mem_pointer < nmem_sp4c[common_particle]; ++mem_pointer) {
         int potential_6A_id = mem_sp4c[common_particle][mem_pointer];
         int *potential_6A_cluster = hcsp4c[potential_6A_id];
 
-        // Loop through all 6A clusters
-        if (potential_6A_cluster[4] == common_particle || potential_6A_cluster[5] == common_particle) {
-
-            // We know the identity of the ring particles already since theey are in the 5As
-            // so to find the 6As we just have to search for a 6A containing these ring particles
-            int first_6A_ring[4];
-            int second_6A_ring[4];
-            setup_6A_rings(trial_cluster, first_6A_ring, second_6A_ring);
-
-            if (first_6A_detected == 0) {
-                if (check_6A(trial_cluster, potential_6A_cluster, first_6A_ring, 1) == 1) {
-                    first_6A_detected = 1;
-                    *bonded_6A_id = potential_6A_id;
-                }
+        if (first_6A_detected == 0) {
+            if (check_6A(trial_cluster, potential_6A_cluster, first_6A_ring, 1) == 1) {
+                first_6A_detected = 1;
+                *bonded_6A_id = potential_6A_id;
             }
-            if (second_6A_detected == 0) {
-                int counter = 0;
-
-                for (int i = 0; i < 4; i++) {
-                    if (potential_6A_cluster[i] == trial_cluster[4] ||
-                        potential_6A_cluster[i] == trial_cluster[6] ||
-                        potential_6A_cluster[i] == trial_cluster[7] ||
-                        potential_6A_cluster[i] == trial_cluster[8] == 1)
-                    counter++;
-                }
-                int common_list[4];
-                if (count_common_particles(second_6A_ring, potential_6A_cluster, 4, 4, common_list) == 4) {
-                    if (potential_6A_cluster[4] == common_particle) {
-                        trial_cluster[2] = potential_6A_cluster[5];
-                    }
-                    else {
-                        trial_cluster[2] = potential_6A_cluster[4];
-                    }
-                    second_6A_detected = 1;
-                }
+        }
+        if (second_6A_detected == 0) {
+            if (check_6A(trial_cluster, potential_6A_cluster, second_6A_ring, 2) == 1) {
+                second_6A_detected = 1;
             }
-            if (first_6A_detected == 1 && second_6A_detected == 1) {
-                return 1;
-            }
+        }
+        if (first_6A_detected == 1 && second_6A_detected == 1) {
+            return 1;
         }
     }
     return 0;
