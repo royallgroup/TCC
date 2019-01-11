@@ -16,49 +16,41 @@
 *
 */
 void Clusters_Get12B_13A() {
-    int i, j, k, l, m;
-    int sp1, sp2;
+    int j, k, l, m;
+    int spindle_1, spindle_2;
     int sj1[5], sj2[5];
     int nSB1, nSB2;
     int flg;
     int break_out;
     int clusSize=12;
 
-    for (i=0; i < nsp5c; ++i) { //first 7A
-        sp1 = hcsp5c[i][5];
-        sp2 = hcsp5c[i][6];
-        nSB1 = nSB2 = 0; // count up spindle bonds
+    for (int first_7A = 0; first_7A < nsp5c; ++first_7A) {
+        int *first_7A_cluster = hcsp5c[first_7A];
+        spindle_1 = first_7A_cluster[5];
+        spindle_2 = first_7A_cluster[6];
+        nSB2 = 0; // count up spindle bonds
 
-        for (j=i+1; j < nsp5c; ++j) { // second 7A
-            flg = sp1 == hcsp5c[j][5] && Bonds_BondCheck(sp2, hcsp5c[j][6]);
-            flg = flg || (sp1 == hcsp5c[j][6] && Bonds_BondCheck(sp2, hcsp5c[j][5]));
-            if (flg==1) {
-                if (nSB1>=5) {
-                    nSB1++;
-                    break;
-                }
-                sj1[nSB1++] = j;
-            }
-        }
+        // Counting number of 7A spindle-spindle bonds
+        nSB1 = count_7A_spindle_bonds(sj1, first_7A);
 
         if (nSB1 == 5 && do13A==1) {     // possibly found 13A, definately found 12B, now establish status
-            for (j=i+1; j < nsp5c; ++j) {
-                if (sp1 == hcsp5c[j][5] || sp1 == hcsp5c[j][6]) {
+            for (j=first_7A+1; j < nsp5c; ++j) {
+                if (spindle_1 == hcsp5c[j][5] || spindle_1 == hcsp5c[j][6]) {
                     for (k=0; k<5; ++k) {
                         for (l=0; l<5; ++l) {
-                            if (hcsp5c[i][k] == hcsp5c[j][l]) break;
+                            if (first_7A_cluster[k] == hcsp5c[j][l]) break;
                         }
                         if (l<5) break;
                     }
-                    if(k==5) { // got 13A, Check all sp5c[j][] - sp1 spindles are less than i
-                        for (k=0; k<i; ++k) {
+                    if(k==5) { // got 13A, Check all sp5c[j][] - spindle_1 spindles are less than first_7A
+                        for (k=0; k<first_7A; ++k) {
                             for(l=0; l<5; ++l) {
-                                if (hcsp5c[j][l] == hcsp5c[k][5] && sp1 == hcsp5c[k][6]) break;
-                                if (hcsp5c[j][l] == hcsp5c[k][6] && sp1 == hcsp5c[k][5]) break;
+                                if (hcsp5c[j][l] == hcsp5c[k][5] && spindle_1 == hcsp5c[k][6]) break;
+                                if (hcsp5c[j][l] == hcsp5c[k][6] && spindle_1 == hcsp5c[k][5]) break;
                             }
-                            if(l<5) break; // index k < i present
+                            if(l<5) break; // index k < first_7A present
                         }
-                        if(k==i) break; // no index k < i present
+                        if(k==first_7A) break; // no index k < first_7A present
                     }
                 }
             }
@@ -68,17 +60,17 @@ void Clusters_Get12B_13A() {
                     m13A= m13A + incrStatic;
                 }
 
-                hc13A[n13A][0] = sp1;
+                hc13A[n13A][0] = spindle_1;
                 k = 1;
-                if(hcsp5c[i][5] != sp1) hc13A[n13A][k++] = hcsp5c[i][5];
-                if(hcsp5c[i][6] != sp1) hc13A[n13A][k++] = hcsp5c[i][6];
-                if(hcsp5c[j][5] != sp1) hc13A[n13A][k++] = hcsp5c[j][5];
-                if(hcsp5c[j][6] != sp1) hc13A[n13A][k] = hcsp5c[j][6];
-                hc13A[n13A][3] = hcsp5c[i][0];
-                hc13A[n13A][4] = hcsp5c[i][1];
-                hc13A[n13A][5] = hcsp5c[i][2];
-                hc13A[n13A][6] = hcsp5c[i][3];
-                hc13A[n13A][7] = hcsp5c[i][4];
+                if(first_7A_cluster[5] != spindle_1) hc13A[n13A][k++] = first_7A_cluster[5];
+                if(first_7A_cluster[6] != spindle_1) hc13A[n13A][k++] = first_7A_cluster[6];
+                if(hcsp5c[j][5] != spindle_1) hc13A[n13A][k++] = hcsp5c[j][5];
+                if(hcsp5c[j][6] != spindle_1) hc13A[n13A][k] = hcsp5c[j][6];
+                hc13A[n13A][3] = first_7A_cluster[0];
+                hc13A[n13A][4] = first_7A_cluster[1];
+                hc13A[n13A][5] = first_7A_cluster[2];
+                hc13A[n13A][6] = first_7A_cluster[3];
+                hc13A[n13A][7] = first_7A_cluster[4];
                 hc13A[n13A][8] = hcsp5c[j][0];
                 hc13A[n13A][9] = hcsp5c[j][1];
                 hc13A[n13A][10] = hcsp5c[j][2];
@@ -90,9 +82,9 @@ void Clusters_Get12B_13A() {
             }
         }
 
-        for (j=i+1; j < nsp5c; ++j) {
-            flg = sp2 == hcsp5c[j][5] && Bonds_BondCheck(sp1, hcsp5c[j][6]);
-            flg = flg || (sp2 == hcsp5c[j][6] && Bonds_BondCheck(sp1, hcsp5c[j][5]));
+        for (j=first_7A+1; j < nsp5c; ++j) {
+            flg = spindle_2 == hcsp5c[j][5] && Bonds_BondCheck(spindle_1, hcsp5c[j][6]);
+            flg = flg || (spindle_2 == hcsp5c[j][6] && Bonds_BondCheck(spindle_1, hcsp5c[j][5]));
             if (flg==1) {
                 if (nSB2>=5) {
                     nSB2++;
@@ -103,23 +95,23 @@ void Clusters_Get12B_13A() {
         }
 
         if(nSB2 == 5 && do13A==1) { // possibly found 13A, definately found 12B, now establish status
-            for (j=i+1; j < nsp5c; ++j) {
-                if (sp2 == hcsp5c[j][5] || sp2 == hcsp5c[j][6]) {
+            for (j=first_7A+1; j < nsp5c; ++j) {
+                if (spindle_2 == hcsp5c[j][5] || spindle_2 == hcsp5c[j][6]) {
                     for (k=0; k<5; ++k) {
                         for (l=0; l<5; ++l) {
-                            if (hcsp5c[i][k] == hcsp5c[j][l]) break;
+                            if (first_7A_cluster[k] == hcsp5c[j][l]) break;
                         }
                         if(l<5) break;
                     }
-                    if (k==5) { // Check all sp5c[j][] - sp2 spindles are less than i
-                        for (k=0; k<i; ++k) {
+                    if (k==5) { // Check all sp5c[j][] - spindle_2 spindles are less than first_7A
+                        for (k=0; k<first_7A; ++k) {
                             for (l=0; l<5; ++l) {
-                                if (hcsp5c[j][l] == hcsp5c[k][5] && sp2 == hcsp5c[k][6]) break;
-                                if (hcsp5c[j][l] == hcsp5c[k][6] && sp2 == hcsp5c[k][5]) break;
+                                if (hcsp5c[j][l] == hcsp5c[k][5] && spindle_2 == hcsp5c[k][6]) break;
+                                if (hcsp5c[j][l] == hcsp5c[k][6] && spindle_2 == hcsp5c[k][5]) break;
                             }
                             if (l<5) break;
                         }
-                        if (k==i) break;
+                        if (k==first_7A) break;
                     }
                 }
             }
@@ -129,17 +121,17 @@ void Clusters_Get12B_13A() {
                     m13A= m13A + incrStatic;
                 }
 
-                hc13A[n13A][0] = sp2;
+                hc13A[n13A][0] = spindle_2;
                 k = 1;
-                if(hcsp5c[i][5] != sp2) hc13A[n13A][k++] = hcsp5c[i][5];
-                if(hcsp5c[i][6] != sp2) hc13A[n13A][k++] = hcsp5c[i][6];
-                if(hcsp5c[j][5] != sp2) hc13A[n13A][k++] = hcsp5c[j][5];
-                if(hcsp5c[j][6] != sp2) hc13A[n13A][k] = hcsp5c[j][6];
-                hc13A[n13A][3] = hcsp5c[i][0];
-                hc13A[n13A][4] = hcsp5c[i][1];
-                hc13A[n13A][5] = hcsp5c[i][2];
-                hc13A[n13A][6] = hcsp5c[i][3];
-                hc13A[n13A][7] = hcsp5c[i][4];
+                if(first_7A_cluster[5] != spindle_2) hc13A[n13A][k++] = first_7A_cluster[5];
+                if(first_7A_cluster[6] != spindle_2) hc13A[n13A][k++] = first_7A_cluster[6];
+                if(hcsp5c[j][5] != spindle_2) hc13A[n13A][k++] = hcsp5c[j][5];
+                if(hcsp5c[j][6] != spindle_2) hc13A[n13A][k] = hcsp5c[j][6];
+                hc13A[n13A][3] = first_7A_cluster[0];
+                hc13A[n13A][4] = first_7A_cluster[1];
+                hc13A[n13A][5] = first_7A_cluster[2];
+                hc13A[n13A][6] = first_7A_cluster[3];
+                hc13A[n13A][7] = first_7A_cluster[4];
                 hc13A[n13A][8] = hcsp5c[j][0];
                 hc13A[n13A][9] = hcsp5c[j][1];
                 hc13A[n13A][10] = hcsp5c[j][2];
@@ -153,9 +145,9 @@ void Clusters_Get12B_13A() {
 
         if ((nSB1 > 5) && (nSB2 > 5)) continue;
 
-        for (j=0; j<i; ++j) { // keep looking for 12B
-            flg = sp1 == hcsp5c[j][5] && Bonds_BondCheck(sp2, hcsp5c[j][6]);
-            flg = flg || (sp1 == hcsp5c[j][6] && Bonds_BondCheck(sp2, hcsp5c[j][5]));
+        for (j=0; j<first_7A; ++j) { // keep looking for 12B
+            flg = spindle_1 == hcsp5c[j][5] && Bonds_BondCheck(spindle_2, hcsp5c[j][6]);
+            flg = flg || (spindle_1 == hcsp5c[j][6] && Bonds_BondCheck(spindle_2, hcsp5c[j][5]));
             if (flg==1) {
                 if (nSB1 >= 5) {
                     nSB1++;
@@ -170,13 +162,13 @@ void Clusters_Get12B_13A() {
                 hc12B= resize_2D_int(hc12B, m12B, m12B + incrStatic, clusSize, -1);
                 m12B= m12B + incrStatic;
             }
-            hc12B[n12B][0] = sp1;
-            hc12B[n12B][1] = sp2;
-            hc12B[n12B][2] = hcsp5c[i][0];
-            hc12B[n12B][3] = hcsp5c[i][1];
-            hc12B[n12B][4] = hcsp5c[i][2];
-            hc12B[n12B][5] = hcsp5c[i][3];
-            hc12B[n12B][6] = hcsp5c[i][4];
+            hc12B[n12B][0] = spindle_1;
+            hc12B[n12B][1] = spindle_2;
+            hc12B[n12B][2] = first_7A_cluster[0];
+            hc12B[n12B][3] = first_7A_cluster[1];
+            hc12B[n12B][4] = first_7A_cluster[2];
+            hc12B[n12B][5] = first_7A_cluster[3];
+            hc12B[n12B][6] = first_7A_cluster[4];
 
             m = 7;
             break_out=0;
@@ -204,9 +196,9 @@ void Clusters_Get12B_13A() {
             Clust_Write_12B();
         }
 
-        for (j=0; j<i; ++j) {
-            flg = sp2 == hcsp5c[j][5] && Bonds_BondCheck(sp1, hcsp5c[j][6]);
-            flg = flg || (sp2 == hcsp5c[j][6] && Bonds_BondCheck(sp1, hcsp5c[j][5]));
+        for (j=0; j<first_7A; ++j) {
+            flg = spindle_2 == hcsp5c[j][5] && Bonds_BondCheck(spindle_1, hcsp5c[j][6]);
+            flg = flg || (spindle_2 == hcsp5c[j][6] && Bonds_BondCheck(spindle_1, hcsp5c[j][5]));
             if (flg==1) {
                 if (nSB2 >= 5) {
                     nSB2++;
@@ -222,13 +214,13 @@ void Clusters_Get12B_13A() {
                 m12B= m12B + incrStatic;
             }
 
-            hc12B[n12B][0] = sp2;
-            hc12B[n12B][1] = sp1;
-            hc12B[n12B][2] = hcsp5c[i][0];
-            hc12B[n12B][3] = hcsp5c[i][1];
-            hc12B[n12B][4] = hcsp5c[i][2];
-            hc12B[n12B][5] = hcsp5c[i][3];
-            hc12B[n12B][6] = hcsp5c[i][4];
+            hc12B[n12B][0] = spindle_2;
+            hc12B[n12B][1] = spindle_1;
+            hc12B[n12B][2] = first_7A_cluster[0];
+            hc12B[n12B][3] = first_7A_cluster[1];
+            hc12B[n12B][4] = first_7A_cluster[2];
+            hc12B[n12B][5] = first_7A_cluster[3];
+            hc12B[n12B][6] = first_7A_cluster[4];
 
             m = 7;
             break_out=0;
@@ -255,6 +247,26 @@ void Clusters_Get12B_13A() {
 
         }
     }
+}
+
+int count_7A_spindle_bonds(int *sj1, const int first_7A) {
+    int flg;
+    int *first_7A_cluster = hcsp5c[first_7A];
+    int num_spindle_bonds = 0;
+
+    for (int second_7A = first_7A + 1; second_7A < nsp5c; ++second_7A) {
+        int *second_7A_cluster = hcsp5c[second_7A];
+        flg = first_7A_cluster[5] == second_7A_cluster[5] && Bonds_BondCheck(first_7A_cluster[6], second_7A_cluster[6]);
+        flg = flg || (first_7A_cluster[5] == second_7A_cluster[6] && Bonds_BondCheck(first_7A_cluster[6], second_7A_cluster[5]));
+        if (flg == 1) {
+            if (num_spindle_bonds >= 5) {
+                num_spindle_bonds++;
+                break;
+            }
+            sj1[num_spindle_bonds++] = second_7A;
+        }
+    }
+    return num_spindle_bonds;
 }
 
 void Clust_Write_12B() {

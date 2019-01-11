@@ -6,8 +6,6 @@
 #include "13K.h"
 
 //!  An 11F cluster is the intersection of two 5A and two 6A clusters
-void get_unbonded_5A_particles(int *trial_cluster, const int *first_5A_cluster, const int *second_5A_cluster);
-
 /*!
 *  Find 11F clusters
 *  An 11F is constructed from two 5A and two 6A clusters where:
@@ -60,7 +58,7 @@ void Clusters_Get11F_13K() {
                 if (get_bonded_6As(&bonded_6A_id, trial_cluster)) {
                     get_unbonded_5A_particles(trial_cluster, first_5A_cluster, second_5A_cluster);
 
-                    write_11F(trial_cluster, first_5A_cluster, second_5A_cluster);
+                    write_11F(trial_cluster);
 
                     if (do13K == 1) {
                         if (Clusters_Get13K(first_5A_id, second_5A_id, bonded_6A_id)) {
@@ -204,8 +202,7 @@ void setup_6A_rings(const int *trial_cluster, int *first_6A_ring, int *second_6A
     second_6A_ring[3] = trial_cluster[8];    // bonded ring particles of 5A
 }
 
-
-void write_11F(const int *trial_cluster, const int *first_5A, const int *second_5A) {
+void write_11F(const int *trial_cluster) {
     int clusSize = 11;
 
     if (n11F == m11F) {

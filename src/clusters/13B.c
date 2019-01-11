@@ -25,30 +25,32 @@ void Clusters_Get13B() {
     for(int first_7A_id = 0; first_7A_id < nsp5c; ++first_7A_id){
         int *first_7A_cluster = hcsp5c[first_7A_id];
 
-        for (int spindle_pointer = 0; spindle_pointer < 2; ++spindle_pointer) {
-            int spindle_id = first_7A_cluster[5 + spindle_pointer];
+        for (int spindle_pointer = 5; spindle_pointer < 7; ++spindle_pointer) {
+            int spindle_id = first_7A_cluster[spindle_pointer];
             for (int second_7A_pointer = 0; second_7A_pointer < nmem_sp5c[spindle_id]; second_7A_pointer++) {
                 int second_7A_id = mem_sp5c[spindle_id][second_7A_pointer];
                 if (first_7A_id > second_7A_id) {
                     int *second_7A_cluster = hcsp5c[second_7A_id];
 
-                    if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, common_spindle_id) == 1) {
-                        uncommon_spindle_ids[0] = get_uncommon_spindle(first_7A_cluster, 7, common_spindle_id[0]);
-                        uncommon_spindle_ids[1] = get_uncommon_spindle(second_7A_cluster, 7, common_spindle_id[0]);
+                    // There should be a single common spindle particle between the two 7As
+                    if (count_common_spindle_particles(first_7A_cluster, second_7A_cluster, 7, 7, common_spindle_id) != 1) continue;
 
-                        if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 0) {
+                    uncommon_spindle_ids[0] = get_uncommon_spindle(first_7A_cluster, 7, common_spindle_id[0]);
+                    uncommon_spindle_ids[1] = get_uncommon_spindle(second_7A_cluster, 7, common_spindle_id[0]);
 
-                            if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) == 0) {
+                    // Check that the uncommon spindles are not bonded to each other
+                    if (Bonds_BondCheck(uncommon_spindle_ids[0], uncommon_spindle_ids[1]) == 1) continue;
 
-                                if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 1) {
+                    // Check that there are no shared particles between the rings of the 7As
+                    if (count_common_particles(first_7A_cluster, second_7A_cluster, 5, 5, common_ring_particles) != 0) continue;
 
-                                    if (check_rings_are_bonded(second_7A_cluster, first_7A_cluster) == 1) {
+                    // Check each particle of ring 1 is bonded to a single particle in ring 2.
+                    if (check_rings_are_bonded(first_7A_cluster, second_7A_cluster) == 0) continue;
 
-                                        Cluster_Write_13B(first_7A_cluster, second_7A_cluster, common_spindle_id[0], uncommon_spindle_ids);
-                                    }
-                                }
-                            }
-                        }
+                    // Check each particle of ring 2 is bonded to a single particle of ring 1
+                    if (check_rings_are_bonded(second_7A_cluster, first_7A_cluster) == 1) {
+                        Cluster_Write_13B(first_7A_cluster, second_7A_cluster, common_spindle_id[0],
+                                          uncommon_spindle_ids);
                     }
                 }
             }
@@ -57,17 +59,17 @@ void Clusters_Get13B() {
 }
 
 int check_rings_are_bonded(const int *first_7A_cluster, const int *second_7A_cluster) {
-    // If each particle in 7Ai is bonded to exactly 1 particle in 7Aj returns 1 else returns 0
-    int first_ring_pointer;
+    // If each particle in 7Ai is bonded to exactly 1 particle in 7Aj returns 1, else returns 0.
+    int ring_pointer;
 
-    for (first_ring_pointer = 0; first_ring_pointer < 5; ++first_ring_pointer) {
-        int first_ring_particle = first_7A_cluster[first_ring_pointer];
+    for (ring_pointer = 0; ring_pointer < 5; ++ring_pointer) {
+        int first_ring_particle = first_7A_cluster[ring_pointer];
 
         if (count_bonds_to_ring(first_ring_particle, second_7A_cluster) != 1) {
             break;
         }
     }
-    if (first_ring_pointer == 5) {
+    if (ring_pointer == 5) {
         return 1;
     } else {
         return 0;
