@@ -16,7 +16,6 @@
 *  Storage order: particles ordered by id x 12
 */
 void Clusters_Get12E() {
-    int common_particle_ids[4], trial[12];
 
     for (int id_11F = 0; id_11F < n11F; id_11F++) {
         int *cluster_11F = hc11F[id_11F];
@@ -28,44 +27,22 @@ void Clusters_Get12E() {
             // Check spindles of new 5A are common with uncommon spindles of 6As in 11F
             if (are_5A_spindles_common(cluster_5A, cluster_11F) == 0) continue;
 
-            //if (are_5A_ring_particles_common(first_5A_cluster, first_11F_cluster) == 0) continue;
             // Check two new 5A ring particles are common with 11F ring particles
-            int num_common_particles = 0;
-            for (int ring_pointer = 0;
-                // loop through 5A ring particles
-                ring_pointer < 3; ring_pointer++) {
-                for (int m = 7; m < 11; m++) { // loop through ring particles of 11F
-                    if (cluster_5A[ring_pointer] == cluster_11F[m]) {
-                        common_particle_ids[num_common_particles] = cluster_5A[ring_pointer];
-                        num_common_particles++;
-                    }
-                }
-            }
-            if (num_common_particles != 2) continue;
+            if (are_5A_ring_particles_common(cluster_5A, cluster_11F) == 0) continue;
 
             // Find which of the 3 ring particles in new_5A is the uncommon one
-            int uncommon_sp3_ring_particle = get_uncommon_5A_ring_particle(common_particle_ids, cluster_5A);
+            int uncommon_sp3_ring_particle = get_uncommon_5A_ring_particle(cluster_11F, cluster_5A);
+
             // check that new particle is not already in 11F
-            if (is_particle_in_cluster(cluster_11F, 11, uncommon_sp3_ring_particle) == 0) {
+            if (is_particle_in_cluster(cluster_11F, 11, uncommon_sp3_ring_particle) == 1) continue;
 
-                // Now need to search the current cluster list to make sure the detected cluster is uniques
-                for (int i = 0; i < 11; ++i) {
-                    trial[i] = cluster_11F[i];
-                }
-                trial[11] = uncommon_sp3_ring_particle;
-
-                quickSort(&trial[0], 12);
-
-                if (check_unique_cluster(trial, 12, hc12E, n12E) == 0) {
-                    Write_12E(trial);
-                }
+            int trial[12];
+            // Now need to search the current cluster list to make sure the detected cluster is unique
+            if (is_12E_unique(cluster_11F, uncommon_sp3_ring_particle, trial) == 1) {
+                Write_12E(trial);
             }
         }
     }
-}
-
-int are_5A_ring_particles_common(const int *first_5A_cluster, const int *first_11F_cluster) {
-    return 0;
 }
 
 int are_5A_spindles_common(const int *first_5A_cluster, const int *first_11F_cluster) {
@@ -79,15 +56,35 @@ int are_5A_spindles_common(const int *first_5A_cluster, const int *first_11F_clu
     return 0;
 }
 
-int get_uncommon_5A_ring_particle(const int *common_particle_ids, const int *first_5A_cluster) {
+int are_5A_ring_particles_common(const int *cluster_5A, const int *cluster_11F) {
 
+    if (is_particle_in_cluster(cluster_5A, 3, cluster_11F[7]) &&
+        is_particle_in_cluster(cluster_5A, 3, cluster_11F[8]) == 1) {
+        return 1;
+    }
+    else return 0;
+}
+
+int get_uncommon_5A_ring_particle(const int *cluster_11F, const int *cluster_5A) {
     for (int i = 0; i < 3; i++) {
-        if (first_5A_cluster[i] != common_particle_ids[0] && first_5A_cluster[i] != common_particle_ids[1]) {
-            return(first_5A_cluster[i]);
+        if (cluster_5A[i] != cluster_11F[7] && cluster_5A[i] != cluster_11F[8]) {
+            return(cluster_5A[i]);
         }
     }
     Error("No uncommon ring particle found.");
     return 0;
+}
+
+int is_12E_unique(const int *cluster_11F, int uncommon_sp3_ring_particle, int *trial) {
+    for (int i = 0; i < 11; ++i) {
+        trial[i] = cluster_11F[i];
+    }
+    trial[11] = uncommon_sp3_ring_particle;
+
+    quickSort(&trial[0], 12);
+
+    if (check_unique_cluster(trial, 12, hc12E, n12E) == 0) return 1;
+    else return 0;
 }
 
 void Write_12E(const int *trial) {
