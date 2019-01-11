@@ -1,10 +1,10 @@
 #include <globals.h>
 #include "13A.h"
 
-//!  A 13K clusters is the intersection of a 12B and a 7A cluster. Topologically it is a regular icosahedron.
+//!  A 13A clusters is the intersection of a 12B and a 7A cluster. Topologically it is a regular icosahedron.
 /*!
-*  Find 13K clusters
-*  A 13K is constructed from a 12B and a 7A where:
+*  Find 13A clusters
+*  A 13A is constructed from a 12B and a 7A where:
 *      - The 7A cluster has one spindle given by sc of the 12B cluster, and one spindle that is distinct from the 12B particles.
 *      - The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.
 *

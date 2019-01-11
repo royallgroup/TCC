@@ -17,7 +17,7 @@
 */
 void Clusters_Get11A() {
     int common_spindle_id[2], uncommon_spindle_ids[2];
-    int common_ring_particles[2];
+    int common_ring_particles[4];
 
     for (int first_6A_id = 0; first_6A_id < nsp4c; first_6A_id++) {
         int *first_6A_cluster = hcsp4c[first_6A_id];
