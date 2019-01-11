@@ -24,7 +24,7 @@ void get_unbonded_5A_particles(int *trial_cluster, const int *first_5A_cluster, 
 */
 void Clusters_Get11F_13K() {
 
-    int bonded_6A_id;               // The id of the first 6A cluster to pass to the 13A method
+    int bonded_6A_id;              // The id of the first 6A cluster to pass to the 13A method
     int trial_cluster[11];         // The ids of the particles as we build the cluster
     // The trial cluster is built up with particles to form the 11F
     // Trial[0] is the common ring particle of the 5As, this is also the common spindle of the 6As

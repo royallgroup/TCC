@@ -94,7 +94,6 @@ void Cluster_Write_13B(const int *first_7A_cluster, const int *second_7A_cluster
     }
 
     hc13B[n13B][0] = common_spindle_id;
-
     hc13B[n13B][1] = uncommon_spindle_ids[0];
     hc13B[n13B][2] = uncommon_spindle_ids[1];
 
