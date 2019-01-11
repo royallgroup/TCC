@@ -35,7 +35,6 @@ void Clusters_Get11F_13K() {
     // Trial[7 and 8] are the distinct but bonded ring particles of the 2 5As. These are the common ring particles of the two 6As
     // Trial[9 and 10] are the uncommon unbonded ring particles of the 5As. These are not in the 6As.
 
-
     for(int first_5A_id = 0; first_5A_id < nsp3c; first_5A_id++) {
         int *first_5A_cluster = hcsp3c[first_5A_id];
         // loop over only the rings of the 5A clusters
@@ -44,6 +43,7 @@ void Clusters_Get11F_13K() {
             for (int second_5A_pointer = 0; second_5A_pointer < nmem_sp3c[first_5A_ring_particle]; second_5A_pointer++) {
                 int second_5A_id = mem_sp3c[first_5A_ring_particle][second_5A_pointer];
                 int *second_5A_cluster = hcsp3c[second_5A_id];
+                // Don't detect clusters twice
                 if (second_5A_id <= first_5A_id) continue;
 
                 // Check that the 5A spindles are bonded
@@ -58,6 +58,8 @@ void Clusters_Get11F_13K() {
                 if (count_bonded_ring_particles_11F(first_5A_cluster, second_5A_cluster, trial_cluster) != 1) continue;
 
                 if (get_bonded_6As(&bonded_6A_id, trial_cluster)) {
+                    get_unbonded_5A_particles(trial_cluster, first_5A_cluster, second_5A_cluster);
+
                     write_11F(trial_cluster, first_5A_cluster, second_5A_cluster);
 
                     if (do13K == 1) {
@@ -69,6 +71,23 @@ void Clusters_Get11F_13K() {
                 }
             }
         }
+    }
+}
+
+void get_unbonded_5A_particles(int *trial_cluster, const int* first_5A_cluster, const int* second_5A_cluster) {
+    // We know all particles except for the unbonded uncommon 5A ring particles.
+    // Finding these particles completes the cluster.
+
+    int known_ring_particles[3];
+    known_ring_particles[0] = trial_cluster[0];
+    known_ring_particles[1] = trial_cluster[7];
+    known_ring_particles[2] = trial_cluster[8];
+
+    for (int i = 0; i < 3; ++i) {
+        if(is_particle_in_cluster(known_ring_particles, 3, first_5A_cluster[i]) == 0)
+            trial_cluster[9] = first_5A_cluster[i];
+        if(is_particle_in_cluster(known_ring_particles, 3, second_5A_cluster[i]) == 0)
+            trial_cluster[10] = second_5A_cluster[i];
     }
 }
 
@@ -194,24 +213,8 @@ void write_11F(const int *trial_cluster, const int *first_5A, const int *second_
         m11F = m11F + incrStatic;
     }
 
-    hc11F[n11F][0] = trial_cluster[0];
-    hc11F[n11F][1] = trial_cluster[1];
-    hc11F[n11F][2] = trial_cluster[2];
-    hc11F[n11F][3] = trial_cluster[3];
-    hc11F[n11F][4] = trial_cluster[4];
-    hc11F[n11F][5] = trial_cluster[5];
-    hc11F[n11F][6] = trial_cluster[6];
-
-    int j = 7;
-    for (int i = 0; i < 3; ++i) {
-        if (first_5A[i] != trial_cluster[0]) {
-            hc11F[n11F][j] = first_5A[i];
-            j++;
-        }
-        if (second_5A[i] != trial_cluster[0]) {
-            hc11F[n11F][j] = second_5A[i];
-            j++;
-        }
+    for (int i = 0; i < 11; ++i) {
+        hc11F[n11F][i] = trial_cluster[i];
     }
 
     if (s11F[hc11F[n11F][0]] == 'C') s11F[hc11F[n11F][0]] = 'B';
