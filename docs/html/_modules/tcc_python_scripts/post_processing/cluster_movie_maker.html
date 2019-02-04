@@ -1,0 +1,328 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tcc_python_scripts.post_processing.cluster_movie_maker &#8212; TCC  documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">TCC  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tcc_python_scripts.post_processing.cluster_movie_maker</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; A script to take the RAW file output from the TCC and produce a combined</span>
+<span class="sd">    cluster XYZ for rendering. Takes a cluster list argument and labels</span>
+<span class="sd">    particles according to the list priority.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+
+<div class="viewcode-block" id="add_cluster_to_xyz"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.add_cluster_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">add_cluster_to_xyz</span><span class="p">(</span><span class="n">xyz_frame</span><span class="p">,</span> <span class="n">particle_types</span><span class="p">,</span> <span class="n">cluster_number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of particle types, overwrite the cluster type in xyz_frame if</span>
+<span class="sd">    a particle is in a cluster.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        xyz_frame (cluster_movie_maker.Snapshot): A snapshot of the system.</span>
+<span class="sd">        particle_types (list of string): Whether particles are in a cluster</span>
+<span class="sd">            or not. &quot;A&quot; and &quot;B&quot; correspond to particles not in a cluster while</span>
+<span class="sd">            &quot;C&quot; and &quot;D&quot; correspond to particles in a cluster</span>
+<span class="sd">        cluster_number (integer): The index of the cluster in the priority</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        cluster_movie_maker.Snapshot: an updated XYZ snapshot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">particle_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span> <span class="ow">or</span> <span class="n">particle</span> <span class="o">==</span> <span class="s2">&quot;D&quot;</span><span class="p">:</span>
+            <span class="n">xyz_frame</span><span class="o">.</span><span class="n">particle_species</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">cluster_number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">xyz_frame</span></div>
+
+
+<div class="viewcode-block" id="prepare_output_file"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.prepare_output_file">[docs]</a><span class="k">def</span> <span class="nf">prepare_output_file</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open the output file once at the beginning of the analysis to delete</span>
+<span class="sd">    any previous copy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output.xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The main loop.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: 0 if script ran successfully.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xyz_name</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">,</span> <span class="n">cluster_list</span> <span class="o">=</span> <span class="n">process_arguments</span><span class="p">()</span>
+    <span class="n">raw_file_handles</span> <span class="o">=</span> <span class="n">open_raw_files</span><span class="p">(</span><span class="n">cluster_list</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">)</span>
+    <span class="n">xyz_file</span> <span class="o">=</span> <span class="n">XyzFileReader</span><span class="p">(</span><span class="n">xyz_name</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Particles not in any cluster are labelled with the letter A&quot;</span><span class="p">)</span>
+
+    <span class="n">prepare_output_file</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">frame_number</span><span class="p">,</span> <span class="n">xyz_frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xyz_file</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">raw_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_file_handles</span><span class="p">):</span>
+            <span class="n">cluster_types</span> <span class="o">=</span> <span class="n">raw_file</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span>
+            <span class="n">xyz_frame</span> <span class="o">=</span> <span class="n">add_cluster_to_xyz</span><span class="p">(</span><span class="n">xyz_frame</span><span class="p">,</span> <span class="n">cluster_types</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">frame_number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cluster type </span><span class="si">{}</span><span class="s2"> is labelled with the letter </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">raw_file</span><span class="o">.</span><span class="n">cluster_name</span><span class="p">,</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">xyz_frame</span><span class="o">.</span><span class="n">write_xyz</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="open_raw_files"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.open_raw_files">[docs]</a><span class="k">def</span> <span class="nf">open_raw_files</span><span class="p">(</span><span class="n">cluster_list</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of clusters, open the corresponding TCC RAW files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cluster_list (list of string): TCC cluster names in reverse order</span>
+<span class="sd">            of priority.</span>
+<span class="sd">        raw_stub (string):  The base of the RAW file name relative to the</span>
+<span class="sd">            working directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of RawFileReader: Objects representing the open RAW files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw_file_handles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cluster_type</span> <span class="ow">in</span> <span class="n">cluster_list</span><span class="p">:</span>
+        <span class="n">raw_file_handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RawFileReader</span><span class="p">(</span><span class="n">raw_stub</span><span class="p">,</span> <span class="n">cluster_type</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">raw_file_handles</span></div>
+
+
+<div class="viewcode-block" id="process_arguments"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.process_arguments">[docs]</a><span class="k">def</span> <span class="nf">process_arguments</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the command line arguments and return variables with the values.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        strings: Processed command line parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Syntax: ./cluster_movie_maker.py simulation_data.xyz &quot;</span>
+              <span class="s2">&quot;simulation_data.xyz.raw_ cluster_priority_list&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="n">xyz_name</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">raw_stub</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">cluster_list</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">xyz_name</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">,</span> <span class="n">cluster_list</span></div>
+
+
+<div class="viewcode-block" id="XyzFileReader"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.XyzFileReader">[docs]</a><span class="k">class</span> <span class="nc">XyzFileReader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generator for xyz files. Opens a file handle when the object is</span>
+<span class="sd">    instantiated. Iteration then returns the file frame by frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On instantiation, open a file handle to file_name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_name (string): The xyz file to open.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a single frame from the xyz and returns it.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Snapshot: A snapshot object representing a single frame from the</span>
+<span class="sd">                xyz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="n">xyz_snapshot</span> <span class="o">=</span> <span class="n">Snapshot</span><span class="p">()</span>
+            <span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_num_particles</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="c1"># All particles are labelled &quot;A&quot; as this represents not being</span>
+                <span class="c1"># present in a cluster. This value is later overwritten if it</span>
+                <span class="c1"># is in a cluster.</span>
+                <span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">particle_species</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+                <span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">x_coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">y_coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="n">xyz_snapshot</span><span class="o">.</span><span class="n">z_coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="k">yield</span> <span class="n">xyz_snapshot</span>
+            <span class="c1"># Read the first line of the next frame</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+<div class="viewcode-block" id="XyzFileReader.process_num_particles"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.XyzFileReader.process_num_particles">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">process_num_particles</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process the first line of an XYZ frame to make sure that it is a</span>
+<span class="sd">        valid number.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            line (string): The first line of an xyz frame.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            integer: The number of particles from line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">num_particles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error reading number of particles from XYZ file.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+        <span class="k">return</span> <span class="n">num_particles</span></div></div>
+
+
+<div class="viewcode-block" id="RawFileReader"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.RawFileReader">[docs]</a><span class="k">class</span> <span class="nc">RawFileReader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reader for TCC .RAW files. Instantiation opens a file handle and the get</span>
+<span class="sd">    frame method then allows the file to be read a frame at a time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_stub</span><span class="p">,</span> <span class="n">cluster_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open the RAW file specified by file_name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_stub (string): The base of the file name relative to the</span>
+<span class="sd">         working directory.</span>
+<span class="sd">            cluster_type (string): The TCC cluster type e.g. &quot;10A&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_stub</span><span class="p">,</span> <span class="n">cluster_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_name</span> <span class="o">=</span> <span class="n">cluster_type</span>
+
+<div class="viewcode-block" id="RawFileReader.get_frame"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.RawFileReader.get_frame">[docs]</a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single frame of data from the raw file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of string: Whether the particles are in a cluster or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+        <span class="c1"># Skip the comment line</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+        <span class="n">type_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">type_list</span></div></div>
+
+
+<div class="viewcode-block" id="Snapshot"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot">[docs]</a><span class="k">class</span> <span class="nc">Snapshot</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Object representing a single configuration of a system with particle types</span>
+<span class="sd">    and coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particle_species</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            string: String representation of the Snapshot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle_species</span><span class="p">[</span><span class="n">particle</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">x_coordinates</span><span class="p">[</span><span class="n">particle</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">y_coordinates</span><span class="p">[</span><span class="n">particle</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">z_coordinates</span><span class="p">[</span><span class="n">particle</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Snapshot.write_xyz"><a class="viewcode-back" href="../../../tcc_python_scripts.post_processing.html#tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot.write_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">write_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the Snapshot to an xyz file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output.xyz&quot;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">))</span>
+            <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+                <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="se">\t</span><span class="si">{}</span><span class="se">\t</span><span class="si">{}</span><span class="se">\t</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span>
+                                  <span class="nb">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particle_species</span><span class="p">[</span><span class="n">particle</span><span class="p">],</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">x_coordinates</span><span class="p">[</span><span class="n">particle</span><span class="p">],</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">y_coordinates</span><span class="p">[</span><span class="n">particle</span><span class="p">],</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">z_coordinates</span><span class="p">[</span><span class="n">particle</span><span class="p">]))</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">TCC  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Peter Crowther.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>
