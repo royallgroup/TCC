@@ -154,3 +154,23 @@ Wahnstrom: (13A, 12B, 11W, 10B, 9B, 8A, sp5c, sp4c, sp3c)
 Lennard-Jones: (13A, 12B, 11C, 10B, 9B, 8B, sp5c, sp4c, sp3c)
 
 Sticky Spheres: (FCC, HCP, 13B, 12E, 11F, 10B, 9B, 8B, sp5c, sp4c, sp3c)
+
+
+Cluster Movie Maker Script
+===========================
+
+To output pretty movies of the TCC requires combining the data from a subset of clusters into a single xyz file. This is done by the maovie maker script.
+
+Running the script
+-------------------
+
+Before running the script run the TCC with RAW output turned on. The arguments for the movie maker script are, the name of the xyz file containing particle coordinates, the stub of the raw file name specifying the location of the raw files relative to the current working directory and a space separated cluster list in order of increasing priority.
+
+If the script is run in a directory containing sample.xyz and a folder raw_output, containing the files ``sample.xyz.rcAA1.88.rcAB1.88.rcBB1.88.Vor1.fc1.PBCs1.raw_6A`` etc. the command to create a hard sphere movie would be:
+
+::
+
+	python cluster_movie_maker_script.py sample.xyz raw_output/sample.xyz.rcAA1.88.rcAB1.88.rcBB1.88.Vor1.fc1.PBCs1.raw_ "sp3c sp4c sp5c 8B 9B 10B 11F 12E 13A FCC"
+
+Note that the raw file omits the cluster type. Only the common stub is given.
+

@@ -316,7 +316,7 @@
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="function">
 <dt id="c.Clusters_Get11B">
-<span class="target" id="11_b_8c_1a8d332bfa299a5404f3f311fdef3ff4e9"></span>int <code class="descname">Clusters_Get11B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11B" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="11_b_8c_1a4269d8d494cfa83e21afbfa5c6682536"></span>void <code class="descname">Clusters_Get11B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11B" title="Permalink to this definition">¶</a></dt>
 <dd><p>An 11B cluster is 9B with two additional particles. </p>
 <p>Find 11B clusters An 11A is a 9B and two extra particles where:<ul class="simple">
 <li>The common spindle particle from the 9B cluster has coordination number 10.</li>
@@ -407,55 +407,51 @@
 <dt id="c.Clusters_Get11F_13K">
 <span class="target" id="11_f_8c_1ae4bf69fd33901b24879a8db74ba016e1"></span>void <code class="descname">Clusters_Get11F_13K</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clusters_Get11F_13K" title="Permalink to this definition">¶</a></dt>
 <dd><p>An 11F cluster is the intersection of two 5A and two 6A clusters. </p>
-<p>Find 11F clusters An 11E is constructed from two 5A two 6A clusters where:<ul class="simple">
+<p>Find 11F clusters An 11F is constructed from two 5A and two 6A clusters where:<ul class="simple">
 <li>Each spindle of 5Ai is bonded to a spindle of 5Aj.</li>
 <li>There is one common ring particle between the 5A clusters.</li>
 <li>There is one bonded pair of ring particle between the 5A clusters.</li>
-<li>Both 6As have one distinct spindle and one spindle which is the common ring particle of the 5As.</li>
+<li>6A_i has a distinct spindle and a spindle which is the common ring particle of the 5As</li>
+<li>6A_j has a distinct spindle and a spindle which is the common ring particle of the 5As</li>
 <li>Each 6A has two bonded 5A spindles and two bonded 5A ring particles as its ring.</li>
 </ul>
 </p>
-<p>Cluster output: BOOOOOOBBBB Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4) </p>
+<p>Cluster output: BOOOOOOBBBB Storage order: 5A_common particle, 6A_uncommon_spindle x 2, 5A_spindles x 4, 5A_ring_particles x 4 </p>
 </dd></dl>
 
 <dl class="function">
-<dt id="c.do_5As_have_distinct_spindles">
-<span class="target" id="11_f_8c_1a42b5f690dc0b6fd169a94d52b13d74de"></span>int <code class="descname">do_5As_have_distinct_spindles</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.do_5As_have_distinct_spindles" title="Permalink to this definition">¶</a></dt>
+<dt id="c.get_unbonded_5A_particles">
+<span class="target" id="11_f_8c_1a0762cff8112e93c68592566a63c67e45"></span>void <code class="descname">get_unbonded_5A_particles</code><span class="sig-paren">(</span>int *<em>&nbsp;trial_cluster</em>, const int *<em>&nbsp;first_5A_cluster</em>, const int *<em>&nbsp;second_5A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_unbonded_5A_particles" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="c.check_common_particle">
-<span class="target" id="11_f_8c_1a98b5831e1021b6a4df99309b3c0ba6f9"></span>void <code class="descname">check_common_particle</code><span class="sig-paren">(</span>int<em>&nbsp;first_5A_cluster_id</em>, int<em>&nbsp;second_5A_id</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_common_particle" title="Permalink to this definition">¶</a></dt>
+<dt id="c.are_spindles_bonded">
+<span class="target" id="11_f_8c_1a4d978bdaff20942f707e9804fec3e3e2"></span>int <code class="descname">are_spindles_bonded</code><span class="sig-paren">(</span>int<em>&nbsp;first_5A_id</em>, int<em>&nbsp;second_5A_id</em>, int *<em>&nbsp;trial_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.are_spindles_bonded" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="c.get_common_particle_between_5As">
-<span class="target" id="11_f_8c_1a229e4af3d20778190c9fab4b30622c64"></span>int <code class="descname">get_common_particle_between_5As</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_common_particle_between_5As" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="c.get_bonded_ring_particles">
-<span class="target" id="11_f_8c_1a42f77ec663c5b5a86b3ffaf688031552"></span>int <code class="descname">get_bonded_ring_particles</code><span class="sig-paren">(</span>int<em>&nbsp;cp</em>, const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em>, int *<em>&nbsp;bpi</em>, int *<em>&nbsp;bpj</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_bonded_ring_particles" title="Permalink to this definition">¶</a></dt>
+<dt id="c.count_bonded_ring_particles_11F">
+<span class="target" id="11_f_8c_1ac3e5b943071bf12f29126c4162a8fbf0"></span>int <code class="descname">count_bonded_ring_particles_11F</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em>, int *<em>&nbsp;trial_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_bonded_ring_particles_11F" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="c.get_bonded_6As">
-<span class="target" id="11_f_8c_1a9275d5636484bce221ec412c041888a6"></span>int <code class="descname">get_bonded_6As</code><span class="sig-paren">(</span>int<em>&nbsp;common_particle</em>, int<em>&nbsp;bpi</em>, int<em>&nbsp;bpj</em>, int *<em>&nbsp;ep1</em>, int *<em>&nbsp;ep2</em>, int *<em>&nbsp;bonded_6A_id</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_bonded_6As" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="11_f_8c_1a28e88afa71aecf2f3b5ee40889c84441"></span>int <code class="descname">get_bonded_6As</code><span class="sig-paren">(</span>int *<em>&nbsp;bonded_6A_id</em>, int *<em>&nbsp;trial_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_bonded_6As" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="c.get_first_6A">
-<span class="target" id="11_f_8c_1a43744f2906fe8923c21610c9937c8acd"></span>int <code class="descname">get_first_6A</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_6A</em>, int<em>&nbsp;bpi</em>, int<em>&nbsp;bpj</em>, int<em>&nbsp;common_particle</em>, int *<em>&nbsp;ep1</em>, int *<em>&nbsp;bonded_6A_id</em>, int<em>&nbsp;potential_6A_pointer</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_first_6A" title="Permalink to this definition">¶</a></dt>
+<dt id="c.check_6A">
+<span class="target" id="11_f_8c_1a44e168a5d2364f9ed61ccfd1c4d7c9f1"></span>int <code class="descname">check_6A</code><span class="sig-paren">(</span>int *<em>&nbsp;trial_cluster</em>, const int *<em>&nbsp;potential_6A_cluster</em>, const int *<em>&nbsp;ring_particles</em>, int<em>&nbsp;which_6A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_6A" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="c.get_second_6A">
-<span class="target" id="11_f_8c_1ae018a464731be01d58802c02273a936f"></span>int <code class="descname">get_second_6A</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_6A</em>, int<em>&nbsp;bpi</em>, int<em>&nbsp;bpj</em>, int<em>&nbsp;common_particle</em>, int *<em>&nbsp;ep2</em>, const int *<em>&nbsp;bonded_pairs</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_second_6A" title="Permalink to this definition">¶</a></dt>
+<dt id="c.setup_6A_rings">
+<span class="target" id="11_f_8c_1a7e37d86c216b5ac46d0bce20fb562af4"></span>void <code class="descname">setup_6A_rings</code><span class="sig-paren">(</span>const int *<em>&nbsp;trial_cluster</em>, int *<em>&nbsp;first_6A_ring</em>, int *<em>&nbsp;second_6A_ring</em><span class="sig-paren">)</span><a class="headerlink" href="#c.setup_6A_rings" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="c.write_11F">
-<span class="target" id="11_f_8c_1a725c880b9a6966d4df6b1811181424dc"></span>void <code class="descname">write_11F</code><span class="sig-paren">(</span>int<em>&nbsp;common_particle</em>, int<em>&nbsp;ep1</em>, int<em>&nbsp;ep2</em>, const int *<em>&nbsp;first_5A</em>, const int *<em>&nbsp;second_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.write_11F" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="11_f_8c_1a09a6b703006c6f80f1c8fc9e0781ad5c"></span>void <code class="descname">write_11F</code><span class="sig-paren">(</span>const int *<em>&nbsp;trial_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.write_11F" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -509,10 +505,16 @@
 <li>The common spindle particle of the 11C has coordination number 11.</li>
 <li>The extra particle is bonded to the common spindle.</li>
 <li>The extra particle is bonded to the two unbonded ring particles of 11C.</li>
+<li>The exrtra particle is not bonded to other particles in the 11C.</li>
 </ul>
 </p>
 <p>Cluster output: SOOBBBBBBBBB Storage order: as_for_11C x 11, extra_particle </p>
 </dd></dl>
+
+<dl class="function">
+<dt id="c.check_extra_particle_bonds">
+<span class="target" id="12_a_8c_1afaec29ea127669d88762c140c03da285"></span>int <code class="descname">check_extra_particle_bonds</code><span class="sig-paren">(</span>int<em>&nbsp;extra_particle</em>, int *<em>&nbsp;first_11C_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.check_extra_particle_bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="c.get_12A_extra_particle">
@@ -548,6 +550,11 @@
 </p>
 <p>Cluster output: SBOOOOOBBBBB Storage order: unknown </p>
 </dd></dl>
+
+<dl class="function">
+<dt id="c.count_7A_spindle_bonds">
+<span class="target" id="12_b_8c_1a0e748a65ef848d3408d5b29e5c3c7695"></span>int <code class="descname">count_7A_spindle_bonds</code><span class="sig-paren">(</span>int *<em>&nbsp;sj1</em>, const int<em>&nbsp;first_7A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_7A_spindle_bonds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="c.Clust_Write_12B">
@@ -601,8 +608,23 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="c.are_5A_spindles_common">
+<span class="target" id="12_e_8c_1a7bf62f5c04fead759e6bfcb337ec7260"></span>int <code class="descname">are_5A_spindles_common</code><span class="sig-paren">(</span>const int *<em>&nbsp;first_5A_cluster</em>, const int *<em>&nbsp;first_11F_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.are_5A_spindles_common" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.are_5A_ring_particles_common">
+<span class="target" id="12_e_8c_1a9b64e6bc22caac9ded429a51ef6d93cc"></span>int <code class="descname">are_5A_ring_particles_common</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_5A</em>, const int *<em>&nbsp;cluster_11F</em><span class="sig-paren">)</span><a class="headerlink" href="#c.are_5A_ring_particles_common" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="c.get_uncommon_5A_ring_particle">
-<span class="target" id="12_e_8c_1ace8a756f9afe4a13975af131f64533b7"></span>int <code class="descname">get_uncommon_5A_ring_particle</code><span class="sig-paren">(</span>const int *<em>&nbsp;common_particle_ids</em>, const int *<em>&nbsp;first_5A_cluster</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_uncommon_5A_ring_particle" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="12_e_8c_1a9eccd694d76f5dfbe3ecfdf0e29c5aae"></span>int <code class="descname">get_uncommon_5A_ring_particle</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_11F</em>, const int *<em>&nbsp;cluster_5A</em><span class="sig-paren">)</span><a class="headerlink" href="#c.get_uncommon_5A_ring_particle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="c.is_12E_unique">
+<span class="target" id="12_e_8c_1ac951e6d117f9ac04c24c397bd6c97f1e"></span>int <code class="descname">is_12E_unique</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_11F</em>, int<em>&nbsp;uncommon_sp3_ring_particle</em>, int *<em>&nbsp;trial</em><span class="sig-paren">)</span><a class="headerlink" href="#c.is_12E_unique" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -637,7 +659,7 @@
 
 <dl class="function">
 <dt id="c.get_12K_ring_bonds">
-<span class="target" id="12_k_8c_1a5183750c6c3c685d2b72ff983408647d"></span>void <code class="descname">get_12K_ring_bonds</code><span class="sig-paren">(</span>int<em>&nbsp;id_11A</em>, int(*sp3_rings)[3]<span class="sig-paren">)</span><a class="headerlink" href="#c.get_12K_ring_bonds" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="12_k_8c_1a919f4f863cf01ae0aaeeb99846881c62"></span>void <code class="descname">get_12K_ring_bonds</code><span class="sig-paren">(</span>int *<em>&nbsp;cluster_11A</em>, int(*sp3_rings)[3]<span class="sig-paren">)</span><a class="headerlink" href="#c.get_12K_ring_bonds" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -656,8 +678,8 @@
 <dl class="function">
 <dt id="c.Clust_Write_13A">
 <span class="target" id="13_a_8c_1a128368a019c4dcfc673d6a324a347e11"></span>void <code class="descname">Clust_Write_13A</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.Clust_Write_13A" title="Permalink to this definition">¶</a></dt>
-<dd><p>A 13K clusters is the intersection of a 12B and a 7A cluster. Topologically it is a regular icosahedron. </p>
-<p>Find 13K clusters A 13K is constructed from a 12B and a 7A where:<ul class="simple">
+<dd><p>A 13A clusters is the intersection of a 12B and a 7A cluster. Topologically it is a regular icosahedron. </p>
+<p>Find 13A clusters A 13A is constructed from a 12B and a 7A where:<ul class="simple">
 <li>The 7A cluster has one spindle given by sc of the 12B cluster, and one spindle that is distinct from the 12B particles.</li>
 <li>The sp5 ring particles of the 7A cluster are distinct from the sp5 ring particles of the central 7A cluster in 12B.</li>
 </ul>
@@ -1126,7 +1148,8 @@
 <dl class="function">
 <dt id="c.count_common_particles">
 <span class="target" id="simple__cluster__methods_8c_1a9475e86e77aaefdb7924489241102244"></span>int <code class="descname">count_common_particles</code><span class="sig-paren">(</span>const int *<em>&nbsp;cluster_1</em>, const int *<em>&nbsp;cluster_2</em>, int<em>&nbsp;cluster_1_size</em>, int<em>&nbsp;cluster_2_size</em>, int *<em>&nbsp;common_particle_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#c.count_common_particles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Count number of common ring particles between two clusters and get thier ids /*! This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers. To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over. <p>This function assumes that the n ring particles are the first n particles of the cluster. This is true for the basic clusters but may not be true for other clusters. </p>
+<dd><p>Count number of common ring particles between two clusters and get thier ids. </p>
+<p>This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers. To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over. <p>This function assumes that the n ring particles are the first n particles of the cluster. This is true for the basic clusters but may not be true for other clusters. </p>
 <dl class="docutils">
 <dt><strong>Return</strong></dt>
 <dd>an integer giving the number of common ring particles between the clusters</dd>

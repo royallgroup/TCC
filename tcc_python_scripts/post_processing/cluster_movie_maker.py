@@ -1,6 +1,6 @@
-"""A script to take the RAW file output from the TCC and produce a combined
-cluster XYZ for rendering. Takes a cluster list argument and labels particles
-according to the list priority."""
+""" A script to take the RAW file output from the TCC and produce a combined
+    cluster XYZ for rendering. Takes a cluster list argument and labels
+    particles according to the list priority."""
 
 import sys
 import io
@@ -9,15 +9,18 @@ import string
 
 def add_cluster_to_xyz(xyz_frame, particle_types, cluster_number):
     """
+    Given a list of particle types, overwrite the cluster type in xyz_frame if
+    a particle is in a cluster.
 
-    :param xyz_frame: (xyz_frame) A frame object describing a snapshot of the
-    system
-    :param particle_types: (list of string) Whether particles are in a cluster
-    or not. "A" and "B" correspond to particles not in a cluster while "C" and
-     "D" correspond to particles in a cluster
-    :param cluster_number: (integer) The index of the cluster in the priority
-    list.
-    :return: (Snapshot) an updated XYZ snapshot.
+    Args:
+        xyz_frame (cluster_movie_maker.Snapshot): A snapshot of the system.
+        particle_types (list of string): Whether particles are in a cluster
+            or not. "A" and "B" correspond to particles not in a cluster while
+            "C" and "D" correspond to particles in a cluster
+        cluster_number (integer): The index of the cluster in the priority
+
+    Returns:
+        cluster_movie_maker.Snapshot: an updated XYZ snapshot.
     """
     for index, particle in enumerate(particle_types):
         if particle == "C" or particle == "D":
@@ -37,7 +40,9 @@ def prepare_output_file():
 def main():
     """
     The main loop.
-    :return: 0 if script ran successfully.
+
+    Returns:
+        int: 0 if script ran successfully.
     """
     xyz_name, raw_stub, cluster_list = process_arguments()
     raw_file_handles = open_raw_files(cluster_list, raw_stub)
@@ -60,11 +65,15 @@ def main():
 def open_raw_files(cluster_list, raw_stub):
     """
     Given a list of clusters, open the corresponding TCC RAW files.
-    :param cluster_list: (list of string) TCC cluster names in reverse order
-    of priority.
-    :param raw_stub: (string)  The base of the RAW file name relative to the
-    working directory.
-    :return: (list of RawFileReader) Objects representing the open RAW files.
+
+    Args:
+        cluster_list (list of string): TCC cluster names in reverse order
+            of priority.
+        raw_stub (string):  The base of the RAW file name relative to the
+            working directory.
+
+    Returns:
+        list of RawFileReader: Objects representing the open RAW files.
     """
     raw_file_handles = []
     for cluster_type in cluster_list:
@@ -75,7 +84,9 @@ def open_raw_files(cluster_list, raw_stub):
 def process_arguments():
     """
     Process the command line arguments and return variables with the values.
-    :return: Processed command line parameters.
+
+    Returns:
+        strings: Processed command line parameters.
     """
     if len(sys.argv) != 4:
         print("Syntax: ./cluster_movie_maker.py simulation_data.xyz "
@@ -96,15 +107,19 @@ class XyzFileReader:
     def __init__(self, file_name):
         """
         On instantiation, open a file handle to file_name.
-        :param file_name: (string) The xyz file to open.
+
+        Args:
+            file_name (string): The xyz file to open.
         """
         self.file_handle = open(file_name, 'r')
 
     def __iter__(self):
         """
         Reads a single frame from the xyz and returns it.
-        :return: (Snapshot) A snapshot object representing a single
-        frame from the xyz.
+
+        Returns:
+            Snapshot: A snapshot object representing a single frame from the
+                xyz.
         """
         line = self.file_handle.readline()
         while line != "" and line != "\n":
@@ -130,8 +145,12 @@ class XyzFileReader:
         """
         Process the first line of an XYZ frame to make sure that it is a
         valid number.
-        :param line: (string) The first line of an xyz frame.
-        :return: (integer) The number of particles from line.
+
+        Args:
+            line (string): The first line of an xyz frame.
+
+        Returns:
+            integer: The number of particles from line.
         """
         try:
             num_particles = int(line)
@@ -148,10 +167,12 @@ class RawFileReader:
     """
     def __init__(self, file_stub, cluster_type):
         """
+        Open the RAW file specified by file_name.
 
-        :param file_stub: (string) The base of the file name relative to the
+        Args:
+            file_stub (string): The base of the file name relative to the
          working directory.
-        :param cluster_type: (string) The TCC cluster type e.g. "10A"
+            cluster_type (string): The TCC cluster type e.g. "10A"
         """
         file_name = "{}{}".format(file_stub, cluster_type)
         self.file_handle = open(file_name, "r")
@@ -161,7 +182,9 @@ class RawFileReader:
     def get_frame(self):
         """
         Get a single frame of data from the raw file.
-        :return: (list of string) Whether the particles are in a cluster or not.
+
+        Returns:
+            list of string: Whether the particles are in a cluster or not.
         """
         self.num_particles = int(self.file_handle.readline())
         # Skip the comment line
@@ -193,7 +216,8 @@ class Snapshot:
 
     def __str__(self):
         """"
-        :return: (string) String representation of the Snapshot.
+        Returns:
+            string: String representation of the Snapshot.
         """
         buffer = io.StringIO()
         for particle in range(self.num_particles):
