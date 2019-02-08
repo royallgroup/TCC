@@ -29,28 +29,30 @@ def add_cluster_to_xyz(xyz_frame, particle_types, cluster_number):
     return xyz_frame
 
 
-def prepare_output_file():
+def prepare_output_file(output_filename):
     """
     Open the output file once at the beginning of the analysis to delete
     any previous copy.
     """
-    open('output.xyz', 'w').close()
+    open(output_filename, 'w').close()
 
 
-def main():
+def main(xyz_name, raw_stub, cluster_list):
     """
     The main loop.
 
     Returns:
         int: 0 if script ran successfully.
     """
-    xyz_name, raw_stub, cluster_list = process_arguments()
+    output_filename = "output.xyz"
+
+    cluster_list = list(reversed(cluster_list.split()))
     raw_file_handles = open_raw_files(cluster_list, raw_stub)
     xyz_file = XyzFileReader(xyz_name)
 
     print("Particles not in any cluster are labelled with the letter A")
 
-    prepare_output_file()
+    prepare_output_file(output_filename)
 
     for frame_number, xyz_frame in enumerate(xyz_file):
         for index, raw_file in enumerate(raw_file_handles):
@@ -59,7 +61,7 @@ def main():
             if frame_number == 0:
                 print("Cluster type {} is labelled with the letter {}".format(
                     raw_file.cluster_name, string.ascii_uppercase[index + 1]))
-        xyz_frame.write_xyz()
+        xyz_frame.write_xyz(output_filename)
 
 
 def open_raw_files(cluster_list, raw_stub):
@@ -94,7 +96,7 @@ def process_arguments():
         sys.exit()
     xyz_name = sys.argv[1]
     raw_stub = sys.argv[2]
-    cluster_list = sys.argv[3].split()
+    cluster_list = sys.argv[3]
 
     return xyz_name, raw_stub, cluster_list
 
@@ -227,11 +229,11 @@ class Snapshot:
                                                 self.z_coordinates[particle]))
         return buffer.getvalue()
 
-    def write_xyz(self):
+    def write_xyz(self, output_name):
         """
         Write the Snapshot to an xyz file.
         """
-        with open("output.xyz", 'a') as output_file:
+        with open(output_name, 'a') as output_file:
             output_file.write("{}\n".format(self.num_particles))
             output_file.write("{}".format(self.comment))
             for particle in range(self.num_particles):
@@ -243,4 +245,7 @@ class Snapshot:
 
 
 if __name__ == "__main__":
-    main()
+
+    xyz_name, raw_stub, cluster_list = process_arguments()
+
+    main(xyz_name, raw_stub, cluster_list)

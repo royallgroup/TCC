@@ -164,13 +164,13 @@ To output pretty movies of the TCC requires combining the data from a subset of 
 Running the script
 -------------------
 
-Before running the script run the TCC with RAW output turned on. The arguments for the movie maker script are, the name of the xyz file containing particle coordinates, the stub of the raw file name specifying the location of the raw files relative to the current working directory and a space separated cluster list in order of increasing priority.
+Before running the script run the TCC with RAW output turned on. The arguments for the movie maker script are, the name of the xyz file containing particle coordinates, the stub of the raw file name specifying the location of the raw files relative to the current working directory and a space separated cluster list in order of decreasing priority.
 
-If the script is run in a directory containing sample.xyz and a folder raw_output, containing the files ``sample.xyz.rcAA1.88.rcAB1.88.rcBB1.88.Vor1.fc1.PBCs1.raw_6A`` etc. the command to create a hard sphere movie would be:
+If the script is run in a directory containing sample.xyz and a folder raw_output, containing the RAW files ``sample.xyz.rcAA1.88.rcAB1.88.rcBB1.88.Vor1.fc1.PBCs1.raw_6A`` etc. the command to create a hard sphere movie would be:
 
 ::
 
-	python cluster_movie_maker_script.py sample.xyz raw_output/sample.xyz.rcAA1.88.rcAB1.88.rcBB1.88.Vor1.fc1.PBCs1.raw_ "sp3c sp4c sp5c 8B 9B 10B 11F 12E 13A FCC"
+	python cluster_movie_maker_script.py sample.xyz raw_output/sample.xyz.rcAA1.88.rcAB1.88.rcBB1.88.Vor1.fc1.PBCs1.raw_ "FCC 13A 12E 11F 10B 9B 8B sp5c sp4c sp3c"
 
-Note that the raw file omits the cluster type. Only the common stub is given.
+Note that the second argument which indicates the location of the RAW files omits the cluster type. Only the common stub is given.
 
