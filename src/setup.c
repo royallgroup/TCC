@@ -291,15 +291,20 @@ void analyse_cluster_dependencies() {
     if(dosp4 == 1) dosp3 = 1;
 
 }
+//!  Check whether the cluster lists are valid.
+/*!
+*  Counts the number of clusters in the cluster_names at the beginning of
+*  the main function and then checks if the rest of the lists are this length.
+*/
+void validate_cluster_lists() {
 
-void setup_cluster_lists() {
     num_cluster_types = 0;
 
     while(strcmp(cluster_names[num_cluster_types], "-1") != 0) {
         if (strcmp(cluster_names[num_cluster_types], "11A") == 0) {
             eleven_A_number = num_cluster_types;
         }
-        else if (strcmp(cluster_names[num_cluster_types], "11A") == 0) {
+        else if (strcmp(cluster_names[num_cluster_types], "13A") == 0) {
             thirteen_A_number = num_cluster_types;
         }
         num_cluster_types += 1;
@@ -325,5 +330,6 @@ void setup_cluster_lists() {
 }
 
 void print_version_number() {
-    printf("The Topological Cluster Classification. Version %d.%d.%d.\n", TCC_VERSION_MAJOR, TCC_VERSION_MINOR, TCC_VERSION_PATCH);
+    printf("The Topological Cluster Classification. Version %d.%d.%d.\n",
+            TCC_VERSION_MAJOR, TCC_VERSION_MINOR, TCC_VERSION_PATCH);
 }

@@ -54,7 +54,8 @@ double get_double_from_string(const char *buff, int *validDouble) {
 }
 
 int try_read_line_from_file(FILE *file_name) {
-    // Try to read a line from a file. If line successfuly read return 1 else return 0.
+    // Try to read a line from a file. If line successfully read return 1,
+    // else return 0.
     char line[1000];
     size_t line_length;
 
