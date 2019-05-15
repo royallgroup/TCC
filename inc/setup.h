@@ -15,7 +15,7 @@ void free_frame_variables();
 
 void analyse_cluster_dependencies();
 
-void setup_cluster_lists();
+void validate_cluster_lists();
 
 void print_version_number();
 

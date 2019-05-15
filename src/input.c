@@ -8,7 +8,7 @@ void read_ini_file() {
 
     char errMsg[1000];
     dictionary  *   ini ;
-    const char *inputfilename = "inputparameters.ini";
+    const char *input_file_name = "inputparameters.ini";
 
     fXmolName = malloc(500 * sizeof(char)); 
     if (fXmolName==NULL) {
@@ -19,9 +19,9 @@ void read_ini_file() {
         Error_no_free("Initialise_Global_Variables(): fBoxSizeName[] malloc out of memory\n"); 
     }
 
-    ini = iniparser_load(inputfilename);
+    ini = iniparser_load(input_file_name);
     if (ini==NULL) {
-        sprintf(errMsg,"read_ini_file(): Error opening file %s", inputfilename);
+        sprintf(errMsg,"read_ini_file(): Error opening file %s", input_file_name);
         Error_no_free(errMsg);
     }
 
@@ -239,64 +239,70 @@ void get_box_size(int current_frame_number) {
     }
 }
 
+void realloc_xyz_info(struct xyz_info *xyz_info);
+
 struct xyz_info parse_xyz_file() {
 
     char line[1000];
     char error_message[100];
-    int i;
-    int line_number;
+    int line_number = 0;
     int valid_long = 0;
-    FILE *xyzfile;
-    struct xyz_info input_xyz_info;
+    FILE *xyz_file;
+    struct xyz_info xyz_info;
 
-    line_number = 0;
+    initialize_xyz_info(&xyz_info);
 
-    initialize_xyz_info(&input_xyz_info);
-
-    xyzfile=fopen(fXmolName,"rb");    // open xmol trajecotry
-    if (xyzfile==NULL)  {
-        sprintf(error_message,"Error opening XYZ file %s",fXmolName);    // Always test file open
+    // Open the source XYZ file
+    xyz_file = fopen(fXmolName, "rb");
+    if (xyz_file == NULL) {
+        sprintf(error_message, "Error opening XYZ file %s", fXmolName);
         Error_no_free(error_message);
     }
 
-    while(feof(xyzfile) == 0) {
-        // Read in num particles
-        if(input_xyz_info.total_frames > 1000) {
-            Error_no_free("XYZ file has over 1000 frames, cannot process XYZ file");
+    while(feof(xyz_file) == 0) {
+        if(xyz_info.total_frames == xyz_info.max_frames) {
+            realloc_xyz_info(&xyz_info);
         }
+        // Read in num particles
         line[0] = '\n';
-        fgets(line, 1000, xyzfile);
+        fgets(line, 1000, xyz_file);
         if (line[0] != '\n') {
-            input_xyz_info.num_particles[input_xyz_info.total_frames] = get_long_from_string(line, &valid_long);
+            xyz_info.num_particles[xyz_info.total_frames] = get_long_from_string(line, &valid_long);
             if (valid_long != 1) {
-                sprintf(error_message, "Unable to read XYZ file. Expected number of particles on line: %d",
-                        line_number);
+                sprintf(error_message, "Unable to read XYZ file. Expected number of particles on line: %d", line_number);
                 Error_no_free(error_message);
             }
             line_number += 1;
-            input_xyz_info.frame_offsets[input_xyz_info.total_frames] = ftell(xyzfile);
-            for (i = 0; i < input_xyz_info.num_particles[input_xyz_info.total_frames]+1; i++) {
-                if(feof(xyzfile)) {
-                    sprintf(error_message, "Unexpected end of file at line %d. Some particles are missing.",
-                            line_number);
+            // Record where start of frame is
+            xyz_info.frame_offsets[xyz_info.total_frames] = ftell(xyz_file);
+            // Loop through particles checking that each line is valid
+            for (int i = 0; i < xyz_info.num_particles[xyz_info.total_frames] + 1; i++) {
+                if(feof(xyz_file)) {
+                    sprintf(error_message, "Unexpected end of file at line %d. Some particles are missing.", line_number);
                     Error_no_free(error_message);
                 }
-                try_read_line_from_file(xyzfile);
+                try_read_line_from_file(xyz_file);
                 line_number += 1;
 
             }
-            input_xyz_info.total_frames += 1;
+            xyz_info.total_frames += 1;
         }
     }
-    fclose(xyzfile);
-    return input_xyz_info;
+    fclose(xyz_file);
+    return xyz_info;
+}
+
+void realloc_xyz_info(struct xyz_info *xyz_info) {
+    (*xyz_info).max_frames += 1000;
+    (*xyz_info).num_particles = realloc((*xyz_info).num_particles, (*xyz_info).max_frames * sizeof(long));
+    (*xyz_info).frame_offsets = realloc((*xyz_info).frame_offsets, (*xyz_info).max_frames * sizeof(long));
 }
 
 void initialize_xyz_info(struct xyz_info* input_xyz_info) {
     (*input_xyz_info).total_frames = 0;
-    (*input_xyz_info).data_width = 1000;
-    (*input_xyz_info).num_particles = malloc((*input_xyz_info).data_width * sizeof(long));
-    (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).data_width * sizeof(long));
+    (*input_xyz_info).max_frames = 1000;
+    (*input_xyz_info).num_particles = malloc((*input_xyz_info).max_frames * sizeof(long));
+    (*input_xyz_info).frame_offsets = malloc((*input_xyz_info).max_frames * sizeof(long));
 }
 
 void free_xyz_info(struct xyz_info* input_xyz_info) {

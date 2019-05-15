@@ -3,6 +3,6 @@
 
 #define TCC_VERSION_MAJOR  1
 #define TCC_VERSION_MINOR  0
-#define TCC_VERSION_PATCH  3
+#define TCC_VERSION_PATCH  4
 
 #endif

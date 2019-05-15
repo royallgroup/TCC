@@ -48,13 +48,13 @@ def main(xyz_name, raw_stub, cluster_list):
 
     cluster_list = list(reversed(cluster_list.split()))
     raw_file_handles = open_raw_files(cluster_list, raw_stub)
-    xyz_file = XyzFileReader(xyz_name)
+    xyz_reader = XyzFileReader(xyz_name)
 
     print("Particles not in any cluster are labelled with the letter A")
 
     prepare_output_file(output_filename)
 
-    for frame_number, xyz_frame in enumerate(xyz_file):
+    for frame_number, xyz_frame in enumerate(xyz_reader):
         for index, raw_file in enumerate(raw_file_handles):
             cluster_types = raw_file.get_frame()
             xyz_frame = add_cluster_to_xyz(xyz_frame, cluster_types, index)
@@ -246,6 +246,6 @@ class Snapshot:
 
 if __name__ == "__main__":
 
-    xyz_name, raw_stub, cluster_list = process_arguments()
+    XYZ_NAME, RAW_STUB, CLUSTER_LIST = process_arguments()
 
-    main(xyz_name, raw_stub, cluster_list)
+    main(XYZ_NAME, RAW_STUB, CLUSTER_LIST)
