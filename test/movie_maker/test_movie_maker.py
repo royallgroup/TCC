@@ -31,14 +31,14 @@ class FileOperations:
     @staticmethod
     def tidy():
         # Remove the files we have created
-        os.remove("sample_output.xyz")
+        os.remove("output.xyz")
         return 0
 
 
 class FileChecks:
     @staticmethod
     def check_movie():
-        return filecmp.cmp("sample_output.xyz", "sample_output.xyz", shallow=False)
+        return filecmp.cmp("sample_output.xyz", "output.xyz", shallow=False)
 
 
 def test_basic_configuration():
