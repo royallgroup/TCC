@@ -42,7 +42,7 @@ void stats_report_clusters(FILE *output_file) {
 
     for(int cluster_type = 0; cluster_type < num_cluster_types; cluster_type++) {
         if(*do_cluster_list[cluster_type] == 1) {
-            sprintf(buffer, "%s	%d	%d	%.5lg\n", cluster_names[cluster_type], total_clusters[cluster_type],
+            sprintf(buffer, "%s	%d	%d	%.5lf\n", cluster_names[cluster_type], total_clusters[cluster_type],
                     num_gross_particles[cluster_type], mean_pop_per_frame[cluster_type]);
         }
         else {

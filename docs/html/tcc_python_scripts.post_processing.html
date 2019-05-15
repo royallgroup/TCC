@@ -79,6 +79,170 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-tcc_python_scripts.post_processing.cluster_movie_maker">
+<span id="tcc-python-scripts-post-processing-cluster-movie-maker-module"></span><h2>tcc_python_scripts.post_processing.cluster_movie_maker module<a class="headerlink" href="#module-tcc_python_scripts.post_processing.cluster_movie_maker" title="Permalink to this headline">¶</a></h2>
+<p>A script to take the RAW file output from the TCC and produce a combined
+cluster XYZ for rendering. Takes a cluster list argument and labels
+particles according to the list priority.</p>
+<dl class="class">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.RawFileReader">
+<em class="property">class </em><code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">RawFileReader</code><span class="sig-paren">(</span><em>file_stub</em>, <em>cluster_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#RawFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.RawFileReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Reader for TCC .RAW files. Instantiation opens a file handle and the get
+frame method then allows the file to be read a frame at a time.</p>
+<dl class="method">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.RawFileReader.get_frame">
+<code class="descname">get_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#RawFileReader.get_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.RawFileReader.get_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a single frame of data from the raw file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Whether the particles are in a cluster or not.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot">
+<em class="property">class </em><code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">Snapshot</code><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#Snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Object representing a single configuration of a system with particle types
+and coordinates.</p>
+<dl class="method">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot.write_xyz">
+<code class="descname">write_xyz</code><span class="sig-paren">(</span><em>output_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#Snapshot.write_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot.write_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the Snapshot to an xyz file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.XyzFileReader">
+<em class="property">class </em><code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">XyzFileReader</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#XyzFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.XyzFileReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generator for xyz files. Opens a file handle when the object is
+instantiated. Iteration then returns the file frame by frame.</p>
+<dl class="staticmethod">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.XyzFileReader.process_num_particles">
+<em class="property">static </em><code class="descname">process_num_particles</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#XyzFileReader.process_num_particles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.XyzFileReader.process_num_particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the first line of an XYZ frame to make sure that it is a
+valid number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<em>string</em>) – The first line of an xyz frame.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The number of particles from line.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.add_cluster_to_xyz">
+<code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">add_cluster_to_xyz</code><span class="sig-paren">(</span><em>xyz_frame</em>, <em>particle_types</em>, <em>cluster_number</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#add_cluster_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.add_cluster_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of particle types, overwrite the cluster type in xyz_frame if
+a particle is in a cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xyz_frame</strong> (<a class="reference internal" href="#tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot" title="tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot"><em>cluster_movie_maker.Snapshot</em></a>) – A snapshot of the system.</li>
+<li><strong>particle_types</strong> (<em>list of string</em>) – Whether particles are in a cluster
+or not. “A” and “B” correspond to particles not in a cluster while
+“C” and “D” correspond to particles in a cluster</li>
+<li><strong>cluster_number</strong> (<em>integer</em>) – The index of the cluster in the priority</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an updated XYZ snapshot.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot" title="tcc_python_scripts.post_processing.cluster_movie_maker.Snapshot">cluster_movie_maker.Snapshot</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.main">
+<code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">main</code><span class="sig-paren">(</span><em>xyz_name</em>, <em>raw_stub</em>, <em>cluster_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main loop.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">0 if script ran successfully.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.open_raw_files">
+<code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">open_raw_files</code><span class="sig-paren">(</span><em>cluster_list</em>, <em>raw_stub</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#open_raw_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.open_raw_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of clusters, open the corresponding TCC RAW files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cluster_list</strong> (<em>list of string</em>) – TCC cluster names in reverse order
+of priority.</li>
+<li><strong>raw_stub</strong> (<em>string</em>) – The base of the RAW file name relative to the
+working directory.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Objects representing the open RAW files.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of RawFileReader</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.prepare_output_file">
+<code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">prepare_output_file</code><span class="sig-paren">(</span><em>output_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#prepare_output_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.prepare_output_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the output file once at the beginning of the analysis to delete
+any previous copy.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tcc_python_scripts.post_processing.cluster_movie_maker.process_arguments">
+<code class="descclassname">tcc_python_scripts.post_processing.cluster_movie_maker.</code><code class="descname">process_arguments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tcc_python_scripts/post_processing/cluster_movie_maker.html#process_arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tcc_python_scripts.post_processing.cluster_movie_maker.process_arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the command line arguments and return variables with the values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Processed command line parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">strings</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -93,6 +257,7 @@
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-tcc_python_scripts.post_processing.cluster_ouptut">tcc_python_scripts.post_processing.cluster_ouptut module</a></li>
 <li><a class="reference internal" href="#module-tcc_python_scripts.post_processing.net">tcc_python_scripts.post_processing.net module</a></li>
+<li><a class="reference internal" href="#module-tcc_python_scripts.post_processing.cluster_movie_maker">tcc_python_scripts.post_processing.cluster_movie_maker module</a></li>
 </ul>
 </li>
 </ul>

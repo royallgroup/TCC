@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
     struct xyz_info input_xyz_info;
 
     print_version_number();
-    setup_cluster_lists();
+    validate_cluster_lists();
     read_ini_file();
     read_clusters_to_analyse();
     analyse_cluster_dependencies();

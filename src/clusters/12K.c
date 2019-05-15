@@ -17,20 +17,20 @@
 *
 */
 void Clusters_Get12K() {
-    int first_11A_pointer, ring_number;
+    int pointer_11A, ring_number;
     int sp3_rings[8][3] = {-1};
     int *sp3_ring;
 
     // Loop over all 11A clusters
-    for(first_11A_pointer = 0; first_11A_pointer < n11A; first_11A_pointer++) {
-        int *first_11A_cluster = hc11A[first_11A_pointer];
+    for(pointer_11A = 0; pointer_11A < n11A; pointer_11A++) {
+        int *cluster_11A = hc11A[pointer_11A];
         // Find the particle IDs of the 8 sp3 rings made from the rings of 11A
-        get_12K_ring_bonds(first_11A_pointer, sp3_rings);
+        get_12K_ring_bonds(cluster_11A, sp3_rings);
 
         // Loop through the 8 sp3 rings made by the sp4s of 11A and see if a particle is attached to any of them
         for(ring_number = 0; ring_number < 8; ring_number++) {
             sp3_ring = sp3_rings[ring_number];
-            find_12K_cluster(first_11A_cluster, sp3_ring);
+            find_12K_cluster(cluster_11A, sp3_ring);
         }
     }
 }
@@ -58,26 +58,26 @@ void find_12K_cluster(int *parent_11A_cluster, const int *sp3_ring) {
     }
 }
 
-void get_12K_ring_bonds(int id_11A, int (*sp3_rings)[3]) {
+void get_12K_ring_bonds(int *cluster_11A, int (*sp3_rings)[3]) {
 
     for(int first_sp4_ring_pointer = 0; first_sp4_ring_pointer < 4; first_sp4_ring_pointer++) {
         int m = 0;
-        sp3_rings[first_sp4_ring_pointer][m] = hc11A[id_11A][first_sp4_ring_pointer];
+        sp3_rings[first_sp4_ring_pointer][m] = cluster_11A[first_sp4_ring_pointer];
         for(int second_sp4_ring_pointer = 4; second_sp4_ring_pointer < 8; second_sp4_ring_pointer++) {
-            if (Bonds_BondCheck(hc11A[id_11A][first_sp4_ring_pointer], hc11A[id_11A][second_sp4_ring_pointer])) {
+            if (Bonds_BondCheck(cluster_11A[first_sp4_ring_pointer], cluster_11A[second_sp4_ring_pointer])) {
                 m++;
-                sp3_rings[first_sp4_ring_pointer][m] = hc11A[id_11A][second_sp4_ring_pointer];
+                sp3_rings[first_sp4_ring_pointer][m] = cluster_11A[second_sp4_ring_pointer];
             }
         }
     }
 
     for(int second_sp4_ring_pointer = 4; second_sp4_ring_pointer < 8; second_sp4_ring_pointer++) {
         int m = 0;
-        sp3_rings[second_sp4_ring_pointer][m] = hc11A[id_11A][second_sp4_ring_pointer];
+        sp3_rings[second_sp4_ring_pointer][m] = cluster_11A[second_sp4_ring_pointer];
         for(int first_sp4_ring_pointer = 0; first_sp4_ring_pointer < 4; first_sp4_ring_pointer++) {
-            if (Bonds_BondCheck(hc11A[id_11A][second_sp4_ring_pointer], hc11A[id_11A][first_sp4_ring_pointer])) {
+            if (Bonds_BondCheck(cluster_11A[second_sp4_ring_pointer], cluster_11A[first_sp4_ring_pointer])) {
                 m++;
-                sp3_rings[second_sp4_ring_pointer][m] = hc11A[id_11A][first_sp4_ring_pointer];
+                sp3_rings[second_sp4_ring_pointer][m] = cluster_11A[first_sp4_ring_pointer];
             }
         }
     }

@@ -20,8 +20,8 @@ extern int* cluster_list_width[]; // A list of pointers to the "m" storage width
 
 
 struct xyz_info {
-    int total_frames;
-    int data_width;
+    long total_frames;
+    long max_frames;
     long *num_particles;
     long *frame_offsets;
 };

@@ -54,7 +54,8 @@ double get_double_from_string(const char *buff, int *validDouble) {
 }
 
 int try_read_line_from_file(FILE *file_name) {
-    // Try to read a line from a file. If line successfuly read return 1 else return 0.
+    // Try to read a line from a file. If line successfully read return 1,
+    // else return 0.
     char line[1000];
     size_t line_length;
 
@@ -122,7 +123,6 @@ void Error(char *msg) { // Exit program printing error message and trying to fre
 }
 
 int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new_col_size, int value) {
-    int i, j;
     char errMsg[1000];
     
     the_array=realloc(the_array,new_row_size*sizeof(int *));
@@ -130,14 +130,14 @@ int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new
         sprintf(errMsg,"resize_2D_int(): the_array[] out of memory old_row_size %d new_row_size %d new_col_size %d\n",old_row_size,new_row_size,new_col_size);
         Error_no_free(errMsg);
     }
-    for (i = old_row_size; i < new_row_size; i++) {
+    for (int i = old_row_size; i < new_row_size; i++) {
         the_array[i] = malloc(new_col_size * sizeof(int));
         if (the_array[i] == NULL) {
             Error_no_free("resize_2D_int(): the_array[][] out of memory\n");
         }
     }
-    for (i = old_row_size; i < new_row_size; i++) {
-        for (j = 0; j < new_col_size; j++) {
+    for (int i = old_row_size; i < new_row_size; i++) {
+        for (int j = 0; j < new_col_size; j++) {
             the_array[i][j] = value;
         }
     }
@@ -146,7 +146,6 @@ int **resize_2D_int(int **the_array, int old_row_size, int new_row_size, int new
 }
 
 int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
-    int i;
     char errMsg[1000];
     
     the_array = realloc(the_array, new_col_size * sizeof(int));
@@ -161,9 +160,8 @@ int *resize_1D_int(int *the_array, int old_col_size, int new_col_size) {
 int sort_list_of_lists_of_ints(const void *lhs, const void *rhs) {
     int* n1 = *(int **) lhs;
     int* n2 = *(int **) rhs;
-    int i;
 
-    for(i=0; i < num_sort_columns; i++) {
+    for(int i=0; i < num_sort_columns; i++) {
         if (n1[i] < n2[i]) return -1;
         else if (n2[i] < n1[i]) return 1;
     }
