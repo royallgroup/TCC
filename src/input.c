@@ -239,6 +239,8 @@ void get_box_size(int current_frame_number) {
     }
 }
 
+void realloc_xyz_info(struct xyz_info *xyz_info);
+
 struct xyz_info parse_xyz_file() {
 
     char line[1000];
@@ -258,9 +260,8 @@ struct xyz_info parse_xyz_file() {
     }
 
     while(feof(xyz_file) == 0) {
-        if(xyz_info.total_frames > xyz_info.max_frames) {
-            sprintf(error_message, "XYZ file has over %li frames, cannot process XYZ file", xyz_info.max_frames);
-            Error_no_free(error_message);
+        if(xyz_info.total_frames == xyz_info.max_frames) {
+            realloc_xyz_info(&xyz_info);
         }
         // Read in num particles
         line[0] = '\n';
@@ -289,6 +290,12 @@ struct xyz_info parse_xyz_file() {
     }
     fclose(xyz_file);
     return xyz_info;
+}
+
+void realloc_xyz_info(struct xyz_info *xyz_info) {
+    (*xyz_info).max_frames += 1000;
+    (*xyz_info).num_particles = realloc((*xyz_info).num_particles, (*xyz_info).max_frames * sizeof(long));
+    (*xyz_info).frame_offsets = realloc((*xyz_info).frame_offsets, (*xyz_info).max_frames * sizeof(long));
 }
 
 void initialize_xyz_info(struct xyz_info* input_xyz_info) {
