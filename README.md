@@ -6,7 +6,7 @@ For documentation, open index.html in the docs folder or https://royallgroup.git
 
 ### Citation
 
-If this software is used in the prepration of published work please cite: \
+If this software is used in the preparation of published work please cite: \
 Malins A, Williams SR, Eggers J & Royall CP "Identification of Structure in Condensed Matter with the Topological Cluster Classification", J. Chem. Phys. (2013). **139** 234506
 
 ### Licenses
