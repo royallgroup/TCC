@@ -42,7 +42,10 @@ class TCCWrapper:
         where file operations will be performed behind the scenes."""
         self.working_directory = None
         self.tcc_executable_directory = None
-        self.tcc_executable_path = None
+        if platform.system() == "Windows":
+            self.tcc_executable_path = shutil.which('tcc.exe')
+        else:
+            self.tcc_executable_path = shutil.which('tcc')
         self.input_parameters = dict()
         self.input_parameters['Box'] = dict()
         self.input_parameters['Run'] = dict()
@@ -128,6 +131,8 @@ class TCCWrapper:
         Returns:
             If provided executable path is valid, returns full path, else raises FileNotFoundError.
         """
+        if self.tcc_executable_path is not None and os.path.exists(self.tcc_executable_path): return
+
         bin_directory = os.path.abspath(self.tcc_executable_directory)
         if platform.system() == "Windows":
             tcc_exe = bin_directory + "\\tcc.exe"
