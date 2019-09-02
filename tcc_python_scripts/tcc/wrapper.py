@@ -3,6 +3,7 @@
 import os
 import tempfile
 import shutil
+import numpy
 import pandas
 import subprocess
 import platform
@@ -58,7 +59,33 @@ class TCCWrapper:
         to free up disk space."""
         shutil.rmtree(self.working_directory)
 
-    def run(self, box, particle_coordinates, output_directory=None, particle_types='A', silent=True):
+    def save(self, destination, verbatim=True):
+        """Save TCC working directory, with all its output files, to a specified path.
+
+        The working directory is deleted when the wrapper falls out of scope, so this must
+        be called to retain all the files.
+
+        Args:
+            paths: new directory to save data
+            verbatim: if True, then the tree is copied verbatim from the output of the TCC,
+                otherwise the xyz/box files are ignored, and the directory is flattened so
+                all files within subdirectories appear at the root level.
+        """
+        if verbatim:
+            shutil.copytree(self.working_directory, destination)
+        else:
+            os.makedirs(destination)
+            for name in os.listdir(self.working_directory):
+                if name.split('.')[-1] in ['xyz', 'txt']: continue
+
+                full_path = os.path.join(self.working_directory, name)
+                if os.path.isdir(full_path):
+                    for p in os.listdir(full_path):
+                        shutil.copy2(os.path.join(full_path, p), destination)
+                else:
+                    shutil.copy2(full_path, destination)
+
+    def run(self, box, particle_coordinates, output_directory=None, output_clusters=False, particle_types='A', silent=True):
         """Invoke the TCC using the provided coordinates and parameters.
 
         Args:
@@ -74,13 +101,24 @@ class TCCWrapper:
 
         self._check_tcc_executable_path()
         self._set_up_working_directory(output_directory)
-
-        # Create the INI file.
-        self._serialise_input_parameters('{}/inputparameters.ini'.format(self.working_directory))
+        self.input_parameters['Output']['clusts'] = output_clusters
+        self.nframes = 1
 
         # Create the box and configuration files.
         self._write_box_file(box, self.working_directory)
-        xyz.write('{}/sample.xyz'.format(self.working_directory), particle_coordinates, species=particle_types)
+        try:
+            xyz.write('{}/sample.xyz'.format(self.working_directory),
+                      particle_coordinates, species=particle_types)
+        except:
+            with open('{}/sample.xyz'.format(self.working_directory), 'w') as f:
+                for coords in particle_coordinates:
+                    xyz.write(f, coords, species=particle_types)
+            self.nframes = len(particle_coordinates)
+
+        # Create the INI file.
+        self.input_parameters['Run']['frames'] = self.nframes
+        self._serialise_input_parameters('{}/inputparameters.ini'.format(self.working_directory))
+
         if self.clusters_to_analyse:
             self._write_clusters_to_analyse(self.clusters_to_analyse, self.working_directory)
 
@@ -171,13 +209,22 @@ class TCCWrapper:
 
         Args:
             box: Box dimensions are given as a list of the format [len_x, len_y, len_z].
+                 A list of box dimensions can be given for multiple frames.
             folder_path: folder to write box file to
         """
         with open('{}/box.txt'.format(folder_path), 'w') as output_file:
             output_file.write('#iter Lx Ly Lz\n')
-            output_file.write('1\t')
-            for dimension in box:
-                output_file.write('{}\t'.format(dimension))
+            if hasattr(box[0], '__iter__'):
+                for i,b in enumerate(box):
+                    output_file.write('%d\t' % (i+1))
+                    for dimension in b:
+                        output_file.write('{}\t'.format(dimension))
+                    if i+1 < len(box):
+                        output_file.write('\n')
+            else:
+                output_file.write('1\t')
+                for dimension in box:
+                    output_file.write('{}\t'.format(dimension))
 
     @staticmethod
     def _write_clusters_to_analyse(clusters_to_include, folder_path):
@@ -196,11 +243,28 @@ class TCCWrapper:
                     output_file.write("{}\t=\t0\n".format(cluster))
 
     def _parse_static_clusters(self):
-        """Retrive the static cluster information after running the TCC.
+        """Retrieve the static cluster information after running the TCC.
         Returns:
             Pandas dataframe containing the static cluster information
         """
         summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
         table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.cluster_list))
         table.fillna(0., inplace=True)
+        return table
+
+    def _parse_particle_clusters(self, natoms):
+        """Determine whether each particle belongs to a certain cluster or not#
+        Returns:
+            Numpy array (bool) saying whether each particle (row) belong to each cluster (column)."""
+        nclusters = len(structures.cluster_list)
+        table = numpy.zeros((natoms, nclusters), dtype=bool)
+
+        for i,cluster in enumerate(structures.cluster_list):
+            cluster_path = glob('%s/cluster_output/*_%s' % (self.working_directory, cluster))[0]
+            # Wrap this in a with statement to ignore empty file warnings when no clusters found
+            with numpy.warnings.catch_warnings():
+                numpy.warnings.simplefilter("ignore")
+                found_clusters = numpy.loadtxt(cluster_path, skiprows=1, dtype=int)
+            table[found_clusters.reshape(-1), i] = True
+
         return table
