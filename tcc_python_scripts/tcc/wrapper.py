@@ -38,9 +38,13 @@ class TCCWrapper:
         input_parameters['Clusters_to_analyse']: List of clusters to include in the analysis, all are detected if list is empty
     """
 
-    def __init__(self):
+    def __init__(self, clusters_to_analyse=None):
         """On initialisation we have to create a temporary directory
-        where file operations will be performed behind the scenes."""
+        where file operations will be performed behind the scenes.
+
+        Args:
+            clusters_to_analyse: list of which structures to perform a structural analysis on.
+                 If None (default) then all of them will be used."""
         self.working_directory = None
         self.tcc_executable_directory = None
         if platform.system() == "Windows":
@@ -52,7 +56,9 @@ class TCCWrapper:
         self.input_parameters['Run'] = dict()
         self.input_parameters['Simulation'] = dict()
         self.input_parameters['Output'] = dict()
-        self.clusters_to_analyse = []
+
+        self.clusters_to_analyse = clusters_to_analyse
+        self.input_parameters['Simulation']['analyse_all_clusters'] = not clusters_to_analyse
 
     def __del__(self):
         """Upon deletion we can remove the temporary working folder
@@ -66,7 +72,7 @@ class TCCWrapper:
         be called to retain all the files.
 
         Args:
-            paths: new directory to save data
+            destination: new directory to save data
             verbatim: if True, then the tree is copied verbatim from the output of the TCC,
                 otherwise the xyz/box files are ignored, and the directory is flattened so
                 all files within subdirectories appear at the root level.
@@ -100,6 +106,7 @@ class TCCWrapper:
         """
 
         self._check_tcc_executable_path()
+        if output_directory is None: output_directory = self.working_directory
         self._set_up_working_directory(output_directory)
         self.input_parameters['Output']['clusts'] = output_clusters
         self.nframes = 1
@@ -252,19 +259,38 @@ class TCCWrapper:
         table.fillna(0., inplace=True)
         return table
 
+    def _parse_cluster_file(self, structure):
+        """Retrieve detailed breakdown of clusters after running the TCC.
+
+        Args:
+            structure: which structure to analyse
+        Returns:
+            Numpy array (int) giving the particles in each cluster
+        """
+        cluster_path = glob('%s/cluster_output/*_%s' % (self.working_directory, structure))[0]
+
+        # Wrap this in a with statement to ignore empty file warnings when no clusters found
+        with numpy.warnings.catch_warnings():
+            numpy.warnings.simplefilter("ignore")
+            clusters = numpy.loadtxt(cluster_path, skiprows=1, dtype=int)
+
+        return clusters
+
     def _parse_particle_clusters(self, natoms):
-        """Determine whether each particle belongs to a certain cluster or not#
+        """Determine whether each particle belongs to a certain cluster or not
         Returns:
             Numpy array (bool) saying whether each particle (row) belong to each cluster (column)."""
-        nclusters = len(structures.cluster_list)
+        nclusters = len(self.active_clusters)
         table = numpy.zeros((natoms, nclusters), dtype=bool)
 
-        for i,cluster in enumerate(structures.cluster_list):
-            cluster_path = glob('%s/cluster_output/*_%s' % (self.working_directory, cluster))[0]
-            # Wrap this in a with statement to ignore empty file warnings when no clusters found
-            with numpy.warnings.catch_warnings():
-                numpy.warnings.simplefilter("ignore")
-                found_clusters = numpy.loadtxt(cluster_path, skiprows=1, dtype=int)
+        for i,structure in enumerate(self.active_clusters):
+            found_clusters = _parse_cluster_file(structure)
             table[found_clusters.reshape(-1), i] = True
 
         return table
+
+    @property
+    def active_clusters(self):
+        """Returns: list of clusters active in the analysis."""
+        if self.clusters_to_analyse: return self.clusters_to_analyse
+        else: return structures.cluster_list
