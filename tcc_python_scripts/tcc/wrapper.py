@@ -256,7 +256,8 @@ class TCCWrapper:
         """
         summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
         table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.cluster_list))
-        table.fillna(0., inplace=True)
+        #table.fillna(0., inplace=True)
+        table = table[numpy.isfinite(table['Number of clusters'])]
         return table
 
     def _parse_cluster_file(self, structure):
@@ -273,6 +274,9 @@ class TCCWrapper:
         with numpy.warnings.catch_warnings():
             numpy.warnings.simplefilter("ignore")
             clusters = numpy.loadtxt(cluster_path, skiprows=1, dtype=int)
+
+        if len(clusters) == 0: return []
+        if len(clusters.shape) == 1: clusters = clusters.reshape(1,-1)
 
         return clusters
 
