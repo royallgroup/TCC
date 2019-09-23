@@ -24,7 +24,10 @@ class DynamicCluster:
 
     @property
     def lifetime(self):
-        return 1 + self.last_seen_time - self.creation_time
+        if self.last_seen_time >= 0:
+            return 1 + self.last_seen_time - self.creation_time
+        else:
+            return -1
 
     def __eq__(self, other):
         same = self.particles == other.particles
@@ -57,9 +60,11 @@ class DynamicTCC(wrapper.TCCWrapper):
         self.static_populations.to_csv(os.path.join(destination, 'statics.pop.csv'), '\t')
         self.static_populations_err.to_csv(os.path.join(destination, 'statics.err.csv'), '\t')
 
-        for structure, clusters in self.clusters.items():
-            out_path = os.path.join(destination, 'clusters.%s' % structure)
-            numpy.save(out_path, clusters)
+        # for structure, clusters in self.clusters.items():
+        for structure, path in self.cluster_paths.items():
+            out = os.path.join(destination, 'clusters.%s.npy' % structure)
+            shutil.copyfile(path, out)
+            # numpy.save(destination, clusters)
 
     def run(self, trajectory, decay_threshold=1):
         """Run the TCC on a trajectory, averaging the static data and performing the dynamic TCC
@@ -71,13 +76,19 @@ class DynamicTCC(wrapper.TCCWrapper):
             decay_threshold: threshold number of frames that a structure must disappear for before
                 it is recognised as having dissociated.
         """
+        self._set_up_working_directory(self.working_directory)
+
         self.static_populations = None
         static_populations_squ = None
-        self.clusters = {}
+        self.cluster_paths = {}
+        cluster_files = {}
+        new_clusters = {}
         surviving_clusters = {}
 
         for structure in self.active_clusters:
-            self.clusters[structure] = []
+            self.cluster_paths[structure] = os.path.join(self.working_directory, 'clusters.{}.csv'.format(structure))
+            cluster_files[structure] = open(self.cluster_paths[structure], 'wb')
+            new_clusters[structure] = []
             surviving_clusters[structure] = set()
 
         for frame,snap in enumerate(trajectory):
@@ -103,15 +114,57 @@ class DynamicTCC(wrapper.TCCWrapper):
                     if frame >= (cluster.last_seen_time + decay_threshold):
                         decayed += [cluster]
                 for cluster in decayed:
-                    self.clusters[structure] += [cluster.table_entry]
+                    new_clusters[structure] += [cluster.table_entry]
                     surviving_clusters[structure].discard(cluster)
+
+                if len(new_clusters) > 0:
+                    to_add = numpy.array(new_clusters[structure], dtype=int)
+                    numpy.savetxt(cluster_files[structure], to_add, fmt='%i')
+                    new_clusters[structure] = []
+
+        for structure in self.active_clusters:
+            for cluster in surviving_clusters[structure]:
+                cluster.last_seen_time = -1
+                new_clusters[structure] += [cluster.table_entry]
+
+            if len(new_clusters) > 0:
+                to_add = numpy.array(new_clusters[structure], dtype=int)
+                numpy.savetxt(cluster_files[structure], to_add, fmt='%i')
+                new_clusters[structure] = []
 
         nframes = frame+1
         self.static_populations /= nframes
         self.static_populations_err = (static_populations_squ - self.static_populations**2)**0.5 / (nframes*(nframes-1))**0.5
+        #print(self.static_populations)
 
+        # Convert the files to binary format.
         for structure in self.active_clusters:
-            self.clusters[structure] = numpy.array(self.clusters[structure], dtype=int)
+            #self.clusters[structure] = numpy.array(self.clusters[structure], dtype=int)
+            cluster_files[structure].close()
+            bin_path = self.cluster_paths[structure].replace('.csv', '.npy')
+
+            with numpy.warnings.catch_warnings():
+                numpy.warnings.simplefilter('ignore')
+                data = numpy.loadtxt(self.cluster_paths[structure], dtype=int)
+            if len(data.shape) == 1:
+                data = data.reshape(1, -1)
+            numpy.save(bin_path, data)
+
+            os.remove(self.cluster_paths[structure])
+            self.cluster_paths[structure] = bin_path
+
+            #_,N = data.shape
+            # static2 = numpy.zeros((nframes,snap.n), dtype=bool)
+            # try:
+            #     for row in data:
+            #         if row[2] >= 0:
+            #             static2[row[1]:row[2]+1, row[3:]] = True
+            #         else:
+            #             static2[row[1]:, row[3:]] = True
+            #     print(structure, numpy.average(static2))
+            # except:
+            #     print(data)
+            #for row in static2: print(numpy.average(row))
 
     def lifetimes(self, structure):
         """Lifetimes of clusters from the dynamic TCC analysis.
