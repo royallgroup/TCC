@@ -1,4 +1,6 @@
+/* Alex Malins - alex.malins@gmail.com */
 /* TCC: A topological cluster classification code with temporal tracking of clusters. */
+/* Not for general consumption */
 
 #include "globals.h"
 #include "bonds.h"
