@@ -8,6 +8,8 @@ import pandas
 import subprocess
 import platform
 from glob import glob
+from typing import Union
+import pathlib
 
 from tcc_python.file_readers import xyz
 from tcc_python.tcc import structures
@@ -31,14 +33,15 @@ class TCCWrapper:
         working_directory: The directory in which the TCC will run
         tcc_executable_directory: The directory containing the TCC executable
         tcc_executable_path: The full path of the TCC executable
-        input_parameters['Box']: TCC box paramaters used for TCC run
-        input_parameters['Run']: TCC run paramaters used for TCC run
-        input_parameters['Simulation']: TCC simulation paramaters used for TCC run
-        input_parameters['Output']: TCC output paramaters used for TCC run
-        input_parameters['Clusters_to_analyse']: List of clusters to include in the analysis, all are detected if list is empty
+        input_parameters['Box']: TCC box parameters used for TCC run
+        input_parameters['Run']: TCC run parameters used for TCC run
+        input_parameters['Simulation']: TCC simulation parameters used for TCC run
+        input_parameters['Output']: TCC output parameters used for TCC run
+        input_parameters['Clusters_to_analyse']: List of clusters to include in the analysis, all are detected if list
+         is empty
     """
 
-    def __init__(self, clusters_to_analyse=None):
+    def __init__(self, path: str, clusters_to_analyse=None):
         """On initialisation we have to create a temporary directory
         where file operations will be performed behind the scenes.
 
@@ -46,11 +49,8 @@ class TCCWrapper:
             clusters_to_analyse: list of which structures to perform a structural analysis on.
                  If None (default) then all of them will be used."""
         self.working_directory = None
-        self.tcc_executable_directory = None
-        if platform.system() == "Windows":
-            self.tcc_executable_path = shutil.which('tcc.exe')
-        else:
-            self.tcc_executable_path = shutil.which('tcc')
+        self.tcc_executable_path: str = self._set_tcc_path(path)
+
         self.input_parameters = dict()
         self.input_parameters['Box'] = dict()
         self.input_parameters['Run'] = dict()
@@ -107,7 +107,6 @@ class TCCWrapper:
             pandas table containing the static cluster information
         """
 
-        self._check_tcc_executable_path()
         if output_directory is None: 
             output_directory = self.working_directory
             self.cleanup = True
@@ -154,7 +153,6 @@ class TCCWrapper:
         Args:
             path: The directory containing the compiled TCC executable.
         """
-        self.tcc_executable_directory = path
 
     def _set_up_working_directory(self, output_directory):
         """
@@ -175,25 +173,6 @@ class TCCWrapper:
                           "Check location is not write protected.".format(output_directory))
                     raise os.error
             self.working_directory = output_directory
-
-    def _check_tcc_executable_path(self):
-        """Check the provided path for the tcc executable is valid.
-        
-        Returns:
-            If provided executable path is valid, returns full path, else raises FileNotFoundError.
-        """
-        if self.tcc_executable_path is not None and os.path.exists(self.tcc_executable_path): return
-
-        bin_directory = os.path.abspath(self.tcc_executable_directory)
-        if platform.system() == "Windows":
-            tcc_exe = bin_directory + "\\tcc.exe"
-        else:
-            tcc_exe = bin_directory + "/tcc"
-        if os.path.exists(tcc_exe):
-            self.tcc_executable_path = tcc_exe
-        else:
-            print("TCC executable not found in provided directory.")
-            raise FileNotFoundError
 
     def _serialise_input_parameters(self, output_filename):
         """Serialise the parameters in INI format.
@@ -303,3 +282,20 @@ class TCCWrapper:
         """Returns: list of clusters active in the analysis."""
         if self.clusters_to_analyse: return self.clusters_to_analyse
         else: return structures.cluster_list
+
+    def _set_tcc_path(self, path: str) -> str:
+        if path:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f'TCC Executable not found at provided path "{path}"')
+        else:
+            if platform.system() == "Windows":
+                path = shutil.which('tcc.exe')
+            else:
+                path = shutil.which('tcc')
+
+            if path is None:
+                raise FileNotFoundError(f"TCC binary not found on system path. Either add binary directory to system"
+                                        f" path or specify binary location as argument to wrapper.")
+
+        return path
+

@@ -1,19 +1,18 @@
 """Unit tests for clusters detected by the TCC."""
 
 import pytest
-import os
 import pandas
-from glob import glob
+import pathlib
 
 from tcc_python.file_readers import xyz
 from tcc_python.tcc import wrapper, structures
 
-structures_to_test = glob('test/unit_tests/clusters/*.xyz')
+structures_to_test = list(pathlib.Path('test/unit_tests/clusters').glob('*.xyz'))
 
 
-def run_unit_test(cluster_path, bond_type):
-    """
-    Run a unit test on a single structure
+def run_unit_test(cluster_path: pathlib.Path, bond_type: str):
+    """Run a unit test on a single structure
+
     Test will fail if the number of detected clusters does not match known composition of a given structure.
     :param cluster_path: path to isolated structure geometry to run TCC on
     :param bond_type: the type of bond to be used by the TCC
@@ -21,10 +20,9 @@ def run_unit_test(cluster_path, bond_type):
 
     xyz_frames = xyz.read(cluster_path)
     particle_coordinates = next(xyz_frames).particle_coordinates
-    cluster_name = os.path.split(cluster_path)[1].rstrip(".xyz")
+    cluster_name = cluster_path.stem
 
-    tcc_parameters = wrapper.TCCWrapper()
-    tcc_parameters.set_tcc_executable_directory("./bin")
+    tcc_parameters = wrapper.TCCWrapper("./bin/tcc.exe")
     tcc_parameters.input_parameters['Run']['xyzfilename'] = 'sample.xyz'
     tcc_parameters.input_parameters['Simulation']['analyse_all_clusters'] = 0
     tcc_parameters.clusters_to_analyse = cluster_name
@@ -55,10 +53,11 @@ def run_unit_test(cluster_path, bond_type):
 
 
 @pytest.mark.parametrize('path', structures_to_test)
-def test_voronoi_long_clusters(path):
-    run_unit_test(path, "voronoi_long")
+class TestStructures:
+    @staticmethod
+    def test_voronoi_long_clusters(path: pathlib.Path):
+        run_unit_test(path, "voronoi_long")
 
-
-@pytest.mark.parametrize('path', structures_to_test)
-def test_voronoi_short_clusters(path):
-    run_unit_test(path, "voronoi_short")
+    @staticmethod
+    def test_voronoi_short_clusters(path: pathlib.Path):
+        run_unit_test(path, "voronoi_short")

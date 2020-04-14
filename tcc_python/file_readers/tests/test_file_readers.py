@@ -9,9 +9,6 @@ FILE_DIR = "tcc_python/file_readers/tests/test_files"
 class TestXYZ:
     @staticmethod
     def test_empty_file():
-        import os
-        cwd = os.getcwd()
-        print(cwd)
         assert list(xyz.read(f"{FILE_DIR}/empty_file.xyz")) == []
 
     @staticmethod

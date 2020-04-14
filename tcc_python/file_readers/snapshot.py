@@ -7,6 +7,7 @@ a trajectory in time.
 import numpy
 import contextlib
 import abc
+import pathlib
 
 
 @contextlib.contextmanager
@@ -18,7 +19,8 @@ def stream_safe_open(path_or_file, mode='r'):
             or a path (in which case the context manager will open this, return a stream and then clean up)
         mode: mode to open file in, 'r' for read, 'w' for write
     """
-    if isinstance(path_or_file, str):
+    if isinstance(path_or_file, str) or isinstance(path_or_file, pathlib.Path):
+        # noinspection PyTypeChecker
         file_object = file_to_close = open(path_or_file, mode)
     else:
         file_object = path_or_file
