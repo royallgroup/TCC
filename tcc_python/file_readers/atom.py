@@ -3,7 +3,7 @@
 import io
 import numpy
 import pandas
-from tcc_python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, Snapshot
+from tcc_python.file_readers.snapshot import stream_safe_open, NoSnapshotError, Snapshot
 
 
 class AtomSnapshot(Snapshot):
@@ -31,7 +31,7 @@ class AtomSnapshot(Snapshot):
                     raise NoSnapshotError
                 assert item[0] == 'ITEM:'
 
-                # Timestep within a trajectory.
+                # Time step within a trajectory.
                 if item[1] == 'TIMESTEP':
                     self.time = int(f.readline())
 
@@ -64,7 +64,7 @@ class AtomSnapshot(Snapshot):
                     for i in range(self.num_particles):
                         particle_buffer.write(f.readline())
                     particle_buffer.seek(0)
-                    table = pandas.read_table(particle_buffer, index_col=0, sep='\s+', names=headings,
+                    table = pandas.read_table(particle_buffer, index_col=0, sep=r'\s+', names=headings,
                                               nrows=self.num_particles)
 
                     if 'xs' in headings:

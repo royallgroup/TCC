@@ -1,15 +1,12 @@
 """Python interface to the TCC executable."""
 
 import os
-import tempfile
 import shutil
 import numpy
-import pandas
-import subprocess
-import platform
-from glob import glob
 
-from tcc_python_scripts.tcc import structures, wrapper
+
+from tcc_python.tcc import wrapper
+
 
 class DynamicCluster:
     def __init__(self, particles, time):
@@ -44,6 +41,7 @@ class DynamicCluster:
     def __repr__(self):
         return '<DynamicCluster t0={} t1={}>'.format(self.creation_time, self.last_seen_time)
 
+
 class DynamicTCC(wrapper.TCCWrapper):
     def save(self, destination):
         """Save results of TCC analysis to a specified path.
@@ -65,6 +63,7 @@ class DynamicTCC(wrapper.TCCWrapper):
             out = os.path.join(destination, 'clusters.%s.npy' % structure)
             shutil.copyfile(path, out)
             # numpy.save(destination, clusters)
+
 
     def run(self, trajectory, decay_threshold=1):
         """Run the TCC on a trajectory, averaging the static data and performing the dynamic TCC
@@ -91,7 +90,7 @@ class DynamicTCC(wrapper.TCCWrapper):
             new_clusters[structure] = []
             surviving_clusters[structure] = set()
 
-        for frame,snap in enumerate(trajectory):
+        for frame, snap in enumerate(trajectory):
             super().run(snap.box_dimensions, snap.x, output_clusters=True)
 
             # Average the static data.

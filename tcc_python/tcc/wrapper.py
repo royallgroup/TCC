@@ -9,8 +9,8 @@ import subprocess
 import platform
 from glob import glob
 
-from tcc_python_scripts.file_readers import xyz
-from tcc_python_scripts.tcc import structures
+from tcc_python.file_readers import xyz
+from tcc_python.tcc import structures
 
 
 class TCCWrapper:
@@ -19,7 +19,7 @@ class TCCWrapper:
 
     The TCC accepts input parameters through a file IO system, so
     this wrapper acts as an intermediate layer to streamline the
-    process of running the TCC from within python. All file operations
+    process of running the TCC from within tcc_python. All file operations
     are hidden from the user to create a more pythonic interface to
     the TCC.
 
@@ -92,7 +92,8 @@ class TCCWrapper:
                 else:
                     shutil.copy2(full_path, destination)
 
-    def run(self, box, particle_coordinates, output_directory=None, output_clusters=False, particle_types='A', silent=True):
+    def run(self, box, particle_coordinates, output_directory=None,
+            output_clusters=False, particle_types='A', silent=True):
         """Invoke the TCC using the provided coordinates and parameters.
 
         Args:
@@ -227,11 +228,11 @@ class TCCWrapper:
         with open('{}/box.txt'.format(folder_path), 'w') as output_file:
             output_file.write('#iter Lx Ly Lz\n')
             if hasattr(box[0], '__iter__'):
-                for i,b in enumerate(box):
-                    output_file.write('%d\t' % (i+1))
+                for i, b in enumerate(box):
+                    output_file.write('%d\t' % (i + 1))
                     for dimension in b:
                         output_file.write('{}\t'.format(dimension))
-                    if i+1 < len(box):
+                    if i + 1 < len(box):
                         output_file.write('\n')
             else:
                 output_file.write('1\t')
@@ -261,7 +262,6 @@ class TCCWrapper:
         """
         summary_file = glob('%s/*.static_clust' % self.working_directory)[0]
         table = pandas.read_table(summary_file, index_col='Cluster type', skiprows=1, nrows=len(structures.cluster_list))
-        #table.fillna(0., inplace=True)
         table = table[numpy.isfinite(table['Number of clusters'])]
         return table
 
@@ -293,7 +293,7 @@ class TCCWrapper:
         table = numpy.zeros((natoms, nclusters), dtype=bool)
 
         for i,structure in enumerate(self.active_clusters):
-            found_clusters = _parse_cluster_file(structure)
+            found_clusters = self._parse_cluster_file(structure)
             table[found_clusters.reshape(-1), i] = True
 
         return table

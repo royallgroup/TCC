@@ -3,7 +3,7 @@
 import io
 import numpy
 import pandas
-from tcc_python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
+from tcc_python.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
 
 
 class XYZSnapshot(Snapshot):
@@ -15,7 +15,7 @@ class XYZSnapshot(Snapshot):
     def _read(self, path_or_file):
         """ Read a single XYZ snapshot from a file.
 
-        Overwrites any exisiting data in the Snaphsot object.
+        Overwrites any existing data in the Snapshot object.
 
         Raises:
             NoSnapshotError if file could not be read.
@@ -26,7 +26,7 @@ class XYZSnapshot(Snapshot):
             # Read the header - check for EOF.
             number_of_particles = self._process_number_of_particles(input_file)
 
-            # Read and igore the comment line
+            # Read and ignore the comment line
             input_file.readline()
 
             # Use pandas to read the main table.
@@ -37,7 +37,8 @@ class XYZSnapshot(Snapshot):
                     raise SnapshotIncompleteError("Error reading XYZ file on line number {}".format(line_number))
                 string_buffer.write(line)
             string_buffer.seek(0)
-            table = pandas.read_table(string_buffer, sep='\s+', names=('atom', 'x', 'y', 'z'), nrows=number_of_particles)
+            table = pandas.read_table(string_buffer, sep=r'\s+', names=('atom', 'x', 'y', 'z'),
+                                      nrows=number_of_particles)
             if table.shape[0] != number_of_particles:
                 raise SnapshotIncompleteError
             self.particle_coordinates = table[['x', 'y', 'z']].values.copy('c').astype(numpy.longdouble)

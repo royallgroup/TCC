@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='tcc_python_scripts',
+    name='tcc_python',
     version='1.0',
-    description='A series of scripts for automating the TCC and postprocessing its output',
+    description='A package for automating analyses with the TCC and the postprocessing of its output',
     author='Peter Crowther',
     packages=find_packages(),
-    install_requires=['numpy', 'pandas']
+    install_requires=['numpy', 'pandas', 'pytest']
 )

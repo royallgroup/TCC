@@ -5,8 +5,8 @@ import os
 import pandas
 from glob import glob
 
-from tcc_python_scripts.file_readers import xyz
-from tcc_python_scripts.tcc import wrapper, structures
+from tcc_python.file_readers import xyz
+from tcc_python.tcc import wrapper, structures
 
 structures_to_test = glob('test/unit_tests/clusters/*.xyz')
 

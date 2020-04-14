@@ -5,6 +5,7 @@
 import sys
 import io
 import string
+from typing import List
 
 
 def add_cluster_to_xyz(xyz_frame, particle_types, cluster_number):
@@ -37,22 +38,20 @@ def prepare_output_file(output_filename):
     open(output_filename, 'w').close()
 
 
-def main(xyz_name, raw_stub, cluster_list):
+def main(xyz_name: str, raw_stub: str, cluster_list: str, output_file: str = "output.xyz"):
     """
     The main loop.
 
     Returns:
         int: 0 if script ran successfully.
     """
-    output_filename = "output.xyz"
-
     cluster_list = list(reversed(cluster_list.split()))
     raw_file_handles = open_raw_files(cluster_list, raw_stub)
     xyz_reader = XyzFileReader(xyz_name)
 
     print("Particles not in any cluster are labelled with the letter A")
 
-    prepare_output_file(output_filename)
+    prepare_output_file(output_file)
 
     for frame_number, xyz_frame in enumerate(xyz_reader):
         for index, raw_file in enumerate(raw_file_handles):
@@ -61,7 +60,7 @@ def main(xyz_name, raw_stub, cluster_list):
             if frame_number == 0:
                 print("Cluster type {} is labelled with the letter {}".format(
                     raw_file.cluster_name, string.ascii_uppercase[index + 1]))
-        xyz_frame.write_xyz(output_filename)
+        xyz_frame.write_xyz(output_file)
 
 
 def open_raw_files(cluster_list, raw_stub):
@@ -91,7 +90,7 @@ def process_arguments():
         strings: Processed command line parameters.
     """
     if len(sys.argv) != 4:
-        print("Syntax: ./cluster_movie_maker.py simulation_data.xyz "
+        print("Syntax: ./movie_maker.py simulation_data.xyz "
               "simulation_data.xyz.raw_ cluster_priority_list")
         sys.exit()
     xyz_name = sys.argv[1]

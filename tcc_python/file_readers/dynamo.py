@@ -1,14 +1,14 @@
 """ Module for reading and writing snapshots from and to DynamO (.xml) file formats."""
 
 import numpy
-import tcc_python_scripts.file_readers.snapshot as snapshot
+import tcc_python.file_readers.snapshot as snapshot
 import xml.etree.ElementTree as ElementTree
 
 
-class NonadditiveError(RuntimeError):
+class NonAdditiveError(RuntimeError):
     """
-    Error rasied if the given interaction range is a cross-species 
-    interaction, so potentially the dynamo file describes a nonadditive potential.
+    Error raised if the given interaction range is a cross-species
+    interaction, so potentially the dynamo file describes a non-additive potential.
     """
     pass
 
@@ -75,10 +75,10 @@ class DynamoSnapshot(snapshot.Snapshot):
                 else:
                     raise RuntimeError('can only process additive hard spheres!')
             else:
-                raise NonadditiveError
+                raise NonAdditiveError
 
         else:
-            raise RuntimeError('unknown range type encounted: %s' % range_type)
+            raise RuntimeError('unknown range type encountered: %s' % range_type)
 
     def _verify_cross_species_interactions(self, uij_range, diameter, eps=1e-12):
         """Check whether a cross-species hard sphere interaction is consistent with the known
@@ -116,7 +116,7 @@ class DynamoSnapshot(snapshot.Snapshot):
             if abs(additive_diameter - diameter) < eps:
                 return
 
-        raise NonadditiveError('cross interaction between ranges (%d,%d) and (%d,%d) is non additive!' % (start0, end0, start1, end1))
+        raise NonAdditiveError('cross interaction between ranges (%d,%d) and (%d,%d) is non additive!' % (start0, end0, start1, end1))
 
     def _read(self, path_or_file):
         """Read a snapshot from a file, overwriting any existing data.
@@ -180,7 +180,7 @@ class DynamoSnapshot(snapshot.Snapshot):
                 diameter = float(uij.attrib['Diameter'])
                 try:
                     self._assign_diameters(uij_range, diameter)
-                except NonadditiveError:
+                except NonAdditiveError:
                     definitely_additive = False
 
             # Check that all diameters were assigned above
@@ -207,7 +207,7 @@ class DynamoSnapshot(snapshot.Snapshot):
 
 
 def read(file_name):
-    """ Read a snaphshot from the dynamo file.
+    """ Read a snapshot from the dynamo file.
     At the moment only a single frame can be read.
 
     Args:
