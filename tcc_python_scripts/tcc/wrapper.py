@@ -63,7 +63,8 @@ class TCCWrapper:
     def __del__(self):
         """Upon deletion we can remove the temporary working folder
         to free up disk space."""
-        shutil.rmtree(self.working_directory)
+        if self.cleanup:
+            shutil.rmtree(self.working_directory)
 
     def save(self, destination, verbatim=True):
         """Save TCC working directory, with all its output files, to a specified path.
@@ -106,7 +107,11 @@ class TCCWrapper:
         """
 
         self._check_tcc_executable_path()
-        if output_directory is None: output_directory = self.working_directory
+        if output_directory is None: 
+            output_directory = self.working_directory
+            self.cleanup = True
+        else:
+            self.cleanup = False 
         self._set_up_working_directory(output_directory)
         self.input_parameters['Output']['clusts'] = output_clusters
         self.nframes = 1
