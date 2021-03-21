@@ -1,6 +1,7 @@
 """ Module for reading and writing snapshots from and to XYZ (.xyz) file formats."""
 
 import io
+import re
 import numpy
 import pandas
 from tcc_python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
@@ -96,6 +97,7 @@ def read(file_name):
 
     Args:
         file_name: Name of XYZ file to read.
+
     Returns:
          A generator object that generates Snapshots.
     """
@@ -177,3 +179,33 @@ def write_multiple(output_filename, particle_coordinates, species=None):
     for frame in frames:
         snapshot = XYZSnapshot(frame, species=species)
         snapshot.write(output_filename, mode='a')
+
+
+def get_frames_from_xyz(filename, usecols, convert_func=float):
+    """
+    load different frames from an xyz file
+
+    Args:
+        filename (str): the path of the file to load
+        usecols (iterable): all the columns to use
+        convert (callable): function to convert loaded string to proper format.
+
+    Return:
+        list: a list of frames. Each frame is a numpy array,
+            shape (n_particle, n_cols).
+    """
+    f = open(filename, 'r')
+    frames = []
+    for line in f:
+        is_head = re.match(r'(\d+)\n', line)
+        if is_head:
+            frames.append([])
+            particle_num = int(is_head.group(1))
+            f.readline()  # jump through comment line
+            for j in range(particle_num):
+                data = re.split(r'\s', f.readline())
+                data = [col for i, col in enumerate(data) if i in usecols]
+                frames[-1].append(list(map(convert_func, data)))
+            frames[-1] = numpy.array(frames[-1])
+    f.close()
+    return frames
