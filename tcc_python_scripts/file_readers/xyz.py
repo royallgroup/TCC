@@ -123,3 +123,57 @@ def write(output_filename, particle_coordinates, species=None):
     """
     snapshot = XYZSnapshot(particle_coordinates, species=species)
     snapshot.write(output_filename)
+
+
+def check_coordinates_type(coordinates):
+    """
+    Determine if a given particle coordinates are multiple frames or
+        just a single frame. Three possbilities were considered:
+
+    1. a numpy array for a single frame, shape (N_paritcle, 3)
+    2. a numpy array for multiple frames, shape (N_frame, N_particle, 3)
+    3. a list of array for multiple frames, shape (N_frame, N_particle*, 3)
+        (*the number of particles in different frames might be different)
+
+    all other possibilities were considered to be invalid
+    (TODO: making more data types legal, such as the pandas dataframe)
+
+    Args:
+        coordinates (iterable): Particle coordinates with different possible
+            shapes / types.
+
+    Return:
+        iterable: for #1, return [coordinates];
+            for #2 & #3, return the origional coordinates,
+    """
+    if isinstance(coordinates, numpy.ndarray):
+        if (coordinates.ndim == 2) and (coordinates.shape[-1] == 3):  # case 1
+            return [coordinates]
+        elif (coordinates.ndim == 3) and (coordinates.shape[-1] == 3): # case 2
+            return coordinates
+        else:
+            raise TypeError("Invalid (numpy) coordinates shape of ", coordinates.shape)
+    elif isinstance(coordinates, list):
+        if numpy.all([isinstance(c, numpy.ndarray) for c in coordinates]):
+            if set([c.ndim for c in coordinates]) == set([2]):
+                return coordinates
+            else:
+                raise TypeError("Invalid (list) coordinates containing numpy array with different dimensions")
+        else:
+            raise TypeError("Invalid (list) coordinates, required: list of numpy arrays")
+    else:
+        raise TypeError("Invalid coordinates, a list or a numpy array is required")
+
+
+def write_multiple(output_filename, particle_coordinates, species=None):
+    """ Write multiple configurations to the disk.
+
+    Args:
+        output_filename: The filename to write the coordinates to.
+        particle_coordinates: A list of particle coordinates
+        species: A list of particle species. Defaults all particles to 'A' if not provided.
+    """
+    frames = check_coordinates_type(particle_coordinates)
+    for frame in frames:
+        snapshot = XYZSnapshot(frame, species=species)
+        snapshot.write(output_filename, mode='a')

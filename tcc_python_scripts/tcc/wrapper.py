@@ -7,6 +7,7 @@ import pandas
 import subprocess
 import platform
 from glob import glob
+import numpy as np
 
 from tcc_python_scripts.file_readers import xyz
 from tcc_python_scripts.tcc import structures
@@ -60,7 +61,7 @@ class TCCWrapper:
 
         Args:
             box: box size for boundary conditions, list of [len_x, len_y, len_z]
-            particle_coordinates: a list of lists, one list for each frame containing coordinates of atoms
+            particle_coordinates: a list for many frames or a single frame, of paritcle coordinates
             output_directory: If you want to save the output of the TCC specify a directory to store the output
             particle_types: species of atoms individually (if given container) or collectively. This must be either length 1
                             (if specifying species of all atoms) or the same length as the number of particles.
@@ -77,7 +78,10 @@ class TCCWrapper:
 
         # Create the box and configuration files.
         self._write_box_file(box, self.working_directory)
-        xyz.write('{}/sample.xyz'.format(self.working_directory), particle_coordinates, species=particle_types)
+        xyz.write_multiple(
+            '{}/sample.xyz'.format(self.working_directory),
+            particle_coordinates, species=particle_types
+        )
         if self.clusters_to_analyse:
             self._write_clusters_to_analyse(self.clusters_to_analyse, self.working_directory)
 
@@ -93,6 +97,7 @@ class TCCWrapper:
             self.__del__()
             print("Error: TCC was not able to run.")
             raise Exception
+
 
     def set_tcc_executable_directory(self, path):
         """A method for setting the directory containing the compiled TCC executable.
@@ -124,7 +129,7 @@ class TCCWrapper:
 
     def _check_tcc_executable_path(self):
         """Check the provided path for the tcc executable is valid.
-        
+
         Returns:
             If provided executable path is valid, returns full path, else raises FileNotFoundError.
         """
