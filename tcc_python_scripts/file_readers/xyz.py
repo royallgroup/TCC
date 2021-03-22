@@ -130,7 +130,7 @@ def write(output_filename, particle_coordinates, species=None):
 def check_coordinates_type(coordinates):
     """
     Determine if a given particle coordinates are multiple frames or
-        just a single frame. Three possbilities were considered:
+        just a single frame. Three possible types were considered:
 
     1. a numpy array for a single frame, shape (N_paritcle, 3)
     2. a numpy array for multiple frames, shape (N_frame, N_particle, 3)
@@ -146,6 +146,22 @@ def check_coordinates_type(coordinates):
 
     Return:
         int: the type of coordinates (1, 2 or 3)
+
+    Example:
+        >>> import numpy as np
+        >>>
+        >>> # 10 particles in 3D
+        >>> coord = np.ones((10, 3))
+        >>> check_coordinates_type(coord)
+        1
+        >>> # 5 frames of 10 particles in 3D
+        >>> coord = np.ones((5, 10, 3))
+        >>> check_coordinates_type(coord)
+        2
+        >>> # 3 frames with different particle numbers in each frame
+        >>> coord = [np.ones((10, 3)), np.ones((20, 3)), np.ones((20, 3))] 
+        >>> check_coordinates_type(coord)
+        3
     """
     if isinstance(coordinates, numpy.ndarray):
         if (coordinates.ndim == 2) and (coordinates.shape[-1] == 3):  # case 1
