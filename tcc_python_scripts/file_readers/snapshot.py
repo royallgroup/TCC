@@ -16,7 +16,7 @@ def stream_safe_open(path_or_file, mode='r'):
     Args:
         path_or_file: either an open file stream (in which case the context manager does nothing and returns it)
             or a path (in which case the context manager will open this, return a stream and then clean up)
-        mode: mode to open file in, 'r' for read, 'w' for write
+        mode: mode to open file in, 'r' for read, 'w' for write, 'a' for append
     """
     if isinstance(path_or_file, str):
         file_object = file_to_close = open(path_or_file, mode)
@@ -125,13 +125,16 @@ class Snapshot:
                     break
                 yield snap
 
-    def write(self, output_file):
+    def write(self, output_file, mode='w'):
         """Dump the snapshot to a file.
 
         Args:
              output_file: file or path to write the snapshot to
+             mode (str): 'w' for overwride and 'a' for append
         """
-        with stream_safe_open(output_file, 'w') as output_file:
+        if mode not in ('a', 'w'):
+            raise ValueError("Only [w]rite and [a]ppend mode are valid")
+        with stream_safe_open(output_file, mode) as output_file:
             xyz_frame = str(self)
             output_file.write(xyz_frame)
             output_file.write('\n')
