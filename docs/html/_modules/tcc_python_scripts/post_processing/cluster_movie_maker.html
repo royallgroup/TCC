@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>tcc_python_scripts.post_processing.cluster_movie_maker &#8212; TCC  documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,6 +12,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -88,13 +87,13 @@
 
     <span class="n">cluster_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">cluster_list</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
     <span class="n">raw_file_handles</span> <span class="o">=</span> <span class="n">open_raw_files</span><span class="p">(</span><span class="n">cluster_list</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">)</span>
-    <span class="n">xyz_file</span> <span class="o">=</span> <span class="n">XyzFileReader</span><span class="p">(</span><span class="n">xyz_name</span><span class="p">)</span>
+    <span class="n">xyz_reader</span> <span class="o">=</span> <span class="n">XyzFileReader</span><span class="p">(</span><span class="n">xyz_name</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Particles not in any cluster are labelled with the letter A&quot;</span><span class="p">)</span>
 
     <span class="n">prepare_output_file</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">frame_number</span><span class="p">,</span> <span class="n">xyz_frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xyz_file</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">frame_number</span><span class="p">,</span> <span class="n">xyz_frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xyz_reader</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">raw_file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_file_handles</span><span class="p">):</span>
             <span class="n">cluster_types</span> <span class="o">=</span> <span class="n">raw_file</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span>
             <span class="n">xyz_frame</span> <span class="o">=</span> <span class="n">add_cluster_to_xyz</span><span class="p">(</span><span class="n">xyz_frame</span><span class="p">,</span> <span class="n">cluster_types</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -146,7 +145,7 @@
 <span class="sd">    Generator for xyz files. Opens a file handle when the object is</span>
 <span class="sd">    instantiated. Iteration then returns the file frame by frame.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        On instantiation, open a file handle to file_name.</span>
 
@@ -155,7 +154,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads a single frame from the xyz and returns it.</span>
 
@@ -207,7 +206,7 @@
 <span class="sd">    Reader for TCC .RAW files. Instantiation opens a file handle and the get</span>
 <span class="sd">    frame method then allows the file to be read a frame at a time.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_stub</span><span class="p">,</span> <span class="n">cluster_type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_stub</span><span class="p">,</span> <span class="n">cluster_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Open the RAW file specified by file_name.</span>
 
@@ -245,7 +244,7 @@
 <span class="sd">    Object representing a single configuration of a system with particle types</span>
 <span class="sd">    and coordinates.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialise variables.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -256,7 +255,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">y_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z_coordinates</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            string: String representation of the Snapshot.</span>
@@ -286,9 +285,9 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 
-    <span class="n">xyz_name</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">,</span> <span class="n">cluster_list</span> <span class="o">=</span> <span class="n">process_arguments</span><span class="p">()</span>
+    <span class="n">XYZ_NAME</span><span class="p">,</span> <span class="n">RAW_STUB</span><span class="p">,</span> <span class="n">CLUSTER_LIST</span> <span class="o">=</span> <span class="n">process_arguments</span><span class="p">()</span>
 
-    <span class="n">main</span><span class="p">(</span><span class="n">xyz_name</span><span class="p">,</span> <span class="n">raw_stub</span><span class="p">,</span> <span class="n">cluster_list</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">XYZ_NAME</span><span class="p">,</span> <span class="n">RAW_STUB</span><span class="p">,</span> <span class="n">CLUSTER_LIST</span><span class="p">)</span>
 </pre></div>
 
           </div>
@@ -297,13 +296,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -327,7 +324,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Peter Crowther.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.0.
     </div>
   </body>
 </html>
