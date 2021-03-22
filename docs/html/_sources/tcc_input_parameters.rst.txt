@@ -58,7 +58,7 @@ These parameters determine what files the TCC will output at the end of the run.
 
 :bonds: 				**0**		; Write bonds file which describes the bond network.
 
-:clusts: 				**0**		; Write clusts files containing which list the ids of particles in all clusters
+:clusts: 				**0**		; Write clusts files which list the ids of particles in all clusters
 
 :raw: 				    **0**      	; Write raw cluster files. These specify whether a particle is or isn't in each structure.
 
