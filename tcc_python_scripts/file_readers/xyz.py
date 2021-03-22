@@ -1,6 +1,7 @@
 """ Module for reading and writing snapshots from and to XYZ (.xyz) file formats."""
 
 import io
+import re
 import numpy
 import pandas
 from tcc_python_scripts.file_readers.snapshot import stream_safe_open, NoSnapshotError, SnapshotIncompleteError, Snapshot
@@ -96,6 +97,7 @@ def read(file_name):
 
     Args:
         file_name: Name of XYZ file to read.
+
     Returns:
          A generator object that generates Snapshots.
     """
@@ -123,3 +125,104 @@ def write(output_filename, particle_coordinates, species=None):
     """
     snapshot = XYZSnapshot(particle_coordinates, species=species)
     snapshot.write(output_filename)
+
+
+def check_coordinates_type(coordinates):
+    """
+    Determine if a given particle coordinates are multiple frames or
+        just a single frame. Three possbilities were considered:
+
+    1. a numpy array for a single frame, shape (N_paritcle, 3)
+    2. a numpy array for multiple frames, shape (N_frame, N_particle, 3)
+    3. a list of array for multiple frames, shape (N_frame, N_particle*, 3)
+        (*the number of particles in different frames might be different)
+
+    all other possibilities were considered to be invalid
+    (TODO: making more data types legal, such as the pandas dataframe)
+
+    Args:
+        coordinates (iterable): Particle coordinates with different possible
+            shapes / types.
+
+    Return:
+        int: the type of coordinates (1, 2 or 3)
+    """
+    if isinstance(coordinates, numpy.ndarray):
+        if (coordinates.ndim == 2) and (coordinates.shape[-1] == 3):  # case 1
+            return 1
+        elif (coordinates.ndim == 3) and (coordinates.shape[-1] == 3): # case 2
+            return 2
+        else:
+            raise TypeError("Invalid (numpy) coordinates shape of ", coordinates.shape)
+    elif isinstance(coordinates, list):
+        if numpy.all([isinstance(c, numpy.ndarray) for c in coordinates]):
+            if set([c.ndim for c in coordinates]) == set([2]):
+                return 3
+            else:
+                raise TypeError("Invalid (list) coordinates containing numpy array with different dimensions")
+        else:
+            raise TypeError("Invalid (list) coordinates, required: list of numpy arrays")
+    else:
+        raise TypeError("Invalid coordinates, a list or a numpy array is required")
+
+
+def write_multiple(output_filename, particle_coordinates, species=None):
+    """ Write multiple configurations to the disk.
+
+    Args:
+        output_filename: The filename to write the coordinates to.
+        particle_coordinates: particle coordinates in various data structures
+        species: A list of particle species. Defaults all particles to 'A' if not provided.
+    """
+    coord_type = check_coordinates_type(particle_coordinates)
+    if coord_type == 1:
+        frames = [particle_coordinates]
+    else:
+        frames = particle_coordinates
+    for frame in frames:
+        snapshot = XYZSnapshot(frame, species=species)
+        snapshot.write(output_filename, mode='a')
+
+
+def get_frame_number(particle_coordinates):
+    """
+    Determine how many frames a give paritcle coordinates data structure has
+
+    Args:
+        particle_coordinates: particle coordinates in various data structures
+    """
+    coord_type = check_coordinates_type(particle_coordinates)
+    if coord_type == 1:
+        return 1
+    else:
+        return len(particle_coordinates)
+
+
+def get_frames_from_xyz(filename, usecols, convert_func=float):
+    """
+    load different frames from an xyz file
+
+    Args:
+        filename (str): the path of the file to load
+        usecols (iterable): all the columns to use
+        convert (callable): function to convert loaded string to proper format.
+
+    Return:
+        list: a list of frames. Each frame is a numpy array,
+            shape (n_particle, n_cols).
+    """
+    f = open(filename, 'r')
+    frames = []
+    for line in f:
+        is_head = re.match(r'(\d+)\n', line)
+        if is_head:
+            frames.append([])
+            particle_num = int(is_head.group(1))
+            f.readline()  # jump through comment line
+            for j in range(particle_num):
+                data = re.split(r'\s', f.readline())
+                data = [col for i, col in enumerate(data) if i in usecols]
+                frames[-1].append(list(map(convert_func, data)))
+            frames[-1] = numpy.array(frames[-1])
+    f.close()
+    return frames
