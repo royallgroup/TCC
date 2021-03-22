@@ -324,16 +324,38 @@ class TCCWrapper:
 
         and each frame is a numpy array with shape (n_particle, )
 
-        For one particle, this function count all the types of clusters that this
-            particle belongs to. The result corresponds to the gross population.
-
         Args:
-            cluster_names (dict): a collection of cluster names to be the
-                head of the output table. If not provided, all the clusters
-                in the raw_output folder will be analysed.
+            cluster_names (list or str): A cluster name, or a list of
+                cluster names to be the head of the output table.
+                If not provided, all the clusters in the raw_output
+                folder will be analysed.
 
         Return:
-            list: a list of pandas table, each table represent one frame
+            dict: a dict with structure {cluster_name : [frame_1, frame_2, ...]},
+                and each frame is a Boolean array with shape (n_particle, 1).
+
+        Example:
+            >>> import numpy as np
+            >>>
+            >>> # 10 frames of 1000 random particles in 3D
+            >>> coords = np.random.uniform(0, 10, (10, 1000, 3))
+            >>> box = [10] * 3
+            >>>
+            >>> tcc = TCCWrapper()
+            >>> tcc.input_parameters['Output']['Raw'] = True
+            >>> _ = tcc.run(box, coords)
+            >>>
+            >>> cluster_dict = tcc.get_cluster_dict(['13A', '10B'])
+            >>>
+            >>> cluster_dict.keys()
+            dict_keys(['13A', '10B'])
+            >>> len(cluster_dict['13A'])
+            10
+            >>> cluster_dict['13A'][0].shape
+            (1000, 1)
+            >>> cluster_dict['13A'][0][:3].ravel().tolist()
+            [False, False, False]
+
         """
         raw_out_folder = os.path.join(self.working_directory, 'raw_output')
         if not os.path.isdir(raw_out_folder):
@@ -396,7 +418,8 @@ class TCCWrapper:
     def get_cluster_table(self, cluster_names=None):
         """
         Getting the result of particles and the clusters they are in. The
-            example output would be like.
+            output is a list of Boolean tables for many frames. A typical
+            table would be like the following.
 
         ..code-block::
 
@@ -406,16 +429,37 @@ class TCCWrapper:
             3,    0,   0,   0,   0,   0   # particle 3 is not in any cluster
             ...
 
-        For one particle, this function count all the types of clusters that this
-            particle belongs to. The result corresponds to the gross population.
-
         Args:
-            cluster_names (list of str): a collection of cluster names to be the
-                head of the output table. If not provided, all the clusters
-                in the raw_output folder will be analysed.
+            cluster_names (list or str): A cluster name, or a list of
+                cluster names to be the head of the output table.
+                If not provided, all the clusters in the raw_output
+                folder will be analysed.
 
         Return:
             list: a list of pandas table, each table represent one frame
+
+
+        Example:
+            >>> import numpy as np
+            >>>
+            >>> # 10 frames of 1000 random particles in 3D
+            >>> coords = np.random.uniform(0, 10, (10, 1000, 3))
+            >>> box = [10] * 3
+            >>>
+            >>> tcc = TCCWrapper()
+            >>> tcc.input_parameters['Output']['Raw'] = True
+            >>> _ = tcc.run(box, coords)
+            >>>
+            >>> cluster_table = tcc.get_cluster_table(["FCC", "13A"])
+            >>> len(cluster_table)
+            10
+            >>> print(cluster_table[0].head())
+                 FCC    13A
+            0  False  False
+            1  False  False
+            2  False  False
+            3  False  False
+            4  False  False
         """
         cluster_dict = self.get_cluster_dict(cluster_names)
         frame_nums = []
