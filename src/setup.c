@@ -111,6 +111,7 @@ void free_run_variables()  {  // Free bond detection variables
 }
 
 void initialise_frame_variables() {
+
     int ***mem_pointers[] = {&mem_sp3b,  &mem_sp3c,  &mem_sp4b,  &mem_sp4c,  &mem_sp5b,  &mem_sp5c};
     int **nmem_pointers[] = {&nmem_sp3b, &nmem_sp3c, &nmem_sp4b, &nmem_sp4c, &nmem_sp5b, &nmem_sp5c};
     int *mmem_pointers[] = {&mmem_sp3b, &mmem_sp3c, &mmem_sp4b, &mmem_sp4c, &mmem_sp5b, &mmem_sp5c};
@@ -188,7 +189,6 @@ void initialise_frame_variables() {
     for(int cluster_type=0; cluster_type < num_cluster_types; cluster_type++) {
         memset(*raw_list[cluster_type], 'C', particles_in_current_frame*sizeof(char));
     }
-
 }
 
 void free_frame_variables() {
@@ -247,48 +247,91 @@ void check_null_pointer(void *pointer, char *pointer_name) {
 
 void analyse_cluster_dependencies() {
 
-    if(doBCC9 == 1) dosp4b = dosp4c = 1;
-    if(doFCC == 1) dosp3b = dosp3c = 1;
-    if(doHCP == 1) dosp3c = 1;
-    if(do13K == 1) dosp3c = dosp4c = do11F = 1;
-    if(do13B == 1) dosp5c = 1;
-    if(do13A == 1) do12B = 1;
-    if(do12K == 1) do11A = 1;
-    if(do12E == 1) dosp3c = do11F = 1;
-    if(do12D == 1) dosp5c = do11E = 1;
-    if(do12B == 1) dosp5c = 1;
-    if(do12A == 1) do11C = 1;
-    if(do11W == 1) do10B = 1;
-    if(do11F == 1) dosp3c = dosp4c = 1;
-    if(do11E == 1) dosp5c = do9B = 1;
-    if(do11C == 1) dosp5c = 1;
-    if(do11B == 1) do9B = 1;
-    if(do11A == 1) dosp4c = 1;
-    if(do10W == 1) dosp5b = 1;
-    if(do10K == 1) do9K = 1;
-    if(do10B == 1) dosp5c = do9B = 1;
-    if(do10A == 1) dosp4b = 1;
-    if(do9K == 1) dosp4c = 1;
-    if(do9B == 1) dosp5c = 1;
-    if(do9A ==1) dosp4b = 1;
-    if(do8K == 1) dosp3c =1;
-    if(do8B == 1) dosp5c = 1;
-    if(do8A == 1) dosp5b = dosp5c = 1;
-    if(do7T_a == 1 || do7T_s == 1) do6Z = 1;
-    if(do7K == 1) dosp3c = 1;
-    if(do6Z == 1) dosp3c = 1;
-    if(do6A == 1) dosp4c = 1;
-    if(dosp5c == 1) dosp5 = 1;
-    if(dosp5b == 1) dosp5 = 1;
-    if(dosp5a == 1) dosp5 = 1;
-    if(dosp4c == 1) dosp4 = 1;
-    if(dosp4b == 1) dosp4 = 1;
-    if(dosp4a == 1) dosp4 = 1;
-    if(dosp3c == 1) dosp3 = 1;
-    if(dosp3b == 1) dosp3 = 1;
-    if(dosp3a == 1) dosp3 = 1;
-    if(dosp5 == 1) dosp4 = 1;
-    if(dosp4 == 1) dosp3 = 1;
+    if(doBCC9  == 1) dosp4b   = dosp4c = 1;
+    if(doFCC   == 1) dosp3b   = dosp3c = 1;
+    if(doHCP   == 1) dosp3c   = 1;
+
+    if(do13SB  == 1) do11SB  = dosp3a  = dosp3c = 1;
+    if(do13S   == 1) do12SB  = dosp3c  = 1;
+    if(do13PBB == 1) do12PAB = do13PAB = 1;
+    if(do13PAB == 1) do12PAA = do13PAA = dosp3a = 1;
+    if(do13PAA == 1) do12PAA = 1;
+    if(do13MW  == 1) dosp4a   = dosp5a = 1;
+    if(do13K   == 1) dosp3c   = dosp4c = do11F = 1;
+    if(do13B   == 1) dosp5c   = 1;
+    if(do13A   == 1) do12B    = 1;
+
+    if(do12SB  == 1) dosp5c   = do11SB  = 1;
+    if(do12S   == 1) dosp5c   = 1;
+    if(do12PBB == 1) do11PAB  = do12PAA = do12PAB = 1;
+    if(do12PAB == 1) do12PAA  = do11PAA = dosp3a = 1;
+    if(do12PAA == 1) do11PAA  = 1;
+    if(do12O   == 1) do8O     = 1;
+    if(do12MW  == 1) dosp4a   = dosp5a = 1;
+    if(do12K   == 1) do11A    = 1;
+    if(do12E   == 1) dosp3c   = do11F = 1;
+    if(do12D   == 1) dosp5c   = do11E = 1;
+    if(do12B   == 1) dosp5c   = 1;
+    if(do12A   == 1) do11C    = 1;
+
+    if(do11W   == 1) do10B    = 1;
+    if(do11SB  == 1) do9B    = dosp3c  = 1;
+    if(do11S   == 1) dosp5c   = 1;
+    if(do11O   == 1) dosp3b   = dosp4c  = 1;
+    if(do11PBB == 1) do10PAB = do11PAB = 1;
+    if(do11PAB == 1) do10PAA = do11PAA = dosp3a = 1;
+    if(do11PAA == 1) do10PAA = 1;
+    if(do11MW  == 1) dosp4a   = dosp5a = 1;
+    if(do11F   == 1) dosp3c   = dosp4c = 1;
+    if(do11E   == 1) dosp5c   = do9B = 1;
+    if(do11C   == 1) dosp5c   = 1;
+    if(do11B   == 1) do9B     = 1;
+    if(do11A   == 1) dosp4c   = 1;
+
+    if(do10W   == 1) dosp5b   = 1;
+    if(do10MW  == 1) dosp4a   = dosp5a = 1;
+    if(do10K   == 1) do9K     = 1;
+    if(do10B   == 1) dosp5c   = do9B = 1;
+    if(do10A   == 1) dosp4b   = 1;
+
+    if(do9S    == 1) do8B     = 1;
+    if(do9PBB  == 1) do8PAB   = 1;
+    if(do9PAA  == 1) do8PAA   = 1;
+    if(do9PAB  == 1) do8PAA   = do9PAA = dosp3a = 1;
+    if(do9MW   == 1) dosp4a   = dosp5a = 1;
+    if(do9K    == 1) dosp4c   = 1;
+    if(do9B    == 1) dosp5c   = 1;
+    if(do9A    == 1) dosp4b   = 1;
+
+    if(do8PAA  == 1) do7T_a   = 1;
+    if(do8PBB  == 1) do7PAB   = 1;
+    if(do8PAB  == 1) do7T_a   = do8PAA = dosp3a = 1;
+    if(do8O    == 1) dosp3b   = dosp4c = 1;
+    if(do8MW   == 1) dosp4a   = 1;
+    if(do8K    == 1) dosp3c   = 1;
+    if(do8B    == 1) dosp5c   = 1;
+    if(do8A    == 1) dosp5b   = dosp5c = 1;
+
+    if(do7T_a  == 1 || do7T_s == 1) do6Z = 1;
+    if(do7PAB  == 1) do6Z     = dosp3a = 1;
+    if(do7K    == 1) dosp3c   = 1;
+    if(do7MW   == 1) dosp4a   = 1;
+
+    if(do6Z    == 1) dosp3c   = 1;
+    if(do6MW   == 1) dosp4a   = dosp5a = 1;
+    if(do6A    == 1) dosp4c   = 1;
+
+    if(dosp5c  == 1) dosp5    = 1;
+    if(dosp5b  == 1) dosp5    = 1;
+    if(dosp5a  == 1) dosp5    = 1;
+    if(dosp4c  == 1) dosp4    = 1;
+    if(dosp4b  == 1) dosp4    = 1;
+    if(dosp4a  == 1) dosp4    = 1;
+    if(dosp3c  == 1) dosp3    = 1;
+    if(dosp3b  == 1) dosp3    = 1;
+    if(dosp3a  == 1) dosp3    = 1;
+    if(dosp5   == 1) dosp4    = 1;
+    if(dosp4   == 1) dosp3    = 1;
 
 }
 //!  Check whether the cluster lists are valid.

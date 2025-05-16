@@ -18,4 +18,12 @@ int check_unique_cluster(const int *trial, int cluster_size, int **cluster_list,
 
 int count_cluster_bonds_to_particle(int particle_id, int *cluster, int cluster_size, int *bonded_ids);
 
+int shared_4a(int *clust4a1, int *clust4a2);
+
+int shared_5a(int *clust5a1, int *clust5a2);
+
+int shared_4a5a(int *clust4a, int *clust5a);
+
+int shared_4a3(int *clust4a1, int *clust4a2, int *clust4a3);
+
 #endif

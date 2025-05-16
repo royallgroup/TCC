@@ -1,7 +1,7 @@
 #include <bonds.h>
 #include "simple_cluster_methods.h"
 
-//!  Count number of common ring particles between two clusters and get thier ids
+//!  Count number of common ring particles between two clusters and get their ids
 /*!  This function can be applied to whole clusters or subsets of clusters since it just compares lists of integers.
 *    To compare a subset of the clusters set the clus_size parameters to the number of elements to iterate over.
 *  @param cluster_1 - a pointer to a cluster stored in an hc memory array
@@ -198,4 +198,94 @@ int count_cluster_bonds_to_particle(int particle_id, int *cluster, int cluster_s
     }
 
     return num_bonded;
+}
+
+
+//!  Count the number of shared particles between two sp4a clusters
+/*!
+*  @param clust4a1 - first 4a cluster
+*  @param clust4a2 - second 4a cluster
+*  @return interger number of shared particles
+*/
+
+int shared_4a(int *clust4a1, int *clust4a2){
+    int u = 0;
+    for (int i = 0; i < 4; ++i){
+        for (int j = 0; j < 4; ++j){
+            if(clust4a1[i] == clust4a2[j]){
+                ++u;
+            }
+        }
+    }
+
+    return u;
+}
+
+
+//!  Count the number of shared particles between two sp4a clusters
+/*!
+*  @param clust5a1 - first 5a cluster
+*  @param clust5a2 - second 5a cluster
+*  @return interger number of shared particles
+*/
+
+int shared_5a(int *clust5a1, int *clust5a2){
+    int u = 0;
+    for (int i = 0; i < 5; ++i){
+        for (int j = 0; j < 5; ++j){
+            if(clust5a1[i] == clust5a2[j]){
+                ++u;
+            }
+        }
+    }
+
+    return u;
+}
+
+
+
+
+
+//!  Count the number of shared particles between an sp5a and an sp4a cluster
+/*!
+*  @param clust4a - 4a cluster
+*  @param clust5a - 5a cluster
+*  @return interger number of shared particles
+*/
+
+
+int shared_4a5a(int *clust4a, int *clust5a){
+    int u = 0;
+    for (int i = 0; i < 4; ++i){
+        for (int j = 0; j < 5; ++j){
+            if(clust4a[i] == clust5a[j]){
+                ++u;
+            }
+        }
+    }
+    return u;
+}
+
+
+
+//!  Count the number of shared particles between three sp4a clusters
+/*!
+*  @param clust4a1 - first 4a cluster
+*  @param clust4a2 - second 4a cluster
+*  @param clust4a2 - third 4a cluster
+*  @return interger number of shared particles
+*/
+
+int shared_4a3(int *clust4a1, int *clust4a2, int *clust4a3){
+    int u = 0;
+    for (int i = 0; i < 4; ++i){
+        for (int j = 0; j < 4; ++j){
+            for (int k = 0; k < 4; ++k){
+                if(clust4a1[i] == clust4a2[j] == clust4a3[k])
+                  ++u;
+            }
+        }
+    }
+
+    return u;
 }

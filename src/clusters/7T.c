@@ -36,6 +36,15 @@ void Clusters_Get7T() {
     }
 }
 
+int is_particle_ring_of_5A(int particle_id, const int *new_5A_cluster) {
+    if (new_5A_cluster[0] == particle_id ||  new_5A_cluster[1] == particle_id ||  new_5A_cluster[2] == particle_id) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
 int is_particle_spindle_of_5A(int particle_id, const int *new_5A_cluster) {
     if (new_5A_cluster[3] == particle_id ||  new_5A_cluster[4] == particle_id) {
         return 1;
