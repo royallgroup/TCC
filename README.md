@@ -8,7 +8,7 @@ For documentation, open index.html in the docs folder or https://royallgroup.git
 
 If this software is used in the prepration of published work please cite: 
 
-- Skipper, K, Moore, F.J. and Royall, C.P., *Identification and classification of clusters of dipolar colloids in an external field*. The Journal of Chemical Physics (2024), **161**(14).
+- Skipper K, Moore, F.J. and Royall, C.P., *Identification and classification of clusters of dipolar colloids in an external field*. The Journal of Chemical Physics (2024), **161**(14).
 - Malins A, Williams SR, Eggers J & Royall CP *Identification of Structure in Condensed Matter with the Topological Cluster Classification*, J. Chem. Phys. (2013). **139** 234506
 
 ### Licenses
